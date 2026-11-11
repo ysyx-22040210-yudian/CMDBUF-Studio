@@ -1,0 +1,43 @@
+PASS native Tk running
+PASS page home visible
+PASS page dut visible
+PASS page cases visible
+PASS page regression visible
+PASS page results visible
+PASS page formal visible
+PASS page settings visible
+PASS automatic profile without configuration
+PASS automatic tool locations detected
+PASS no tool setup path or homes needed
+PASS job import_rtl
+PASS DUT imported and saved
+PASS only main_phase changed
+PASS editor only main_phase
+PASS job regress
+PASS Tk event loop alive during EDA
+PASS six regression runs pass
+PASS per-case repeat counts and seeds
+PASS all FSDB VCD exist
+PASS coverage merged
+PASS results show body cycle counts
+PASS job wave_index
+PASS native waveform has traces
+PASS job wave
+PASS job coverage
+PASS Verdi windows created
+PASS job import_fsdb
+PASS import preserves original FSDB
+PASS job fsdb_inspect
+PASS NPI hierarchy inspection
+PASS job fsdb_formal
+PASS two FSDB pattern IDs
+PASS generated assume assert and pattern guards
+PASS formal ZIP saved
+PASS job regress
+PASS no-wave regression passes
+PASS no-wave disables files but retains coverage
+PASS all EDA launches use local Make
+PASS no remote settings in application
+PASS short display can scroll to final settings
+PASS reopen persisted plan
+PASS reopen saved Formal selection

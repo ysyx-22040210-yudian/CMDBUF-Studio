@@ -16,8 +16,8 @@ ROOT=eda.ROOT
 def selected_files():
     paths=set(eda.sources())
     paths.update(ROOT/p for p in ('CMDBUF Studio.cmd','CMDBUF Studio.sh','eda.example.json','AGENTS.md'))
-    paths.update((ROOT/'documents').glob('3[2345]_*.pdf'))
-    paths.update((ROOT/'documents').glob('3[2345]_*.docx'))
+    paths.update((ROOT/'documents').glob('3[23456]_*.pdf'))
+    paths.update((ROOT/'documents').glob('3[23456]_*.docx'))
     for p in list(paths):
         rel=p.relative_to(ROOT)
         if 'plans' in rel.parts or p.name.endswith('.local.json') or '__pycache__' in rel.parts:
@@ -25,44 +25,47 @@ def selected_files():
     return sorted(paths)
 
 
-QUICKSTART='''# CMDBUF Studio portable edition
+QUICKSTART='''# CMDBUF Studio — native Tk / local Linux
 
-Linux with VCS/Verdi already configured in the shell:
+On the Linux EDA workstation, load your site's tool/license environment, then:
+    python3 -c "import tkinter; print(tkinter.TkVersion)"
     make doctor
     make smoke
     make gui
 
-If your site requires an environment script:
+Requires Python >= 3.6, Tk >= 8.5, a Linux graphical session, GNU Make,
+compatible C/C++ tools, and licensed VCS / Verdi with FSDB PLI and NPI.
+No browser, Node.js, HTTP service, SSH connection, or pip packages are required.
+Tk installation if missing: Debian/Ubuntu python3-tk; RHEL/CentOS python3-tkinter.
+
+Optional site configuration:
     export EDA_TOOL_SETUP=/absolute/path/to/site_setup.sh
-    make doctor
+Normally no paths are entered: the Local tools page automatically detects the
+project, launch directory, commands, installation roots, PLI/NPI, and display.
+Special sites can opt in to machine-bound overrides in Advanced options.
+Old VM profiles and overrides copied from a different device are ignored.
+Settings are saved to ignored eda.local.json; DISPLAY inherits the current desktop.
 
-Windows (Python 3.6+ and OpenSSH client; no Windows Make or Node.js needed):
-    .\\make.cmd gui
-Choose SSH mode in connection settings. Enter user@host (or SSH alias),
-an independent absolute remote directory, and optional tool setup path.
-Alternatively:
-    .\\make.cmd configure MODE=ssh HOST=user@eda ROOT=/home/user/cmdbuf_studio
-    .\\make.cmd doctor
-    .\\make.cmd smoke
-Use an existing authenticated SSH connection (test with ssh user@eda).
+Compile / simulate / open waves and coverage all use Make:
+    make compile
+    make regress SEEDS=1,2,42 JOBS=2 WAVES=1
+    make wave REGRESSION=latest CASE=tc_random SEED=42
+    make coverage REGRESSION=latest
+    make wave-file FSDB=/absolute/path/to/input.fsdb
 
-GUI: DUT import, main_phase editor, per-case seed sweeps, FSDB/VCD viewers,
-Verdi coverage, and direct NPI FSDB-to-Formal generation are included.
-Native EDA execution requires Linux x86_64, licensed VCS/Verdi, GNU Make,
-Python >=3.6, a compatible C/C++ toolchain and Verdi PLI/NPI components.
-The GUI uses a modern browser; all web assets are bundled for offline use.
-Verdi windows require a usable DISPLAY and desktop authorization.
-SBY/Yosys/read_slang/ABC/Yices are optional, used only by generated bmc/cover jobs.
+The GUI includes DUT import and instantiation, a main_phase-only SV editor,
+per-case seed sweeps, a native waveform canvas, local Verdi coverage, and direct
+NPI FSDB-to-Formal generation with one pattern per FSDB. FSDB viewing uses local
+fsdb2vcd for the canvas; Formal extraction reads FSDB directly through NPI.
+Generated Formal packages require the site's formal engine; generation is not a proof.
 
-Machine settings: eda.local.json (created by GUI/configure, never distributed).
-Site scripts should set the site's own license environment. No license, EDA
-binary, cached simv, previous results, password, or machine configuration is bundled.
-Run doctor to locate components; smoke compiles and runs real cases to check licensing.
+Windows: make.cmd gui opens the same native editor and existing VCD viewer.
+EDA commands intentionally require Linux; there is no remote-execution fallback.
 
-Detailed Chinese Word/PDF guides: documents/32*, 33*, 34*, 35*.
-Current source and protocol contracts are included; historical evidence is kept
-in the original repository, separate from this clean runtime distribution.
-Verify the archive with: python3 simulation/vcs/portable.py --verify
+Current Chinese Word/PDF manual: documents/36_*. TC guide: documents/32_*.
+FSDB semantics: documents/34_*. Guides 33/35 describe the previous web/SSH UI.
+Verify the archive: python3 simulation/vcs/portable.py --verify
+No EDA binaries, licenses, credentials, machine settings, or prior results are shipped.
 '''
 
 

@@ -1,0 +1,83 @@
+python3 "/root/cmdbuf_tk_unpack_check_20261111/EDA workspace 测试/cmdbuf-studio/simulation/vcs/platform_config.py" --output "/root/cmdbuf_tk_unpack_check_20261111/evidence/environment.json"
+{
+  "profile": "auto",
+  "rows": [
+    {
+      "name": "运行设备",
+      "status": "本机",
+      "detail": "linux"
+    },
+    {
+      "name": "工程目录",
+      "status": "自动定位",
+      "detail": "/root/cmdbuf_tk_unpack_check_20261111/EDA workspace 测试/cmdbuf-studio"
+    },
+    {
+      "name": "启动目录",
+      "status": "自动读取",
+      "detail": "/root/cmdbuf_tk_unpack_check_20261111/EDA workspace 测试/cmdbuf-studio"
+    },
+    {
+      "name": "Python",
+      "status": "当前进程",
+      "detail": "/usr/bin/python3"
+    },
+    {
+      "name": "图形会话",
+      "status": "自动继承",
+      "detail": ":280"
+    },
+    {
+      "name": "vcs",
+      "status": "已发现",
+      "detail": "/home/synopsys/vcs-mx/O-2018.09-1/bin/vcs"
+    },
+    {
+      "name": "verdi",
+      "status": "已发现",
+      "detail": "/home/synopsys/verdi/Verdi_O-2018.09-SP2/bin/.wrapper"
+    },
+    {
+      "name": "urg",
+      "status": "已发现",
+      "detail": "/home/synopsys/vcs-mx/O-2018.09-1/bin/urg"
+    },
+    {
+      "name": "fsdb2vcd",
+      "status": "已发现",
+      "detail": "/home/synopsys/verdi/Verdi_O-2018.09-SP2/bin/.wrapper"
+    },
+    {
+      "name": "make",
+      "status": "已发现",
+      "detail": "/usr/local/bin/make"
+    },
+    {
+      "name": "g++",
+      "status": "已发现",
+      "detail": "/usr/bin/g++"
+    },
+    {
+      "name": "VCS 安装目录",
+      "status": "自动定位",
+      "detail": "/home/synopsys/vcs-mx/O-2018.09-1"
+    },
+    {
+      "name": "Verdi 安装目录",
+      "status": "自动定位",
+      "detail": "/home/synopsys/verdi/Verdi_O-2018.09-SP2"
+    },
+    {
+      "name": "FSDB PLI",
+      "status": "自动定位",
+      "detail": "/home/synopsys/verdi/Verdi_O-2018.09-SP2/share/PLI/VCS/LINUX64"
+    },
+    {
+      "name": "NPI",
+      "status": "自动定位",
+      "detail": "/home/synopsys/verdi/Verdi_O-2018.09-SP2/share/NPI/inc / /home/synopsys/verdi/Verdi_O-2018.09-SP2/share/NPI/lib/linux64"
+    }
+  ],
+  "legacy_config_ignored": false
+}
+

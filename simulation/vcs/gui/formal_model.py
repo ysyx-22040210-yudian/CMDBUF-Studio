@@ -2,8 +2,6 @@
 import json
 from pathlib import Path
 import re
-import shlex
-import subprocess
 import sys
 import zipfile
 import shutil
@@ -105,44 +103,24 @@ def selections(payload):
     return dict(sources=normalized,max_edges=core.number(payload.get('max_edges',100000),'采样沿上限',1,1000000))
 
 
-def stage(payload,settings,job_id,progress):
+def stage(payload, settings, job_id, progress):
     request=selections(payload);request['id']=identifier(job_id)
-    if settings['mode']=='local':
-        for source in request['sources']:
-            if source['kind']=='import':
-                folder=IMPORTS/source['id'];target=eda.OUT/'fsdb_imports'/source['id']
-                target.mkdir(parents=True,exist_ok=True)
-                if not (target/'wave.fsdb').exists():shutil.copyfile(str(folder/'wave.fsdb'),str(target/'wave.fsdb'))
-                if file_hash(target/'wave.fsdb')!=eda.read_json(folder/'metadata.json')['sha256']:
-                    raise ValueError('本地 FSDB 副本哈希不一致')
-        local=STATE/'formal_requests'/(job_id+'.json');eda.write_json(local,request)
-        return str(local)
-    host,root=settings['host'],settings['vm_root'];q=shlex.quote
     for source in request['sources']:
-        if source['kind']!='import':continue
-        folder=IMPORTS/source['id'];remote=root+'/results/fsdb_imports/'+source['id']
-        meta=eda.read_json(folder/'metadata.json')
-        progress('上传 FSDB: '+source['name'])
-        eda.ssh(host,'set -e\nmkdir -p '+q(remote)+'\n',capture=True)
-        existing=eda.ssh(host,'if test -f '+q(remote+'/sha256')+'; then cat '+q(remote+'/sha256')+'; fi\n',capture=True).stdout.decode().strip()
-        if existing==meta['sha256']:continue
-        subprocess.check_call(['scp','-q','-o','BatchMode=yes',str(folder/'wave.fsdb'),host+':'+remote+'/wave.part'])
-        verify='set -e\ncd '+q(remote)+'\nprintf "%s  wave.part\\n" '+q(meta['sha256'])+' | sha256sum -c - >/dev/null\nmv wave.part wave.fsdb\nprintf "%s" '+q(meta['sha256'])+' > sha256\n'
-        eda.ssh(host,verify,capture=True)
+        if source['kind']=='import':
+            folder=IMPORTS/source['id'];target=eda.OUT/'fsdb_imports'/source['id']
+            target.mkdir(parents=True,exist_ok=True)
+            progress('校验 FSDB: '+source['name'])
+            if not (target/'wave.fsdb').exists():
+                shutil.copyfile(str(folder/'wave.fsdb'),str(target/'wave.fsdb'))
+            if file_hash(target/'wave.fsdb')!=eda.read_json(folder/'metadata.json')['sha256']:
+                raise ValueError('FSDB 副本哈希不一致，请重新导入')
     local=STATE/'formal_requests'/(job_id+'.json');eda.write_json(local,request)
-    remote=root+'/results/fsdb_requests/'+job_id+'.json'
-    eda.ssh(host,'mkdir -p '+q(root+'/results/fsdb_requests')+'\n',capture=True)
-    subprocess.check_call(['scp','-q','-o','BatchMode=yes',str(local),host+':'+remote])
-    return remote
+    return str(local)
 
 
 def fetch(settings,key):
     key=identifier(key);folder=EXPORTS/key;folder.mkdir(parents=True,exist_ok=True)
-    if settings['mode']=='local':
-        shutil.copyfile(str(eda.OUT/'fsdb_formal'/key/'package.zip'),str(folder/'package.zip'))
-    else:
-        remote=settings['vm_root']+'/results/fsdb_formal/'+key+'/package.zip'
-        subprocess.check_call(['scp','-q','-o','BatchMode=yes',settings['host']+':'+remote,str(folder/'package.zip')])
+    shutil.copyfile(str(eda.OUT/'fsdb_formal'/key/'package.zip'),str(folder/'package.zip'))
     with zipfile.ZipFile(str(folder/'package.zip')) as archive:
         if sum(i.file_size for i in archive.infolist())>16*1024**3:raise ValueError('导出包解压后超过 16 GB')
         for item in archive.infolist():
@@ -164,3 +142,14 @@ def artifact(key,name):
     path=EXPORTS/identifier(key)/name
     if not path.is_file():raise ValueError('导出文件不存在')
     return path
+
+
+def import_file(path, progress=lambda text: None):
+    path=Path(path).resolve()
+    meta=begin_upload(dict(name=path.name,size=path.stat().st_size))
+    offset=0
+    with path.open('rb') as stream:
+        for data in iter(lambda:stream.read(8*1024**2),b''):
+            chunk_upload(meta['id'],offset,data);offset+=len(data)
+            progress('导入 %s · %d%%' % (path.name,100*offset//meta['size']))
+    return finish_upload(meta)

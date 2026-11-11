@@ -28,5 +28,5 @@ if (-not $selected) {
 $exe = $selected.File
 $prefix = $selected.Prefix
 $env:PYTHONIOENCODING = 'utf-8'
-& $exe @prefix (Join-Path $PSScriptRoot 'vm_make.py') @MakeArguments
+& $exe @prefix (Join-Path $PSScriptRoot 'launcher.py') @MakeArguments
 exit $LASTEXITCODE

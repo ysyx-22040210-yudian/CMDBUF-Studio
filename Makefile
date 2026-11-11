@@ -1,4 +1,4 @@
-# Primary EDA entry point. Paths also work when included by the VM launcher.
+# Primary EDA entry point on the local Linux workstation.
 .DEFAULT_GOAL := help
 empty :=
 space := $(empty) $(empty)

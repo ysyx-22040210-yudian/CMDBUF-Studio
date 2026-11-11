@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""VM Make entry point for direct NPI inspection and Formal package generation."""
+"""Local Linux Make entry point for direct NPI inspection and Formal package generation."""
 import argparse
 import hashlib
 import json

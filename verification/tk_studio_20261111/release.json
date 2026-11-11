@@ -1,0 +1,86 @@
+{
+  "status": "PASS",
+  "created_utc": "2026-11-11T05:11:23.436390Z",
+  "baseline_commit": "fbd6eafb7cc6843bd5a3aa9bb15570777ba25f54",
+  "unit_linux": {
+    "total": 44,
+    "passed": 44
+  },
+  "unit_windows": {
+    "total": 44,
+    "passed": 42,
+    "skipped": 2,
+    "reason": "Linux Bash discovery tests"
+  },
+  "native_acceptance_checks": 43,
+  "distribution_checks": 15,
+  "runtime_sha256": {
+    "simulation/vcs/regression_plan.py": "b399d7d2aa889eb79c45ae6e73755cbb8c54c08c8a3ceeb3af09e8ba773a8b5e",
+    "simulation/vcs/sv_audit.py": "2a2b5f86577537b28a112ddd04311ae1150fad39393674017c2c0bef7de54479",
+    "simulation/vcs/sv_cases.py": "b3cb83e4d4d87133d58d0b4df85d8794403dba9dbbd9fbf7dd3831da1cf3cd47",
+    "simulation/vcs/sv_suite.py": "808a4b3704086df077f9ed32b100981167ea8fa87a3861e1e0f1d1164e6c7822",
+    "simulation/vcs/wave_tools.py": "8c40ffc469e8df126ccdc984c4c022bda855be281c7477ac235279679990217e",
+    "simulation/vcs/wavedrom_adapter.py": "4ba53dea78a5d7aa7e9474599bdf4ad5d4afa9f78bbf8f86d3221771f24d90e7",
+    "simulation/vcs/case_adapter.py": "f01be54f578fabc34166a2a3a924548d39fd4e14ebf4b26f72ba6284bd5bdfed",
+    "simulation/vcs/constraint_suite.py": "37971347ab63b4c089ad54b2f141fe4bd26d25f1de51f7886198b33aa43db1ce",
+    "simulation/vcs/contracts.py": "2461252cb3b4b8ed9d6e4321b36560a0ec59c72384bc65807e97e404bd47a8c9",
+    "simulation/vcs/dut_config.py": "6b2c88b270d91250ee59235b47c83f720f7d26d6a23b5699a61d8deae1c10d51",
+    "simulation/vcs/eda.py": "40b6f7239e4cad73fbe5acad3c0a27c4c74c82d18ac3467acbb9e28a551f9651",
+    "simulation/vcs/launcher.py": "c44ed75833bcc7aea73937ee47dcd7b7911dae123623be0406ac1cc143f3e132",
+    "simulation/vcs/main_phase_audit.py": "5fc39f08b48559869a93a2764bed23f5ed534a35656c9f68a7395348a0e4906f",
+    "simulation/vcs/main_phase_suite.py": "fb81fc7447f949ba7f489ca1d82e615dac91d5758fe62d00a422616eab5d92cc",
+    "simulation/vcs/platform_config.py": "a3765e656680e58ef687a8d59447eef4a9af51df5c0e3e47bd8bbb357bb62293",
+    "simulation/vcs/portable.py": "9989970a2694e66389089f5819f6599423aef997e29d06d14434203796d7c846",
+    "simulation/vcs/protocol_adapter.py": "870fe4b3d36ba4c6a875c28523a082b0c3a2ffe03d825d5aa910583932f88bbd",
+    "simulation/vcs/protocol_cases.py": "b7d6918d2a93019507bbc937236543474119ba899ccb9d98de6a700012b48f0a",
+    "simulation/vcs/protocol_views.py": "6e0f5207b1dc6d67c06de038e393557ee7c803de91b88e0ecea9dff2e80f3ef2",
+    "simulation/vcs/random_audit.py": "3e54a290b2a9a9f619477e31777cea4a5c80b2ac07b247448a198b3ec4d3891d",
+    "simulation/vcs/fsdb_formal/core.py": "b987e786acb66761d1ec5f7027472570e62f4f99f4fd6f19dd62635b74419c89",
+    "simulation/vcs/fsdb_formal/engine.py": "06a8be8001abb5b4b6425c94eb2189f8f88064b6bde657de5816d8bbc43e402b",
+    "simulation/vcs/gui/backend.py": "53c7e4ed507addecc0651ac9dcea5cd1431efa1b1d283e63e6cfe036b18bf97a",
+    "simulation/vcs/gui/desktop.py": "780148d6fc148e9fc006f77dba2ee311f4f1e04d2267a5d160140f8b18ffed33",
+    "simulation/vcs/gui/formal_model.py": "b34b82dc0b3af9d64651ed245181e97df990e08fd7f6f70ea51711f253ba10aa",
+    "simulation/vcs/gui/model.py": "1b62a59431aa2a95d8e8ce12c2a09e5642fa1b1f018e97d27c43e730350f36f0",
+    "simulation/vcs/gui/vcd.py": "c922e16af51b36ee81b34fef6f12b075f4984231c1431aba464b1361278fdfb0",
+    "simulation/vcs/gui/widgets.py": "abed045b05913ec147c5226356b108e1ef0fb787a772353cc00f0fbd8a8efa91"
+  },
+  "acceptance_delta": {
+    "files": [
+      "simulation/vcs/portable.py"
+    ],
+    "change": "QUICKSTART documentation only; executable Python AST matches the tested snapshot"
+  },
+  "distribution": {
+    "files": 155,
+    "archives": {
+      "cmdbuf-studio-portable.zip": {
+        "bytes": 5471173,
+        "sha256": "9eac6b7d5565d554268583b36101ac8d541c70d82a1ab2dd9d6f94469204ae8f"
+      },
+      "cmdbuf-studio-portable.tar.gz": {
+        "bytes": 5373986,
+        "sha256": "b68ea79a6c086240124780f950deb8c02b7931c144f118594d8dca2f8a05f27e"
+      }
+    }
+  },
+  "package_files": 155,
+  "docs": {
+    "word": "documents/36_cmdbuf_native_tk_20261111.docx",
+    "pdf": "documents/36_cmdbuf_native_tk_20261111.pdf",
+    "pages": 6,
+    "visual_review": "All six rendered pages inspected: no clipping, overlap or missing screenshots"
+  },
+  "previous_sealed_directories": "unchanged",
+  "validation_scope": "Native Tk/local Make integration and finite simulation/trace export; no claim of arbitrary EDA-version compatibility or exhaustive formal proof",
+  "test_environment": {
+    "python": "3.6.8 (default, Nov 14 2023, 16:29:52) \n[GCC 4.8.5 20150623 (Red Hat 4.8.5-44)]",
+    "tk": 8.5,
+    "vcs": "O-2018.09-1",
+    "verdi": "O-2018.09-SP2",
+    "unicode_distribution_locale": "en_US.UTF-8",
+    "note": "Python 3.6 uses locale-dependent filesystem encoding; the initial bare SSH C-locale probe could not represent a Chinese project path. The Unicode-path acceptance uses an installed UTF-8 locale."
+  },
+  "redactions": [
+    "FLEXlm hardware host identifier removed from doctor.log before sealing"
+  ]
+}

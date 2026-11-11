@@ -1,10 +1,4 @@
 {
-  "mode": "auto",
-  "host": "",
-  "vm_root": "",
-  "display": "",
-  "xauthority": "",
-  "tool_setup": "",
-  "vcs_home": "",
-  "verdi_home": ""
+  "schema": 2,
+  "profile": "auto"
 }

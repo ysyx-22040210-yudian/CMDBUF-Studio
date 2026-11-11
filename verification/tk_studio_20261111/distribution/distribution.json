@@ -1,0 +1,155 @@
+{
+  "status": "PASS",
+  "project": "/root/cmdbuf_tk_unpack_check_20261111/EDA workspace \u6d4b\u8bd5/cmdbuf-studio",
+  "checks": [
+    {
+      "name": "fresh project has no machine configuration",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "no explicit setup path or installation homes",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "project path contains spaces and Unicode",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "package_verify",
+      "pass_": true,
+      "detail": 0
+    },
+    {
+      "name": "env_info",
+      "pass_": true,
+      "detail": 0
+    },
+    {
+      "name": "automatic tool discovery",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "doctor",
+      "pass_": true,
+      "detail": 0
+    },
+    {
+      "name": "smoke",
+      "pass_": true,
+      "detail": 0
+    },
+    {
+      "name": "three smoke simulations pass",
+      "pass_": true,
+      "detail": [
+        [
+          "tc_directed",
+          1,
+          "PASS"
+        ],
+        [
+          "tc_random",
+          17,
+          "PASS"
+        ],
+        [
+          "tc_random",
+          42,
+          "PASS"
+        ]
+      ]
+    },
+    {
+      "name": "coverage merge passes",
+      "pass_": true,
+      "detail": {
+        "SCORE": "83.24",
+        "LINE": "89.47",
+        "COND": "86.21",
+        "TOGGLE": "81.66",
+        "FSM": "--",
+        "BRANCH": "75.61"
+      }
+    },
+    {
+      "name": "WAVES=0 has no waveform files",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "automatic ASCII output directory",
+      "pass_": true,
+      "detail": "/tmp/cmdbuf-studio-0/results-0455a9a5e8c307c9e532"
+    },
+    {
+      "name": "make gui creates native window",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "standalone GUI automatic detection completes",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "package_verify_after_run",
+      "pass_": true,
+      "detail": 0
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "simulation/vcs/portable.py",
+        "--verify"
+      ],
+      "returncode": 0,
+      "log": "package_verify.log"
+    },
+    {
+      "argv": [
+        "make",
+        "--no-print-directory",
+        "env-info",
+        "INFO=/root/cmdbuf_tk_unpack_check_20261111/evidence/environment.json"
+      ],
+      "returncode": 0,
+      "log": "env_info.log"
+    },
+    {
+      "argv": [
+        "make",
+        "--no-print-directory",
+        "doctor"
+      ],
+      "returncode": 0,
+      "log": "doctor.log"
+    },
+    {
+      "argv": [
+        "make",
+        "--no-print-directory",
+        "smoke",
+        "WAVES=0",
+        "JOBS=2"
+      ],
+      "returncode": 0,
+      "log": "smoke.log"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "simulation/vcs/portable.py",
+        "--verify"
+      ],
+      "returncode": 0,
+      "log": "package_verify_after_run.log"
+    }
+  ],
+  "manifest_sha256": "8b8ae34e50e2fb5fab4c3025089b5a10b6b7023afc287cb9d3204b7e2a19364f"
+}

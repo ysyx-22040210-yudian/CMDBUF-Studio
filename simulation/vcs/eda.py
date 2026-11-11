@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""VCS/Verdi runner. Python >= 3.6, stdlib only; Windows dispatches over SSH.
+"""VCS/Verdi runner. Python >= 3.6, stdlib only; commands execute on the local Linux host.
 
 The DUT-specific stimulus adapter is case_adapter.py and tb/. Project sources
 and tool selection live in project.json/toolchain.sh, not in this runner.
@@ -60,7 +60,7 @@ def digest(path):
 
 
 def stamp():
-    # Explicit client timezone, independent of the VM's configured timezone.
+    # Stable report timezone, independent of the workstation timezone.
     return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8))).strftime('%Y%m%d_%H%M%S')
 
 
@@ -379,8 +379,8 @@ def write_report(regression, summary):
 td,th{border:1px solid #bbc7d0;padding:10px;text-align:left}code{font-size:13px}h1{font-size:26px}</style>
 <h1>CMDBUF RD VCS 回归</h1><p>批次 %s　状态 %s　通过 %d / %d</p>
 <p><a href="coverage/urgReport/dashboard.html">URG 代码覆盖率</a> · <a href="summary.json">机器可读结果</a></p>
-<p>在 VM 的 Make 工作目录运行下表命令；Windows 使用 make.cmd 替代 make。
-FSDB 与 VDB 保存在 VM。覆盖率使用 <code>make coverage REGRESSION=%s</code>。
+<p>在 Linux 工程目录运行下表 Make 命令。
+FSDB 与 VDB 保存在当前设备。覆盖率使用 <code>make coverage REGRESSION=%s</code>。
 覆盖率仅合并通过的用例。失败用例的原始数据库和波形单独保留。</p>
 <table><tr><th>用例与种子</th><th>状态</th><th>接收数</th><th>原因</th><th>证据</th><th>Verdi 命令</th></tr>%s</table>
 </html>''' % (html.escape(summary['id']), summary['status'], sum(r.get('acceptance_pass',r['status']=='PASS') for r in summary['results']), len(summary['results']),
@@ -553,11 +553,11 @@ def launch_verdi(args, env):
             except (OSError, UnicodeError):
                 continue
     if not env.get('DISPLAY'):
-        raise RuntimeError('Set --display to the VM desktop DISPLAY, or use SSH X forwarding')
+        raise RuntimeError('No desktop DISPLAY. Start Studio in the Linux graphical session or set DISPLAY.')
     if shutil.which('xdpyinfo', path=env.get('PATH')):
         probe = subprocess.run(['xdpyinfo'], env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=10)
         if probe.returncode:
-            raise RuntimeError('Cannot access VM desktop {}. Use --display / --xauthority.'.format(env['DISPLAY']))
+            raise RuntimeError('Cannot access Linux desktop {}. Use --display / --xauthority.'.format(env['DISPLAY']))
     write_json(log.with_suffix('.command.json'), {'argv': cmd, 'DISPLAY': env['DISPLAY'], 'cwd': str(view_dir)})
     with log.open('w') as out:
         proc = subprocess.Popen(cmd, cwd=str(view_dir), env=env, stdout=out,
@@ -582,109 +582,11 @@ def export_results(args):
     return output
 
 
-def ssh(host, script, capture=False):
-    result = subprocess.run(['ssh', '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=10', host, 'bash -s'],
-                            input=script.replace('\r\n', '\n').encode('utf-8'),
-                            stdout=subprocess.PIPE if capture else None,
-                            stderr=subprocess.PIPE if capture else None)
-    if capture and result.returncode:
-        raise RuntimeError(result.stderr.decode(errors='replace') + result.stdout.decode(errors='replace'))
-    return result
-
-
-def dispatch_vm(args, argv):
-    settings = platform_config.load()
-    host = args.host or settings['host']
-    vm_root = args.vm_root or settings['vm_root']
-    platform_config.validate(dict(settings,mode='ssh',host=host,vm_root=vm_root))
-    if not re.fullmatch(r'/[A-Za-z0-9_./-]+', vm_root) or '..' in Path(vm_root).parts:
-        raise ValueError('vm-root must be a simple absolute Linux path')
-    if host.startswith('-'):
-        raise ValueError('Invalid SSH host')
-    hashes = manifest()
-    key = hashlib.sha256(json.dumps(hashes, sort_keys=True).encode()).hexdigest()[:16]
-    remote_source = vm_root + '/sources/' + key
-    remote_out = vm_root + '/results'
-    stage = ROOT / 'build/vcs/staging'
-    stage.mkdir(parents=True, exist_ok=True)
-    package = stage / (key + '-' + uuid.uuid4().hex[:8] + '.tar.gz')
-    # Preserve canonical RTL/checker bytes. Bash scripts are transported with LF.
-    with tarfile.open(str(package), 'w:gz') as archive:
-        import io
-        for path in sources():
-            data = path.read_bytes()
-            if path.suffix == '.sh':
-                data = data.replace(b'\r\n', b'\n')
-            item = tarfile.TarInfo(path.relative_to(ROOT).as_posix())
-            item.size = len(data); item.mode = 0o644; item.mtime = 1700000000
-            archive.addfile(item, io.BytesIO(data))
-    q = shlex.quote
-    remote_pkg = vm_root + '/uploads/' + package.name
-    setup = 'set -e\nmkdir -p ' + q(vm_root + '/uploads') + ' ' + q(remote_source) + '\n'
-    if ssh(host, setup).returncode:
-        raise RuntimeError('Cannot prepare VM workspace')
-    subprocess.check_call(['scp', '-q', '-o', 'BatchMode=yes', str(package), host + ':' + remote_pkg])
-    if ssh(host, 'set -e\ntar -xzf ' + q(remote_pkg) + ' -C ' + q(remote_source) + '\n').returncode:
-        raise RuntimeError('Cannot unpack VM sources')
-    if args.command == 'sync':
-        command = ['python3', remote_source + '/simulation/vcs/sync_workspace.py', remote_source, vm_root]
-        return ssh(host, ' '.join(q(a) for a in command) + '\n').returncode
-    # Reconstruct argv without remote-control flags. No shell interpolation of case text.
-    forwarded = []
-    skip = False
-    for arg in argv:
-        if skip:
-            skip = False; continue
-        if arg in ('--host', '--vm-root'):
-            skip = True; continue
-        if arg in ('--vm', '--local'):
-            continue
-        if arg.startswith('--host=') or arg.startswith('--vm-root='):
-            continue
-        forwarded.append(arg)
-    request_id = uuid.uuid4().hex
-    base = platform_config.shell_exports(settings) + 'export EDA_RESULT_ROOT=' + q(remote_out) + '\nexport EDA_REQUEST_ID=' + request_id + '\n'
-    run = ['bash', remote_source + '/simulation/vcs/run.sh', '--local'] + forwarded
-    command = base + ' '.join(q(a) for a in run) + '\n'
-    rc = 0 if args.command == 'fetch' else ssh(host, command).returncode
-    if args.command in ('run', 'regress', 'selftest', 'replay', 'fetch'):
-        marker_path = remote_out + '/requests/' + request_id + '.json'
-        marker = ssh(host, 'if test -f ' + q(marker_path) + '; then cat ' +
-                     q(marker_path) + '; fi\n', capture=True)
-        if args.command != 'fetch' and not marker.stdout:
-            print('No new regression report was produced; previous results were not downloaded.')
-            return rc or 2
-        rid = json.loads(marker.stdout.decode())['id'] if args.command != 'fetch' else args.regression
-        exp = ['bash', remote_source + '/simulation/vcs/run.sh', '--local', 'export', '--regression', rid]
-        if getattr(args, 'all', False):
-            exp.append('--all')
-        result = ssh(host, base + ' '.join(q(a) for a in exp) + '\n', capture=True)
-        remote_archive = result.stdout.decode().strip().splitlines()[-1]
-        local_archive = stage / Path(remote_archive).name
-        subprocess.check_call(['scp', '-q', '-o', 'BatchMode=yes', host + ':' + remote_archive, str(local_archive)])
-        dest = ROOT / 'build/vcs/vm_results'
-        dest.mkdir(exist_ok=True)
-        with tarfile.open(str(local_archive)) as archive:
-            for item in archive.getmembers():
-                target = (dest / item.name).resolve()
-                if dest.resolve() not in target.parents or not (item.isfile() or item.isdir()):
-                    raise RuntimeError('Unsafe result archive entry')
-            archive.extractall(str(dest))
-        actual_id = Path(remote_archive).name[:-7]
-        pointer = 'latest_download.json' if args.command in ('run', 'regress', 'fetch') else 'last_check_download.json'
-        write_json(dest / pointer, {'id': actual_id, 'host': host, 'root': vm_root})
-        print('LOCAL REPORT ' + str(dest / actual_id / 'index.html'))
-    return rc
-
-
 def parser():
     p = argparse.ArgumentParser(description=__doc__)
-    where = p.add_mutually_exclusive_group()
-    where.add_argument('--vm', action='store_true')
-    where.add_argument('--local', action='store_true')
-    p.add_argument('--host'); p.add_argument('--vm-root')
+    p.add_argument('--local', action='store_true', help='Compatibility flag; execution is always local')
     sub = p.add_subparsers(dest='command')
-    sub.add_parser('doctor'); sub.add_parser('build'); sub.add_parser('list'); sub.add_parser('sync')
+    sub.add_parser('doctor'); sub.add_parser('build'); sub.add_parser('list')
     sub.add_parser('constraints')
     s = sub.add_parser('constraint-test'); s.add_argument('--jobs',type=int,default=2); s.add_argument('--timeout',type=int,default=120)
     s = sub.add_parser('tc-test'); s.add_argument('--jobs',type=int,default=2); s.add_argument('--timeout',type=int,default=120)
@@ -701,7 +603,7 @@ def parser():
             s.add_argument('--seeds'); s.add_argument('--cycles', type=int); s.add_argument('--cases')
             s.add_argument('--random-case')
             s.add_argument('--random-only', action='store_true')
-    for name in ('view', 'coverage', 'report', 'open-report', 'trace', 'export', 'fetch'):
+    for name in ('view', 'coverage', 'report', 'open-report', 'trace', 'export'):
         s = sub.add_parser(name)
         s.add_argument('--regression', default='latest')
         if name in ('view', 'trace'):
@@ -711,7 +613,7 @@ def parser():
         if name in ('view', 'coverage'):
             s.add_argument('--display', default=os.environ.get('EDA_DISPLAY', os.environ.get('DISPLAY','')))
             s.add_argument('--xauthority', default=os.environ.get('EDA_XAUTHORITY'))
-        if name in ('export', 'fetch'):
+        if name == 'export':
             s.add_argument('--all', action='store_true')
     s = sub.add_parser('new-case'); s.add_argument('name'); s.add_argument('--template', default='tc_directed')
     for name in ('validate', 'explain', 'diagram'):
@@ -730,17 +632,8 @@ def main(argv=None):
     if not args.command:
         parser().print_help(); return 2
     if args.command == 'open-report':
-        import webbrowser
-        if os.name == 'nt':
-            downloaded = ROOT / 'build/vcs/vm_results'
-            rid = read_json(downloaded / 'latest_download.json')['id'] if args.regression == 'latest' else args.regression
-            report = downloaded / rid / 'index.html'
-        else:
-            report = select_regression(args.regression) / 'index.html'
-        if not report.is_file():
-            raise ValueError('Run or fetch a regression first')
-        webbrowser.open(report.as_uri())
-        print(str(report)); return 0
+        subprocess.check_call([sys.executable, str(HERE/'gui/desktop.py'), '--page', 'results', '--batch', args.regression])
+        return 0
     if args.command == 'new-case':
         if not re.fullmatch('[A-Za-z][A-Za-z0-9_]*', args.name):
             raise ValueError('Case name must contain only letters, digits and underscore')
@@ -769,8 +662,6 @@ def main(argv=None):
             input_program(cfg,args.seed,args.cycles)
             if args.command == 'explain':
                 print(sv_cases.explain(cfg)); return 0
-            if args.vm or (os.name == 'nt' and not args.local):
-                return dispatch_vm(args,argv)
             print('VCS_COMPILE_VALID '+str(build(tool_env())))
             print('Procedural assignments and runtime contracts are checked by make run CASE='+cfg['name'])
             return 0
@@ -787,8 +678,6 @@ def main(argv=None):
             write_preview(cfg, output)
             print('DIAGRAM ' + str(output))
         return 0
-    if args.vm or (os.name == 'nt' and not args.local):
-        return dispatch_vm(args, argv)
     if args.command == 'export':
         export_results(args); return 0
     if args.command == 'constraints':
@@ -840,7 +729,7 @@ def main(argv=None):
         return replay(args, env)
     if args.command in ('view', 'coverage'):
         return launch_verdi(args, env)
-    raise ValueError('fetch is a Windows/--vm operation')
+    raise ValueError('Unsupported command: '+args.command)
 
 
 if __name__ == '__main__':

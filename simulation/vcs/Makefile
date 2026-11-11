@@ -2,7 +2,7 @@
 .PHONY: help gui doctor compile build run regress wave coverage report open-report list \
         new-case validate explain diagram trace replay selftest export constraints constraint-test tc-test fsdb-inspect fsdb-formal smoke dist configure
 PYTHON ?= python3
-# SSH sessions on the old VM may inherit the C locale; explanations contain Chinese.
+# Keep Chinese diagnostics readable on Linux installations with a C locale.
 export PYTHONIOENCODING := utf-8
 EDA_PROJECT_ROOT ?= $(CURDIR)
 EDA_HERE := $(EDA_PROJECT_ROOT)/simulation/vcs/
@@ -33,7 +33,7 @@ EDA_REGRESSION = --regression "$(REGRESSION)"
 EDA_GUI = --display "$(DISPLAY)" $(if $(strip $(XAUTHORITY)),--xauthority "$(XAUTHORITY)")
 
 help:
-	@echo 'CMDBUF RD: local Linux or SSH EDA workspace'
+	@echo 'CMDBUF Studio: native Tk desktop and local Linux EDA'
 	@echo '  make doctor | smoke                 Check tools, then real compile/simulation/coverage'
 	@echo '  make dist                           Build a clean portable ZIP and tar.gz'
 	@echo '  make gui                             Open CMDBUF Studio on this computer'
@@ -52,7 +52,7 @@ help:
 	@echo '  make coverage                        Open merged code coverage in Verdi'
 	@echo '       REGRESSION=latest|batch_id DISPLAY=:0 XAUTHORITY=/path (optional)'
 	@echo '  make report                          Print verdicts and report path'
-	@echo '  make open-report                     Open HTML report on this machine'
+	@echo '  make open-report                     Open results in the native Tk window'
 	@echo '  make new-case CASE=my_retry TEMPLATE=tc_retry'
 	@echo '  make new-case CASE=my_read            Copy a complete main_phase TC'
 	@echo '  make constraints                      Audit complete versioned contract inventory'
@@ -66,16 +66,24 @@ help:
 	@echo '       RUN_ID=tc_random_seed_42           Alternative full run selector'
 	@echo '  make list | selftest | export ALL=1  List cases / negative checks / archive'
 	@echo 'Windows PowerShell: .\make.cmd <same target and NAME=value arguments>'
-	@echo 'Windows source sync: .\make.cmd sync (preserve VM edits; stop on conflicts)'
+	@echo 'Windows: make.cmd gui supports project editing; EDA execution requires Linux.'
 
 gui:
-	$(PYTHON) "$(EDA_HERE)gui/server.py" --desktop
+	$(PYTHON) "$(EDA_HERE)gui/desktop.py"
 
 dist:
 	$(PYTHON) "$(EDA_HERE)portable.py"
 
 configure:
-	$(PYTHON) "$(EDA_HERE)vm_make.py" configure MODE=local $(if $(strip $(TOOL_SETUP)),"TOOL_SETUP=$(TOOL_SETUP)")
+	$(PYTHON) "$(EDA_HERE)launcher.py" configure $(if $(strip $(TOOL_SETUP)),"TOOL_SETUP=$(TOOL_SETUP)") $(if $(strip $(VCS_HOME)),"VCS_HOME=$(VCS_HOME)") $(if $(strip $(VERDI_HOME)),"VERDI_HOME=$(VERDI_HOME)")
+
+.PHONY: wave-file wave-convert
+wave-file wave-convert:
+	$(PYTHON) "$(EDA_HERE)wave_tools.py" $(if $(filter wave-file,$@),view,convert) --fsdb "$(FSDB)" $(if $(strip $(OUTPUT)),--output "$(OUTPUT)")
+
+.PHONY: env-info
+env-info:
+	$(PYTHON) "$(EDA_HERE)platform_config.py" $(if $(strip $(INFO)),--output "$(INFO)")
 
 smoke:
 	$(EDA) regress --cases tc_directed --seeds 17,42 --cycles 64 --jobs "$(JOBS)" --timeout "$(TIMEOUT)" --waves "$(WAVES)"

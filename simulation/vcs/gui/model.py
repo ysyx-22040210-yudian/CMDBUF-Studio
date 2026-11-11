@@ -110,7 +110,9 @@ def state_read():
     path = STATE / 'settings.json'
     default = dict(plan=default_plan())
     if path.exists():
-        default.update(eda.read_json(path))
+        saved = eda.read_json(path)
+        if 'plan' in saved:
+            default['plan'] = saved['plan']
     default.update(eda.platform_config.load())
     return default
 
@@ -122,4 +124,4 @@ def settings_save(value):
 
 
 def results_root():
-    return eda.OUT/'regressions' if state_read()['mode']=='local' else ROOT/'build/vcs/vm_results'
+    return eda.OUT/'regressions'

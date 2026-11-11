@@ -1,0 +1,308 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "name": "native Tk running",
+      "pass_": true,
+      "detail": "8.5.13"
+    },
+    {
+      "name": "page home visible",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "page dut visible",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "page cases visible",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "page regression visible",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "page results visible",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "page formal visible",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "page settings visible",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "automatic profile without configuration",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "automatic tool locations detected",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "no tool setup path or homes needed",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "job import_rtl",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "DUT imported and saved",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "only main_phase changed",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "editor only main_phase",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "job regress",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "Tk event loop alive during EDA",
+      "pass_": true,
+      "detail": 193
+    },
+    {
+      "name": "six regression runs pass",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "per-case repeat counts and seeds",
+      "pass_": true,
+      "detail": {
+        "tc_directed": [
+          17,
+          18
+        ],
+        "tc_random": [
+          101,
+          102,
+          103
+        ],
+        "tc_tk_acceptance": [
+          31
+        ]
+      }
+    },
+    {
+      "name": "all FSDB VCD exist",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "coverage merged",
+      "pass_": true,
+      "detail": {
+        "SCORE": "84.13",
+        "LINE": "89.47",
+        "COND": "86.21",
+        "TOGGLE": "85.25",
+        "FSM": "--",
+        "BRANCH": "75.61"
+      }
+    },
+    {
+      "name": "results show body cycle counts",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "job wave_index",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "native waveform has traces",
+      "pass_": true,
+      "detail": 171
+    },
+    {
+      "name": "job wave",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "job coverage",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "Verdi windows created",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "job import_fsdb",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "import preserves original FSDB",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "job fsdb_inspect",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "NPI hierarchy inspection",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "job fsdb_formal",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "two FSDB pattern IDs",
+      "pass_": true,
+      "detail": {
+        "patterns": 2,
+        "segments": 2,
+        "cycles": 344,
+        "input_assumptions": 344,
+        "output_assertions": 344,
+        "terminal_covers": 2,
+        "transactions": 168
+      }
+    },
+    {
+      "name": "generated assume assert and pattern guards",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "formal ZIP saved",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "job regress",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "no-wave regression passes",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "no-wave disables files but retains coverage",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "all EDA launches use local Make",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "no remote settings in application",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "short display can scroll to final settings",
+      "pass_": true,
+      "detail": [
+        0.36801752464403065,
+        1.0
+      ]
+    },
+    {
+      "name": "reopen persisted plan",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "reopen saved Formal selection",
+      "pass_": true,
+      "detail": null
+    }
+  ],
+  "screenshots": [
+    "01_home.png",
+    "02_dut.png",
+    "03_main_phase.png",
+    "04_regression.png",
+    "05_results.png",
+    "06_waveform.png",
+    "07_formal.png",
+    "08_settings.png",
+    "09_short_display.png"
+  ],
+  "regression": "20261111_125319_regress_10d805",
+  "no_wave_regression": "20261111_125338_regress_543b37",
+  "formal_id": "20261111_125334_08c2d777",
+  "counts": {
+    "patterns": 2,
+    "segments": 2,
+    "cycles": 344,
+    "input_assumptions": 344,
+    "output_assertions": 344,
+    "terminal_covers": 2,
+    "transactions": 168
+  },
+  "python": "3.6.8 (default, Nov 14 2023, 16:29:52) \n[GCC 4.8.5 20150623 (Red Hat 4.8.5-44)]",
+  "tk": 8.5,
+  "runtime_sha256": {
+    "simulation/vcs/regression_plan.py": "b399d7d2aa889eb79c45ae6e73755cbb8c54c08c8a3ceeb3af09e8ba773a8b5e",
+    "simulation/vcs/sv_audit.py": "2a2b5f86577537b28a112ddd04311ae1150fad39393674017c2c0bef7de54479",
+    "simulation/vcs/sv_cases.py": "b3cb83e4d4d87133d58d0b4df85d8794403dba9dbbd9fbf7dd3831da1cf3cd47",
+    "simulation/vcs/sv_suite.py": "808a4b3704086df077f9ed32b100981167ea8fa87a3861e1e0f1d1164e6c7822",
+    "simulation/vcs/wave_tools.py": "8c40ffc469e8df126ccdc984c4c022bda855be281c7477ac235279679990217e",
+    "simulation/vcs/wavedrom_adapter.py": "4ba53dea78a5d7aa7e9474599bdf4ad5d4afa9f78bbf8f86d3221771f24d90e7",
+    "simulation/vcs/case_adapter.py": "f01be54f578fabc34166a2a3a924548d39fd4e14ebf4b26f72ba6284bd5bdfed",
+    "simulation/vcs/constraint_suite.py": "37971347ab63b4c089ad54b2f141fe4bd26d25f1de51f7886198b33aa43db1ce",
+    "simulation/vcs/contracts.py": "2461252cb3b4b8ed9d6e4321b36560a0ec59c72384bc65807e97e404bd47a8c9",
+    "simulation/vcs/dut_config.py": "6b2c88b270d91250ee59235b47c83f720f7d26d6a23b5699a61d8deae1c10d51",
+    "simulation/vcs/eda.py": "40b6f7239e4cad73fbe5acad3c0a27c4c74c82d18ac3467acbb9e28a551f9651",
+    "simulation/vcs/launcher.py": "c44ed75833bcc7aea73937ee47dcd7b7911dae123623be0406ac1cc143f3e132",
+    "simulation/vcs/main_phase_audit.py": "5fc39f08b48559869a93a2764bed23f5ed534a35656c9f68a7395348a0e4906f",
+    "simulation/vcs/main_phase_suite.py": "fb81fc7447f949ba7f489ca1d82e615dac91d5758fe62d00a422616eab5d92cc",
+    "simulation/vcs/platform_config.py": "a3765e656680e58ef687a8d59447eef4a9af51df5c0e3e47bd8bbb357bb62293",
+    "simulation/vcs/portable.py": "ae00ec8ee50883c08e0803ca6efc77d0bf2732e66fa8a3b36e0955c95aa795ad",
+    "simulation/vcs/protocol_adapter.py": "870fe4b3d36ba4c6a875c28523a082b0c3a2ffe03d825d5aa910583932f88bbd",
+    "simulation/vcs/protocol_cases.py": "b7d6918d2a93019507bbc937236543474119ba899ccb9d98de6a700012b48f0a",
+    "simulation/vcs/protocol_views.py": "6e0f5207b1dc6d67c06de038e393557ee7c803de91b88e0ecea9dff2e80f3ef2",
+    "simulation/vcs/random_audit.py": "3e54a290b2a9a9f619477e31777cea4a5c80b2ac07b247448a198b3ec4d3891d",
+    "simulation/vcs/fsdb_formal/core.py": "b987e786acb66761d1ec5f7027472570e62f4f99f4fd6f19dd62635b74419c89",
+    "simulation/vcs/fsdb_formal/engine.py": "06a8be8001abb5b4b6425c94eb2189f8f88064b6bde657de5816d8bbc43e402b",
+    "simulation/vcs/gui/backend.py": "53c7e4ed507addecc0651ac9dcea5cd1431efa1b1d283e63e6cfe036b18bf97a",
+    "simulation/vcs/gui/desktop.py": "780148d6fc148e9fc006f77dba2ee311f4f1e04d2267a5d160140f8b18ffed33",
+    "simulation/vcs/gui/formal_model.py": "b34b82dc0b3af9d64651ed245181e97df990e08fd7f6f70ea51711f253ba10aa",
+    "simulation/vcs/gui/model.py": "1b62a59431aa2a95d8e8ce12c2a09e5642fa1b1f018e97d27c43e730350f36f0",
+    "simulation/vcs/gui/vcd.py": "c922e16af51b36ee81b34fef6f12b075f4984231c1431aba464b1361278fdfb0",
+    "simulation/vcs/gui/widgets.py": "abed045b05913ec147c5226356b108e1ef0fb787a772353cc00f0fbd8a8efa91"
+  },
+  "project": "/root/cmdbuf_tk_auto_20261111/cmdbuf-studio",
+  "scope": "Native Tk callbacks, local Make, actual VCS/Verdi/NPI. Generated Formal proof semantics covered by earlier sealed evidence; this run verifies generation and integration, not a new exhaustive proof."
+}

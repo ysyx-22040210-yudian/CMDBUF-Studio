@@ -1,0 +1,315 @@
+[
+  {
+    "id": "20261111_125314_4ac73524",
+    "kind": "detect",
+    "state": "DONE",
+    "started": 1794372794.3986437,
+    "completed": 0,
+    "total": 0,
+    "stage": "已完成",
+    "log": "$ make env-info INFO=/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/build/vcs/studio/tools.json\n/usr/bin/python3 \"/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/simulation/vcs/platform_config.py\" --output \"/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/build/vcs/studio/tools.json\"\n{\n  \"profile\": \"auto\",\n  \"rows\": [\n    {\n      \"name\": \"运行设备\",\n      \"status\": \"本机\",\n      \"detail\": \"linux\"\n    },\n    {\n      \"name\": \"工程目录\",\n      \"status\": \"自动定位\",\n      \"detail\": \"/root/cmdbuf_tk_auto_20261111/cmdbuf-studio\"\n    },\n    {\n      \"name\": \"启动目录\",\n      \"status\": \"自动读取\",\n      \"detail\": \"/root/cmdbuf_tk_auto_20261111/cmdbuf-studio\"\n    },\n    {\n      \"name\": \"Python\",\n      \"status\": \"当前进程\",\n      \"detail\": \"/usr/bin/python3\"\n    },\n    {\n      \"name\": \"图形会话\",\n      \"status\": \"自动继承\",\n      \"detail\": \":260\"\n    },\n    {\n      \"name\": \"vcs\",\n      \"status\": \"已发现\",\n      \"detail\": \"/home/synopsys/vcs-mx/O-2018.09-1/bin/vcs\"\n    },\n    {\n      \"name\": \"verdi\",\n      \"status\": \"已发现\",\n      \"detail\": \"/home/synopsys/verdi/Verdi_O-2018.09-SP2/bin/.wrapper\"\n    },\n    {\n      \"name\": \"urg\",\n      \"status\": \"已发现\",\n      \"detail\": \"/home/synopsys/vcs-mx/O-2018.09-1/bin/urg\"\n    },\n    {\n      \"name\": \"fsdb2vcd\",\n      \"status\": \"已发现\",\n      \"detail\": \"/home/synopsys/verdi/Verdi_O-2018.09-SP2/bin/.wrapper\"\n    },\n    {\n      \"name\": \"make\",\n      \"status\": \"已发现\",\n      \"detail\": \"/usr/local/bin/make\"\n    },\n    {\n      \"name\": \"g++\",\n      \"status\": \"已发现\",\n      \"detail\": \"/usr/bin/g++\"\n    },\n    {\n      \"name\": \"VCS 安装目录\",\n      \"status\": \"自动定位\",\n      \"detail\": \"/home/synopsys/vcs-mx/O-2018.09-1\"\n    },\n    {\n      \"name\": \"Verdi 安装目录\",\n      \"status\": \"自动定位\",\n      \"detail\": \"/home/synopsys/verdi/Verdi_O-2018.09-SP2\"\n    },\n    {\n      \"name\": \"FSDB PLI\",\n      \"status\": \"自动定位\",\n      \"detail\": \"/home/synopsys/verdi/Verdi_O-2018.09-SP2/share/PLI/VCS/LINUX64\"\n    },\n    {\n      \"name\": \"NPI\",\n      \"status\": \"自动定位\",\n      \"detail\": \"/home/synopsys/verdi/Verdi_O-2018.09-SP2/share/NPI/inc / /home/synopsys/verdi/Verdi_O-2018.09-SP2/share/NPI/lib/linux64\"\n    }\n  ],\n  \"legacy_config_ignored\": false\n}\n\n",
+    "commands": [
+      {
+        "argv": [
+          "make",
+          "--no-print-directory",
+          "PYTHON=/usr/bin/python3",
+          "env-info",
+          "INFO=/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/build/vcs/studio/tools.json"
+        ],
+        "returncode": 0
+      }
+    ],
+    "detected": {
+      "profile": "auto",
+      "rows": [
+        {
+          "name": "运行设备",
+          "status": "本机",
+          "detail": "linux"
+        },
+        {
+          "name": "工程目录",
+          "status": "自动定位",
+          "detail": "/root/cmdbuf_tk_auto_20261111/cmdbuf-studio"
+        },
+        {
+          "name": "启动目录",
+          "status": "自动读取",
+          "detail": "/root/cmdbuf_tk_auto_20261111/cmdbuf-studio"
+        },
+        {
+          "name": "Python",
+          "status": "当前进程",
+          "detail": "/usr/bin/python3"
+        },
+        {
+          "name": "图形会话",
+          "status": "自动继承",
+          "detail": ":260"
+        },
+        {
+          "name": "vcs",
+          "status": "已发现",
+          "detail": "/home/synopsys/vcs-mx/O-2018.09-1/bin/vcs"
+        },
+        {
+          "name": "verdi",
+          "status": "已发现",
+          "detail": "/home/synopsys/verdi/Verdi_O-2018.09-SP2/bin/.wrapper"
+        },
+        {
+          "name": "urg",
+          "status": "已发现",
+          "detail": "/home/synopsys/vcs-mx/O-2018.09-1/bin/urg"
+        },
+        {
+          "name": "fsdb2vcd",
+          "status": "已发现",
+          "detail": "/home/synopsys/verdi/Verdi_O-2018.09-SP2/bin/.wrapper"
+        },
+        {
+          "name": "make",
+          "status": "已发现",
+          "detail": "/usr/local/bin/make"
+        },
+        {
+          "name": "g++",
+          "status": "已发现",
+          "detail": "/usr/bin/g++"
+        },
+        {
+          "name": "VCS 安装目录",
+          "status": "自动定位",
+          "detail": "/home/synopsys/vcs-mx/O-2018.09-1"
+        },
+        {
+          "name": "Verdi 安装目录",
+          "status": "自动定位",
+          "detail": "/home/synopsys/verdi/Verdi_O-2018.09-SP2"
+        },
+        {
+          "name": "FSDB PLI",
+          "status": "自动定位",
+          "detail": "/home/synopsys/verdi/Verdi_O-2018.09-SP2/share/PLI/VCS/LINUX64"
+        },
+        {
+          "name": "NPI",
+          "status": "自动定位",
+          "detail": "/home/synopsys/verdi/Verdi_O-2018.09-SP2/share/NPI/inc / /home/synopsys/verdi/Verdi_O-2018.09-SP2/share/NPI/lib/linux64"
+        }
+      ],
+      "legacy_config_ignored": false
+    },
+    "ended": 1794372794.4394493
+  },
+  {
+    "id": "20261111_125315_dd6ff602",
+    "kind": "import_rtl",
+    "state": "DONE",
+    "started": 1794372795.3922315,
+    "completed": 0,
+    "total": 0,
+    "stage": "已完成",
+    "log": "",
+    "commands": [],
+    "imported": {
+      "files": [
+        "simulation/vcs/dut_sources/import_20261111_125315_f7988a/cmdbuf_rd.sv",
+        "simulation/vcs/dut_sources/import_20261111_125315_f7988a/cmdbuf_rd_cmd.sv",
+        "simulation/vcs/dut_sources/import_20261111_125315_f7988a/cmdbuf_rd_otb.sv"
+      ],
+      "include_dirs": [
+        "simulation/vcs/dut_sources/import_20261111_125315_f7988a"
+      ]
+    },
+    "ended": 1794372795.3932154
+  },
+  {
+    "id": "20261111_125317_767240da",
+    "kind": "regress",
+    "state": "DONE",
+    "started": 1794372797.1933868,
+    "completed": 6,
+    "total": 6,
+    "stage": "已完成",
+    "log": "$ make regress PLAN=/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/build/vcs/studio/plans/20261111_125317_767240da.json JOBS=2 TIMEOUT=120 WAVES=1\n/usr/bin/python3 \"/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/simulation/vcs/eda.py\" --local regress   \\\n   \\\n    \\\n  --jobs \"2\" --timeout \"120\" --waves \"1\" --plan \"/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/build/vcs/studio/plans/20261111_125317_767240da.json\"\nBUILD /root/cmdbuf_tk_auto_20261111/cmdbuf-studio/build/vcs/builds/dcd2b4b19596aa7f\nBATCH 20261111_125319_regress_10d805 TOTAL 6\nPASS tc_directed_seed_17 (0.57s)\nPASS tc_directed_seed_18 (0.57s)\nPROGRESS 20261111_125319_regress_10d805 1/6\nPROGRESS 20261111_125319_regress_10d805 2/6\nPASS tc_random_seed_102 (0.52s)\nPROGRESS 20261111_125319_regress_10d805 3/6\nPASS tc_random_seed_101 (0.52s)\nPROGRESS 20261111_125319_regress_10d805 4/6\nPASS tc_tk_acceptance_seed_31 (0.47s)\nPROGRESS 20261111_125319_regress_10d805 5/6\nPASS tc_random_seed_103 (0.47s)\nPROGRESS 20261111_125319_regress_10d805 6/6\nREPORT /root/cmdbuf_tk_auto_20261111/cmdbuf-studio/build/vcs/regressions/20261111_125319_regress_10d805/index.html\n",
+    "commands": [
+      {
+        "argv": [
+          "make",
+          "--no-print-directory",
+          "PYTHON=/usr/bin/python3",
+          "regress",
+          "PLAN=/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/build/vcs/studio/plans/20261111_125317_767240da.json",
+          "JOBS=2",
+          "TIMEOUT=120",
+          "WAVES=1"
+        ],
+        "returncode": 0
+      }
+    ],
+    "batch": "20261111_125319_regress_10d805",
+    "verdict": "PASS",
+    "ended": 1794372801.839966
+  },
+  {
+    "id": "20261111_125322_c65ecbe3",
+    "kind": "wave_index",
+    "state": "DONE",
+    "started": 1794372802.7938452,
+    "completed": 0,
+    "total": 0,
+    "stage": "已完成",
+    "log": "",
+    "commands": [],
+    "database": "/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/build/vcs/studio/vcd_index/5e9193f460bd77a2c0fbeb99.sqlite",
+    "wave_name": "waves.vcd",
+    "ended": 1794372802.952687
+  },
+  {
+    "id": "20261111_125323_f0646ce6",
+    "kind": "wave",
+    "state": "DONE",
+    "started": 1794372803.7051573,
+    "completed": 0,
+    "total": 0,
+    "stage": "已完成",
+    "log": "$ make wave REGRESSION=20261111_125319_regress_10d805 RUN_ID=tc_directed_seed_17\n/usr/bin/python3 \"/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/simulation/vcs/eda.py\" --local view --regression \"20261111_125319_regress_10d805\" --case \"tc_directed_seed_17\" --display \":260\" --xauthority \"/tmp/xvfb-run.CTvgzM/Xauthority.krpqeg\"\nVERDI pid=31052 display=:260 log=/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/build/vcs/regressions/20261111_125319_regress_10d805/views/view_20261111_125323_e90379/verdi.log\n",
+    "commands": [
+      {
+        "argv": [
+          "make",
+          "--no-print-directory",
+          "PYTHON=/usr/bin/python3",
+          "wave",
+          "REGRESSION=20261111_125319_regress_10d805",
+          "RUN_ID=tc_directed_seed_17"
+        ],
+        "returncode": 0
+      }
+    ],
+    "ended": 1794372806.7844975
+  },
+  {
+    "id": "20261111_125327_dcf0b8ad",
+    "kind": "coverage",
+    "state": "DONE",
+    "started": 1794372807.145527,
+    "completed": 0,
+    "total": 0,
+    "stage": "已完成",
+    "log": "$ make coverage REGRESSION=20261111_125319_regress_10d805\n/usr/bin/python3 \"/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/simulation/vcs/eda.py\" --local coverage --regression \"20261111_125319_regress_10d805\" --display \":260\" --xauthority \"/tmp/xvfb-run.CTvgzM/Xauthority.krpqeg\"\nVERDI pid=31358 display=:260 log=/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/build/vcs/regressions/20261111_125319_regress_10d805/views/coverage_20261111_125327_af1d0a/verdi.log\n",
+    "commands": [
+      {
+        "argv": [
+          "make",
+          "--no-print-directory",
+          "PYTHON=/usr/bin/python3",
+          "coverage",
+          "REGRESSION=20261111_125319_regress_10d805"
+        ],
+        "returncode": 0
+      }
+    ],
+    "ended": 1794372811.9202814
+  },
+  {
+    "id": "20261111_125332_3339cb1e",
+    "kind": "import_fsdb",
+    "state": "DONE",
+    "started": 1794372812.3319552,
+    "completed": 0,
+    "total": 0,
+    "stage": "已完成",
+    "log": "",
+    "commands": [],
+    "imported": [
+      {
+        "id": "20261111_125332_286cdab87e",
+        "name": "waves.fsdb",
+        "size": 37661,
+        "received": 37661,
+        "ready": true,
+        "sha256": "8f4af96ef30c5345740dd8a9e56af83555e3065011dc55e9202603ffc9855048"
+      }
+    ],
+    "ended": 1794372812.3342786
+  },
+  {
+    "id": "20261111_125333_975f9e3e",
+    "kind": "fsdb_inspect",
+    "state": "DONE",
+    "started": 1794372813.0245438,
+    "completed": 0,
+    "total": 0,
+    "stage": "已完成",
+    "log": "$ make fsdb-inspect REQUEST=/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/build/vcs/studio/formal_requests/20261111_125333_975f9e3e.json\n/usr/bin/python3 \"/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/simulation/vcs/fsdb_formal/engine.py\" --action inspect --request \"/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/build/vcs/studio/formal_requests/20261111_125333_975f9e3e.json\"\nNPI_PACKAGE /root/cmdbuf_tk_auto_20261111/cmdbuf-studio/build/vcs/fsdb_formal/20261111_125333_975f9e3e/package.zip\n",
+    "commands": [
+      {
+        "argv": [
+          "make",
+          "--no-print-directory",
+          "PYTHON=/usr/bin/python3",
+          "fsdb-inspect",
+          "REQUEST=/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/build/vcs/studio/formal_requests/20261111_125333_975f9e3e.json"
+        ],
+        "returncode": 0
+      }
+    ],
+    "formal_id": "20261111_125333_975f9e3e",
+    "ended": 1794372813.9509032
+  },
+  {
+    "id": "20261111_125334_08c2d777",
+    "kind": "fsdb_formal",
+    "state": "DONE",
+    "started": 1794372814.3342795,
+    "completed": 2,
+    "total": 2,
+    "stage": "已完成",
+    "log": "$ make fsdb-formal REQUEST=/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/build/vcs/studio/formal_requests/20261111_125334_08c2d777.json\n/usr/bin/python3 \"/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/simulation/vcs/fsdb_formal/engine.py\" --action export --request \"/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/build/vcs/studio/formal_requests/20261111_125334_08c2d777.json\"\nNPI_FORMAL 20261111_125334_08c2d777 TOTAL 2\nNPI_PROGRESS 1/2 pattern=7\nNPI_PROGRESS 2/2 pattern=42\nNPI_PACKAGE /root/cmdbuf_tk_auto_20261111/cmdbuf-studio/build/vcs/fsdb_formal/20261111_125334_08c2d777/package.zip\n",
+    "commands": [
+      {
+        "argv": [
+          "make",
+          "--no-print-directory",
+          "PYTHON=/usr/bin/python3",
+          "fsdb-formal",
+          "REQUEST=/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/build/vcs/studio/formal_requests/20261111_125334_08c2d777.json"
+        ],
+        "returncode": 0
+      }
+    ],
+    "formal_id": "20261111_125334_08c2d777",
+    "ended": 1794372815.075235
+  },
+  {
+    "id": "20261111_125338_19db8ea0",
+    "kind": "regress",
+    "state": "DONE",
+    "started": 1794372818.740941,
+    "completed": 1,
+    "total": 1,
+    "stage": "已完成",
+    "log": "$ make regress PLAN=/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/build/vcs/studio/plans/20261111_125338_19db8ea0.json JOBS=2 TIMEOUT=120 WAVES=0\n/usr/bin/python3 \"/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/simulation/vcs/eda.py\" --local regress   \\\n   \\\n    \\\n  --jobs \"2\" --timeout \"120\" --waves \"0\" --plan \"/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/build/vcs/studio/plans/20261111_125338_19db8ea0.json\"\nBATCH 20261111_125338_regress_543b37 TOTAL 1\nPASS tc_directed_seed_99 (0.42s)\nPROGRESS 20261111_125338_regress_543b37 1/1\nREPORT /root/cmdbuf_tk_auto_20261111/cmdbuf-studio/build/vcs/regressions/20261111_125338_regress_543b37/index.html\n",
+    "commands": [
+      {
+        "argv": [
+          "make",
+          "--no-print-directory",
+          "PYTHON=/usr/bin/python3",
+          "regress",
+          "PLAN=/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/build/vcs/studio/plans/20261111_125338_19db8ea0.json",
+          "JOBS=2",
+          "TIMEOUT=120",
+          "WAVES=0"
+        ],
+        "returncode": 0
+      }
+    ],
+    "batch": "20261111_125338_regress_543b37",
+    "verdict": "PASS",
+    "ended": 1794372819.6318665
+  }
+]

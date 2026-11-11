@@ -1,0 +1,27 @@
+python3 "/root/cmdbuf_tk_auto_20261111/cmdbuf-studio/simulation/vcs/eda.py" --local doctor 
+PASS Python: 3.6.8
+PASS Tk desktop: 8.5 (make gui requires a graphical DISPLAY)
+PASS bash: /usr/bin/bash
+PASS make: /usr/local/bin/make
+PASS vcs: /home/synopsys/vcs-mx/O-2018.09-1/bin/vcs
+PASS verdi: /home/synopsys/verdi/Verdi_O-2018.09-SP2/bin/verdi
+PASS urg: /home/synopsys/vcs-mx/O-2018.09-1/bin/urg
+PASS fsdb2vcd: /home/synopsys/verdi/Verdi_O-2018.09-SP2/bin/fsdb2vcd
+PASS g++: /usr/bin/g++
+PASS FSDB PLI: /home/synopsys/verdi/Verdi_O-2018.09-SP2/share/PLI/VCS/LINUX64
+PASS NPI: /home/synopsys/verdi/Verdi_O-2018.09-SP2/share/NPI/inc / /home/synopsys/verdi/Verdi_O-2018.09-SP2/share/NPI/lib/linux64
+PASS Results writable: /root/cmdbuf_tk_auto_20261111/cmdbuf-studio/build/vcs
+PASS vcs launch: vcs script version : O-2018.09
+machine name = IC_EDA 
+machine type = linux 
+machine os = Linux 3.10.0-1160.53.1.el7.x86_64  
+PASS verdi launch: logDir = /root/cmdbuf_tk_auto_20261111/cmdbuf-studio/verdiLog
+
+Verdi (R)
+
+Release Verdi_O-2018.09-SP2 for (RH Linux x86_64/64bit) -- Thu Feb 21 04:40:56 PDT 2019
+PASS urg launch: Note: Bumping stack limit from 8192 to 131072 Kbytes.
+URG Version O-2018.09-1 Copyright (c) 1991-2018 by Synopsys Inc.
+CovDB version: 13.1
+
+License: make smoke performs a real VCS compile, simulation and URG merge.
