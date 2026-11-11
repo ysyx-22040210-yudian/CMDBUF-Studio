@@ -16,8 +16,9 @@ ROOT=eda.ROOT
 def selected_files():
     paths=set(eda.sources())
     paths.update(ROOT/p for p in ('CMDBUF Studio.cmd','CMDBUF Studio.sh','eda.example.json','AGENTS.md'))
-    paths.update((ROOT/'documents').glob('3[23456789]_*.pdf'))
-    paths.update((ROOT/'documents').glob('3[23456789]_*.docx'))
+    for number in range(32, 41):
+        for extension in ('pdf', 'docx'):
+            paths.update((ROOT/'documents').glob(str(number)+'_*.'+extension))
     for p in list(paths):
         rel=p.relative_to(ROOT)
         if 'plans' in rel.parts or p.name.endswith('.local.json') or '__pycache__' in rel.parts:
@@ -55,6 +56,11 @@ Compile / simulate / open waves and coverage all use Make:
     make wave REGRESSION=latest CASE=tc_random SEED=42
     make coverage REGRESSION=latest
     make wave-file FSDB=/absolute/path/to/input.fsdb
+
+Verdi wave commands automatically add every dumped signal directly under the DUT
+instance (ports, internal signals and arrays), then fit the full time range.
+Imported FSDB can select DUT_SCOPE=top.u_cmdbuf; the GUI uses its instance field.
+The signal list is checked before reporting success. See documents/40_*.
 
 VCS compilation includes -lca -licqueue +vcs+lic+wait. Simulation uses
 +vcs+lic+wait; coverage merging uses +urg+lic+wait. License waiting has no

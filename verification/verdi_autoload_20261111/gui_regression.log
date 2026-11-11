@@ -1,0 +1,5 @@
+$ make wave REGRESSION=20261111_222515_regress_b9fe29 RUN_ID=tc_directed_seed_867
+/usr/bin/python3 "/root/CMDBUF license 发布 20261111/cmdbuf-studio/simulation/vcs/eda.py" --local view --regression "20261111_222515_regress_b9fe29" --case "tc_directed_seed_867" --display ":0" --xauthority "/root/.xauthUg6tC2" 
+VERDI waiting for waveform initialization; status: /tmp/cmdbuf-studio-0/results-06719cdd302251b81d81/regressions/20261111_222515_regress_b9fe29/views/view_20261111_233410_70c90b/wave_autoload.status
+VERDI DUT=/tb_cmdbuf_rd/dut signals=35 (all signals in this scope)
+VERDI pid=72247 display=:0 log=/tmp/cmdbuf-studio-0/results-06719cdd302251b81d81/regressions/20261111_222515_regress_b9fe29/views/view_20261111_233410_70c90b/verdi.log

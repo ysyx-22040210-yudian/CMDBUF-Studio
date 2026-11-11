@@ -1,0 +1,80 @@
+{
+  "status": "PASS",
+  "tool": "Verdi O-2018.09-SP2",
+  "gui": "native Tk",
+  "regression_button": {
+    "status": "PASS",
+    "scope": "/tb_cmdbuf_rd/dut",
+    "expected": 35,
+    "displayed": 35,
+    "missing": [],
+    "view": "/tmp/cmdbuf-studio-0/results-06719cdd302251b81d81/regressions/20261111_222515_regress_b9fe29/views/view_20261111_233410_70c90b"
+  },
+  "imported_fsdb_button": {
+    "status": "PASS",
+    "scope": "/tb_cmdbuf_rd/dut",
+    "expected": 35,
+    "displayed": 35,
+    "missing": [],
+    "view": "/tmp/cmdbuf-studio-0/results-06719cdd302251b81d81/views/import_20261111_233413_2ea1ea"
+  },
+  "missing_scope": {
+    "status": "EXPECTED_ERROR",
+    "diagnostic": "DUT scope not found",
+    "no_silent_fallback": true
+  },
+  "screenshot": "/root/cmdbuf-verdi-autoload-20261111/verdi_dut_top.png",
+  "scope": "DUT top only; child instances remain available in the hierarchy",
+  "screenshot_window": "0x5000310",
+  "auxiliary_test_windows_closed": [
+    68651,
+    69074,
+    70822,
+    71126,
+    71446,
+    72551,
+    72869
+  ],
+  "verdi_left_open_pid": 72247,
+  "unit_tests": {
+    "platform": "Linux Python 3.6",
+    "passed": 12,
+    "failed": 0
+  },
+  "deployment": {
+    "status": "PASS",
+    "package_files": 174,
+    "changed": [
+      "README.md",
+      "documents/40_cmdbuf_verdi_dut_signals_20261111.pdf",
+      "simulation/vcs/eda.py",
+      "simulation/vcs/portable.py"
+    ],
+    "archive_sha256": "4beb7c52f8838e8b8f96b738fc7e31aca213db937f1a2d5021d4eed0e1ba97d4",
+    "userdata_preserved": true
+  },
+  "packages": {
+    "files": 174,
+    "archives": {
+      "cmdbuf-studio-portable.zip": {
+        "bytes": 7097924,
+        "sha256": "4a5f21bb11d44ce7888ad96df5430fbdff87774be5bbe0cc1a9b60b9f829a1bb"
+      },
+      "cmdbuf-studio-portable.tar.gz": {
+        "bytes": 6992429,
+        "sha256": "4beb7c52f8838e8b8f96b738fc7e31aca213db937f1a2d5021d4eed0e1ba97d4"
+      }
+    }
+  },
+  "source_sha256": {
+    "simulation/vcs/waves.tcl": "4270ca7925a48e25c23119c8566c05ba0d0be1acf2267feba34165dc4eee397b",
+    "simulation/vcs/verdi_wave.py": "a3ff39bd46388adb9ca48e6fbc30659b74611f81c27fabcb071679f44e48803f",
+    "simulation/vcs/eda.py": "cf2d80198e434abebd39cea1d0aa2cbbd6108c528d6c2e4aa98d5ae4a1af6323",
+    "simulation/vcs/wave_tools.py": "21557e1dd71a30ff29d3e3e69f661c16d77d018448519104eb9c82e54877b76c",
+    "simulation/vcs/Makefile": "b3486a554b7e426496e90305922748252f30f270ce0a58c14169438f0534cce9",
+    "simulation/vcs/gui/backend.py": "0b3cce3ca84f1ee98abb080823bb912a050b05824775512912d9c2cbafea59a0",
+    "simulation/vcs/gui/desktop.py": "d6ee902eb7fdcb50faf562ac3d71bcba3baa3d94f468b1f2ef0f9de0fd5b17e8",
+    "simulation/vcs/portable.py": "1077e77d123009c10b60fe85cc0c021482b351b84cb30dadad57a61b1be8951d"
+  },
+  "scope_limits": "Existing CMDBUF FSDB on Verdi O-2018.09-SP2; all 35 directly scoped signals. No RTL/stimulus/assertion changes; no new simulation correctness claim."
+}

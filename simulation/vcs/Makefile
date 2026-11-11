@@ -29,12 +29,14 @@ CHECK_MODE ?=
 ASSERT_FATAL ?=
 PLAN ?=
 REQUEST ?=
+DUT_SCOPE ?=
 EDA_RUN_CASE = $(if $(strip $(CASE)),$(CASE),tc_directed)
 EDA_SELECT = $(if $(strip $(RUN_ID)),--case "$(RUN_ID)",$(if $(strip $(CASE)),--case "$(CASE)_seed_$(SEED)"))
 EDA_CYCLES = $(if $(strip $(CYCLES)),--cycles "$(CYCLES)")
 EDA_CHECKS = $(if $(strip $(CHECK_MODE)),--check-mode "$(CHECK_MODE)") $(if $(strip $(ASSERT_FATAL)),--assert-fatal "$(ASSERT_FATAL)")
 EDA_REGRESSION = --regression "$(REGRESSION)"
 EDA_GUI = --display "$(DISPLAY)" $(if $(strip $(XAUTHORITY)),--xauthority "$(XAUTHORITY)")
+EDA_WAVE_SCOPE = $(if $(strip $(DUT_SCOPE)),--dut-scope "$(DUT_SCOPE)")
 
 help:
 	@echo 'CMDBUF Studio: native Tk desktop and local Linux EDA'
@@ -58,6 +60,9 @@ help:
 	@echo '       RANDOM_CASE=my_random RANDOM_ONLY=1  Seed sweep of your own SV TC'
 	@echo '  make wave CASE=tc_random SEED=42        Open selected FSDB in Verdi'
 	@echo '  make wave                            First failure, otherwise first case'
+	@echo '       Automatically add every dumped signal at DUT top (ports + internal signals).'
+	@echo '  make wave-file FSDB=/path/wave.fsdb  Open imported FSDB with the same preset'
+	@echo '       DUT_SCOPE=tb_cmdbuf_rd.dut      Optional explicit instance for imported FSDB'
 	@echo '  make coverage                        Open merged code coverage in Verdi'
 	@echo '       REGRESSION=latest|batch_id DISPLAY=:0 XAUTHORITY=/path (optional)'
 	@echo '  make report                          Print verdicts and report path'
@@ -89,7 +94,7 @@ configure:
 
 .PHONY: wave-file wave-convert
 wave-file wave-convert:
-	$(PYTHON) "$(EDA_HERE)wave_tools.py" $(if $(filter wave-file,$@),view,convert) --fsdb "$(FSDB)" $(if $(strip $(OUTPUT)),--output "$(OUTPUT)")
+	$(PYTHON) "$(EDA_HERE)wave_tools.py" $(if $(filter wave-file,$@),view,convert) --fsdb "$(FSDB)" $(if $(strip $(OUTPUT)),--output "$(OUTPUT)") $(EDA_WAVE_SCOPE)
 
 .PHONY: env-info
 env-info:
@@ -130,7 +135,7 @@ regress:
 	  --jobs "$(JOBS)" --timeout "$(TIMEOUT)" --waves "$(WAVES)" $(if $(strip $(PLAN)),--plan "$(PLAN)") $(EDA_CHECKS)
 
 wave:
-	$(EDA) view $(EDA_REGRESSION) $(EDA_SELECT) $(EDA_GUI)
+	$(EDA) view $(EDA_REGRESSION) $(EDA_SELECT) $(EDA_GUI) $(EDA_WAVE_SCOPE)
 
 coverage:
 	$(EDA) coverage $(EDA_REGRESSION) $(EDA_GUI)

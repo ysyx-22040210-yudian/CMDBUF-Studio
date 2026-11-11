@@ -1,0 +1,89 @@
+Magic 271485
+Revision Verdi_O-2018.09-SP2
+
+; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
+viewPort 0 27 1143 480 100 65
+
+; File list:
+; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
+openDirFile -d / "" "/root/cmdbuf-verdi-autoload-20261111/gui_state/fsdb_imports/20261111_233301_46ca6b5638/wave.fsdb"
+
+; file time scale:
+; fileTimeScale ### s|ms|us|ns|ps
+
+; signal spacing:
+signalSpacing 5
+
+; windowTimeUnit is used for zoom, cursor & marker
+; waveform viewport range
+zoom 0.000000 738311.010000
+cursor 0.000000
+marker 0.000000
+
+; user define markers
+; userMarker time_pos marker_name color linestyle
+; visible top row signal index
+top 18
+; marker line index
+markerPos 35
+
+; event list
+; addEvent event_name event_expression
+; curEvent event_name
+
+
+
+COMPLEX_EVENT_BEGIN
+
+
+COMPLEX_EVENT_END
+
+
+
+; toolbar current search type
+; curSTATUS search_type
+curSTATUS ByChange
+
+
+addGroup "G1"
+activeDirFile "" "/root/cmdbuf-verdi-autoload-20261111/gui_state/fsdb_imports/20261111_233301_46ca6b5638/wave.fsdb"
+addSignal -h 15 /tb_cmdbuf_rd/dut/alloc_entry[3:0]
+addSignal -h 15 -holdScope alloc_fire
+addSignal -h 15 -holdScope ar_port_id[4:0]
+addSignal -h 15 -holdScope ar_rd_gnt[7:0]
+addSignal -h 15 -holdScope araddr[17:0]
+addSignal -h 15 -holdScope arb_addr[11:0]
+addSignal -h 15 -holdScope arid[7:0]
+addSignal -h 15 -holdScope arready[2:0]
+addSignal -h 15 -holdScope arresp[1:0]
+addSignal -h 15 -holdScope arvalid
+addSignal -h 15 -holdScope capture_entry[3:0]
+addSignal -h 15 -holdScope capture_valid
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -holdScope issue_entry[3:0]
+addSignal -h 15 -holdScope issue_success
+addSignal -h 15 -holdScope mem_rdata[127:0]
+addSignal -h 15 -holdScope pc_err
+addSignal -h 15 -holdScope pending_cnt[3:0]
+addSignal -h 15 -holdScope r_port_id[4:0]
+addSignal -h 15 -holdScope raddr[2:0]
+addSignal -h 15 -holdScope rd_mem_status[7:0]
+addSignal -h 15 -holdScope rdata[127:0]
+addSignal -h 15 -holdScope req[7:0]
+addSignal -h 15 -holdScope retire_entry[3:0]
+addSignal -h 15 -holdScope retire_fire
+addSignal -h 15 -holdScope rid[7:0]
+addSignal -h 15 -holdScope rready[2:0]
+addSignal -h 15 -holdScope rresp[1:0]
+addSignal -h 15 -holdScope rsp_data[127:0]
+addSignal -h 15 -holdScope rsp_entry[3:0]
+addSignal -h 15 -holdScope rsp_pc_err
+addSignal -h 15 -holdScope rst_n
+addSignal -h 15 -holdScope rvalid[2:0]
+addSignal -h 15 -holdScope rw_rd_gnt[7:0]
+addSignal -h 15 -holdScope src[1:0]
+addGroup "G2"
+
+; getSignalForm Scope Hierarchy Status
+; active file of getSignalForm
+

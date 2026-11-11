@@ -1,0 +1,15 @@
+$ make wave-file FSDB=/root/cmdbuf-verdi-autoload-20261111/gui_state/fsdb_imports/20261111_233301_46ca6b5638/wave.fsdb DUT_SCOPE=tb_cmdbuf_rd.missing_dut
+/usr/bin/python3 "/root/CMDBUF license 发布 20261111/cmdbuf-studio/simulation/vcs/wave_tools.py" view --fsdb "/root/cmdbuf-verdi-autoload-20261111/gui_state/fsdb_imports/20261111_233301_46ca6b5638/wave.fsdb"  --dut-scope "tb_cmdbuf_rd.missing_dut"
+VERDI waiting for waveform initialization; status: /tmp/cmdbuf-studio-0/results-06719cdd302251b81d81/views/import_20261111_233418_f5e18c/wave_autoload.status
+Traceback (most recent call last):
+  File "/root/CMDBUF license 发布 20261111/cmdbuf-studio/simulation/vcs/wave_tools.py", line 43, in <module>
+    main()
+  File "/root/CMDBUF license 发布 20261111/cmdbuf-studio/simulation/vcs/wave_tools.py", line 38, in main
+    verdi_wave.wait_ready(process, folder)
+  File "/root/CMDBUF license 发布 20261111/cmdbuf-studio/simulation/vcs/verdi_wave.py", line 29, in wait_ready
+    '\nSee ' + str(Path(folder) / 'verdi.log'))
+RuntimeError: Verdi DUT signal loading failed: DUT scope not found in FSDB: /tb_cmdbuf_rd/missing_dut. Check DUT_SCOPE / the GUI instance path.
+See /tmp/cmdbuf-studio-0/results-06719cdd302251b81d81/views/import_20261111_233418_f5e18c/verdi.log
+make: *** [/root/CMDBUF license 发布 20261111/cmdbuf-studio/simulation/vcs/Makefile:97: wave-file] Error 1
+
+make wave-file 失败（退出码 2），详见任务日志

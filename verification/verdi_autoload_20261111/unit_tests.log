@@ -1,0 +1,23 @@
+test_job_exclusion_failure_and_recovery (test_native.NativeTests) ... ok
+test_make_arguments_are_local_and_reject_recipe_expansion (test_native.NativeTests) ... ok
+test_native_fsdb_import_keeps_exact_bytes_and_hash (test_native.NativeTests) ... ok
+test_no_gui_web_or_ssh_runtime (test_native.NativeTests) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.020s
+
+OK
+
+test_clean_defaults_and_separate_machine_settings (test_portability.PortabilityTests) ... ok
+test_component_discovery_rejects_partial_installs (test_portability.PortabilityTests) ... ok
+test_distribution_contains_offline_runtime_and_no_machine_data (test_portability.PortabilityTests) ... ok
+test_local_config_validates_paths_and_rejects_remote_mode (test_portability.PortabilityTests) ... ok
+test_old_ssh_settings_and_environment_cannot_change_execution_host (test_portability.PortabilityTests) ... ok
+test_overrides_are_opt_in_and_bound_to_this_device (test_portability.PortabilityTests) ... ok
+test_path_discovery_needs_no_config_or_home_variables (test_portability.PortabilityTests) ... ok
+test_site_script_banner_and_path_discovery (test_portability.PortabilityTests) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.021s
+
+OK

@@ -1,0 +1,5 @@
+$ make wave-file FSDB=/root/cmdbuf-verdi-autoload-20261111/gui_state/fsdb_imports/20261111_233301_46ca6b5638/wave.fsdb DUT_SCOPE=tb_cmdbuf_rd.dut
+/usr/bin/python3 "/root/CMDBUF license 发布 20261111/cmdbuf-studio/simulation/vcs/wave_tools.py" view --fsdb "/root/cmdbuf-verdi-autoload-20261111/gui_state/fsdb_imports/20261111_233301_46ca6b5638/wave.fsdb"  --dut-scope "tb_cmdbuf_rd.dut"
+VERDI waiting for waveform initialization; status: /tmp/cmdbuf-studio-0/results-06719cdd302251b81d81/views/import_20261111_233413_2ea1ea/wave_autoload.status
+VERDI DUT=/tb_cmdbuf_rd/dut signals=35 (all signals in this scope)
+VERDI pid=72551

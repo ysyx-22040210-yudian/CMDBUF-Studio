@@ -32,6 +32,7 @@ import sv_cases
 import platform_config
 import check_policy
 import execution
+import verdi_wave
 
 
 def load_input(path):
@@ -597,8 +598,8 @@ def launch_verdi(args, env):
         build_dir = Path(result['build'])
         if not wave.exists():
             raise ValueError('FSDB is missing: ' + str(wave))
-        cmd = ['verdi', '-full64', '-dbdir', str(build_dir / 'simv.daidir'), '-ssf', str(wave),
-               '-play', str(HERE / 'waves.tcl')]
+        cmd = ['verdi', '-full64', '-dbdir', str(build_dir / 'simv.daidir'), '-ssf', str(wave)]
+        cmd += verdi_wave.prepare(view_dir, env, args.dut_scope, PROJECT['top'] + '.dut')
     if args.display:
         env['DISPLAY'] = args.display
     if args.xauthority:
@@ -626,9 +627,12 @@ def launch_verdi(args, env):
     with log.open('w') as out:
         proc = subprocess.Popen(cmd, cwd=str(view_dir), env=env, stdout=out,
                                 stderr=subprocess.STDOUT, start_new_session=True)
-    time.sleep(3)
-    if proc.poll() is not None:
-        raise RuntimeError('Verdi exited early. Check ' + str(log))
+    if args.command == 'view':
+        verdi_wave.wait_ready(proc, view_dir)
+    else:
+        time.sleep(3)
+        if proc.poll() is not None:
+            raise RuntimeError('Verdi exited early. Check ' + str(log))
     print('VERDI pid={} display={} log={}'.format(proc.pid, env['DISPLAY'], log))
     return 0
 
@@ -674,6 +678,8 @@ def parser():
         s.add_argument('--regression', default='latest')
         if name in ('view', 'trace'):
             s.add_argument('--case')
+        if name == 'view':
+            s.add_argument('--dut-scope', default='')
         if name == 'trace':
             s.add_argument('--limit', type=int, default=50)
         if name in ('view', 'coverage'):

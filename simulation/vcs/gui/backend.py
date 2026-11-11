@@ -231,7 +231,10 @@ class Jobs:
                 self.invoke(job, arguments)
             elif kind == 'wave_file':
                 progress('打开本机 Verdi')
-                self.invoke(job, ['wave-file', 'FSDB='+str(Path(payload['path']).resolve())])
+                arguments = ['wave-file', 'FSDB='+str(Path(payload['path']).resolve())]
+                if payload.get('scope'):
+                    arguments.append('DUT_SCOPE='+payload['scope'])
+                self.invoke(job, arguments)
             elif kind == 'import_rtl':
                 progress('导入 RTL 文件')
                 self.update(job, imported=import_rtl(payload['paths'], payload.get('base')))

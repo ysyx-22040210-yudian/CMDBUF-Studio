@@ -596,7 +596,8 @@ make replay 使用原用例保存的检查模式和 fatal 开关。通用模式�
         return formal_model.IMPORTS/s['id']/'wave.fsdb' if s['kind'] == 'import' else backend.result_path(s['batch'], s['run'])/'waves.fsdb'
 
     def formal_verdi(self):
-        self.launch('wave_file', dict(path=str(self.formal_source_path())))
+        self.apply_formal()
+        self.launch('wave_file', dict(path=str(self.formal_source_path()), scope=self.formal_selected()['scope']))
 
     def formal_wave(self):
         self.launch('wave_index', dict(path=str(self.formal_source_path())))

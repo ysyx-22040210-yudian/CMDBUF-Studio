@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "package_files": 174,
+  "changed": [
+    "README.md",
+    "documents/40_cmdbuf_verdi_dut_signals_20261111.pdf",
+    "simulation/vcs/eda.py",
+    "simulation/vcs/portable.py"
+  ],
+  "archive_sha256": "4beb7c52f8838e8b8f96b738fc7e31aca213db937f1a2d5021d4eed0e1ba97d4",
+  "userdata_preserved": true
+}

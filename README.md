@@ -68,6 +68,8 @@ make dist
 
 `WAVES=0` 保留日志和代码覆盖率，该轮不生成 FSDB / VCD。GUI 运行中可查看实时 Make 日志，任务结束后保留日志与结果。
 
+`make wave`、`make wave-file` 及对应 GUI 按钮会自动加入 DUT 顶层全部已记录的信号，包括端口、内部信号和数组，并缩放到完整时间范围。信号列表直接来自 FSDB，更换 RTL 后无需维护固定信号名。外部 FSDB 可指定 `DUT_SCOPE=top.u_cmdbuf`；GUI 使用当前“实例”栏。加载后会核对完整清单，错误实例路径明确报错。操作补充见说明 40。
+
 所有 VCS 编译自动加入 `-lca -licqueue +vcs+lic+wait`；仿真自动加入 `+vcs+lic+wait`，URG 合并自动加入 `+urg+lic+wait`。等待 License 不设超时上限，编译和合并进程也不再使用外层固定超时。`TIMEOUT=120` 只从 VCS 的仿真启动回调之后计算执行时间；`TIMEOUT=0` 表示执行也不限时。GUI 显示等待/启动及执行状态，结果中的 `sim.process.json` 分别记录启动等待和执行耗时。旧归档二进制没有启动回调时，重放保留原二进制并关闭整个进程的超时，以免中断许可证等待。
 
 当前 SV 用例从 t=0 启动时钟，`clk` 初始为 1。`rst_n` 在 t=0 为 0，在 `#1`（1 ns）释放后一直为 1。默认 5 ns 下降、10 ns 上升；`main_phase` 的 `cycle=0` 在 12 ns 驱动，供 20 ns 采样。TC 保持 `rst_n=1`，再次请求拉低会报错。`clock_reset.csv` 记录实际时钟和复位跳变；旧归档重放沿用其原二进制和原时序。说明 38 覆盖旧说明中的多周期复位及用例中再次复位示例。
@@ -78,6 +80,7 @@ make dist
 
 ## 下载与说明
 
+- [Verdi 自动加载 DUT 顶层信号 PDF](documents/40_cmdbuf_verdi_dut_signals_20261111.pdf)
 - [License 等待与执行超时 PDF](documents/39_cmdbuf_license_wait_20261111.pdf) / [Word](documents/39_cmdbuf_license_wait_20261111.docx)
 - [时钟与复位启动时序 PDF](documents/38_cmdbuf_startup_20261111.pdf) / [Word](documents/38_cmdbuf_startup_20261111.docx)
 - [检查模式与 fatal 操作说明 PDF](documents/37_cmdbuf_check_modes_20261111.pdf) / [Word](documents/37_cmdbuf_check_modes_20261111.docx)
