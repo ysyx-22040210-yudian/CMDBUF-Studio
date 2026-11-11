@@ -1,0 +1,13 @@
+{
+  "description": "失败同拍重选、单 grant 不推进，恢复双 grant 后排空",
+  "sequence": [
+    {"set": {"rwgrant": 0}},
+    {"send": {"src": 0, "addr": "0x1a018", "id": 7}},
+    {"wait": 12},
+    {"set": {"argrant": 0, "rwgrant": 255}},
+    {"wait": 6},
+    {"set": {"argrant": 255}},
+    {"wait": 10}
+  ],
+  "require": {"accepted": 1, "retired": 1, "issue_failed": 10, "ar_only": 1, "rw_only": 1}
+}

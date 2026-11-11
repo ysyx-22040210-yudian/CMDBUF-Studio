@@ -1,0 +1,5 @@
+{
+  "description": "VCS 原生约束随机：同拍 ready/req 与 MEM 返回历史参与求解，最终输入原样驱动；合法错误响应码与校验错误也参与随机",
+  "sequence": [{"random": 2000}],
+  "require": {"accepted": 10, "issued": 10, "retired": 10, "issue_failed": 1}
+}

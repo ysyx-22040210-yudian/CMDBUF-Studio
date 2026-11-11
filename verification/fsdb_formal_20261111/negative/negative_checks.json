@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "npi_negative_checks": [
+    {
+      "name": "invalid_fsdb",
+      "status": "REJECTED",
+      "returncode": 2,
+      "message": "Not a readable FSDB"
+    },
+    {
+      "name": "width_mismatch",
+      "status": "REJECTED",
+      "returncode": 2,
+      "message": "width mismatch"
+    },
+    {
+      "name": "missing_signal",
+      "status": "REJECTED",
+      "returncode": 2,
+      "message": "Signal not found"
+    },
+    {
+      "name": "edge_limit",
+      "status": "REJECTED",
+      "returncode": 2,
+      "message": "edge limit exceeded"
+    }
+  ],
+  "formal_mutation": {
+    "expected": "FAIL",
+    "actual": "FAIL 2 6",
+    "returncode": 2,
+    "change": "Only first output assertion's expected arready changed from 3'h7 to 3'h6; input assumptions unchanged.",
+    "original_sha256": "174210d5cc0ceb5fd0dafd267d0ce926a857b9c468b8e3b16c67388003174e33",
+    "mutant_sha256": "895749c88ba9067d05c84500ea9b2f8a38b01b8c124f508c0a807df603e82377"
+  }
+}

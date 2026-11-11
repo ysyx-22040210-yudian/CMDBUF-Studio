@@ -1,0 +1,12 @@
+# running in run_cover/src/
+read_slang --top cmdbuf_fsdb_formal_top --no-implicit-memories -f slang.f
+prep -top cmdbuf_fsdb_formal_top
+async2sync
+dffunmap
+chformal -lower
+sim -clock clk -resetn rst_n -rstlen 1 -n 1 -w -vcd reset_initialization.vcd
+
+hierarchy -smtcheck
+rename -witness
+write_jny -no-connections ../model/design.json
+write_rtlil ../model/design.il

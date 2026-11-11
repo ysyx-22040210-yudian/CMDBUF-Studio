@@ -1,0 +1,21 @@
+{
+  "id": "20261111_054851_93b112f0",
+  "kind": "coverage",
+  "state": "DONE",
+  "started": 1794347331.7197707,
+  "completed": 0,
+  "total": 0,
+  "stage": "已完成",
+  "log": "\n› make coverage REGRESSION=20261111_054845_regress_a2713b DISPLAY=:0\npython3 \"/tmp/cmdbuf_portable_20261111_054023_e347ff/windows_remote/workspace/simulation/vcs/eda.py\" --local coverage --regression \"20261111_054845_regress_a2713b\" --display \":0\" \nVERDI pid=62073 display=:0 log=/tmp/cmdbuf_portable_20261111_054023_e347ff/windows_remote/results/regressions/20261111_054845_regress_a2713b/views/coverage_20261111_054851_6b6537/verdi.log\n",
+  "commands": [
+    {
+      "argv": [
+        "coverage",
+        "REGRESSION=20261111_054845_regress_a2713b",
+        "DISPLAY=:0"
+      ],
+      "returncode": 0
+    }
+  ],
+  "ended": 1794347335.198112
+}

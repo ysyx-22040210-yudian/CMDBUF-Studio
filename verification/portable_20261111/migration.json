@@ -1,0 +1,7 @@
+{
+  "host": "root@192.168.31.116",
+  "root": "/tmp/cmdbuf_portable_20261111_054023_e347ff",
+  "project": "/tmp/cmdbuf_portable_20261111_054023_e347ff/cmdbuf-studio",
+  "space_project": "/tmp/cmdbuf_portable_20261111_054023_e347ff/space parent/cmdbuf-studio",
+  "archive_sha256": "3e89ba083e00e6d69cf12a734add7004ad8ff78f61d5d04ecffce4600c9cb055"
+}

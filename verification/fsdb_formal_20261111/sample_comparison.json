@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "pin_values_checked": 6355,
+  "nonclock_values_different_after_edge": 60,
+  "method": "NPI direct FSDB value at T-1 versus independently archived VCD last transition strictly before T",
+  "details": [
+    {
+      "pattern": 11,
+      "case": "tc_studio_demo_seed_1",
+      "samples": 69,
+      "signals": 31
+    },
+    {
+      "pattern": 22,
+      "case": "tc_directed_seed_1",
+      "samples": 69,
+      "signals": 31
+    },
+    {
+      "pattern": 33,
+      "case": "tc_reset_seed_1",
+      "samples": 67,
+      "signals": 31
+    }
+  ]
+}

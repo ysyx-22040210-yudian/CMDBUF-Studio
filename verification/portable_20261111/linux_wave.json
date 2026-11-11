@@ -1,0 +1,22 @@
+{
+  "id": "20261111_054723_384cf305",
+  "kind": "wave",
+  "state": "DONE",
+  "started": 1794347243.118627,
+  "completed": 0,
+  "total": 0,
+  "stage": "已完成",
+  "log": "\n› make wave REGRESSION=20261111_054717_regress_63f64b DISPLAY=:0 RUN_ID=tc_directed_seed_21\npython3 \"/tmp/cmdbuf_portable_20261111_054023_e347ff/cmdbuf-studio/simulation/vcs/eda.py\" --local view --regression \"20261111_054717_regress_63f64b\" --case \"tc_directed_seed_21\" --display \":0\" \nVERDI pid=55384 display=:0 log=/tmp/cmdbuf_portable_20261111_054023_e347ff/cmdbuf-studio/build/vcs/regressions/20261111_054717_regress_63f64b/views/view_20261111_054723_a4b4c0/verdi.log\n",
+  "commands": [
+    {
+      "argv": [
+        "wave",
+        "REGRESSION=20261111_054717_regress_63f64b",
+        "DISPLAY=:0",
+        "RUN_ID=tc_directed_seed_21"
+      ],
+      "returncode": 0
+    }
+  ],
+  "ended": 1794347246.2829847
+}

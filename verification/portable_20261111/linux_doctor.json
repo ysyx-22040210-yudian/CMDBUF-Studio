@@ -1,0 +1,25 @@
+{
+  "id": "20261111_054716_0b1f78ec",
+  "kind": "doctor",
+  "state": "DONE",
+  "started": 1794347236.0712392,
+  "completed": 0,
+  "total": 0,
+  "stage": "已完成",
+  "log": "\n› make sync\nLocal Linux workspace: no SSH or source synchronization required.\n\n› make doctor\npython3 \"/tmp/cmdbuf_portable_20261111_054023_e347ff/cmdbuf-studio/simulation/vcs/eda.py\" --local doctor \nPASS Python: 3.6.8\nPASS bash: /usr/bin/bash\nPASS make: /usr/local/bin/make\nPASS vcs: /home/synopsys/vcs-mx/O-2018.09-1/bin/vcs\nPASS verdi: /home/synopsys/verdi/Verdi_O-2018.09-SP2/bin/verdi\nPASS urg: /home/synopsys/vcs-mx/O-2018.09-1/bin/urg\nPASS fsdb2vcd: /home/synopsys/verdi/Verdi_O-2018.09-SP2/bin/fsdb2vcd\nPASS g++: /usr/bin/g++\nPASS FSDB PLI: /home/synopsys/verdi/Verdi_O-2018.09-SP2/share/PLI/VCS/LINUX64\nPASS NPI: /home/synopsys/verdi/Verdi_O-2018.09-SP2/share/NPI/inc / /home/synopsys/verdi/Verdi_O-2018.09-SP2/share/NPI/lib/linux64\nPASS Results writable: /tmp/cmdbuf_portable_20261111_054023_e347ff/cmdbuf-studio/build/vcs\nPASS vcs launch: vcs script version : O-2018.09\nmachine name = IC_EDA \nmachine type = linux \nmachine os = Linux 3.10.0-1160.53.1.el7.x86_64  \nThe FLEXlm host ID of this machine is \"000c299c3ce0\"\nPASS verdi launch: logDir = /tmp/cmdbuf_portable_20261111_054023_e347ff/cmdbuf-studio/verdiLog\n\nVerdi (R)\n\nRelease Verdi_O-2018.09-SP2 for (RH Linux x86_64/64bit) -- Thu Feb 21 04:40:56 PDT 2019\nPASS urg launch: Note: Bumping stack limit from 8192 to 131072 Kbytes.\nURG Version O-2018.09-1 Copyright (c) 1991-2018 by Synopsys Inc.\nCovDB version: 13.1\n\nLicense: make smoke performs a real VCS compile, simulation and URG merge.\n",
+  "commands": [
+    {
+      "argv": [
+        "sync"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "doctor"
+      ],
+      "returncode": 0
+    }
+  ],
+  "ended": 1794347236.728783
+}

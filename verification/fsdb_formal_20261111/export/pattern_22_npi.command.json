@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "/root/cmdbuf_rd_vcs_eda/results/npi_readers/1b67eed9c71879f7/npi_reader",
+    "extract",
+    "/root/cmdbuf_rd_vcs_eda/results/regressions/20261111_041030_regress_e2f2fa/cases/tc_directed_seed_1/waves.fsdb",
+    "/root/cmdbuf_rd_vcs_eda/results/fsdb_formal/20261111_051214_8d079772/pattern_22.tsv",
+    "/root/cmdbuf_rd_vcs_eda/results/fsdb_formal/20261111_051214_8d079772/pattern_22.ndjson",
+    "100000"
+  ],
+  "cwd": "/root/cmdbuf_rd_vcs_eda/results/fsdb_formal/20261111_051214_8d079772"
+}

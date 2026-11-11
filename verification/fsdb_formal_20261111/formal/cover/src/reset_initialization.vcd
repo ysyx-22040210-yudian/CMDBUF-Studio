@@ -1,0 +1,417 @@
+$version Yosys $end
+$scope module cmdbuf_fsdb_formal_top $end
+$var reg 32 n193 trace_checks.trace_prev_segment [31:0] $end
+$var reg 32 n192 trace_checks.trace_prev_pattern [31:0] $end
+$var wire 32 n191 trace_checks.trace_cycle [31:0] $end
+$var wire 2 n190 trace_checks.src [1:0] $end
+$var wire 8 n189 trace_checks.rw_rd_gnt [7:0] $end
+$var wire 3 n188 trace_checks.rvalid [2:0] $end
+$var wire 1 n187 trace_checks.rst_n $end
+$var wire 2 n186 trace_checks.rresp [1:0] $end
+$var wire 3 n185 trace_checks.rready [2:0] $end
+$var wire 8 n184 trace_checks.rid [7:0] $end
+$var wire 32 n183 trace_checks.reset_segment [31:0] $end
+$var wire 8 n182 trace_checks.req [7:0] $end
+$var wire 128 n181 trace_checks.rdata [127:0] $end
+$var wire 16 n180 trace_checks.rd_mem_status [15:0] $end
+$var wire 3 n179 trace_checks.raddr [2:0] $end
+$var wire 5 n178 trace_checks.r_port_id [4:0] $end
+$var wire 4 n177 trace_checks.pending_cnt [3:0] $end
+$var wire 1 n176 trace_checks.pc_err $end
+$var wire 32 n175 trace_checks.pattern [31:0] $end
+$var wire 128 n174 trace_checks.mem_rdata [127:0] $end
+$var wire 1 n173 trace_checks.clk $end
+$var wire 1 n172 trace_checks.arvalid $end
+$var wire 2 n171 trace_checks.arresp [1:0] $end
+$var wire 3 n170 trace_checks.arready [2:0] $end
+$var wire 8 n169 trace_checks.arid [7:0] $end
+$var wire 12 n168 trace_checks.arb_addr [11:0] $end
+$var wire 18 n167 trace_checks.araddr [17:0] $end
+$var wire 8 n166 trace_checks.ar_rd_gnt [7:0] $end
+$var wire 5 n165 trace_checks.ar_port_id [4:0] $end
+$var wire 2 n164 src [1:0] $end
+$var wire 8 n163 rw_rd_gnt [7:0] $end
+$var wire 3 n162 rvalid [2:0] $end
+$var wire 1 n161 rst_n $end
+$var wire 2 n160 rresp [1:0] $end
+$var wire 3 n159 rready [2:0] $end
+$var wire 8 n158 rid [7:0] $end
+$var wire 32 n157 reset_segment [31:0] $end
+$var wire 8 n156 req [7:0] $end
+$var wire 128 n155 rdata [127:0] $end
+$var wire 16 n154 rd_mem_status [15:0] $end
+$var wire 3 n153 raddr [2:0] $end
+$var wire 5 n152 r_port_id [4:0] $end
+$var wire 4 n151 pending_cnt [3:0] $end
+$var wire 1 n150 pc_err $end
+$var wire 32 n149 pattern [31:0] $end
+$var wire 128 n148 mem_rdata [127:0] $end
+$var wire 1 n147 dut.u_otb.rst_n $end
+$var wire 1 n146 dut.u_otb.rsp_pc_err $end
+$var wire 4 n145 dut.u_otb.rsp_entry [3:0] $end
+$var wire 128 n144 dut.u_otb.rsp_data [127:0] $end
+$var wire 1 n143 dut.u_otb.retire_fire $end
+$var wire 4 n142 dut.u_otb.retire_entry [3:0] $end
+$var wire 4 n141 dut.u_otb.ret_valid_q [3:0] $end
+$var wire 16 n140 dut.u_otb.ret_entry_q [15:0] $end
+$var wire 9 n139 dut.u_otb.pc_err_q [8:0] $end
+$var wire 1 n138 dut.u_otb.pc_err $end
+$var wire 128 n137 dut.u_otb.mem_rdata [127:0] $end
+$var wire 1 n136 dut.u_otb.issue_success $end
+$var wire 4 n135 dut.u_otb.issue_entry [3:0] $end
+$var wire 1152 n134 dut.u_otb.data_q [1151:0] $end
+$var wire 1 n133 dut.u_otb.clk $end
+$var wire 1 n132 dut.u_otb.capture_valid $end
+$var wire 4 n131 dut.u_otb.capture_entry [3:0] $end
+$var wire 1 n130 dut.u_otb.alloc_fire $end
+$var wire 4 n129 dut.u_otb.alloc_entry [3:0] $end
+$var wire 1 n128 dut.u_cmd.winner_valid $end
+$var wire 2 n127 dut.u_cmd.winner [1:0] $end
+$var wire 9 n126 dut.u_cmd.window_mask [8:0] $end
+$var wire 9 n125 dut.u_cmd.valid_q [8:0] $end
+$var wire 9 n124 dut.u_cmd.valid_next [8:0] $end
+$var wire 32 n123 dut.u_cmd.used_after [31:0] $end
+$var wire 9 n122 dut.u_cmd.success_mask [8:0] $end
+$var wire 1 n121 dut.u_cmd.src_ready $end
+$var wire 18 n120 dut.u_cmd.src_q [17:0] $end
+$var wire 27 n119 dut.u_cmd.src_mask [26:0] $end
+$var wire 2 n118 dut.u_cmd.src [1:0] $end
+$var wire 32 n117 dut.u_cmd.shared_after [31:0] $end
+$var wire 1 n116 dut.u_cmd.select_valid $end
+$var wire 9 n115 dut.u_cmd.select_onehot [8:0] $end
+$var wire 4 n114 dut.u_cmd.select_entry [3:0] $end
+$var wire 32 n113 dut.u_cmd.scan [31:0] $end
+$var wire 8 n112 dut.u_cmd.rw_rd_gnt [7:0] $end
+$var wire 3 n111 dut.u_cmd.rvalid [2:0] $end
+$var wire 1 n110 dut.u_cmd.rst_n $end
+$var wire 1 n109 dut.u_cmd.rsp_pc_err $end
+$var wire 4 n108 dut.u_cmd.rsp_entry [3:0] $end
+$var wire 2 n107 dut.u_cmd.rresp [1:0] $end
+$var wire 3 n106 dut.u_cmd.rready [2:0] $end
+$var wire 2 n105 dut.u_cmd.rr_ptr_q [1:0] $end
+$var wire 8 n104 dut.u_cmd.rid [7:0] $end
+$var wire 9 n103 dut.u_cmd.retire_mask [8:0] $end
+$var wire 1 n102 dut.u_cmd.retire_fire $end
+$var wire 4 n101 dut.u_cmd.retire_entry [3:0] $end
+$var wire 8 n100 dut.u_cmd.req [7:0] $end
+$var wire 16 n99 dut.u_cmd.rd_mem_status [15:0] $end
+$var wire 9 n98 dut.u_cmd.rank_pool [8:0] $end
+$var wire 288 n97 dut.u_cmd.rank_count [287:0] $end
+$var wire 3 n96 dut.u_cmd.raddr [2:0] $end
+$var wire 5 n95 dut.u_cmd.r_port_id [4:0] $end
+$var wire 3 n94 dut.u_cmd.r_candidate [2:0] $end
+$var wire 45 n93 dut.u_cmd.port_q [44:0] $end
+$var wire 4 n92 dut.u_cmd.pending_q [3:0] $end
+$var wire 9 n91 dut.u_cmd.pending_mask [8:0] $end
+$var wire 4 n90 dut.u_cmd.pending_cnt [3:0] $end
+$var wire 32 n89 dut.u_cmd.p_6.j [31:0] $end
+$var wire 32 n88 dut.u_cmd.p_6.i [31:0] $end
+$var wire 32 n87 dut.u_cmd.p_5.j [31:0] $end
+$var wire 32 n86 dut.u_cmd.p_5.i [31:0] $end
+$var wire 32 n85 dut.u_cmd.p_4.x [31:0] $end
+$var wire 32 n84 dut.u_cmd.p_4.i [31:0] $end
+$var wire 32 n83 dut.u_cmd.p_2.offset [31:0] $end
+$var wire 32 n82 dut.u_cmd.p_1.x [31:0] $end
+$var wire 32 n81 dut.u_cmd.p_1.i [31:0] $end
+$var wire 81 n80 dut.u_cmd.older_q [80:0] $end
+$var wire 81 n79 dut.u_cmd.older_next [80:0] $end
+$var wire 12 n78 dut.u_cmd.occ_q [11:0] $end
+$var wire 96 n77 dut.u_cmd.occ_after [95:0] $end
+$var wire 9 n76 dut.u_cmd.issued_q [8:0] $end
+$var wire 1 n75 dut.u_cmd.issue_valid_q $end
+$var wire 1 n74 dut.u_cmd.issue_success $end
+$var wire 4 n73 dut.u_cmd.issue_entry_q [3:0] $end
+$var wire 4 n72 dut.u_cmd.issue_entry [3:0] $end
+$var wire 3 n71 dut.u_cmd.issue_bank_q [2:0] $end
+$var wire 12 n70 dut.u_cmd.issue_addr_q [11:0] $end
+$var wire 72 n69 dut.u_cmd.id_q [71:0] $end
+$var wire 3 n68 dut.u_cmd.head_valid [2:0] $end
+$var wire 27 n67 dut.u_cmd.head_onehot [26:0] $end
+$var wire 12 n66 dut.u_cmd.head_entry [11:0] $end
+$var wire 9 n65 dut.u_cmd.free_mask [8:0] $end
+$var wire 32 n64 dut.u_cmd.free_after [31:0] $end
+$var wire 9 n63 dut.u_cmd.done_q [8:0] $end
+$var wire 9 n62 dut.u_cmd.current_issue_mask [8:0] $end
+$var wire 1 n61 dut.u_cmd.clk $end
+$var wire 1 n60 dut.u_cmd.capture_valid $end
+$var wire 4 n59 dut.u_cmd.capture_entry [3:0] $end
+$var wire 9 n58 dut.u_cmd.candidate_mask [8:0] $end
+$var wire 9 n57 dut.u_cmd.bank_idle_mask [8:0] $end
+$var wire 1 n56 dut.u_cmd.arvalid $end
+$var wire 18 n55 dut.u_cmd.arresp_q [17:0] $end
+$var wire 2 n54 dut.u_cmd.arresp [1:0] $end
+$var wire 3 n53 dut.u_cmd.arready [2:0] $end
+$var wire 8 n52 dut.u_cmd.arid [7:0] $end
+$var wire 12 n51 dut.u_cmd.arb_addr [11:0] $end
+$var wire 18 n50 dut.u_cmd.araddr [17:0] $end
+$var wire 8 n49 dut.u_cmd.ar_rd_gnt [7:0] $end
+$var wire 5 n48 dut.u_cmd.ar_port_id [4:0] $end
+$var wire 1 n47 dut.u_cmd.alloc_fire $end
+$var wire 4 n46 dut.u_cmd.alloc_entry [3:0] $end
+$var wire 162 n45 dut.u_cmd.addr_q [161:0] $end
+$var wire 2 n44 dut.src [1:0] $end
+$var wire 8 n43 dut.rw_rd_gnt [7:0] $end
+$var wire 3 n42 dut.rvalid [2:0] $end
+$var wire 1 n41 dut.rst_n $end
+$var wire 1 n40 dut.rsp_pc_err $end
+$var wire 4 n39 dut.rsp_entry [3:0] $end
+$var wire 128 n38 dut.rsp_data [127:0] $end
+$var wire 2 n37 dut.rresp [1:0] $end
+$var wire 3 n36 dut.rready [2:0] $end
+$var wire 8 n35 dut.rid [7:0] $end
+$var wire 1 n34 dut.retire_fire $end
+$var wire 4 n33 dut.retire_entry [3:0] $end
+$var wire 8 n32 dut.req [7:0] $end
+$var wire 128 n31 dut.rdata [127:0] $end
+$var wire 16 n30 dut.rd_mem_status [15:0] $end
+$var wire 3 n29 dut.raddr [2:0] $end
+$var wire 5 n28 dut.r_port_id [4:0] $end
+$var wire 4 n27 dut.pending_cnt [3:0] $end
+$var wire 1 n26 dut.pc_err $end
+$var wire 128 n25 dut.mem_rdata [127:0] $end
+$var wire 1 n24 dut.issue_success $end
+$var wire 4 n23 dut.issue_entry [3:0] $end
+$var wire 1 n22 dut.clk $end
+$var wire 1 n21 dut.capture_valid $end
+$var wire 4 n20 dut.capture_entry [3:0] $end
+$var wire 1 n19 dut.arvalid $end
+$var wire 2 n18 dut.arresp [1:0] $end
+$var wire 3 n17 dut.arready [2:0] $end
+$var wire 8 n16 dut.arid [7:0] $end
+$var wire 12 n15 dut.arb_addr [11:0] $end
+$var wire 18 n14 dut.araddr [17:0] $end
+$var wire 8 n13 dut.ar_rd_gnt [7:0] $end
+$var wire 5 n12 dut.ar_port_id [4:0] $end
+$var wire 1 n11 dut.alloc_fire $end
+$var wire 4 n10 dut.alloc_entry [3:0] $end
+$var wire 1 n9 clk $end
+$var wire 1 n8 arvalid $end
+$var wire 2 n7 arresp [1:0] $end
+$var wire 3 n6 arready [2:0] $end
+$var wire 8 n5 arid [7:0] $end
+$var wire 12 n4 arb_addr [11:0] $end
+$var wire 18 n3 araddr [17:0] $end
+$var wire 8 n2 ar_rd_gnt [7:0] $end
+$var wire 5 n1 ar_port_id [4:0] $end
+$upscope $end
+$enddefinitions $end
+#0
+bxxxxx n1
+bxxxxxxxx n2
+bxxxxxxxxxxxxxxxxxx n3
+b000000000000 n4
+bxxxxxxxx n5
+b000 n6
+bxx n7
+bx n8
+bx n9
+b0000 n10
+bx n11
+bxxxxx n12
+bxxxxxxxx n13
+bxxxxxxxxxxxxxxxxxx n14
+b000000000000 n15
+bxxxxxxxx n16
+b000 n17
+bxx n18
+bx n19
+b0000 n20
+b0 n21
+bx n22
+b0000 n23
+b0 n24
+bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx n25
+bx n26
+b0000 n27
+b00000 n28
+b000 n29
+bxxxxxxxxxxxxxxxx n30
+b00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 n31
+b00000000 n32
+b0000 n33
+b0 n34
+b00000000 n35
+bxxx n36
+b00 n37
+b00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 n38
+b0000 n39
+b0 n40
+b0 n41
+b000 n42
+bxxxxxxxx n43
+bxx n44
+b000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 n45
+b0000 n46
+bx n47
+bxxxxx n48
+bxxxxxxxx n49
+bxxxxxxxxxxxxxxxxxx n50
+b000000000000 n51
+bxxxxxxxx n52
+b000 n53
+bxx n54
+b000000000000000000 n55
+bx n56
+bxxxxxxxxx n57
+b000000000 n58
+b0000 n59
+b0 n60
+bx n61
+b000000000 n62
+b000000000 n63
+b00000000000000000000000000001001 n64
+b111111111 n65
+b000000000000 n66
+b000000000000000000000000000 n67
+b000 n68
+b000000000000000000000000000000000000000000000000000000000000000000000000 n69
+b000000000000 n70
+b000 n71
+b0000 n72
+b0000 n73
+b0 n74
+b0 n75
+b000000000 n76
+b000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 n77
+b000000000000 n78
+b000000000000000000000000000000000000000000000000000000000000000000000000000000000 n79
+b000000000000000000000000000000000000000000000000000000000000000000000000000000000 n80
+b00000000000000000000000000001001 n81
+b00000000000000000000000000000011 n82
+b00000000000000000000000000000011 n83
+b00000000000000000000000000001001 n84
+b00000000000000000000000000000011 n85
+b00000000000000000000000000001001 n86
+b00000000000000000000000000001001 n87
+b00000000000000000000000000001001 n88
+b00000000000000000000000000001001 n89
+b0000 n90
+b000000000 n91
+b0000 n92
+b000000000000000000000000000000000000000000000 n93
+b000 n94
+b00000 n95
+b000 n96
+b000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 n97
+b000000000 n98
+bxxxxxxxxxxxxxxxx n99
+b00000000 n100
+b0000 n101
+b0 n102
+b000000000 n103
+b00000000 n104
+b00 n105
+bxxx n106
+b00 n107
+b0000 n108
+b0 n109
+b0 n110
+b000 n111
+bxxxxxxxx n112
+b00000000000000000000000000000010 n113
+b0000 n114
+b000000000 n115
+b0 n116
+b00000000000000000000000000000000 n117
+bxx n118
+b000000000000000000000000000 n119
+b000000000000000000 n120
+bx n121
+b000000000 n122
+b00000000000000000000000000000000 n123
+b00000000x n124
+b000000000 n125
+b000000000 n126
+b00 n127
+b0 n128
+b0000 n129
+bx n130
+b0000 n131
+b0 n132
+bx n133
+b000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 n134
+b0000 n135
+b0 n136
+bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx n137
+bx n138
+b000000000 n139
+b0000000000000000 n140
+b0000 n141
+b0000 n142
+b0 n143
+b00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 n144
+b0000 n145
+b0 n146
+b0 n147
+bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx n148
+bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx n149
+bx n150
+b0000 n151
+b00000 n152
+b000 n153
+bxxxxxxxxxxxxxxxx n154
+b00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 n155
+b00000000 n156
+bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx n157
+b00000000 n158
+bxxx n159
+b00 n160
+b0 n161
+b000 n162
+bxxxxxxxx n163
+bxx n164
+bxxxxx n165
+bxxxxxxxx n166
+bxxxxxxxxxxxxxxxxxx n167
+b000000000000 n168
+bxxxxxxxx n169
+b000 n170
+bxx n171
+bx n172
+bx n173
+bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx n174
+bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx n175
+bx n176
+b0000 n177
+b00000 n178
+b000 n179
+bxxxxxxxxxxxxxxxx n180
+b00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 n181
+b00000000 n182
+bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx n183
+b00000000 n184
+bxxx n185
+b00 n186
+b0 n187
+b000 n188
+bxxxxxxxx n189
+bxx n190
+b00000000000000000000000000000000 n191
+bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx n192
+bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx n193
+#5
+b0 n9
+b0 n22
+b0 n61
+b0 n133
+b0 n173
+#10
+b111 n6
+b1 n9
+b111 n17
+b1 n22
+bxxxx n27
+b1 n41
+b111 n53
+b1 n61
+bxxxx n90
+b1 n110
+b1 n133
+b1 n147
+bxxxx n151
+b1 n161
+b111 n170
+b1 n173
+bxxxx n177
+b1 n187
+#12

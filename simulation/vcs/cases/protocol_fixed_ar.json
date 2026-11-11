@@ -1,0 +1,52 @@
+{
+  "description": "协议驱动：输入所有权明确，真实 ISSUE +4 返回；固定时钟和复位。",
+  "sim": {
+  "mode": "protocol",
+  "tick_ps": 10000,
+  "clock_skew_ps": 1,
+  "finish": "require_empty",
+  "drivers": {
+    "ar": "fixed",
+    "bank": "busy_on_issue",
+    "mem": "on_issue"
+  },
+  "queue_limit": 64,
+  "wait_cycles": 100,
+  "requests": {}
+},
+  "signal": [
+    {"name": "clk", "wave": "p......................."},
+    {"name": "rst_n", "wave": "0.1....................."},
+    {"name": "rready", "wave": "=.......................", "data": [7]},
+    {"name": "ar_rd_gnt", "wave": "=.......................", "data": [255]},
+    {"name": "rw_rd_gnt", "wave": "=.......................", "data": [255]},
+    {"name": "bank_busy[0]", "wave": "=.......................", "data": [0]},
+    {"name": "bank_busy[1]", "wave": "=.......................", "data": [0]},
+    {"name": "bank_busy[2]", "wave": "=.......................", "data": [0]},
+    {"name": "bank_busy[3]", "wave": "=.......................", "data": [0]},
+    {"name": "bank_busy[4]", "wave": "=.......................", "data": [0]},
+    {"name": "bank_busy[5]", "wave": "=.......................", "data": [0]},
+    {"name": "bank_busy[6]", "wave": "=.......................", "data": [0]},
+    {"name": "bank_busy[7]", "wave": "=.......................", "data": [0]},
+    {"name": "arvalid", "wave": "0.10...................."},
+    {"name": "src", "wave": "=.......................", "data": [0]},
+    {"name": "araddr", "wave": "=.......................", "data": [73729]},
+    {"name": "arid", "wave": "=.......................", "data": [42]},
+    {"name": "ar_port_id", "wave": "=.......................", "data": [6]},
+    {"name": "arresp", "wave": "=.......................", "data": [0]},
+    {"name": "mem_error", "wave": "1......................."}
+  ],
+  "head": {
+  "text": "Protocol-driven WaveDrom",
+  "tick": 0
+},
+  "config": {
+  "hscale": 1
+},
+  "require": {
+  "accepted": 1,
+  "issued": 1,
+  "captured": 1,
+  "retired": 1
+}
+}

@@ -1,0 +1,57 @@
+{
+  "description": "协议驱动：输入所有权明确，真实 ISSUE +4 返回；固定时钟和复位。",
+  "sim": {
+  "mode": "protocol",
+  "tick_ps": 10000,
+  "clock_skew_ps": 1,
+  "finish": "require_empty",
+  "drivers": {
+    "ar": "queued",
+    "bank": "busy_on_issue",
+    "mem": "on_issue"
+  },
+  "queue_limit": 64,
+  "wait_cycles": 100,
+  "requests": {
+    "A": {
+      "src": 0,
+      "addr": "0x12001",
+      "id": 42,
+      "port": 6,
+      "resp": 0,
+      "data": "0x00112233445566778899aabbccddeeff",
+      "pc_err": 0
+    }
+  }
+},
+  "signal": [
+    {"name": "clk", "wave": "p......................."},
+    {"name": "rst_n", "wave": "0.1....................."},
+    {"name": "ar_offer", "wave": "0.=.....................", "data": ["A"]},
+    {"name": "ar_send", "wave": "1......................."},
+    {"name": "rready", "wave": "=.......................", "data": [7]},
+    {"name": "ar_rd_gnt", "wave": "=.......................", "data": [255]},
+    {"name": "rw_rd_gnt", "wave": "=.......................", "data": [255]},
+    {"name": "bank_busy[0]", "wave": "=.......................", "data": [0]},
+    {"name": "bank_busy[1]", "wave": "=.......................", "data": [0]},
+    {"name": "bank_busy[2]", "wave": "=.......................", "data": [0]},
+    {"name": "bank_busy[3]", "wave": "=.......................", "data": [0]},
+    {"name": "bank_busy[4]", "wave": "=.......................", "data": [0]},
+    {"name": "bank_busy[5]", "wave": "=.......................", "data": [0]},
+    {"name": "bank_busy[6]", "wave": "=.......................", "data": [0]},
+    {"name": "bank_busy[7]", "wave": "=.......................", "data": [0]}
+  ],
+  "head": {
+  "text": "Protocol-driven WaveDrom",
+  "tick": 0
+},
+  "config": {
+  "hscale": 1
+},
+  "require": {
+  "accepted": 1,
+  "issued": 1,
+  "captured": 1,
+  "retired": 1
+}
+}

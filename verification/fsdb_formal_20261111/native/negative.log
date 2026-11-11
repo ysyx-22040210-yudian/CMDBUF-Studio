@@ -1,0 +1,17 @@
+./simv +MUTATE
+Chronologic VCS simulator copyright 1991-2018
+Contains Synopsys proprietary information.
+Compiler version O-2018.09-1_Full64; Runtime version O-2018.09-1_Full64;  Nov 11 05:13 2026
+"trace_properties.sv", 74: fsdb_replay_tb.dut_wrap.trace_checks.A_P11_S0_C00000: started at 35000ps failed at 35000ps
+	Offending '((((arready == 3'h7) && (rvalid == 3'b0)) && (req == 8'b0)) && (pending_cnt == 4'b1))'
+Fatal: "trace_properties.sv", 74: fsdb_replay_tb.dut_wrap.trace_checks.A_P11_S0_C00000: at time 35000 ps
+A_P11_S0_C00000
+$finish called from file "trace_properties.sv", line 74.
+$finish at simulation time                35000
+"trace_properties.sv", 2058: fsdb_replay_tb.dut_wrap.trace_checks.C_END_P11_S0, 4 attempts, 0 match
+"trace_properties.sv", 4069: fsdb_replay_tb.dut_wrap.trace_checks.C_END_P22_S0, 4 attempts, 0 match
+"trace_properties.sv", 4219: fsdb_replay_tb.dut_wrap.trace_checks.C_END_P33_S0, 4 attempts, 0 match
+"trace_properties.sv", 4485: fsdb_replay_tb.dut_wrap.trace_checks.C_END_P33_S1, 4 attempts, 0 match
+"trace_properties.sv", 6032: fsdb_replay_tb.dut_wrap.trace_checks.C_END_P33_S2, 4 attempts, 0 match
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 35000 ps

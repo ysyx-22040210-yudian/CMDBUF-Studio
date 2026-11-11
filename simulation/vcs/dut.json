@@ -1,0 +1,13 @@
+{
+  "name": "项目基准 CMDBUF",
+  "files": [
+    "rtl/cmdbuf_rd.sv",
+    "rtl/cmdbuf_rd_cmd.sv",
+    "rtl/cmdbuf_rd_otb.sv"
+  ],
+  "include_dirs": [
+    "rtl"
+  ],
+  "defines": [],
+  "instance": "cmdbuf_rd dut (\n    .clk(clk), .rst_n(rst_n),\n    .arvalid(arvalid), .arready(arready), .araddr(araddr),\n    .src(src), .arid(arid), .ar_port_id(ar_port_id), .arresp(arresp),\n    .rvalid(rvalid), .rready(rready), .rdata(rdata), .rid(rid),\n    .r_port_id(r_port_id), .raddr(raddr), .rresp(rresp),\n    .req(req), .arb_addr(arb_addr), .pending_cnt(pending_cnt),\n    .ar_rd_gnt(ar_rd_gnt), .rw_rd_gnt(rw_rd_gnt),\n    .rd_mem_status(rd_mem_status), .mem_rdata(mem_rdata), .pc_err(pc_err)\n);\n"
+}

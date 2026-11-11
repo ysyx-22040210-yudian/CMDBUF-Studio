@@ -1,0 +1,30 @@
+{
+  "status": "PASS",
+  "scope": "Standalone repository assembly and local runtime checks; EDA rerun unavailable in this turn",
+  "source_commit": "0853cc943e5c65d615066fa9e66baf6770b1105e",
+  "independent_git_history": true,
+  "runtime_files_unchanged": 167,
+  "navigation_files_rewritten": [
+    "AGENTS.md",
+    "README.md"
+  ],
+  "previous_evidence_seals": {
+    "portable_20261111": 41,
+    "fsdb_formal_20261111": 179
+  },
+  "unit_tests": {
+    "passed": 36,
+    "skipped_linux_only": 4
+  },
+  "gui_startup": "PASS",
+  "distribution": {
+    "status": "PASS",
+    "payload_files": 169
+  },
+  "eda_rerun": {
+    "status": "NOT_RUN",
+    "reason": "Original VM SSH port 22 timed out; no simulation result is claimed for this new directory",
+    "log": "doctor.log"
+  },
+  "old_repository_modified": false
+}

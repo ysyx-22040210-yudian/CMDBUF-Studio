@@ -1,0 +1,6 @@
+{
+  "status": "PASS",
+  "requested": "unknown_testbench.missing_dut",
+  "scope_count": 77,
+  "actual_dut_found": true
+}

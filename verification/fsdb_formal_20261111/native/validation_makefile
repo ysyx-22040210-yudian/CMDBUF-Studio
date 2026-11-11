@@ -1,0 +1,5 @@
+.PHONY: compile run
+compile:
+	vcs -full64 -sverilog -timescale=1ns/1ps -assert svaext -top fsdb_replay_tb -f files.f replay_tb.sv -o simv -l compile.log
+run:
+	./simv $(ARGS)

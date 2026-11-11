@@ -1,0 +1,17 @@
+{
+  "version": "5.65.21",
+  "distribution": "https://registry.npmjs.org/codemirror/-/codemirror-5.65.21.tgz",
+  "archive_sha256": "b26d9d7ae0f42e34b44a8f7667d29a3ab0d3df88d0e79c0dad39dc03ba43f6dc",
+  "files": {
+    "lib/codemirror.js": "e98aac5ffa07bae58acd4ff07c4293059f8921c0ae0eba506929d8c6f41c9288",
+    "lib/codemirror.css": "eb494ea972d2661ef86f7f6ac656dd6786d721e49c9c1b46e1eb967e4b6f9bf3",
+    "mode/verilog/verilog.js": "ae7c58b13650019ca08760e04f3ece3315e889eb5aa849a34400f16542610eb1",
+    "addon/edit/matchbrackets.js": "9d23a177f1e4d07e3acc37c210ffbe4c1c2eb4d55bbe54c16d3e7ad3d04d0401",
+    "addon/comment/comment.js": "a65c038258c6541658a0e9f24c56c78255e0e20d4cf06aa9ad83342069a589be",
+    "addon/search/searchcursor.js": "2c0b8cd8fe7ca5ca2253f4aacc914b390bff5b3cac3475df66c43a9ea8c8ccbe",
+    "addon/search/search.js": "4949580371fcd81c0ad70164b169dd8bcab2bd9869eddaa0d7e295508bec7a04",
+    "addon/dialog/dialog.js": "fd8c925fcc25357617faff21220c026bb91a617b995268d96c5d39232fd42833",
+    "addon/dialog/dialog.css": "5df690d771f12118348562dd2a90060433ae2edeccd0908abcaa4480b1e3e468",
+    "LICENSE": "168a4becc968f5001e2ee2e0291b6e4daabafc1894a11ade1e11d56e96096e07"
+  }
+}

@@ -1,0 +1,961 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.67+94 (git sha1 7defa5186-dirty, Release, Clang /usr/bin/clang++ 18.1.8)
+
+-- Executing script file `design_aiger.ys' --
+
+1. Executing RTLIL frontend.
+Input filename: design_prep.il
+
+2. Executing HIERARCHY pass (managing design hierarchy).
+Attribute `top' found on module `cmdbuf_fsdb_formal_top'. Setting top module to cmdbuf_fsdb_formal_top.
+
+2.1. Analyzing design hierarchy..
+Top module:  \cmdbuf_fsdb_formal_top
+
+2.2. Analyzing design hierarchy..
+Top module:  \cmdbuf_fsdb_formal_top
+Removed 0 unused modules.
+Module cmdbuf_fsdb_formal_top directly or indirectly contains formal properties -> setting "keep" attribute.
+
+3. Executing FORMALFF pass.
+
+4. Executing FLATTEN pass (flatten design).
+
+5. Executing SETUNDEF pass (replace undef values with defined constants).
+
+6. Executing OPT pass (performing simple optimizations).
+
+6.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module cmdbuf_fsdb_formal_top.
+<suppressed ~248 debug messages>
+
+6.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 3268 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 3267 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 3265 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+<suppressed ~9 debug messages>
+Removed a total of 3 cells.
+
+6.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \cmdbuf_fsdb_formal_top..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 2/2 on $mux $auto$async2sync.cc:233:execute$4605.
+    dead port 2/2 on $mux $auto$async2sync.cc:233:execute$4609.
+    dead port 2/2 on $mux $auto$async2sync.cc:233:execute$4613.
+Removed 3 multiplexer ports.
+<suppressed ~997 debug messages>
+
+6.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \cmdbuf_fsdb_formal_top.
+    Consolidated identical input bits for $mux cell $auto$async2sync.cc:234:execute$4446:
+      Old ports: A=9'000000000, B={ \dut.u_cmd.older_next [80:73] 1'0 }, Y=$auto$async2sync.cc:220:execute$4443
+      New ports: A=8'00000000, B=\dut.u_cmd.older_next [80:73], Y=$auto$async2sync.cc:220:execute$4443 [8:1]
+      New connections: $auto$async2sync.cc:220:execute$4443 [0] = 1'0
+    Consolidated identical input bits for $mux cell $auto$async2sync.cc:234:execute$4450:
+      Old ports: A=9'000000000, B={ \dut.u_cmd.older_next [71:65] 1'0 \dut.u_cmd.older_next [63] }, Y=$auto$async2sync.cc:220:execute$4447
+      New ports: A=8'00000000, B={ \dut.u_cmd.older_next [71:65] \dut.u_cmd.older_next [63] }, Y={ $auto$async2sync.cc:220:execute$4447 [8:2] $auto$async2sync.cc:220:execute$4447 [0] }
+      New connections: $auto$async2sync.cc:220:execute$4447 [1] = 1'0
+    Consolidated identical input bits for $mux cell $auto$async2sync.cc:234:execute$4454:
+      Old ports: A=9'000000000, B={ \dut.u_cmd.older_next [62:57] 1'0 \dut.u_cmd.older_next [55:54] }, Y=$auto$async2sync.cc:220:execute$4451
+      New ports: A=8'00000000, B={ \dut.u_cmd.older_next [62:57] \dut.u_cmd.older_next [55:54] }, Y={ $auto$async2sync.cc:220:execute$4451 [8:3] $auto$async2sync.cc:220:execute$4451 [1:0] }
+      New connections: $auto$async2sync.cc:220:execute$4451 [2] = 1'0
+    Consolidated identical input bits for $mux cell $auto$async2sync.cc:234:execute$4458:
+      Old ports: A=9'000000000, B={ \dut.u_cmd.older_next [53:49] 1'0 \dut.u_cmd.older_next [47:45] }, Y=$auto$async2sync.cc:220:execute$4455
+      New ports: A=8'00000000, B={ \dut.u_cmd.older_next [53:49] \dut.u_cmd.older_next [47:45] }, Y={ $auto$async2sync.cc:220:execute$4455 [8:4] $auto$async2sync.cc:220:execute$4455 [2:0] }
+      New connections: $auto$async2sync.cc:220:execute$4455 [3] = 1'0
+    Consolidated identical input bits for $mux cell $auto$async2sync.cc:234:execute$4462:
+      Old ports: A=9'000000000, B={ \dut.u_cmd.older_next [44:41] 1'0 \dut.u_cmd.older_next [39:36] }, Y=$auto$async2sync.cc:220:execute$4459
+      New ports: A=8'00000000, B={ \dut.u_cmd.older_next [44:41] \dut.u_cmd.older_next [39:36] }, Y={ $auto$async2sync.cc:220:execute$4459 [8:5] $auto$async2sync.cc:220:execute$4459 [3:0] }
+      New connections: $auto$async2sync.cc:220:execute$4459 [4] = 1'0
+    Consolidated identical input bits for $mux cell $auto$async2sync.cc:234:execute$4466:
+      Old ports: A=9'000000000, B={ \dut.u_cmd.older_next [35:33] 1'0 \dut.u_cmd.older_next [31:27] }, Y=$auto$async2sync.cc:220:execute$4463
+      New ports: A=8'00000000, B={ \dut.u_cmd.older_next [35:33] \dut.u_cmd.older_next [31:27] }, Y={ $auto$async2sync.cc:220:execute$4463 [8:6] $auto$async2sync.cc:220:execute$4463 [4:0] }
+      New connections: $auto$async2sync.cc:220:execute$4463 [5] = 1'0
+    Consolidated identical input bits for $mux cell $auto$async2sync.cc:234:execute$4470:
+      Old ports: A=9'000000000, B={ \dut.u_cmd.older_next [26:25] 1'0 \dut.u_cmd.older_next [23:18] }, Y=$auto$async2sync.cc:220:execute$4467
+      New ports: A=8'00000000, B={ \dut.u_cmd.older_next [26:25] \dut.u_cmd.older_next [23:18] }, Y={ $auto$async2sync.cc:220:execute$4467 [8:7] $auto$async2sync.cc:220:execute$4467 [5:0] }
+      New connections: $auto$async2sync.cc:220:execute$4467 [6] = 1'0
+    Consolidated identical input bits for $mux cell $auto$async2sync.cc:234:execute$4474:
+      Old ports: A=9'000000000, B={ \dut.u_cmd.older_next [17] 1'0 \dut.u_cmd.older_next [15:9] }, Y=$auto$async2sync.cc:220:execute$4471
+      New ports: A=8'00000000, B={ \dut.u_cmd.older_next [17] \dut.u_cmd.older_next [15:9] }, Y={ $auto$async2sync.cc:220:execute$4471 [8] $auto$async2sync.cc:220:execute$4471 [6:0] }
+      New connections: $auto$async2sync.cc:220:execute$4471 [7] = 1'0
+    Consolidated identical input bits for $mux cell $auto$async2sync.cc:234:execute$4478:
+      Old ports: A=9'000000000, B={ 1'0 \dut.u_cmd.older_next [7:0] }, Y=$auto$async2sync.cc:220:execute$4475
+      New ports: A=8'00000000, B=\dut.u_cmd.older_next [7:0], Y=$auto$async2sync.cc:220:execute$4475 [7:0]
+      New connections: $auto$async2sync.cc:220:execute$4475 [8] = 1'0
+    Consolidated identical input bits for $mux cell $procmux$3717:
+      Old ports: A={ 3'000 $auto$wreduce.cc:514:run$4279 [0] }, B=4'0010, Y=$dut.u_cmd.select_entry$760
+      New ports: A={ 1'0 \dut.u_cmd.select_onehot [1] }, B=2'10, Y=$dut.u_cmd.select_entry$760 [1:0]
+      New connections: $dut.u_cmd.select_entry$760 [3:2] = 2'00
+    Consolidated identical input bits for $mux cell $procmux$4012:
+      Old ports: A={ 3'000 $auto$wreduce.cc:514:run$4289 [0] }, B=4'0010, Y=$dut.u_cmd.alloc_entry$384
+      New ports: A={ 1'0 $379y }, B=2'10, Y=$dut.u_cmd.alloc_entry$384 [1:0]
+      New connections: $dut.u_cmd.alloc_entry$384 [3:2] = 2'00
+    Consolidated identical input bits for $mux cell $procmux$4032:
+      Old ports: A={ 28'0000000000000000000000000000 \dut.u_cmd.occ_q [3:0] }, B={ $338y [4] $338y [4] $338y [4] $338y [4] $338y [4] $338y [4] $338y [4] $338y [4] $338y [4] $338y [4] $338y [4] $338y [4] $338y [4] $338y [4] $338y [4] $338y [4] $338y [4] $338y [4] $338y [4] $338y [4] $338y [4] $338y [4] $338y [4] $338y [4] $338y [4] $338y [4] $338y [4] $338y [4:0] }, Y=\dut.u_cmd.occ_after [31:0]
+      New ports: A={ 1'0 \dut.u_cmd.occ_q [3:0] }, B=$338y [4:0], Y=\dut.u_cmd.occ_after [4:0]
+      New connections: \dut.u_cmd.occ_after [31:5] = { \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] \dut.u_cmd.occ_after [4] }
+    Consolidated identical input bits for $mux cell $procmux$4038:
+      Old ports: A={ 28'0000000000000000000000000000 \dut.u_cmd.occ_q [7:4] }, B={ $326y [4] $326y [4] $326y [4] $326y [4] $326y [4] $326y [4] $326y [4] $326y [4] $326y [4] $326y [4] $326y [4] $326y [4] $326y [4] $326y [4] $326y [4] $326y [4] $326y [4] $326y [4] $326y [4] $326y [4] $326y [4] $326y [4] $326y [4] $326y [4] $326y [4] $326y [4] $326y [4] $326y [4:0] }, Y=\dut.u_cmd.occ_after [63:32]
+      New ports: A={ 1'0 \dut.u_cmd.occ_q [7:4] }, B=$326y [4:0], Y=\dut.u_cmd.occ_after [36:32]
+      New connections: \dut.u_cmd.occ_after [63:37] = { \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] \dut.u_cmd.occ_after [36] }
+    Consolidated identical input bits for $mux cell $procmux$4044:
+      Old ports: A={ 28'0000000000000000000000000000 \dut.u_cmd.occ_q [11:8] }, B={ $314y [4] $314y [4] $314y [4] $314y [4] $314y [4] $314y [4] $314y [4] $314y [4] $314y [4] $314y [4] $314y [4] $314y [4] $314y [4] $314y [4] $314y [4] $314y [4] $314y [4] $314y [4] $314y [4] $314y [4] $314y [4] $314y [4] $314y [4] $314y [4] $314y [4] $314y [4] $314y [4] $314y [4:0] }, Y=\dut.u_cmd.occ_after [95:64]
+      New ports: A={ 1'0 \dut.u_cmd.occ_q [11:8] }, B=$314y [4:0], Y=\dut.u_cmd.occ_after [68:64]
+      New connections: \dut.u_cmd.occ_after [95:69] = { \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] \dut.u_cmd.occ_after [68] }
+    Consolidated identical input bits for $mux cell $procmux$4086:
+      Old ports: A={ 29'00000000000000000000000000000 $248y }, B={ $250y [3] $250y [3] $250y [3] $250y [3] $250y [3] $250y [3] $250y [3] $250y [3] $250y [3] $250y [3] $250y [3] $250y [3] $250y [3] $250y [3] $250y [3] $250y [3] $250y [3] $250y [3] $250y [3] $250y [3] $250y [3] $250y [3] $250y [3] $250y [3] $250y [3] $250y [3] $250y [3] $250y [3] $250y [3:0] }, Y=\dut.u_cmd.scan
+      New ports: A={ 1'0 $248y [2:1] \dut.u_cmd.rr_ptr_q [0] }, B=$250y [3:0], Y=\dut.u_cmd.scan [3:0]
+      New connections: \dut.u_cmd.scan [31:4] = { \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] \dut.u_cmd.scan [3] }
+    Consolidated identical input bits for $mux cell $procmux$4095:
+      Old ports: A={ 29'00000000000000000000000000000 $237y }, B={ $239y [3] $239y [3] $239y [3] $239y [3] $239y [3] $239y [3] $239y [3] $239y [3] $239y [3] $239y [3] $239y [3] $239y [3] $239y [3] $239y [3] $239y [3] $239y [3] $239y [3] $239y [3] $239y [3] $239y [3] $239y [3] $239y [3] $239y [3] $239y [3] $239y [3] $239y [3] $239y [3] $239y [3] $239y [3:0] }, Y=$dut.u_cmd.scan$240
+      New ports: A={ 1'0 $237y }, B=$239y [3:0], Y=$dut.u_cmd.scan$240 [3:0]
+      New connections: $dut.u_cmd.scan$240 [31:4] = { $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] $dut.u_cmd.scan$240 [3] }
+    Consolidated identical input bits for $mux cell $procmux$4103:
+      Old ports: A={ 30'000000000000000000000000000000 \dut.u_cmd.rr_ptr_q }, B={ $229y [3] $229y [3] $229y [3] $229y [3] $229y [3] $229y [3] $229y [3] $229y [3] $229y [3] $229y [3] $229y [3] $229y [3] $229y [3] $229y [3] $229y [3] $229y [3] $229y [3] $229y [3] $229y [3] $229y [3] $229y [3] $229y [3] $229y [3] $229y [3] $229y [3] $229y [3] $229y [3] $229y [3] $229y [3:0] }, Y=$dut.u_cmd.scan$230
+      New ports: A={ 2'00 \dut.u_cmd.rr_ptr_q }, B=$229y [3:0], Y=$dut.u_cmd.scan$230 [3:0]
+      New connections: $dut.u_cmd.scan$230 [31:4] = { $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] $dut.u_cmd.scan$230 [3] }
+    Consolidated identical input bits for $mux cell $procmux$4148:
+      Old ports: A={ 3'000 $auto$wreduce.cc:514:run$4296 [0] }, B=4'0010, Y=$dut.u_cmd.head_entry[3:0]$188
+      New ports: A={ 1'0 \dut.u_cmd.head_onehot [1] }, B=2'10, Y=$dut.u_cmd.head_entry[3:0]$188 [1:0]
+      New connections: $dut.u_cmd.head_entry[3:0]$188 [3:2] = 2'00
+    Consolidated identical input bits for $mux cell $procmux$4204:
+      Old ports: A={ 3'000 $auto$wreduce.cc:514:run$4297 [0] }, B=4'0010, Y=$dut.u_cmd.head_entry[7:4]$120
+      New ports: A={ 1'0 \dut.u_cmd.head_onehot [10] }, B=2'10, Y=$dut.u_cmd.head_entry[7:4]$120 [1:0]
+      New connections: $dut.u_cmd.head_entry[7:4]$120 [3:2] = 2'00
+    Consolidated identical input bits for $mux cell $procmux$4260:
+      Old ports: A={ 3'000 $auto$wreduce.cc:514:run$4298 [0] }, B=4'0010, Y=$dut.u_cmd.head_entry[11:8]$52
+      New ports: A={ 1'0 \dut.u_cmd.head_onehot [19] }, B=2'10, Y=$dut.u_cmd.head_entry[11:8]$52 [1:0]
+      New connections: $dut.u_cmd.head_entry[11:8]$52 [3:2] = 2'00
+  Optimizing cells in module \cmdbuf_fsdb_formal_top.
+    Consolidated identical input bits for $mux cell $procmux$3714:
+      Old ports: A=$dut.u_cmd.select_entry$760, B=4'0011, Y=$dut.u_cmd.select_entry$764
+      New ports: A=$dut.u_cmd.select_entry$760 [1:0], B=2'11, Y=$dut.u_cmd.select_entry$764 [1:0]
+      New connections: $dut.u_cmd.select_entry$764 [3:2] = 2'00
+    Consolidated identical input bits for $mux cell $procmux$4006:
+      Old ports: A=$dut.u_cmd.alloc_entry$384, B=4'0011, Y=$dut.u_cmd.alloc_entry$388
+      New ports: A=$dut.u_cmd.alloc_entry$384 [1:0], B=2'11, Y=$dut.u_cmd.alloc_entry$388 [1:0]
+      New connections: $dut.u_cmd.alloc_entry$388 [3:2] = 2'00
+    Consolidated identical input bits for $mux cell $procmux$4142:
+      Old ports: A=$dut.u_cmd.head_entry[3:0]$188, B=4'0011, Y=$dut.u_cmd.head_entry[3:0]$193
+      New ports: A=$dut.u_cmd.head_entry[3:0]$188 [1:0], B=2'11, Y=$dut.u_cmd.head_entry[3:0]$193 [1:0]
+      New connections: $dut.u_cmd.head_entry[3:0]$193 [3:2] = 2'00
+    Consolidated identical input bits for $mux cell $procmux$4198:
+      Old ports: A=$dut.u_cmd.head_entry[7:4]$120, B=4'0011, Y=$dut.u_cmd.head_entry[7:4]$125
+      New ports: A=$dut.u_cmd.head_entry[7:4]$120 [1:0], B=2'11, Y=$dut.u_cmd.head_entry[7:4]$125 [1:0]
+      New connections: $dut.u_cmd.head_entry[7:4]$125 [3:2] = 2'00
+    Consolidated identical input bits for $mux cell $procmux$4254:
+      Old ports: A=$dut.u_cmd.head_entry[11:8]$52, B=4'0011, Y=$dut.u_cmd.head_entry[11:8]$57
+      New ports: A=$dut.u_cmd.head_entry[11:8]$52 [1:0], B=2'11, Y=$dut.u_cmd.head_entry[11:8]$57 [1:0]
+      New connections: $dut.u_cmd.head_entry[11:8]$57 [3:2] = 2'00
+  Optimizing cells in module \cmdbuf_fsdb_formal_top.
+    Consolidated identical input bits for $mux cell $procmux$3711:
+      Old ports: A=$dut.u_cmd.select_entry$764, B=4'0100, Y=$dut.u_cmd.select_entry$768
+      New ports: A={ 1'0 $dut.u_cmd.select_entry$764 [1:0] }, B=3'100, Y=$dut.u_cmd.select_entry$768 [2:0]
+      New connections: $dut.u_cmd.select_entry$768 [3] = 1'0
+    Consolidated identical input bits for $mux cell $procmux$4000:
+      Old ports: A=$dut.u_cmd.alloc_entry$388, B=4'0100, Y=$dut.u_cmd.alloc_entry$392
+      New ports: A={ 1'0 $dut.u_cmd.alloc_entry$388 [1:0] }, B=3'100, Y=$dut.u_cmd.alloc_entry$392 [2:0]
+      New connections: $dut.u_cmd.alloc_entry$392 [3] = 1'0
+    Consolidated identical input bits for $mux cell $procmux$4136:
+      Old ports: A=$dut.u_cmd.head_entry[3:0]$193, B=4'0100, Y=$dut.u_cmd.head_entry[3:0]$198
+      New ports: A={ 1'0 $dut.u_cmd.head_entry[3:0]$193 [1:0] }, B=3'100, Y=$dut.u_cmd.head_entry[3:0]$198 [2:0]
+      New connections: $dut.u_cmd.head_entry[3:0]$198 [3] = 1'0
+    Consolidated identical input bits for $mux cell $procmux$4192:
+      Old ports: A=$dut.u_cmd.head_entry[7:4]$125, B=4'0100, Y=$dut.u_cmd.head_entry[7:4]$130
+      New ports: A={ 1'0 $dut.u_cmd.head_entry[7:4]$125 [1:0] }, B=3'100, Y=$dut.u_cmd.head_entry[7:4]$130 [2:0]
+      New connections: $dut.u_cmd.head_entry[7:4]$130 [3] = 1'0
+    Consolidated identical input bits for $mux cell $procmux$4248:
+      Old ports: A=$dut.u_cmd.head_entry[11:8]$57, B=4'0100, Y=$dut.u_cmd.head_entry[11:8]$62
+      New ports: A={ 1'0 $dut.u_cmd.head_entry[11:8]$57 [1:0] }, B=3'100, Y=$dut.u_cmd.head_entry[11:8]$62 [2:0]
+      New connections: $dut.u_cmd.head_entry[11:8]$62 [3] = 1'0
+  Optimizing cells in module \cmdbuf_fsdb_formal_top.
+    Consolidated identical input bits for $mux cell $procmux$3708:
+      Old ports: A=$dut.u_cmd.select_entry$768, B=4'0101, Y=$dut.u_cmd.select_entry$772
+      New ports: A=$dut.u_cmd.select_entry$768 [2:0], B=3'101, Y=$dut.u_cmd.select_entry$772 [2:0]
+      New connections: $dut.u_cmd.select_entry$772 [3] = 1'0
+    Consolidated identical input bits for $mux cell $procmux$3994:
+      Old ports: A=$dut.u_cmd.alloc_entry$392, B=4'0101, Y=$dut.u_cmd.alloc_entry$396
+      New ports: A=$dut.u_cmd.alloc_entry$392 [2:0], B=3'101, Y=$dut.u_cmd.alloc_entry$396 [2:0]
+      New connections: $dut.u_cmd.alloc_entry$396 [3] = 1'0
+    Consolidated identical input bits for $mux cell $procmux$4130:
+      Old ports: A=$dut.u_cmd.head_entry[3:0]$198, B=4'0101, Y=$dut.u_cmd.head_entry[3:0]$203
+      New ports: A=$dut.u_cmd.head_entry[3:0]$198 [2:0], B=3'101, Y=$dut.u_cmd.head_entry[3:0]$203 [2:0]
+      New connections: $dut.u_cmd.head_entry[3:0]$203 [3] = 1'0
+    Consolidated identical input bits for $mux cell $procmux$4186:
+      Old ports: A=$dut.u_cmd.head_entry[7:4]$130, B=4'0101, Y=$dut.u_cmd.head_entry[7:4]$135
+      New ports: A=$dut.u_cmd.head_entry[7:4]$130 [2:0], B=3'101, Y=$dut.u_cmd.head_entry[7:4]$135 [2:0]
+      New connections: $dut.u_cmd.head_entry[7:4]$135 [3] = 1'0
+    Consolidated identical input bits for $mux cell $procmux$4242:
+      Old ports: A=$dut.u_cmd.head_entry[11:8]$62, B=4'0101, Y=$dut.u_cmd.head_entry[11:8]$67
+      New ports: A=$dut.u_cmd.head_entry[11:8]$62 [2:0], B=3'101, Y=$dut.u_cmd.head_entry[11:8]$67 [2:0]
+      New connections: $dut.u_cmd.head_entry[11:8]$67 [3] = 1'0
+  Optimizing cells in module \cmdbuf_fsdb_formal_top.
+    Consolidated identical input bits for $mux cell $procmux$3705:
+      Old ports: A=$dut.u_cmd.select_entry$772, B=4'0110, Y=$dut.u_cmd.select_entry$776
+      New ports: A=$dut.u_cmd.select_entry$772 [2:0], B=3'110, Y=$dut.u_cmd.select_entry$776 [2:0]
+      New connections: $dut.u_cmd.select_entry$776 [3] = 1'0
+    Consolidated identical input bits for $mux cell $procmux$3988:
+      Old ports: A=$dut.u_cmd.alloc_entry$396, B=4'0110, Y=$dut.u_cmd.alloc_entry$400
+      New ports: A=$dut.u_cmd.alloc_entry$396 [2:0], B=3'110, Y=$dut.u_cmd.alloc_entry$400 [2:0]
+      New connections: $dut.u_cmd.alloc_entry$400 [3] = 1'0
+    Consolidated identical input bits for $mux cell $procmux$4124:
+      Old ports: A=$dut.u_cmd.head_entry[3:0]$203, B=4'0110, Y=$dut.u_cmd.head_entry[3:0]$208
+      New ports: A=$dut.u_cmd.head_entry[3:0]$203 [2:0], B=3'110, Y=$dut.u_cmd.head_entry[3:0]$208 [2:0]
+      New connections: $dut.u_cmd.head_entry[3:0]$208 [3] = 1'0
+    Consolidated identical input bits for $mux cell $procmux$4180:
+      Old ports: A=$dut.u_cmd.head_entry[7:4]$135, B=4'0110, Y=$dut.u_cmd.head_entry[7:4]$140
+      New ports: A=$dut.u_cmd.head_entry[7:4]$135 [2:0], B=3'110, Y=$dut.u_cmd.head_entry[7:4]$140 [2:0]
+      New connections: $dut.u_cmd.head_entry[7:4]$140 [3] = 1'0
+    Consolidated identical input bits for $mux cell $procmux$4236:
+      Old ports: A=$dut.u_cmd.head_entry[11:8]$67, B=4'0110, Y=$dut.u_cmd.head_entry[11:8]$72
+      New ports: A=$dut.u_cmd.head_entry[11:8]$67 [2:0], B=3'110, Y=$dut.u_cmd.head_entry[11:8]$72 [2:0]
+      New connections: $dut.u_cmd.head_entry[11:8]$72 [3] = 1'0
+  Optimizing cells in module \cmdbuf_fsdb_formal_top.
+    Consolidated identical input bits for $mux cell $procmux$3702:
+      Old ports: A=$dut.u_cmd.select_entry$776, B=4'0111, Y=$dut.u_cmd.select_entry$780
+      New ports: A=$dut.u_cmd.select_entry$776 [2:0], B=3'111, Y=$dut.u_cmd.select_entry$780 [2:0]
+      New connections: $dut.u_cmd.select_entry$780 [3] = 1'0
+    Consolidated identical input bits for $mux cell $procmux$3982:
+      Old ports: A=$dut.u_cmd.alloc_entry$400, B=4'0111, Y=$dut.u_cmd.alloc_entry$404
+      New ports: A=$dut.u_cmd.alloc_entry$400 [2:0], B=3'111, Y=$dut.u_cmd.alloc_entry$404 [2:0]
+      New connections: $dut.u_cmd.alloc_entry$404 [3] = 1'0
+    Consolidated identical input bits for $mux cell $procmux$4118:
+      Old ports: A=$dut.u_cmd.head_entry[3:0]$208, B=4'0111, Y=$dut.u_cmd.head_entry[3:0]$213
+      New ports: A=$dut.u_cmd.head_entry[3:0]$208 [2:0], B=3'111, Y=$dut.u_cmd.head_entry[3:0]$213 [2:0]
+      New connections: $dut.u_cmd.head_entry[3:0]$213 [3] = 1'0
+    Consolidated identical input bits for $mux cell $procmux$4174:
+      Old ports: A=$dut.u_cmd.head_entry[7:4]$140, B=4'0111, Y=$dut.u_cmd.head_entry[7:4]$145
+      New ports: A=$dut.u_cmd.head_entry[7:4]$140 [2:0], B=3'111, Y=$dut.u_cmd.head_entry[7:4]$145 [2:0]
+      New connections: $dut.u_cmd.head_entry[7:4]$145 [3] = 1'0
+    Consolidated identical input bits for $mux cell $procmux$4230:
+      Old ports: A=$dut.u_cmd.head_entry[11:8]$72, B=4'0111, Y=$dut.u_cmd.head_entry[11:8]$77
+      New ports: A=$dut.u_cmd.head_entry[11:8]$72 [2:0], B=3'111, Y=$dut.u_cmd.head_entry[11:8]$77 [2:0]
+      New connections: $dut.u_cmd.head_entry[11:8]$77 [3] = 1'0
+  Optimizing cells in module \cmdbuf_fsdb_formal_top.
+Performed a total of 45 changes.
+
+6.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 3262 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Removed a total of 0 cells.
+
+6.6. Executing OPT_SHARE pass.
+
+6.7. Executing OPT_DFF pass (perform DFF optimizations).
+
+6.8. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \cmdbuf_fsdb_formal_top..
+Removed 30 unused cells and 133 unused wires.
+<suppressed ~61 debug messages>
+
+6.9. Executing OPT_EXPR pass (perform const folding).
+Optimizing module cmdbuf_fsdb_formal_top.
+
+6.10. Rerunning OPT passes. (Maybe there is more to do..)
+
+6.11. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \cmdbuf_fsdb_formal_top..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~994 debug messages>
+
+6.12. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \cmdbuf_fsdb_formal_top.
+Performed a total of 0 changes.
+
+6.13. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 3232 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Removed a total of 0 cells.
+
+6.14. Executing OPT_SHARE pass.
+
+6.15. Executing OPT_DFF pass (perform DFF optimizations).
+Setting constant 0-bit at position 0 on $driver$dut.u_cmd.older_q[0] ($ff) from module cmdbuf_fsdb_formal_top.
+Setting constant 0-bit at position 1 on $driver$dut.u_cmd.older_q[1] ($ff) from module cmdbuf_fsdb_formal_top.
+Setting constant 0-bit at position 2 on $driver$dut.u_cmd.older_q[2] ($ff) from module cmdbuf_fsdb_formal_top.
+Setting constant 0-bit at position 3 on $driver$dut.u_cmd.older_q[3] ($ff) from module cmdbuf_fsdb_formal_top.
+Setting constant 0-bit at position 4 on $driver$dut.u_cmd.older_q[4] ($ff) from module cmdbuf_fsdb_formal_top.
+Setting constant 0-bit at position 5 on $driver$dut.u_cmd.older_q[5] ($ff) from module cmdbuf_fsdb_formal_top.
+Setting constant 0-bit at position 6 on $driver$dut.u_cmd.older_q[6] ($ff) from module cmdbuf_fsdb_formal_top.
+Setting constant 0-bit at position 7 on $driver$dut.u_cmd.older_q[7] ($ff) from module cmdbuf_fsdb_formal_top.
+Setting constant 0-bit at position 8 on $driver$dut.u_cmd.older_q[8] ($ff) from module cmdbuf_fsdb_formal_top.
+
+6.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \cmdbuf_fsdb_formal_top..
+
+6.17. Executing OPT_EXPR pass (perform const folding).
+Optimizing module cmdbuf_fsdb_formal_top.
+
+6.18. Rerunning OPT passes. (Maybe there is more to do..)
+
+6.19. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \cmdbuf_fsdb_formal_top..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~994 debug messages>
+
+6.20. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \cmdbuf_fsdb_formal_top.
+    Consolidated identical input bits for $mux cell $auto$async2sync.cc:233:execute$4445:
+      Old ports: A=9'000000000, B={ $auto$async2sync.cc:221:execute$4444 [8:1] 1'0 }, Y=\dut.u_cmd.older_q [80:72]
+      New ports: A=8'00000000, B=$auto$async2sync.cc:221:execute$4444 [8:1], Y=\dut.u_cmd.older_q [80:73]
+      New connections: \dut.u_cmd.older_q [72] = 1'0
+    Consolidated identical input bits for $mux cell $auto$async2sync.cc:233:execute$4449:
+      Old ports: A=9'000000000, B={ $auto$async2sync.cc:221:execute$4448 [8:2] 1'0 $auto$async2sync.cc:221:execute$4448 [0] }, Y=\dut.u_cmd.older_q [71:63]
+      New ports: A=8'00000000, B={ $auto$async2sync.cc:221:execute$4448 [8:2] $auto$async2sync.cc:221:execute$4448 [0] }, Y={ \dut.u_cmd.older_q [71:65] \dut.u_cmd.older_q [63] }
+      New connections: \dut.u_cmd.older_q [64] = 1'0
+    Consolidated identical input bits for $mux cell $auto$async2sync.cc:233:execute$4453:
+      Old ports: A=9'000000000, B={ $auto$async2sync.cc:221:execute$4452 [8:3] 1'0 $auto$async2sync.cc:221:execute$4452 [1:0] }, Y=\dut.u_cmd.older_q [62:54]
+      New ports: A=8'00000000, B={ $auto$async2sync.cc:221:execute$4452 [8:3] $auto$async2sync.cc:221:execute$4452 [1:0] }, Y={ \dut.u_cmd.older_q [62:57] \dut.u_cmd.older_q [55:54] }
+      New connections: \dut.u_cmd.older_q [56] = 1'0
+    Consolidated identical input bits for $mux cell $auto$async2sync.cc:233:execute$4457:
+      Old ports: A=9'000000000, B={ $auto$async2sync.cc:221:execute$4456 [8:4] 1'0 $auto$async2sync.cc:221:execute$4456 [2:0] }, Y=\dut.u_cmd.older_q [53:45]
+      New ports: A=8'00000000, B={ $auto$async2sync.cc:221:execute$4456 [8:4] $auto$async2sync.cc:221:execute$4456 [2:0] }, Y={ \dut.u_cmd.older_q [53:49] \dut.u_cmd.older_q [47:45] }
+      New connections: \dut.u_cmd.older_q [48] = 1'0
+    Consolidated identical input bits for $mux cell $auto$async2sync.cc:233:execute$4461:
+      Old ports: A=9'000000000, B={ $auto$async2sync.cc:221:execute$4460 [8:5] 1'0 $auto$async2sync.cc:221:execute$4460 [3:0] }, Y=\dut.u_cmd.older_q [44:36]
+      New ports: A=8'00000000, B={ $auto$async2sync.cc:221:execute$4460 [8:5] $auto$async2sync.cc:221:execute$4460 [3:0] }, Y={ \dut.u_cmd.older_q [44:41] \dut.u_cmd.older_q [39:36] }
+      New connections: \dut.u_cmd.older_q [40] = 1'0
+    Consolidated identical input bits for $mux cell $auto$async2sync.cc:233:execute$4465:
+      Old ports: A=9'000000000, B={ $auto$async2sync.cc:221:execute$4464 [8:6] 1'0 $auto$async2sync.cc:221:execute$4464 [4:0] }, Y=\dut.u_cmd.older_q [35:27]
+      New ports: A=8'00000000, B={ $auto$async2sync.cc:221:execute$4464 [8:6] $auto$async2sync.cc:221:execute$4464 [4:0] }, Y={ \dut.u_cmd.older_q [35:33] \dut.u_cmd.older_q [31:27] }
+      New connections: \dut.u_cmd.older_q [32] = 1'0
+    Consolidated identical input bits for $mux cell $auto$async2sync.cc:233:execute$4469:
+      Old ports: A=9'000000000, B={ $auto$async2sync.cc:221:execute$4468 [8:7] 1'0 $auto$async2sync.cc:221:execute$4468 [5:0] }, Y=\dut.u_cmd.older_q [26:18]
+      New ports: A=8'00000000, B={ $auto$async2sync.cc:221:execute$4468 [8:7] $auto$async2sync.cc:221:execute$4468 [5:0] }, Y={ \dut.u_cmd.older_q [26:25] \dut.u_cmd.older_q [23:18] }
+      New connections: \dut.u_cmd.older_q [24] = 1'0
+    Consolidated identical input bits for $mux cell $auto$async2sync.cc:233:execute$4473:
+      Old ports: A=9'000000000, B={ $auto$async2sync.cc:221:execute$4472 [8] 1'0 $auto$async2sync.cc:221:execute$4472 [6:0] }, Y=\dut.u_cmd.older_q [17:9]
+      New ports: A=8'00000000, B={ $auto$async2sync.cc:221:execute$4472 [8] $auto$async2sync.cc:221:execute$4472 [6:0] }, Y={ \dut.u_cmd.older_q [17] \dut.u_cmd.older_q [15:9] }
+      New connections: \dut.u_cmd.older_q [16] = 1'0
+    Consolidated identical input bits for $mux cell $auto$async2sync.cc:233:execute$4477:
+      Old ports: A=9'000000000, B={ 1'0 $auto$async2sync.cc:221:execute$4476 [7:0] }, Y=\dut.u_cmd.older_q [8:0]
+      New ports: A=8'00000000, B=$auto$async2sync.cc:221:execute$4476 [7:0], Y=\dut.u_cmd.older_q [7:0]
+      New connections: \dut.u_cmd.older_q [8] = 1'0
+  Optimizing cells in module \cmdbuf_fsdb_formal_top.
+Performed a total of 9 changes.
+
+6.21. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 3232 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Removed a total of 0 cells.
+
+6.22. Executing OPT_SHARE pass.
+
+6.23. Executing OPT_DFF pass (perform DFF optimizations).
+
+6.24. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \cmdbuf_fsdb_formal_top..
+
+6.25. Executing OPT_EXPR pass (perform const folding).
+Optimizing module cmdbuf_fsdb_formal_top.
+<suppressed ~343 debug messages>
+
+6.26. Rerunning OPT passes. (Maybe there is more to do..)
+
+6.27. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \cmdbuf_fsdb_formal_top..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~978 debug messages>
+
+6.28. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \cmdbuf_fsdb_formal_top.
+    Consolidated identical input bits for $mux cell $procmux$3962:
+      Old ports: A=0, B=1, Y=$dut.u_cmd.rank_count[287:256]$437
+      New ports: A=1'0, B=1'1, Y=$dut.u_cmd.rank_count[287:256]$437 [0]
+      New connections: $dut.u_cmd.rank_count[287:256]$437 [31:1] = 31'0000000000000000000000000000000
+  Optimizing cells in module \cmdbuf_fsdb_formal_top.
+Performed a total of 1 changes.
+
+6.29. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 3214 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 3207 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+<suppressed ~21 debug messages>
+Removed a total of 7 cells.
+
+6.30. Executing OPT_SHARE pass.
+
+6.31. Executing OPT_DFF pass (perform DFF optimizations).
+
+6.32. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \cmdbuf_fsdb_formal_top..
+Removed 1 unused cells and 98 unused wires.
+<suppressed ~2 debug messages>
+
+6.33. Executing OPT_EXPR pass (perform const folding).
+Optimizing module cmdbuf_fsdb_formal_top.
+<suppressed ~1 debug messages>
+
+6.34. Rerunning OPT passes. (Maybe there is more to do..)
+
+6.35. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \cmdbuf_fsdb_formal_top..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~976 debug messages>
+
+6.36. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \cmdbuf_fsdb_formal_top.
+Performed a total of 0 changes.
+
+6.37. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 3205 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Removed a total of 0 cells.
+
+6.38. Executing OPT_SHARE pass.
+
+6.39. Executing OPT_DFF pass (perform DFF optimizations).
+
+6.40. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \cmdbuf_fsdb_formal_top..
+Removed 0 unused cells and 1 unused wires.
+<suppressed ~1 debug messages>
+
+6.41. Executing OPT_EXPR pass (perform const folding).
+Optimizing module cmdbuf_fsdb_formal_top.
+
+6.42. Rerunning OPT passes. (Maybe there is more to do..)
+
+6.43. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \cmdbuf_fsdb_formal_top..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~976 debug messages>
+
+6.44. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \cmdbuf_fsdb_formal_top.
+Performed a total of 0 changes.
+
+6.45. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 3205 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Removed a total of 0 cells.
+
+6.46. Executing OPT_SHARE pass.
+
+6.47. Executing OPT_DFF pass (perform DFF optimizations).
+
+6.48. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \cmdbuf_fsdb_formal_top..
+
+6.49. Executing OPT_EXPR pass (perform const folding).
+Optimizing module cmdbuf_fsdb_formal_top.
+
+6.50. Finished fast OPT passes. (There is nothing left to do.)
+
+7. Executing TECHMAP pass (map to technology primitives).
+
+7.1. Executing Verilog-2005 frontend: /home/ucagent-lab/portable-build/sby-linux-0.3.0/oss-cad-suite/lib/../share/yosys/techmap.v
+Parsing Verilog input from `/home/ucagent-lab/portable-build/sby-linux-0.3.0/oss-cad-suite/lib/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `$__div_mod_u'.
+Generating RTLIL representation for module `$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `$connect'.
+Generating RTLIL representation for module `$input_port'.
+Successfully finished Verilog frontend.
+
+7.2. Continuing TECHMAP pass.
+Using extmapper simplemap for cells of type $and.
+Using extmapper simplemap for cells of type $ff.
+Using extmapper simplemap for cells of type $logic_not.
+Using extmapper simplemap for cells of type $not.
+Using extmapper simplemap for cells of type $logic_or.
+Using extmapper simplemap for cells of type $logic_and.
+Using extmapper simplemap for cells of type $mux.
+Using extmapper simplemap for cells of type $or.
+Using template $paramod$constmap:1b6115d36d46c0296d0024e3e3623593810ba834$paramod$3b3a66a7766bf28794ddcd35314b025da1fe57c8\_90_shift_ops_shr_shl_sshl_sshr for cells of type $shl.
+Using extmapper simplemap for cells of type $eq.
+Running "alumacc" on wrapper $extern:wrap:$add:A_SIGNED=0:A_WIDTH=4:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=4:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$add:A_SIGNED=0:A_WIDTH=4:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=4:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$add:A_SIGNED=0:A_WIDTH=4:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=4:394426c56d1a028ba8fdd5469b163e04011def47.
+Running "alumacc" on wrapper $extern:wrap:$sub:A_SIGNED=0:A_WIDTH=4:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=4:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$sub:A_SIGNED=0:A_WIDTH=4:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=4:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$sub:A_SIGNED=0:A_WIDTH=4:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=4:394426c56d1a028ba8fdd5469b163e04011def47.
+Using extmapper simplemap for cells of type $bmux.
+Running "alumacc" on wrapper $extern:wrap:$add:A_SIGNED=0:A_WIDTH=2:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=2:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$add:A_SIGNED=0:A_WIDTH=2:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=2:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$add:A_SIGNED=0:A_WIDTH=2:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=2:394426c56d1a028ba8fdd5469b163e04011def47.
+Running "alumacc" on wrapper $extern:wrap:$ge:A_SIGNED=1:A_WIDTH=5:B_SIGNED=1:B_WIDTH=5:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$ge:A_SIGNED=1:A_WIDTH=5:B_SIGNED=1:B_WIDTH=5:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$ge:A_SIGNED=1:A_WIDTH=5:B_SIGNED=1:B_WIDTH=5:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47.
+Using extmapper simplemap for cells of type $reduce_or.
+Running "alumacc" on wrapper $extern:wrap:$lt:A_SIGNED=0:A_WIDTH=4:B_SIGNED=0:B_WIDTH=4:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$lt:A_SIGNED=0:A_WIDTH=4:B_SIGNED=0:B_WIDTH=4:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$lt:A_SIGNED=0:A_WIDTH=4:B_SIGNED=0:B_WIDTH=4:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47.
+Running "alumacc" on wrapper $extern:wrap:$lt:A_SIGNED=0:A_WIDTH=32:B_SIGNED=0:B_WIDTH=7:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$lt:A_SIGNED=0:A_WIDTH=32:B_SIGNED=0:B_WIDTH=7:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$lt:A_SIGNED=0:A_WIDTH=32:B_SIGNED=0:B_WIDTH=7:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47.
+Running "alumacc" on wrapper $extern:wrap:$add:A_SIGNED=0:A_WIDTH=32:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=32:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$add:A_SIGNED=0:A_WIDTH=32:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=32:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$add:A_SIGNED=0:A_WIDTH=32:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=32:394426c56d1a028ba8fdd5469b163e04011def47.
+Using extmapper simplemap for cells of type $reduce_bool.
+Running "alumacc" on wrapper $extern:wrap:$lt:A_SIGNED=0:A_WIDTH=32:B_SIGNED=0:B_WIDTH=2:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$lt:A_SIGNED=0:A_WIDTH=32:B_SIGNED=0:B_WIDTH=2:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$lt:A_SIGNED=0:A_WIDTH=32:B_SIGNED=0:B_WIDTH=2:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47.
+Running "alumacc" on wrapper $extern:wrap:$ge:A_SIGNED=0:A_WIDTH=3:B_SIGNED=0:B_WIDTH=2:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$ge:A_SIGNED=0:A_WIDTH=3:B_SIGNED=0:B_WIDTH=2:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$ge:A_SIGNED=0:A_WIDTH=3:B_SIGNED=0:B_WIDTH=2:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47.
+Running "alumacc" on wrapper $extern:wrap:$sub:A_SIGNED=0:A_WIDTH=3:B_SIGNED=0:B_WIDTH=2:Y_WIDTH=4:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$sub:A_SIGNED=0:A_WIDTH=3:B_SIGNED=0:B_WIDTH=2:Y_WIDTH=4:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$sub:A_SIGNED=0:A_WIDTH=3:B_SIGNED=0:B_WIDTH=2:Y_WIDTH=4:394426c56d1a028ba8fdd5469b163e04011def47.
+Running "alumacc" on wrapper $extern:wrap:$add:A_SIGNED=0:A_WIDTH=2:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=3:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$add:A_SIGNED=0:A_WIDTH=2:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=3:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$add:A_SIGNED=0:A_WIDTH=2:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=3:394426c56d1a028ba8fdd5469b163e04011def47.
+Running "alumacc" on wrapper $extern:wrap:$add:A_SIGNED=0:A_WIDTH=1:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=2:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$add:A_SIGNED=0:A_WIDTH=1:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=2:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$add:A_SIGNED=0:A_WIDTH=1:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=2:394426c56d1a028ba8fdd5469b163e04011def47.
+Running "alumacc" on wrapper $extern:wrap:$ge:A_SIGNED=1:A_WIDTH=3:B_SIGNED=1:B_WIDTH=3:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$ge:A_SIGNED=1:A_WIDTH=3:B_SIGNED=1:B_WIDTH=3:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$ge:A_SIGNED=1:A_WIDTH=3:B_SIGNED=1:B_WIDTH=3:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $paramod$c5c783b17ab1d780abfad8cfe6563a0a7b47a3b0\_90_demux for cells of type $demux.
+Using template $paramod$b3b6ac92d800c6f07aa48f510f923d86a674e5a7\_90_demux for cells of type $demux.
+Running "alumacc" on wrapper $extern:wrap:$sub:A_SIGNED=0:A_WIDTH=4:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=5:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$sub:A_SIGNED=0:A_WIDTH=4:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=5:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$sub:A_SIGNED=0:A_WIDTH=4:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=5:394426c56d1a028ba8fdd5469b163e04011def47.
+Running "alumacc" on wrapper $extern:wrap:$gt:A_SIGNED=0:A_WIDTH=32:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$gt:A_SIGNED=0:A_WIDTH=32:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$gt:A_SIGNED=0:A_WIDTH=32:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47.
+Running "alumacc" on wrapper $extern:wrap:$sub:A_SIGNED=0:A_WIDTH=32:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=32:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$sub:A_SIGNED=0:A_WIDTH=32:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=32:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$sub:A_SIGNED=0:A_WIDTH=32:B_SIGNED=0:B_WIDTH=1:Y_WIDTH=32:394426c56d1a028ba8fdd5469b163e04011def47.
+Running "alumacc" on wrapper $extern:wrap:$add:A_SIGNED=0:A_WIDTH=32:B_SIGNED=0:B_WIDTH=32:Y_WIDTH=32:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$add:A_SIGNED=0:A_WIDTH=32:B_SIGNED=0:B_WIDTH=32:Y_WIDTH=32:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$add:A_SIGNED=0:A_WIDTH=32:B_SIGNED=0:B_WIDTH=32:Y_WIDTH=32:394426c56d1a028ba8fdd5469b163e04011def47.
+Running "alumacc" on wrapper $extern:wrap:$sub:A_SIGNED=0:A_WIDTH=4:B_SIGNED=0:B_WIDTH=32:Y_WIDTH=32:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$sub:A_SIGNED=0:A_WIDTH=4:B_SIGNED=0:B_WIDTH=32:Y_WIDTH=32:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$sub:A_SIGNED=0:A_WIDTH=4:B_SIGNED=0:B_WIDTH=32:Y_WIDTH=32:394426c56d1a028ba8fdd5469b163e04011def47.
+Running "alumacc" on wrapper $extern:wrap:$lt:A_SIGNED=0:A_WIDTH=32:B_SIGNED=0:B_WIDTH=3:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$lt:A_SIGNED=0:A_WIDTH=32:B_SIGNED=0:B_WIDTH=3:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$lt:A_SIGNED=0:A_WIDTH=32:B_SIGNED=0:B_WIDTH=3:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47.
+Running "alumacc" on wrapper $extern:wrap:$lt:A_SIGNED=0:A_WIDTH=2:B_SIGNED=0:B_WIDTH=2:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$lt:A_SIGNED=0:A_WIDTH=2:B_SIGNED=0:B_WIDTH=2:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$lt:A_SIGNED=0:A_WIDTH=2:B_SIGNED=0:B_WIDTH=2:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $paramod$b7dbb4ea758f2402846a04a06dfe9e2cbfb47604\_90_alu for cells of type $alu.
+Using template $paramod$f47943a1f8520b2e9fab25220c0025f020e7013b\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $xor.
+Using extmapper simplemap for cells of type $reduce_and.
+Using template $paramod$740b056ede97228d3eae64ea2fdc81f0a33e0fe7\_90_alu for cells of type $alu.
+Using template $paramod$175e67c02b86e96b1288b9dc100122520d7240d8\_90_alu for cells of type $alu.
+Using template $paramod$32a7b7b86c07519b7537abc18e96f0331f97914d\_90_alu for cells of type $alu.
+Using template $paramod$8742280fdebca84e1c87f2a86ed84f62d558f4cc\_90_alu for cells of type $alu.
+Using template $paramod$6a42b6fefed750f8a1c58eab59479d960557103c\_90_alu for cells of type $alu.
+Using template $paramod$a586fc170a813ff4ac6151d914901763ae218e46\_90_alu for cells of type $alu.
+Using template $paramod$2116a631f856d4d4902c2618dca73dafa3b8c9c0\_90_alu for cells of type $alu.
+Using template $paramod$ce7ef2326da8c97779ccfb0cc1505e2694ed575a\_90_alu for cells of type $alu.
+Using template $paramod$b3c20b05d9b1fc2c940ef2f6c917486aead042e8\_90_alu for cells of type $alu.
+Using template $paramod$1d1e68f77481583066c6d429218f48ea9d5739b3\_90_alu for cells of type $alu.
+Using template $paramod$619a7e60d42ca0996ea4b1b41bb5412f6a52141d\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $pos.
+Using template $paramod$5d1d2614b24accd0f9d06c4779fd9ef771faf494\_90_demux for cells of type $demux.
+Using template $paramod$dde52db7035cb02b3cc5e73865788532339e3bcb\_90_alu for cells of type $alu.
+Using template $paramod$c04af8dbf0e5d1d69bbccb2c7bd8a93fc9ef54dc\_90_alu for cells of type $alu.
+Using template $paramod$fbc7873bff55778c0b3173955b7e4bce1d9d6834\_90_alu for cells of type $alu.
+Using template $paramod$a7817265ef3ab2ee43da53bbd8a90f6450d412d9\_90_alu for cells of type $alu.
+Using template $paramod$3e92930b84a1f8e99102decb41b57db2b77e2f7a\_90_alu for cells of type $alu.
+Using template $paramod$7e708ae28ab761f11d0fb59d3ffc72f6a4baf5d9\_90_alu for cells of type $alu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000100000 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000100000 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000101 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000000101 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000100 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000000100 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000010 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000000010 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000011 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000000011 for cells of type $lcu.
+No more expansions possible.
+<suppressed ~18931 debug messages>
+
+8. Executing OPT pass (performing simple optimizations).
+
+8.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module cmdbuf_fsdb_formal_top.
+<suppressed ~43458 debug messages>
+
+8.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 24957 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 22900 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 22142 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 21740 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 21618 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 21601 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 21589 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 21586 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 21585 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+<suppressed ~10116 debug messages>
+Removed a total of 3372 cells.
+
+8.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+8.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \cmdbuf_fsdb_formal_top..
+Removed 1323 unused cells and 15694 unused wires.
+<suppressed ~1325 debug messages>
+
+8.5. Finished fast OPT passes.
+
+9. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+
+10. Executing FORMALFF pass.
+
+11. Executing SIMPLEMAP pass (map simple cells to gate primitives).
+
+12. Executing DFFUNMAP pass (unmap clock enable and synchronous reset from FFs).
+
+13. Executing AIGMAP pass (map logic to AIG).
+Module cmdbuf_fsdb_formal_top: replaced 14514 cells with 94170 new cells, skipped 5748 cells.
+  replaced 3 cell types:
+   11359 $_MUX_
+    2476 $_OR_
+     679 $_XOR_
+  not replaced 7 cell types:
+    2297 $_AND_
+    1866 $_FF_
+    1140 $_NOT_
+       7 $anyinit
+      24 $anyseq
+     205 $assert
+     209 $assume
+
+14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \cmdbuf_fsdb_formal_top..
+Removed 0 unused cells and 5720 unused wires.
+<suppressed ~1 debug messages>
+
+15. Printing statistics.
+
+=== cmdbuf_fsdb_formal_top ===
+
+        +----------Local Count, excluding submodules.
+        | 
+    93398 wires
+   111448 wire bits
+      222 public wires
+     6105 public wire bits
+       16 ports
+      266 port bits
+    99918 cells
+    40887   $_AND_
+     1866   $_FF_
+    56720   $_NOT_
+        7   $anyinit
+       24   $anyseq
+      205   $assert
+      209   $assume
+
+16. Executing AIGER backend.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\clk like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\src [0] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\src [1] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rw_rd_gnt [0] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rw_rd_gnt [1] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rw_rd_gnt [2] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rw_rd_gnt [3] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rw_rd_gnt [4] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rw_rd_gnt [5] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rw_rd_gnt [6] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rw_rd_gnt [7] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rst_n like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rready [0] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rready [1] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rready [2] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [0] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [1] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [2] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [3] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [4] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [5] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [6] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [7] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [8] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [9] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [10] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [11] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [12] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [13] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [14] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [15] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [16] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [17] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [18] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [19] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [20] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [21] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [22] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [23] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [24] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [25] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [26] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [27] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [28] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [29] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [30] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [31] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [0] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [1] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [2] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [3] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [4] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [5] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [6] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [7] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [8] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [9] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [10] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [11] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [12] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [13] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [14] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [15] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pc_err like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [0] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [1] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [2] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [3] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [4] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [5] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [6] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [7] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [8] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [9] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [10] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [11] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [12] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [13] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [14] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [15] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [16] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [17] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [18] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [19] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [20] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [21] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [22] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [23] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [24] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [25] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [26] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [27] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [28] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [29] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [30] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [31] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [0] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [1] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [2] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [3] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [4] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [5] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [6] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [7] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [8] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [9] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [10] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [11] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [12] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [13] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [14] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [15] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [16] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [17] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [18] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [19] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [20] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [21] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [22] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [23] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [24] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [25] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [26] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [27] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [28] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [29] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [30] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [31] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [32] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [33] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [34] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [35] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [36] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [37] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [38] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [39] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [40] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [41] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [42] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [43] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [44] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [45] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [46] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [47] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [48] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [49] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [50] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [51] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [52] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [53] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [54] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [55] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [56] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [57] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [58] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [59] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [60] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [61] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [62] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [63] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [64] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [65] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [66] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [67] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [68] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [69] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [70] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [71] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [72] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [73] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [74] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [75] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [76] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [77] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [78] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [79] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [80] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [81] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [82] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [83] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [84] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [85] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [86] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [87] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [88] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [89] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [90] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [91] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [92] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [93] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [94] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [95] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [96] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [97] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [98] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [99] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [100] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [101] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [102] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [103] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [104] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [105] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [106] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [107] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [108] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [109] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [110] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [111] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [112] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [113] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [114] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [115] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [116] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [117] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [118] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [119] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [120] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [121] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [122] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [123] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [124] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [125] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [126] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [127] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\arvalid like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\arresp [0] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\arresp [1] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\arid [0] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\arid [1] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\arid [2] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\arid [3] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\arid [4] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\arid [5] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\arid [6] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\arid [7] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [0] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [1] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [2] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [3] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [4] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [5] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [6] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [7] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [8] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [9] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [10] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [11] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [12] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [13] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [14] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [15] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [16] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [17] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_rd_gnt [0] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_rd_gnt [1] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_rd_gnt [2] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_rd_gnt [3] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_rd_gnt [4] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_rd_gnt [5] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_rd_gnt [6] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_rd_gnt [7] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_port_id [0] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_port_id [1] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_port_id [2] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_port_id [3] like $anyseq.
+Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_port_id [4] like $anyseq.
+Warning: Treating a total of 266 undriven bits in cmdbuf_fsdb_formal_top like $anyseq.
+
+Warnings: 267 unique messages, 267 total
+End of script. Logfile hash: 5379a907a2, time: 2.31s, user: 3.02s, system: 0.12s, MEM: 175.56 MB peak
+Yosys 0.67+94 (git sha1 7defa5186-dirty, Release, Clang /usr/bin/clang++ 18.1.8)
+Time spent: 31% 13x opt_clean (0 sec), 26% 20x opt_expr (0 sec), ...

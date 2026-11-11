@@ -1,0 +1,32 @@
+{
+  "sources": [
+    {
+      "kind": "import",
+      "name": "imported_demo.fsdb",
+      "pattern": 11,
+      "scope": "tb_cmdbuf_rd.dut",
+      "mapping": {},
+      "id": "20261111_051200_2a2f4e908c"
+    },
+    {
+      "kind": "regression",
+      "name": "tc_directed · seed 1",
+      "pattern": 22,
+      "scope": "tb_cmdbuf_rd.dut",
+      "mapping": {},
+      "batch": "20261111_041030_regress_e2f2fa",
+      "run": "tc_directed_seed_1"
+    },
+    {
+      "kind": "regression",
+      "name": "tc_reset · seed 1",
+      "pattern": 33,
+      "scope": "tb_cmdbuf_rd.dut",
+      "mapping": {},
+      "batch": "20261111_041030_regress_e2f2fa",
+      "run": "tc_reset_seed_1"
+    }
+  ],
+  "max_edges": 100000,
+  "id": "20261111_051214_8d079772"
+}

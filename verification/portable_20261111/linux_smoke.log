@@ -1,0 +1,61 @@
+PACKAGE PASS: 167 files
+python3 "/tmp/cmdbuf_portable_20261111_054023_e347ff/cmdbuf-studio/simulation/vcs/eda.py" --local doctor 
+PASS Python: 3.6.8
+PASS bash: /usr/bin/bash
+PASS make: /usr/local/bin/make
+PASS vcs: /home/synopsys/vcs-mx/O-2018.09-1/bin/vcs
+PASS verdi: /home/synopsys/verdi/Verdi_O-2018.09-SP2/bin/verdi
+PASS urg: /home/synopsys/vcs-mx/O-2018.09-1/bin/urg
+PASS fsdb2vcd: /home/synopsys/verdi/Verdi_O-2018.09-SP2/bin/fsdb2vcd
+PASS g++: /usr/bin/g++
+PASS FSDB PLI: /home/synopsys/verdi/Verdi_O-2018.09-SP2/share/PLI/VCS/LINUX64
+PASS NPI: /home/synopsys/verdi/Verdi_O-2018.09-SP2/share/NPI/inc / /home/synopsys/verdi/Verdi_O-2018.09-SP2/share/NPI/lib/linux64
+PASS Results writable: /tmp/cmdbuf_portable_20261111_054023_e347ff/cmdbuf-studio/build/vcs
+PASS vcs launch: vcs script version : O-2018.09
+machine name = IC_EDA 
+machine type = linux 
+machine os = Linux 3.10.0-1160.53.1.el7.x86_64  
+The FLEXlm host ID of this machine is "000c299c3ce0"
+PASS verdi launch: logDir = /tmp/cmdbuf_portable_20261111_054023_e347ff/cmdbuf-studio/verdiLog
+
+Verdi (R)
+
+Release Verdi_O-2018.09-SP2 for (RH Linux x86_64/64bit) -- Thu Feb 21 04:40:56 PDT 2019
+PASS urg launch: Note: Bumping stack limit from 8192 to 131072 Kbytes.
+URG Version O-2018.09-1 Copyright (c) 1991-2018 by Synopsys Inc.
+CovDB version: 13.1
+
+License: make smoke performs a real VCS compile, simulation and URG merge.
+python3 "/tmp/cmdbuf_portable_20261111_054023_e347ff/cmdbuf-studio/simulation/vcs/eda.py" --local regress --cases tc_directed --seeds 17,42 --cycles 64 --jobs "2" --timeout "120" --waves "1"
+BUILD /tmp/cmdbuf_portable_20261111_054023_e347ff/cmdbuf-studio/build/vcs/builds/b449324ebf21901e
+BATCH 20261111_054025_regress_215049 TOTAL 3
+PASS tc_directed_seed_1 (0.47s)
+PROGRESS 20261111_054025_regress_215049 1/3
+PASS tc_random_seed_17 (0.52s)
+PROGRESS 20261111_054025_regress_215049 2/3
+PASS tc_random_seed_42 (0.41s)
+PROGRESS 20261111_054025_regress_215049 3/3
+REPORT /tmp/cmdbuf_portable_20261111_054023_e347ff/cmdbuf-studio/build/vcs/regressions/20261111_054025_regress_215049/index.html
+........................................
+----------------------------------------------------------------------
+Ran 40 tests in 0.174s
+
+OK
+VM workspace: /tmp/tmpc7o4sxgl/vm/workspace
+Make entry: cd /tmp/tmpc7o4sxgl/vm && make help
+Updated 1 files; retained 0 VM edits. Untracked VM files were kept.
+VM workspace: /tmp/tmpkpxdpiwc/vm/workspace
+Make entry: cd /tmp/tmpkpxdpiwc/vm && make help
+Updated 1 files; retained 0 VM edits. Untracked VM files were kept.
+VM workspace: /tmp/tmpkpxdpiwc/vm/workspace
+Make entry: cd /tmp/tmpkpxdpiwc/vm && make help
+Updated 0 files; retained 1 VM edits. Untracked VM files were kept.
+VM workspace: /tmp/tmp6bbom8yf/vm/workspace
+Make entry: cd /tmp/tmp6bbom8yf/vm && make help
+Updated 1 files; retained 0 VM edits. Untracked VM files were kept.
+VM workspace: /tmp/tmp6bbom8yf/vm/workspace
+Make entry: cd /tmp/tmp6bbom8yf/vm && make help
+Updated 2 files; retained 0 VM edits. Untracked VM files were kept.
+VM workspace: /tmp/tmp6bbom8yf/vm/workspace
+Make entry: cd /tmp/tmp6bbom8yf/vm && make help
+Updated 0 files; retained 1 VM edits. Untracked VM files were kept.

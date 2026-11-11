@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "/root/cmdbuf_rd_vcs_eda/results/npi_readers/1b67eed9c71879f7/npi_reader",
+    "extract",
+    "/root/cmdbuf_rd_vcs_eda/results/fsdb_imports/20261111_051200_2a2f4e908c/wave.fsdb",
+    "/root/cmdbuf_rd_vcs_eda/results/fsdb_formal/20261111_051214_8d079772/pattern_11.tsv",
+    "/root/cmdbuf_rd_vcs_eda/results/fsdb_formal/20261111_051214_8d079772/pattern_11.ndjson",
+    "100000"
+  ],
+  "cwd": "/root/cmdbuf_rd_vcs_eda/results/fsdb_formal/20261111_051214_8d079772"
+}

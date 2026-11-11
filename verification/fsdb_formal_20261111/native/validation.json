@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "cycles": 205,
+  "patterns": 3,
+  "segments": 5,
+  "native_replay": "PASS",
+  "forced_output_fault": "DETECTED",
+  "runtime_instrumentation_count": 413,
+  "commands": [
+    {
+      "name": "compile",
+      "command": [
+        "make",
+        "-f",
+        "validation_makefile",
+        "compile"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "positive",
+      "command": [
+        "make",
+        "-f",
+        "validation_makefile",
+        "run"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "negative",
+      "command": [
+        "make",
+        "-f",
+        "validation_makefile",
+        "run",
+        "ARGS=+MUTATE"
+      ],
+      "returncode": 0
+    }
+  ]
+}

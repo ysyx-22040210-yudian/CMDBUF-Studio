@@ -1,0 +1,38 @@
+{
+  "id": "20261111_054844_cd033f12",
+  "kind": "regress",
+  "state": "DONE",
+  "started": 1794347324.643051,
+  "completed": 3,
+  "total": 3,
+  "stage": "已完成",
+  "log": "\n› make sync\nVM workspace: /tmp/cmdbuf_portable_20261111_054023_e347ff/windows_remote/workspace\nMake entry: cd /tmp/cmdbuf_portable_20261111_054023_e347ff/windows_remote && make help\nUpdated 1 files; retained 0 VM edits. Untracked VM files were kept.\n\n› make regress PLAN=simulation/vcs/plans/studio_20261111_054844_e8ad72.json JOBS=2 TIMEOUT=120 WAVES=1\npython3 \"/tmp/cmdbuf_portable_20261111_054023_e347ff/windows_remote/workspace/simulation/vcs/eda.py\" --local regress   \\\n   \\\n    \\\n  --jobs \"2\" --timeout \"120\" --waves \"1\" --plan \"simulation/vcs/plans/studio_20261111_054844_e8ad72.json\"\nBATCH 20261111_054845_regress_a2713b TOTAL 3\nPASS tc_random_seed_21 (0.67s)\nPROGRESS 20261111_054845_regress_a2713b 1/3\nPASS tc_directed_seed_21 (0.67s)\nPROGRESS 20261111_054845_regress_a2713b 2/3\nPASS tc_random_seed_22 (0.47s)\nPROGRESS 20261111_054845_regress_a2713b 3/3\nREPORT /tmp/cmdbuf_portable_20261111_054023_e347ff/windows_remote/results/regressions/20261111_054845_regress_a2713b/index.html\n\n› make fetch REGRESSION=20261111_054845_regress_a2713b\nLOCAL REPORT E:\\formal打榜\\publish\\UCAgent-CMDBUF-RD-verification\\build\\portability\\Windows clean path\\cmdbuf-studio\\build\\vcs\\vm_results\\20261111_054845_regress_a2713b\\index.html\n",
+  "commands": [
+    {
+      "argv": [
+        "sync"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "regress",
+        "PLAN=simulation/vcs/plans/studio_20261111_054844_e8ad72.json",
+        "JOBS=2",
+        "TIMEOUT=120",
+        "WAVES=1"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "fetch",
+        "REGRESSION=20261111_054845_regress_a2713b"
+      ],
+      "returncode": 0
+    }
+  ],
+  "batch": "20261111_054845_regress_a2713b",
+  "verdict": "PASS",
+  "ended": 1794347330.9098802
+}

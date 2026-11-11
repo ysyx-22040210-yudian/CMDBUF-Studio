@@ -1,0 +1,21 @@
+{
+  "description": "7 1 1 满容量、R 反压及同拍回收接收",
+  "sequence": [
+    {"set": {"ready": 0}},
+    {"send": {"src": 0, "addr": 0, "id": 0}},
+    {"send": {"src": 0, "addr": 73, "id": 1}},
+    {"send": {"src": 0, "addr": 146, "id": 2}},
+    {"send": {"src": 0, "addr": 219, "id": 3}},
+    {"send": {"src": 0, "addr": 292, "id": 4}},
+    {"send": {"src": 0, "addr": 365, "id": 5}},
+    {"send": {"src": 0, "addr": 438, "id": 6}},
+    {"send": {"src": 1, "addr": 511, "id": 7}},
+    {"send": {"src": 2, "addr": 520, "id": 8}},
+    {"wait": 16},
+    {"set": {"ready": 1}},
+    {"send": {"src": 0, "addr": 1024, "id": 9}},
+    {"set": {"ready": 7}},
+    {"wait": 16}
+  ],
+  "require": {"accepted": 10, "retired": 10, "full": 1, "full_reuse": 1, "ready_zero": 1}
+}

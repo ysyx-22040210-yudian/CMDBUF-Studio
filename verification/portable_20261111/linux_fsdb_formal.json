@@ -1,0 +1,27 @@
+{
+  "id": "20261111_054729_cb769a4f",
+  "kind": "fsdb_formal",
+  "state": "DONE",
+  "started": 1794347249.250139,
+  "completed": 2,
+  "total": 2,
+  "stage": "已完成",
+  "log": "\n› make sync\nLocal Linux workspace: no SSH or source synchronization required.\n\n› make fsdb-formal REQUEST=/tmp/cmdbuf_portable_20261111_054023_e347ff/cmdbuf-studio/build/vcs/studio/formal_requests/20261111_054729_cb769a4f.json\npython3 \"/tmp/cmdbuf_portable_20261111_054023_e347ff/cmdbuf-studio/simulation/vcs/fsdb_formal/engine.py\" --action export --request \"/tmp/cmdbuf_portable_20261111_054023_e347ff/cmdbuf-studio/build/vcs/studio/formal_requests/20261111_054729_cb769a4f.json\"\nNPI_FORMAL 20261111_054729_cb769a4f TOTAL 2\nNPI_PROGRESS 1/2 pattern=1\nNPI_PROGRESS 2/2 pattern=2\nNPI_PACKAGE /tmp/cmdbuf_portable_20261111_054023_e347ff/cmdbuf-studio/build/vcs/fsdb_formal/20261111_054729_cb769a4f/package.zip\n",
+  "commands": [
+    {
+      "argv": [
+        "sync"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "fsdb-formal",
+        "REQUEST=/tmp/cmdbuf_portable_20261111_054023_e347ff/cmdbuf-studio/build/vcs/studio/formal_requests/20261111_054729_cb769a4f.json"
+      ],
+      "returncode": 0
+    }
+  ],
+  "formal_id": "20261111_054729_cb769a4f",
+  "ended": 1794347250.1029139
+}

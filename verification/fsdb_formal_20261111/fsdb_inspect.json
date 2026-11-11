@@ -1,0 +1,27 @@
+{
+  "id": "20261111_051208_54bbc56c",
+  "kind": "fsdb_inspect",
+  "state": "DONE",
+  "started": 1794345128.450219,
+  "completed": 0,
+  "total": 0,
+  "stage": "已完成",
+  "log": "\n› make sync\nVM workspace: /root/cmdbuf_rd_vcs_eda/workspace\nMake entry: cd /root/cmdbuf_rd_vcs_eda && make help\nUpdated 0 files; retained 0 VM edits. Untracked VM files were kept.\n上传 FSDB: imported_demo.fsdb\n\n› make fsdb-inspect REQUEST=/root/cmdbuf_rd_vcs_eda/results/fsdb_requests/20261111_051208_54bbc56c.json\npython3 \"/root/cmdbuf_rd_vcs_eda/workspace/simulation/vcs/fsdb_formal/engine.py\" --action inspect --request \"/root/cmdbuf_rd_vcs_eda/results/fsdb_requests/20261111_051208_54bbc56c.json\"\nNPI_PACKAGE /root/cmdbuf_rd_vcs_eda/results/fsdb_formal/20261111_051208_54bbc56c/package.zip\n",
+  "commands": [
+    {
+      "argv": [
+        "sync"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "fsdb-inspect",
+        "REQUEST=/root/cmdbuf_rd_vcs_eda/results/fsdb_requests/20261111_051208_54bbc56c.json"
+      ],
+      "returncode": 0
+    }
+  ],
+  "formal_id": "20261111_051208_54bbc56c",
+  "ended": 1794345134.3891478
+}

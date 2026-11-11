@@ -1,0 +1,11 @@
+{
+  "description": "教学：AR 接收后只给 AR grant，等待 8 拍，再恢复双 grant，检查失败重试和完整返回",
+  "sequence": [
+    {"set": {"ready": 7, "status": 0, "argrant": 255, "rwgrant": 0, "parity": 0}},
+    {"send": {"src": 1, "addr": "0x12345", "id": 42, "port": 6, "resp": 0}, "timeout": 100},
+    {"wait": 8},
+    {"set": {"rwgrant": 255}},
+    {"wait": 12}
+  ],
+  "require": {"accepted": 1, "issued": 1, "captured": 1, "retired": 1, "issue_failed": 1, "ar_only": 1, "src1": 1, "resp0": 1}
+}

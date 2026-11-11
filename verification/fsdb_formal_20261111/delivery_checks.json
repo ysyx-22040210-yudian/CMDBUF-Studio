@@ -1,0 +1,36 @@
+{
+  "status": "PASS",
+  "export_id": "20261111_051214_8d079772",
+  "verified_source_unchanged": true,
+  "zip_matches_executed_properties": true,
+  "manual_examples_match_native_sva": true,
+  "document_pages": 6,
+  "all_six_pages_visually_reviewed": true,
+  "desktop_launch": {
+    "command": ".\\make.cmd gui",
+    "exit_code": 0,
+    "windows": [
+      {
+        "pid": 28920,
+        "title": "CMDBUF Studio · 验证工作台",
+        "has_window": true
+      }
+    ],
+    "visible": true
+  },
+  "artifacts_sha256": {
+    "documents/34_cmdbuf_fsdb_formal_20261111.docx": "19bfa4a07ab79522632b026f50e2a439966938b7816f21c533f0aa50dd08a5f3",
+    "documents/34_cmdbuf_fsdb_formal_20261111.pdf": "751e804841c9d25e919bd0788be2b68e55f7bcd4000faacdf479e32308d42c1b",
+    "documents/CMDBUF_FSDB_Formal界面预览.png": "9457bdfc8509ae5ec466245729d4d281ad81d85c8cea4fc16442d3a23d124a7f",
+    "README.md": "ddc839d90a59e50b289ef5fe4ebfb040cb0f7d2f081ca069eb0c58ca14e0b1a2",
+    "docs/guides/fsdb_formal_20261111/build_manual.py": "c8afd558b8141332e8d566c0efc55f257d5678db339a454e0f3938efc9610bc0",
+    "docs/guides/fsdb_formal_20261111/capture_delivery.js": "ec78854ffd7e366e5f117d8de8346b5a2159e71b37ce93b9a6afbe19d08f6f77",
+    "docs/guides/fsdb_formal_20261111/collect_results.py": "92ca1fe65dedd3836b6cbf4c9871f4260fc69b3c2cceba0f6305be231ace626f",
+    "docs/guides/fsdb_formal_20261111/compare_samples.py": "73faa97e44abfdfa5090537901d920eba33456767ea2b4a4aae08c0af218821e",
+    "docs/guides/fsdb_formal_20261111/negative_checks.py": "0b499a7ae87a2f670637789ab49c4675d6a95549571b13ae6ce95cbda56d6dc7",
+    "docs/guides/fsdb_formal_20261111/regenerate.js": "8095182c3b8acd5e0c478c625faa30df530f2fdedb1d99aa8a64ef160cd05a9d",
+    "docs/guides/fsdb_formal_20261111/seal_delivery.py": "243c5dd2c1b786a86b72d3b8cdf7c82903f4a0342d288b8e26033a1873896a99",
+    "docs/guides/fsdb_formal_20261111/ui_acceptance.js": "1971fe8c1fbe457ffd985124471150979abc42999bf3095a0f52beb9b75ab108",
+    "docs/guides/fsdb_formal_20261111/validate_export.py": "b833c0205aa8c799e709cd693ab86e8cb69150486ab92da21f9c1d28e58a6cb6"
+  }
+}

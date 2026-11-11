@@ -1,0 +1,79 @@
+{
+  "status": "PASS",
+  "runtime_identity": {
+    "linux": {
+      "status": "PASS",
+      "files": 156,
+      "regression": "20261111_054717_regress_63f64b"
+    },
+    "windows": {
+      "status": "PASS",
+      "files": 156,
+      "regression": "20261111_054845_regress_a2713b"
+    }
+  },
+  "private_settings_ignored": true,
+  "secret_signature_scan": "PASS",
+  "files_over_100MiB": 0,
+  "canonical_rtl_sva_unchanged": true,
+  "historical_seals": {
+    "vcs_eda_20261110": {
+      "status": "UNCHANGED",
+      "files": 246,
+      "manifest_sha256": "6696da6d1991cafecdc753f4b076ab104e1bacfefe50c130d775c4c4ad43aeb6"
+    },
+    "vcs_make_20261110": {
+      "status": "UNCHANGED",
+      "files": 293,
+      "manifest_sha256": "1bb254e4a41df663a9030fa25e9d037bbb34e2289a70e6ac9fa06c6b5418479c"
+    },
+    "wavedrom_20261111": {
+      "status": "UNCHANGED",
+      "files": 313,
+      "manifest_sha256": "04d212eb36c00f4d4eac6c297b4db2c2f50d9796c42615f7fab254ad5bae88d1"
+    },
+    "constraint_driver_20261111": {
+      "status": "UNCHANGED",
+      "files": 1870,
+      "manifest_sha256": "f106d46e0240dea8b2559810c1d10b7b556ea59d280a356a2b6ce5378bf65705"
+    },
+    "strict_random_20261111": {
+      "status": "UNCHANGED",
+      "files": 1760,
+      "manifest_sha256": "06ce1bb513af79f8d19774ba4ec74e4cdd567b6775d0cae4236885a664233cbd"
+    },
+    "sv_tc_20261111": {
+      "status": "UNCHANGED",
+      "files": 2141,
+      "manifest_sha256": "1d336e1b97b7adac7c48e99bfa35dc11f2ec042da991586fc7fe2e8a62c619e9"
+    },
+    "main_phase_20261111": {
+      "status": "UNCHANGED",
+      "files": 2245,
+      "manifest_sha256": "6aa9580993df0c79df88bc8cefc2dbc6467e0371a2ca037fbf326c14e7a95291"
+    },
+    "studio_20261111": {
+      "status": "UNCHANGED",
+      "files": 600,
+      "manifest_sha256": "702d31a8b94b02fc251cbf8d7e4a9f7597838d899336a67fbee360250a4afb81"
+    },
+    "fsdb_formal_20261111": {
+      "status": "UNCHANGED",
+      "files": 179,
+      "manifest_sha256": "653e033b30a3d682ed232a01b410e8c56d60ebb4b6a43f11a60bf4e1b7aec40f"
+    }
+  },
+  "artifacts_sha256": {
+    "README.md": "73c0369091aff4aa76bda86ba0fd9992e9cbd02076c15bc3daceede802d885a3",
+    "documents/35_cmdbuf_portable_setup_20261111.docx": "21f13628b7309641005a751ee84dc7720b280c6988a683e378a59e89e6d00b55",
+    "documents/35_cmdbuf_portable_setup_20261111.pdf": "766ddcaef735fa631280534a88e940b2cf615e5fc9caf2f1c3449c4bd3cc0552",
+    "packages/cmdbuf-studio-portable.tar.gz": "253ae8c1721402c17962184e08ac60c02fede308f1a9068a9439374f57dfd4fd",
+    "packages/cmdbuf-studio-portable.zip": "fcf0bb91d922b5062bef3d3062e334008707f0156ed51617cf3ed2f6504b869a",
+    "packages/SHA256SUMS.json": "93a2430ee7328ad18c6af28b18bbf60747cfdb92c58f0fb4f93df01228090fd3",
+    "docs/guides/portable_20261111/build_manual.py": "e9cc460281888db2edf95becec26ec03fecc051974d93e97add10c749f3722ac",
+    "docs/guides/portable_20261111/gui_check.js": "00807dabaad8aa23aac533e65a5b8f356a106c418448261d17e9a62ed64e6b91",
+    "docs/guides/portable_20261111/migration_check.py": "21e54280f6b3be06ec7a6b9c6f46040353dce077ca33b37222e0049ebda0e252",
+    "docs/guides/portable_20261111/prepare_gui.py": "e19ecb62d6f12ce75a3ae88ef544821b02eabd21fcd1c609704e40b1ecc81e1e",
+    "docs/guides/portable_20261111/seal_delivery.py": "e59a2afbc155581f536793234f5e34d75df456c137e948a478cd479cb1e5bf44"
+  }
+}

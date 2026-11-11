@@ -1,0 +1,359 @@
+{
+  "status": "PASS",
+  "date": "2026-11-11",
+  "export_id": "20261111_051214_8d079772",
+  "counts": {
+    "patterns": 3,
+    "segments": 5,
+    "cycles": 205,
+    "input_assumptions": 205,
+    "output_assertions": 205,
+    "terminal_covers": 5,
+    "transactions": 13
+  },
+  "fsdb_reader": "Installed Synopsys NPI C API, Verdi O-2018.09-SP2. No VCD, CSV, RTL DB or TC data used for extraction.",
+  "sampling": "Clock 0->1 at FSDB T; values queried at T-1 time unit, before same-timestamp changes.",
+  "manual": {
+    "path": "D:/VMshare/CPU_CORE/ysyx/VC_APPS_NPI.pdf",
+    "pages": [
+      12,
+      13,
+      14,
+      15,
+      16,
+      142,
+      155,
+      156,
+      157,
+      158
+    ],
+    "sha256": "f5abc2f83ee5fcef912c1c2c0f62e74f4d92b0f8050938b95b79b14bdde9b53c"
+  },
+  "independent_comparison": {
+    "status": "PASS",
+    "pin_values_checked": 6355,
+    "nonclock_values_different_after_edge": 60,
+    "method": "NPI direct FSDB value at T-1 versus independently archived VCD last transition strictly before T",
+    "details": [
+      {
+        "pattern": 11,
+        "case": "tc_studio_demo_seed_1",
+        "samples": 69,
+        "signals": 31
+      },
+      {
+        "pattern": 22,
+        "case": "tc_directed_seed_1",
+        "samples": 69,
+        "signals": 31
+      },
+      {
+        "pattern": 33,
+        "case": "tc_reset_seed_1",
+        "samples": 67,
+        "signals": 31
+      }
+    ]
+  },
+  "native_vcs": {
+    "status": "PASS",
+    "cycles": 205,
+    "patterns": 3,
+    "segments": 5,
+    "native_replay": "PASS",
+    "forced_output_fault": "DETECTED",
+    "runtime_instrumentation_count": 413,
+    "commands": [
+      {
+        "name": "compile",
+        "command": [
+          "make",
+          "-f",
+          "validation_makefile",
+          "compile"
+        ],
+        "returncode": 0
+      },
+      {
+        "name": "positive",
+        "command": [
+          "make",
+          "-f",
+          "validation_makefile",
+          "run"
+        ],
+        "returncode": 0
+      },
+      {
+        "name": "negative",
+        "command": [
+          "make",
+          "-f",
+          "validation_makefile",
+          "run",
+          "ARGS=+MUTATE"
+        ],
+        "returncode": 0
+      }
+    ]
+  },
+  "formal": {
+    "bmc": "PASS",
+    "depth": 71,
+    "engine": "SBY / Yosys read_slang / ABC bmc3",
+    "covers": "PASS",
+    "cover_engine": "Yices",
+    "terminal_covers": [
+      "C_END_P11_S0",
+      "C_END_P22_S0",
+      "C_END_P33_S0",
+      "C_END_P33_S1",
+      "C_END_P33_S2"
+    ],
+    "reset_initialization": "Real reset simulation, not zinit or reset-sequence assumptions.",
+    "native_adaptation": {
+      "source": "trace_properties.sv",
+      "executed": "sby_properties.sv",
+      "properties": 412,
+      "rule": "Single-sample A |-> B becomes (!A || B); clock and disable iff preserved.",
+      "sampled_value_expansion": "Two $stable selectors replaced by comparisons against explicit previous-posedge registers. First-cycle guards preserved.",
+      "source_sha256": "75c06544916c3182ed7483b188cc1704455d268757fd39c679a9e74954d786da",
+      "executed_sha256": "174210d5cc0ceb5fd0dafd267d0ce926a857b9c468b8e3b16c67388003174e33"
+    }
+  },
+  "negative_checks": {
+    "status": "PASS",
+    "npi_negative_checks": [
+      {
+        "name": "invalid_fsdb",
+        "status": "REJECTED",
+        "returncode": 2,
+        "message": "Not a readable FSDB"
+      },
+      {
+        "name": "width_mismatch",
+        "status": "REJECTED",
+        "returncode": 2,
+        "message": "width mismatch"
+      },
+      {
+        "name": "missing_signal",
+        "status": "REJECTED",
+        "returncode": 2,
+        "message": "Signal not found"
+      },
+      {
+        "name": "edge_limit",
+        "status": "REJECTED",
+        "returncode": 2,
+        "message": "edge limit exceeded"
+      }
+    ],
+    "formal_mutation": {
+      "expected": "FAIL",
+      "actual": "FAIL 2 6",
+      "returncode": 2,
+      "change": "Only first output assertion's expected arready changed from 3'h7 to 3'h6; input assumptions unchanged.",
+      "original_sha256": "174210d5cc0ceb5fd0dafd267d0ce926a857b9c468b8e3b16c67388003174e33",
+      "mutant_sha256": "895749c88ba9067d05c84500ea9b2f8a38b01b8c124f508c0a807df603e82377"
+    }
+  },
+  "gui": {
+    "status": "PASS",
+    "export_id": "20261111_051214_8d079772",
+    "summary": {
+      "status": "GENERATED",
+      "id": "20261111_051214_8d079772",
+      "counts": {
+        "patterns": 3,
+        "segments": 5,
+        "cycles": 205,
+        "input_assumptions": 205,
+        "output_assertions": 205,
+        "terminal_covers": 5,
+        "transactions": 13
+      },
+      "formal_status": "NOT_RUN",
+      "dut_name": "项目基准 CMDBUF",
+      "sampling": "posedge 前一个 FSDB 时间刻度",
+      "patterns": [
+        {
+          "pattern": 11,
+          "name": "imported_demo.fsdb",
+          "fsdb_sha256": "f3efc236ff3de08bf5bbc36ff7c1dd5b9ef8e952d031bee4a381733a6c974c0b",
+          "cycles": 69,
+          "segments": [
+            {
+              "reset_asserted_at": 0,
+              "reset_released_at": 36000,
+              "segment": 0,
+              "cycles": 69
+            }
+          ]
+        },
+        {
+          "pattern": 22,
+          "name": "tc_directed · seed 1",
+          "fsdb_sha256": "fd13d9ceaec3217ab7c551d20d72e4dd6c040c00b6ed9d1392e82d0212adeb73",
+          "cycles": 69,
+          "segments": [
+            {
+              "reset_asserted_at": 0,
+              "reset_released_at": 36000,
+              "segment": 0,
+              "cycles": 69
+            }
+          ]
+        },
+        {
+          "pattern": 33,
+          "name": "tc_reset · seed 1",
+          "fsdb_sha256": "bd86dab44cecc710e68bb4176fd74243dbc1817830084a4be8abb5ae61c8f958",
+          "cycles": 67,
+          "segments": [
+            {
+              "reset_asserted_at": 0,
+              "reset_released_at": 38000,
+              "segment": 0,
+              "cycles": 5
+            },
+            {
+              "reset_asserted_at": 168000,
+              "reset_released_at": 218000,
+              "segment": 1,
+              "cycles": 9
+            },
+            {
+              "reset_asserted_at": 308000,
+              "reset_released_at": 358000,
+              "segment": 2,
+              "cycles": 53
+            }
+          ]
+        }
+      ],
+      "files": [
+        "trace_properties.sv",
+        "formal_top.sv",
+        "files.f",
+        "samples.csv",
+        "transactions.json",
+        "trace.json",
+        "integration.json",
+        "Makefile",
+        "run_bmc.sby",
+        "run_cover.sby",
+        "slang.f",
+        "sby_properties.sv",
+        "sby_adaptation.json"
+      ]
+    },
+    "layouts": [
+      {
+        "width": 1500,
+        "height": 1000,
+        "no_horizontal_overflow": true
+      },
+      {
+        "width": 1280,
+        "height": 800,
+        "no_horizontal_overflow": true
+      },
+      {
+        "width": 1100,
+        "height": 720,
+        "no_horizontal_overflow": true
+      }
+    ],
+    "errors": [],
+    "checks": [
+      "Native file picker import",
+      "Regression FSDB selection",
+      "NPI hierarchy and 31 port mappings",
+      "Unique pattern IDs 11/22/33",
+      "All reset intervals retained",
+      "Make-backed generation",
+      "Code/CSV preview",
+      "ZIP download"
+    ]
+  },
+  "api_negative": {
+    "status": "PASS",
+    "duplicate_pattern": true,
+    "no_wave_source": true,
+    "unauthorized_upload_rejected": true
+  },
+  "unknown_scope_discovery": {
+    "status": "PASS",
+    "requested": "unknown_testbench.missing_dut",
+    "scope_count": 77,
+    "actual_dut_found": true
+  },
+  "vm_unit_tests": 35,
+  "historical_manifests": {
+    "vcs_eda_20261110": {
+      "files": 246,
+      "unchanged": true
+    },
+    "vcs_make_20261110": {
+      "files": 293,
+      "unchanged": true
+    },
+    "wavedrom_20261111": {
+      "files": 313,
+      "unchanged": true
+    },
+    "constraint_driver_20261111": {
+      "files": 1870,
+      "unchanged": true
+    },
+    "strict_random_20261111": {
+      "files": 1760,
+      "unchanged": true
+    },
+    "sv_tc_20261111": {
+      "files": 2141,
+      "unchanged": true
+    },
+    "main_phase_20261111": {
+      "files": 2245,
+      "unchanged": true
+    },
+    "studio_20261111": {
+      "files": 600,
+      "unchanged": true
+    }
+  },
+  "rtl_and_canonical_sva_unchanged": true,
+  "source_sha256": {
+    "simulation/vcs/fsdb_formal/core.py": "b987e786acb66761d1ec5f7027472570e62f4f99f4fd6f19dd62635b74419c89",
+    "simulation/vcs/fsdb_formal/engine.py": "4de948cd1ab24b5bb0fb94e85e8ef58682feb4b672a6e95cc75572fed93526d3",
+    "simulation/vcs/fsdb_formal/npi_reader.cpp": "7656272ebe7cc857d8fd6548668aeb98863b658d37c04d7a6355fa8e90577456",
+    "simulation/vcs/gui/default_dut.json": "843e673451addd3b88449a9f74ff158832f00fa25b4fd2baf94d1b851c0f1d0d",
+    "simulation/vcs/gui/formal_model.py": "f471ba18613b87d289e25432ce8f811567cb88e996fa5532f1da1c13a6779dbf",
+    "simulation/vcs/gui/model.py": "8bce7872b461aef221b7a8dacd2638edffaf6f18cbd9a98990d495278ee572b0",
+    "simulation/vcs/gui/server.py": "b76d96a3602ea92e7ce873d5df9317cdf1f879f312f0b64206eb847009387437",
+    "simulation/vcs/gui/vcd.py": "c922e16af51b36ee81b34fef6f12b075f4984231c1431aba464b1361278fdfb0",
+    "simulation/vcs/gui/web/app.js": "018a1091c8061f8479e1f70a3482fc5b5277ee9216c4d1b0979f32e538389c0e",
+    "simulation/vcs/gui/web/formal.css": "55f7ac10c439df6181852705851fb93d88e52e1ca66315a437c2ec45010e9637",
+    "simulation/vcs/gui/web/formal.js": "44116a3f556982b541bf00be790413d5b03b8f25d8af1f3bddbbb92b970f1601",
+    "simulation/vcs/gui/web/icon.svg": "98c7295c27435feb3d1fde45afd96b43e2c994a124c5b7648268af72ba1fb618",
+    "simulation/vcs/gui/web/index.html": "b8fef5a71477fc0e64a39af09b54dab2c0d0b1fd61c3c4ba2da213bd5b25253d",
+    "simulation/vcs/gui/web/style.css": "175391d19403ce879f9a9b038b9fd0c2b8848b194566d597567fabc0dc777200",
+    "simulation/vcs/gui/web/vendor/codemirror/addon/comment/comment.js": "a65c038258c6541658a0e9f24c56c78255e0e20d4cf06aa9ad83342069a589be",
+    "simulation/vcs/gui/web/vendor/codemirror/addon/dialog/dialog.css": "5df690d771f12118348562dd2a90060433ae2edeccd0908abcaa4480b1e3e468",
+    "simulation/vcs/gui/web/vendor/codemirror/addon/dialog/dialog.js": "fd8c925fcc25357617faff21220c026bb91a617b995268d96c5d39232fd42833",
+    "simulation/vcs/gui/web/vendor/codemirror/addon/edit/matchbrackets.js": "9d23a177f1e4d07e3acc37c210ffbe4c1c2eb4d55bbe54c16d3e7ad3d04d0401",
+    "simulation/vcs/gui/web/vendor/codemirror/addon/search/search.js": "4949580371fcd81c0ad70164b169dd8bcab2bd9869eddaa0d7e295508bec7a04",
+    "simulation/vcs/gui/web/vendor/codemirror/addon/search/searchcursor.js": "2c0b8cd8fe7ca5ca2253f4aacc914b390bff5b3cac3475df66c43a9ea8c8ccbe",
+    "simulation/vcs/gui/web/vendor/codemirror/lib/codemirror.css": "eb494ea972d2661ef86f7f6ac656dd6786d721e49c9c1b46e1eb967e4b6f9bf3",
+    "simulation/vcs/gui/web/vendor/codemirror/lib/codemirror.js": "e98aac5ffa07bae58acd4ff07c4293059f8921c0ae0eba506929d8c6f41c9288",
+    "simulation/vcs/gui/web/vendor/codemirror/LICENSE": "168a4becc968f5001e2ee2e0291b6e4daabafc1894a11ade1e11d56e96096e07",
+    "simulation/vcs/gui/web/vendor/codemirror/manifest.json": "68bd03b7e664f7462459568cb0200b327cc595027934cbff0f9d8dca68dbba96",
+    "simulation/vcs/gui/web/vendor/codemirror/mode/verilog/verilog.js": "ae7c58b13650019ca08760e04f3ece3315e889eb5aa849a34400f16542610eb1",
+    "simulation/vcs/gui/web/wave.js": "9611e9852086d0ca6ae519b6324d0fc5937bdd29cca9e321262dc7319e5d1044",
+    "simulation/vcs/Makefile": "ddf9065f9523cb7f860e77ca379dfd80359d11b8cbc9c98beace7cc18afc1524",
+    "simulation/vcs/tests/test_fsdb_formal.py": "c35e4e8386ce6de540161a5ac7222b1e9ee57e2d11e318ac0b929d0df0d8b26d"
+  },
+  "limitations": "Finite recorded traces of the CMDBUF protocol, not an unbounded functional proof; initialize DUT reset in the target formal engine and check every terminal cover."
+}

@@ -1,0 +1,87 @@
+{
+  "status": "GENERATED",
+  "id": "20261111_051214_8d079772",
+  "counts": {
+    "patterns": 3,
+    "segments": 5,
+    "cycles": 205,
+    "input_assumptions": 205,
+    "output_assertions": 205,
+    "terminal_covers": 5,
+    "transactions": 13
+  },
+  "formal_status": "NOT_RUN",
+  "dut_name": "项目基准 CMDBUF",
+  "sampling": "posedge 前一个 FSDB 时间刻度",
+  "patterns": [
+    {
+      "pattern": 11,
+      "name": "imported_demo.fsdb",
+      "fsdb_sha256": "f3efc236ff3de08bf5bbc36ff7c1dd5b9ef8e952d031bee4a381733a6c974c0b",
+      "cycles": 69,
+      "segments": [
+        {
+          "reset_asserted_at": 0,
+          "reset_released_at": 36000,
+          "segment": 0,
+          "cycles": 69
+        }
+      ]
+    },
+    {
+      "pattern": 22,
+      "name": "tc_directed · seed 1",
+      "fsdb_sha256": "fd13d9ceaec3217ab7c551d20d72e4dd6c040c00b6ed9d1392e82d0212adeb73",
+      "cycles": 69,
+      "segments": [
+        {
+          "reset_asserted_at": 0,
+          "reset_released_at": 36000,
+          "segment": 0,
+          "cycles": 69
+        }
+      ]
+    },
+    {
+      "pattern": 33,
+      "name": "tc_reset · seed 1",
+      "fsdb_sha256": "bd86dab44cecc710e68bb4176fd74243dbc1817830084a4be8abb5ae61c8f958",
+      "cycles": 67,
+      "segments": [
+        {
+          "reset_asserted_at": 0,
+          "reset_released_at": 38000,
+          "segment": 0,
+          "cycles": 5
+        },
+        {
+          "reset_asserted_at": 168000,
+          "reset_released_at": 218000,
+          "segment": 1,
+          "cycles": 9
+        },
+        {
+          "reset_asserted_at": 308000,
+          "reset_released_at": 358000,
+          "segment": 2,
+          "cycles": 53
+        }
+      ]
+    }
+  ],
+  "files": [
+    "trace_properties.sv",
+    "formal_top.sv",
+    "files.f",
+    "samples.csv",
+    "transactions.json",
+    "trace.json",
+    "integration.json",
+    "Makefile",
+    "run_bmc.sby",
+    "run_cover.sby",
+    "slang.f",
+    "sby_properties.sv",
+    "sby_adaptation.json"
+  ]
+}

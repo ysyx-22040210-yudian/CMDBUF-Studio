@@ -1,0 +1,30 @@
+{
+  "description": "WaveDrom：停钟期间拉低复位取消第一笔在途读，恢复后第二笔正常返回",
+  "sim": {"tick_ps": 10000, "clock_skew_ps": 1, "finish": "require_empty", "values": {"DATA_A": "0xdeadbeef0123456789abcdef55667788"}},
+  "signal": [
+    {"name": "clk"               , "wave": "p....l..p..........."},
+    {"name": "rst_n"             , "wave": "0.1..0.1............"},
+    {"name": "arvalid"           , "wave": "0.10....10.........."},
+    {"name": "src"               , "wave": "=...................", "data": ["0x1"]},
+    {"name": "araddr"            , "wave": "=.......=...........", "data": ["0x12345", "0x12385"]},
+    {"name": "arid"              , "wave": "=.......=...........", "data": ["0x2a", "0x2b"]},
+    {"name": "ar_port_id"        , "wave": "=...................", "data": ["0x6"]},
+    {"name": "arresp"            , "wave": "=...................", "data": ["0x0"]},
+    {"name": "rready"            , "wave": "=...................", "data": ["0x7"]},
+    {"name": "ar_rd_gnt"         , "wave": "=...................", "data": ["0xff"]},
+    {"name": "rw_rd_gnt"         , "wave": "=...................", "data": ["0xff"]},
+    {"name": "rd_mem_status[0]"  , "wave": "=...==....==........", "data": ["0x0", "0x2", "0x0", "0x1", "0x0"]},
+    {"name": "rd_mem_status[1]"  , "wave": "=...................", "data": ["0x0"]},
+    {"name": "rd_mem_status[2]"  , "wave": "=...................", "data": ["0x0"]},
+    {"name": "rd_mem_status[3]"  , "wave": "=...................", "data": ["0x0"]},
+    {"name": "rd_mem_status[4]"  , "wave": "=...................", "data": ["0x0"]},
+    {"name": "rd_mem_status[5]"  , "wave": "=...................", "data": ["0x0"]},
+    {"name": "rd_mem_status[6]"  , "wave": "=...................", "data": ["0x0"]},
+    {"name": "rd_mem_status[7]"  , "wave": "=...................", "data": ["0x0"]},
+    {"name": "mem_rdata"         , "wave": "=.............==....", "data": ["0x0", "DATA_A", "0x0"]},
+    {"name": "pc_err"            , "wave": "0..................."}
+  ],
+  "head": {"text": "WaveDrom：停钟期间拉低复位取消第一笔在途读，恢复后第二笔正常返回", "tick": 0},
+  "config": {"hscale": 2},
+  "require": {"accepted": 2, "issued": 2, "captured": 1, "retired": 1, "aborted": 1, "aborted_mem": 1, "reset_assertions": 2, "resp0": 1}
+ }

@@ -1,0 +1,27 @@
+{
+  "id": "20261111_054903_7050b1d8",
+  "kind": "fsdb_formal",
+  "state": "DONE",
+  "started": 1794347343.8495035,
+  "completed": 2,
+  "total": 2,
+  "stage": "已完成",
+  "log": "\n› make sync\nVM workspace: /tmp/cmdbuf_portable_20261111_054023_e347ff/windows_remote/workspace\nMake entry: cd /tmp/cmdbuf_portable_20261111_054023_e347ff/windows_remote && make help\nUpdated 0 files; retained 0 VM edits. Untracked VM files were kept.\n上传 FSDB: imported_demo.fsdb\n\n› make fsdb-formal REQUEST=/tmp/cmdbuf_portable_20261111_054023_e347ff/windows_remote/results/fsdb_requests/20261111_054903_7050b1d8.json\npython3 \"/tmp/cmdbuf_portable_20261111_054023_e347ff/windows_remote/workspace/simulation/vcs/fsdb_formal/engine.py\" --action export --request \"/tmp/cmdbuf_portable_20261111_054023_e347ff/windows_remote/results/fsdb_requests/20261111_054903_7050b1d8.json\"\nNPI_FORMAL 20261111_054903_7050b1d8 TOTAL 2\nNPI_PROGRESS 1/2 pattern=1\nNPI_PROGRESS 2/2 pattern=2\nNPI_PACKAGE /tmp/cmdbuf_portable_20261111_054023_e347ff/windows_remote/results/fsdb_formal/20261111_054903_7050b1d8/package.zip\n",
+  "commands": [
+    {
+      "argv": [
+        "sync"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "fsdb-formal",
+        "REQUEST=/tmp/cmdbuf_portable_20261111_054023_e347ff/windows_remote/results/fsdb_requests/20261111_054903_7050b1d8.json"
+      ],
+      "returncode": 0
+    }
+  ],
+  "formal_id": "20261111_054903_7050b1d8",
+  "ended": 1794347347.61447
+}

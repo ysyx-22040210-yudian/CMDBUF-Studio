@@ -1,0 +1,367 @@
+SBY  5:13:50 [run_bmc] Removing directory '/root/cmdbuf_rd_vcs_eda/results/fsdb_formal/20261111_051214_8d079772/run_bmc'.
+SBY  5:13:50 [run_bmc] Copy '/root/cmdbuf_rd_vcs_eda/results/fsdb_formal/20261111_051214_8d079772/rtl_snapshot' to '/root/cmdbuf_rd_vcs_eda/results/fsdb_formal/20261111_051214_8d079772/run_bmc/src/rtl_snapshot'.
+SBY  5:13:50 [run_bmc] Copy '/root/cmdbuf_rd_vcs_eda/results/fsdb_formal/20261111_051214_8d079772/sby_properties.sv' to '/root/cmdbuf_rd_vcs_eda/results/fsdb_formal/20261111_051214_8d079772/run_bmc/src/sby_properties.sv'.
+SBY  5:13:50 [run_bmc] Copy '/root/cmdbuf_rd_vcs_eda/results/fsdb_formal/20261111_051214_8d079772/formal_top.sv' to '/root/cmdbuf_rd_vcs_eda/results/fsdb_formal/20261111_051214_8d079772/run_bmc/src/formal_top.sv'.
+SBY  5:13:50 [run_bmc] Copy '/root/cmdbuf_rd_vcs_eda/results/fsdb_formal/20261111_051214_8d079772/slang.f' to '/root/cmdbuf_rd_vcs_eda/results/fsdb_formal/20261111_051214_8d079772/run_bmc/src/slang.f'.
+SBY  5:13:50 [run_bmc] engine_0: abc bmc3
+SBY  5:13:50 [run_bmc] base: starting process "cd run_bmc/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  5:13:52 [run_bmc] base: finished (returncode=0)
+SBY  5:13:52 [run_bmc] prep: starting process "cd run_bmc/model; yosys -ql design_prep.log design_prep.ys"
+SBY  5:13:52 [run_bmc] prep: finished (returncode=0)
+SBY  5:13:52 [run_bmc] aig: starting process "cd run_bmc/model; yosys -ql design_aiger.log design_aiger.ys"
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\clk like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\src [0] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\src [1] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rw_rd_gnt [0] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rw_rd_gnt [1] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rw_rd_gnt [2] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rw_rd_gnt [3] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rw_rd_gnt [4] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rw_rd_gnt [5] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rw_rd_gnt [6] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rw_rd_gnt [7] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rst_n like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rready [0] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rready [1] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rready [2] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [0] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [1] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [2] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [3] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [4] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [5] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [6] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [7] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [8] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [9] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [10] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [11] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [12] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [13] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [14] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [15] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [16] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [17] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [18] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [19] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [20] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [21] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [22] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [23] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [24] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [25] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [26] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [27] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [28] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [29] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [30] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\reset_segment [31] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [0] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [1] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [2] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [3] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [4] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [5] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [6] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [7] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [8] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [9] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [10] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [11] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [12] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [13] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [14] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\rd_mem_status [15] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pc_err like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [0] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [1] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [2] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [3] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [4] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [5] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [6] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [7] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [8] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [9] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [10] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [11] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [12] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [13] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [14] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [15] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [16] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [17] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [18] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [19] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [20] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [21] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [22] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [23] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [24] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [25] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [26] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [27] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [28] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [29] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [30] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\pattern [31] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [0] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [1] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [2] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [3] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [4] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [5] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [6] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [7] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [8] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [9] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [10] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [11] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [12] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [13] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [14] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [15] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [16] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [17] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [18] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [19] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [20] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [21] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [22] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [23] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [24] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [25] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [26] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [27] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [28] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [29] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [30] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [31] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [32] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [33] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [34] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [35] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [36] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [37] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [38] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [39] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [40] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [41] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [42] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [43] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [44] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [45] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [46] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [47] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [48] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [49] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [50] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [51] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [52] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [53] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [54] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [55] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [56] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [57] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [58] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [59] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [60] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [61] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [62] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [63] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [64] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [65] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [66] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [67] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [68] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [69] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [70] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [71] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [72] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [73] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [74] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [75] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [76] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [77] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [78] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [79] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [80] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [81] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [82] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [83] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [84] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [85] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [86] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [87] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [88] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [89] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [90] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [91] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [92] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [93] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [94] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [95] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [96] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [97] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [98] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [99] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [100] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [101] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [102] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [103] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [104] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [105] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [106] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [107] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [108] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [109] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [110] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [111] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [112] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [113] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [114] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [115] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [116] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [117] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [118] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [119] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [120] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [121] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [122] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [123] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [124] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [125] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [126] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\mem_rdata [127] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\arvalid like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\arresp [0] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\arresp [1] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\arid [0] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\arid [1] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\arid [2] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\arid [3] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\arid [4] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\arid [5] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\arid [6] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\arid [7] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [0] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [1] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [2] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [3] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [4] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [5] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [6] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [7] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [8] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [9] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [10] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [11] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [12] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [13] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [14] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [15] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [16] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\araddr [17] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_rd_gnt [0] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_rd_gnt [1] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_rd_gnt [2] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_rd_gnt [3] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_rd_gnt [4] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_rd_gnt [5] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_rd_gnt [6] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_rd_gnt [7] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_port_id [0] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_port_id [1] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_port_id [2] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_port_id [3] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating undriven bit cmdbuf_fsdb_formal_top.\ar_port_id [4] like $anyseq.
+SBY  5:13:54 [run_bmc] aig: Warning: Treating a total of 266 undriven bits in cmdbuf_fsdb_formal_top like $anyseq.
+SBY  5:13:55 [run_bmc] aig: finished (returncode=0)
+SBY  5:13:55 [run_bmc] engine_0: starting process "cd run_bmc; yosys-abc -c 'read_aiger model/design_aiger.aig; fold; strash; bmc3 -F 71 -v; write_cex -a engine_0/trace.aiw'"
+SBY  5:13:55 [run_bmc] engine_0: ======== ABC command line "read_aiger model/design_aiger.aig; fold; strash; bmc3 -F 71 -v; write_cex -a engine_0/trace.aiw"
+SBY  5:13:55 [run_bmc] engine_0: Warning: The last 209 outputs are interpreted as constraints.
+SBY  5:13:55 [run_bmc] engine_0: Running "bmc3". PI/PO/Reg = 1791/205/1937. And =  27714. Lev =   235. ObjNums = 15378.
+SBY  5:13:55 [run_bmc] engine_0: Params: FramesMax = 71. Start = 0. ConfLimit = 0. TimeOut = 0. SolveAll = 0.
+SBY  5:13:55 [run_bmc] engine_0: 0 + : Var =       1. Cla =        0. Conf =      0. Learn =      0.    0 MB   4 MB     0.03 sec
+SBY  5:13:55 [run_bmc] engine_0: 1 + : Var =    1136. Cla =     2547. Conf =      0. Learn =      0.    0 MB   4 MB     0.03 sec
+SBY  5:13:55 [run_bmc] engine_0: 2 + : Var =    2216. Cla =     5748. Conf =      0. Learn =      0.    0 MB   4 MB     0.03 sec
+SBY  5:13:55 [run_bmc] engine_0: 3 + : Var =    3617. Cla =    10128. Conf =      9. Learn =      8.    0 MB   4 MB     0.04 sec
+SBY  5:13:55 [run_bmc] engine_0: 4 + : Var =    6770. Cla =    17062. Conf =     17. Learn =     13.    0 MB   4 MB     0.04 sec
+SBY  5:13:55 [run_bmc] engine_0: 5 + : Var =   10692. Cla =    27117. Conf =     29. Learn =     19.    0 MB   5 MB     0.05 sec
+SBY  5:13:55 [run_bmc] engine_0: 6 + : Var =   17214. Cla =    47854. Conf =     43. Learn =     26.    0 MB   5 MB     0.06 sec
+SBY  5:13:55 [run_bmc] engine_0: 7 + : Var =   24292. Cla =    71030. Conf =     61. Learn =     35.    0 MB   6 MB     0.08 sec
+SBY  5:13:55 [run_bmc] engine_0: 8 + : Var =   31990. Cla =    96892. Conf =     90. Learn =     54.    1 MB   8 MB     0.11 sec
+SBY  5:13:55 [run_bmc] engine_0: 9 + : Var =   39967. Cla =   124327. Conf =    149. Learn =     89.    1 MB   8 MB     0.15 sec
+SBY  5:13:55 [run_bmc] engine_0: 10 + : Var =   48611. Cla =   154951. Conf =    230. Learn =    135.    1 MB  10 MB     0.20 sec
+SBY  5:13:55 [run_bmc] engine_0: 11 + : Var =   58703. Cla =   192415. Conf =    347. Learn =    202.    1 MB  14 MB     0.27 sec
+SBY  5:13:55 [run_bmc] engine_0: 12 + : Var =   69074. Cla =   232281. Conf =    416. Learn =    241.    1 MB  14 MB     0.36 sec
+SBY  5:13:55 [run_bmc] engine_0: 13 + : Var =   79451. Cla =   272432. Conf =    595. Learn =    395.    1 MB  16 MB     0.47 sec
+SBY  5:13:55 [run_bmc] engine_0: 14 + : Var =   89833. Cla =   312602. Conf =    636. Learn =    427.    1 MB  18 MB     0.62 sec
+SBY  5:13:55 [run_bmc] engine_0: 15 + : Var =  100218. Cla =   352787. Conf =    739. Learn =    484.    1 MB  24 MB     0.78 sec
+SBY  5:13:56 [run_bmc] engine_0: 16 + : Var =  110606. Cla =   392986. Conf =    807. Learn =    523.    1 MB  26 MB     0.95 sec
+SBY  5:13:56 [run_bmc] engine_0: 17 + : Var =  120999. Cla =   433275. Conf =    863. Learn =    558.    1 MB  27 MB     1.16 sec
+SBY  5:13:56 [run_bmc] engine_0: 18 + : Var =  131396. Cla =   473581. Conf =    938. Learn =    603.    1 MB  29 MB     1.39 sec
+SBY  5:13:56 [run_bmc] engine_0: 19 + : Var =  141797. Cla =   513904. Conf =   1016. Learn =    648.    1 MB  31 MB     1.66 sec
+SBY  5:13:57 [run_bmc] engine_0: 20 + : Var =  152203. Cla =   554248. Conf =   1109. Learn =    710.    1 MB  32 MB     1.95 sec
+SBY  5:13:57 [run_bmc] engine_0: 21 + : Var =  162613. Cla =   594612. Conf =   1159. Learn =    738.    1 MB  34 MB     2.28 sec
+SBY  5:13:57 [run_bmc] engine_0: 22 + : Var =  173028. Cla =   634995. Conf =   1256. Learn =    804.    1 MB  35 MB     2.68 sec
+SBY  5:13:58 [run_bmc] engine_0: 23 + : Var =  183446. Cla =   675393. Conf =   1330. Learn =    845.    1 MB  37 MB     3.07 sec
+SBY  5:13:58 [run_bmc] engine_0: 24 + : Var =  193869. Cla =   715813. Conf =   1404. Learn =    889.    1 MB  39 MB     3.60 sec
+SBY  5:13:59 [run_bmc] engine_0: 25 + : Var =  204297. Cla =   756256. Conf =   1462. Learn =    924.    2 MB  51 MB     4.15 sec
+SBY  5:13:59 [run_bmc] engine_0: 26 + : Var =  214730. Cla =   796719. Conf =   1630. Learn =   1021.    2 MB  52 MB     4.68 sec
+SBY  5:14:00 [run_bmc] engine_0: 27 + : Var =  225166. Cla =   837197. Conf =   1966. Learn =   1266.    2 MB  53 MB     5.27 sec
+SBY  5:14:00 [run_bmc] engine_0: 28 + : Var =  235606. Cla =   877691. Conf =   2054. Learn =   1323.    2 MB  55 MB     5.87 sec
+SBY  5:14:01 [run_bmc] engine_0: 29 + : Var =  246051. Cla =   918209. Conf =   2109. Learn =   1356.    2 MB  56 MB     6.47 sec
+SBY  5:14:02 [run_bmc] engine_0: 30 + : Var =  256498. Cla =   958739. Conf =   2173. Learn =   1395.    2 MB  58 MB     7.12 sec
+SBY  5:14:02 [run_bmc] engine_0: 31 + : Var =  266951. Cla =   999294. Conf =   2503. Learn =   1614.    2 MB  59 MB     7.84 sec
+SBY  5:14:03 [run_bmc] engine_0: 32 + : Var =  277407. Cla =  1039864. Conf =   2703. Learn =   1734.    2 MB  61 MB     8.50 sec
+SBY  5:14:04 [run_bmc] engine_0: 33 + : Var =  287864. Cla =  1080441. Conf =   2815. Learn =   1810.    2 MB  63 MB     9.19 sec
+SBY  5:14:05 [run_bmc] engine_0: 34 + : Var =  298321. Cla =  1121018. Conf =   2911. Learn =   1871.    2 MB  64 MB     9.91 sec
+SBY  5:14:05 [run_bmc] engine_0: 35 + : Var =  308778. Cla =  1161595. Conf =   2984. Learn =   1916.    2 MB  66 MB    10.67 sec
+SBY  5:14:06 [run_bmc] engine_0: 36 + : Var =  319235. Cla =  1202172. Conf =   3083. Learn =   1979.    2 MB  67 MB    11.52 sec
+SBY  5:14:07 [run_bmc] engine_0: 37 + : Var =  329692. Cla =  1242749. Conf =   3141. Learn =   2012.    2 MB  69 MB    12.40 sec
+SBY  5:14:08 [run_bmc] engine_0: 38 + : Var =  340149. Cla =  1283326. Conf =   3230. Learn =   2061.    2 MB  70 MB    13.37 sec
+SBY  5:14:09 [run_bmc] engine_0: 39 + : Var =  350606. Cla =  1323903. Conf =   3339. Learn =   2124.    2 MB  72 MB    14.37 sec
+SBY  5:14:10 [run_bmc] engine_0: 40 + : Var =  361063. Cla =  1364480. Conf =   3430. Learn =   2184.    2 MB  73 MB    15.39 sec
+SBY  5:14:11 [run_bmc] engine_0: 41 + : Var =  371520. Cla =  1405057. Conf =   3496. Learn =   2230.    2 MB  74 MB    16.43 sec
+SBY  5:14:12 [run_bmc] engine_0: 42 + : Var =  381977. Cla =  1445634. Conf =   3584. Learn =   2278.    3 MB  76 MB    17.53 sec
+SBY  5:14:13 [run_bmc] engine_0: 43 + : Var =  392434. Cla =  1486211. Conf =   3722. Learn =   2357.    3 MB  77 MB    18.70 sec
+SBY  5:14:15 [run_bmc] engine_0: 44 + : Var =  402891. Cla =  1526788. Conf =   3959. Learn =   2542.    3 MB 100 MB    19.91 sec
+SBY  5:14:16 [run_bmc] engine_0: 45 + : Var =  413348. Cla =  1567365. Conf =   4116. Learn =   2650.    3 MB 102 MB    21.17 sec
+SBY  5:14:17 [run_bmc] engine_0: 46 + : Var =  423805. Cla =  1607942. Conf =   4294. Learn =   2764.    3 MB 104 MB    22.59 sec
+SBY  5:14:19 [run_bmc] engine_0: 47 + : Var =  434262. Cla =  1648519. Conf =   4517. Learn =   2947.    3 MB 105 MB    24.07 sec
+SBY  5:14:20 [run_bmc] engine_0: 48 + : Var =  444719. Cla =  1689096. Conf =   4937. Learn =   3210.    3 MB 107 MB    25.55 sec
+SBY  5:14:22 [run_bmc] engine_0: 49 + : Var =  455176. Cla =  1729673. Conf =   5277. Learn =   3408.    3 MB 109 MB    27.28 sec
+SBY  5:14:23 [run_bmc] engine_0: 50 + : Var =  465633. Cla =  1770250. Conf =   5451. Learn =   3519.    3 MB 110 MB    28.87 sec
+SBY  5:14:28 [run_bmc] engine_0: 51 + : Var =  476090. Cla =  1810827. Conf =   5635. Learn =   3618.    3 MB 112 MB    30.76 sec
+SBY  5:14:30 [run_bmc] engine_0: 52 + : Var =  486547. Cla =  1851404. Conf =   5834. Learn =   3733.    3 MB 113 MB    32.63 sec
+SBY  5:14:32 [run_bmc] engine_0: 53 + : Var =  497004. Cla =  1891981. Conf =   5966. Learn =   3829.    3 MB 115 MB    34.65 sec
+SBY  5:14:34 [run_bmc] engine_0: 54 + : Var =  507461. Cla =  1932558. Conf =   6168. Learn =   3939.    3 MB 116 MB    36.68 sec
+SBY  5:14:36 [run_bmc] engine_0: 55 + : Var =  517918. Cla =  1973135. Conf =   6747. Learn =   4381.    3 MB 118 MB    38.80 sec
+SBY  5:14:38 [run_bmc] engine_0: 56 + : Var =  528375. Cla =  2013712. Conf =   7071. Learn =   4591.    3 MB 119 MB    41.09 sec
+SBY  5:14:40 [run_bmc] engine_0: 57 + : Var =  538832. Cla =  2054289. Conf =   7222. Learn =   4680.    3 MB 121 MB    43.39 sec
+SBY  5:14:43 [run_bmc] engine_0: 58 + : Var =  549289. Cla =  2094866. Conf =   7409. Learn =   4800.    3 MB 122 MB    45.66 sec
+SBY  5:14:45 [run_bmc] engine_0: 59 + : Var =  559746. Cla =  2135443. Conf =   7634. Learn =   4987.    4 MB 124 MB    48.04 sec
+SBY  5:14:48 [run_bmc] engine_0: 60 + : Var =  570203. Cla =  2176020. Conf =   7690. Learn =   5020.    4 MB 125 MB    50.57 sec
+SBY  5:14:50 [run_bmc] engine_0: 61 + : Var =  580660. Cla =  2216597. Conf =   7769. Learn =   5065.    4 MB 127 MB    53.00 sec
+SBY  5:14:52 [run_bmc] engine_0: 62 + : Var =  591117. Cla =  2257174. Conf =   7983. Learn =   5203.    4 MB 129 MB    55.50 sec
+SBY  5:14:55 [run_bmc] engine_0: 63 + : Var =  601574. Cla =  2297751. Conf =   8130. Learn =   5289.    4 MB 130 MB    58.20 sec
+SBY  5:14:58 [run_bmc] engine_0: 64 + : Var =  612031. Cla =  2338328. Conf =   8192. Learn =   5329.    4 MB 132 MB    60.78 sec
+SBY  5:15:00 [run_bmc] engine_0: 65 + : Var =  622488. Cla =  2378905. Conf =   8234. Learn =   5357.    4 MB 134 MB    63.47 sec
+SBY  5:15:03 [run_bmc] engine_0: 66 + : Var =  632945. Cla =  2419482. Conf =   8295. Learn =   5393.    4 MB 136 MB    66.26 sec
+SBY  5:15:06 [run_bmc] engine_0: 67 + : Var =  643402. Cla =  2460059. Conf =   8361. Learn =   5435.    4 MB 137 MB    69.05 sec
+SBY  5:15:09 [run_bmc] engine_0: 68 + : Var =  653859. Cla =  2500636. Conf =   8450. Learn =   5488.    4 MB 139 MB    72.04 sec
+SBY  5:15:12 [run_bmc] engine_0: 69 + : Var =  664316. Cla =  2541213. Conf =   8522. Learn =   5536.    4 MB 140 MB    74.82 sec
+SBY  5:15:14 [run_bmc] engine_0: 70 + : Var =  674773. Cla =  2581790. Conf =   8639. Learn =   5600.    4 MB 141 MB    77.48 sec
+SBY  5:15:14 [run_bmc] engine_0: Runtime:  CNF = 0.6 sec (0.8 %)  UNSAT = 76.7 sec (99.0 %)  SAT = 0.0 sec (0.0 %)  UNDEC = 0.0 sec (0.0 %)
+SBY  5:15:14 [run_bmc] engine_0: LStart(P) = 10000  LDelta(Q) = 2000  LRatio(R) = 80  ReduceDB = 0  Vars = 674773  Used = 572330 (84.82 %)
+SBY  5:15:14 [run_bmc] engine_0: Buffs = 29689. Dups = 0.   Hash hits = 6892.  Hash misses = 575796.  UniProps = 0.
+SBY  5:15:14 [run_bmc] engine_0: No output asserted in 71 frames. Resource limit reached (conf limit 0). Time =    77.51 sec
+SBY  5:15:14 [run_bmc] engine_0: Counter-example is not available.
+SBY  5:15:14 [run_bmc] engine_0: finished (returncode=0)
+SBY  5:15:14 [run_bmc] engine_0: Status returned by engine: PASS
+SBY  5:15:14 [run_bmc] summary: Elapsed clock time [H:MM:SS (secs)]: 0:01:21 (81)
+SBY  5:15:14 [run_bmc] summary: Elapsed process time [H:MM:SS (secs)]: 0:01:25 (85)
+SBY  5:15:14 [run_bmc] summary: engine_0 (abc bmc3) returned PASS
+SBY  5:15:14 [run_bmc] summary: engine_0 did not produce any traces
+SBY  5:15:14 [run_bmc] DONE (PASS, rc=0)

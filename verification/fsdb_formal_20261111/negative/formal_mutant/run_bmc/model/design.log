@@ -1,0 +1,3548 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.67+94 (git sha1 7defa5186-dirty, Release, Clang /usr/bin/clang++ 18.1.8)
+
+-- Executing script file `../model/design.ys' --
+
+1. Executing SLANG frontend.
+Top level design units:
+    cmdbuf_fsdb_formal_top
+
+
+Build succeeded: 0 errors, 0 warnings
+
+1.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2094'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2093'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$1891'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$1878'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$1608'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$787'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$420'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$304'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$292'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$226'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$20'.
+Cleaned up 10 empty switches.
+<suppressed ~201 debug messages>
+
+1.2. Executing TRIBUF pass.
+
+1.3. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 44 switch rules as full_case in process $1891 in module cmdbuf_fsdb_formal_top.
+Marked 56 switch rules as full_case in process $1608 in module cmdbuf_fsdb_formal_top.
+Marked 431 switch rules as full_case in process $787 in module cmdbuf_fsdb_formal_top.
+Marked 90 switch rules as full_case in process $420 in module cmdbuf_fsdb_formal_top.
+Marked 17 switch rules as full_case in process $304 in module cmdbuf_fsdb_formal_top.
+Marked 3 switch rules as full_case in process $292 in module cmdbuf_fsdb_formal_top.
+Marked 6 switch rules as full_case in process $226 in module cmdbuf_fsdb_formal_top.
+Marked 29 switch rules as full_case in process $20 in module cmdbuf_fsdb_formal_top.
+Removed a total of 0 dead cases.
+
+1.4. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 364 redundant assignments.
+Promoted 0 assignments to connections.
+
+1.5. Executing PROC_INIT pass (extract init attributes).
+
+1.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~1272 debug messages>
+
+1.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$15729'.
+     1/1: $15728
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$15712'.
+     1/1: $15711
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$15663'.
+     1/1: $15662
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$15646'.
+     1/1: $15645
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$15597'.
+     1/1: $15596
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$15580'.
+     1/1: $15579
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$15531'.
+     1/1: $15530
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$15514'.
+     1/1: $15513
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$15465'.
+     1/1: $15464
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$15448'.
+     1/1: $15447
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$15399'.
+     1/1: $15398
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$15382'.
+     1/1: $15381
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$15333'.
+     1/1: $15332
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$15316'.
+     1/1: $15315
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$15267'.
+     1/1: $15266
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$15250'.
+     1/1: $15249
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$15201'.
+     1/1: $15200
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$15184'.
+     1/1: $15183
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$15135'.
+     1/1: $15134
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$15118'.
+     1/1: $15117
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$15069'.
+     1/1: $15068
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$15052'.
+     1/1: $15051
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$15003'.
+     1/1: $15002
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14986'.
+     1/1: $14985
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14937'.
+     1/1: $14936
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14920'.
+     1/1: $14919
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14871'.
+     1/1: $14870
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14854'.
+     1/1: $14853
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14805'.
+     1/1: $14804
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14788'.
+     1/1: $14787
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14739'.
+     1/1: $14738
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14722'.
+     1/1: $14721
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14673'.
+     1/1: $14672
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14656'.
+     1/1: $14655
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14607'.
+     1/1: $14606
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14590'.
+     1/1: $14589
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14541'.
+     1/1: $14540
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14524'.
+     1/1: $14523
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14475'.
+     1/1: $14474
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14458'.
+     1/1: $14457
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14409'.
+     1/1: $14408
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14392'.
+     1/1: $14391
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14343'.
+     1/1: $14342
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14326'.
+     1/1: $14325
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14277'.
+     1/1: $14276
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14260'.
+     1/1: $14259
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14211'.
+     1/1: $14210
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14194'.
+     1/1: $14193
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14145'.
+     1/1: $14144
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14128'.
+     1/1: $14127
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14079'.
+     1/1: $14078
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14062'.
+     1/1: $14061
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$14013'.
+     1/1: $14012
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13996'.
+     1/1: $13995
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13947'.
+     1/1: $13946
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13930'.
+     1/1: $13929
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13881'.
+     1/1: $13880
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13864'.
+     1/1: $13863
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13815'.
+     1/1: $13814
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13798'.
+     1/1: $13797
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13749'.
+     1/1: $13748
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13732'.
+     1/1: $13731
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13683'.
+     1/1: $13682
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13666'.
+     1/1: $13665
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13617'.
+     1/1: $13616
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13600'.
+     1/1: $13599
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13551'.
+     1/1: $13550
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13534'.
+     1/1: $13533
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13485'.
+     1/1: $13484
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13468'.
+     1/1: $13467
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13419'.
+     1/1: $13418
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13402'.
+     1/1: $13401
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13353'.
+     1/1: $13352
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13336'.
+     1/1: $13335
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13287'.
+     1/1: $13286
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13270'.
+     1/1: $13269
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13221'.
+     1/1: $13220
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13204'.
+     1/1: $13203
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13155'.
+     1/1: $13154
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13138'.
+     1/1: $13137
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13089'.
+     1/1: $13088
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13062'.
+     1/1: $13061
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$13013'.
+     1/1: $13012
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12996'.
+     1/1: $12995
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12947'.
+     1/1: $12946
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12930'.
+     1/1: $12929
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12881'.
+     1/1: $12880
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12864'.
+     1/1: $12863
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12815'.
+     1/1: $12814
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12798'.
+     1/1: $12797
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12749'.
+     1/1: $12748
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12730'.
+     1/1: $12729
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12681'.
+     1/1: $12680
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12664'.
+     1/1: $12663
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12615'.
+     1/1: $12614
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12598'.
+     1/1: $12597
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12549'.
+     1/1: $12548
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12532'.
+     1/1: $12531
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12483'.
+     1/1: $12482
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12466'.
+     1/1: $12465
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12417'.
+     1/1: $12416
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12400'.
+     1/1: $12399
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12351'.
+     1/1: $12350
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12334'.
+     1/1: $12333
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12285'.
+     1/1: $12284
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12268'.
+     1/1: $12267
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12219'.
+     1/1: $12218
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12211'.
+     1/1: $12210
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12194'.
+     1/1: $12193
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12145'.
+     1/1: $12144
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12128'.
+     1/1: $12127
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12079'.
+     1/1: $12078
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12062'.
+     1/1: $12061
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$12013'.
+     1/1: $12012
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11994'.
+     1/1: $11993
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11945'.
+     1/1: $11944
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11928'.
+     1/1: $11927
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11879'.
+     1/1: $11878
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11862'.
+     1/1: $11861
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11813'.
+     1/1: $11812
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11796'.
+     1/1: $11795
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11747'.
+     1/1: $11746
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11730'.
+     1/1: $11729
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11681'.
+     1/1: $11680
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11664'.
+     1/1: $11663
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11615'.
+     1/1: $11614
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11607'.
+     1/1: $11606
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11590'.
+     1/1: $11589
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11541'.
+     1/1: $11540
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11524'.
+     1/1: $11523
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11475'.
+     1/1: $11474
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11456'.
+     1/1: $11455
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11407'.
+     1/1: $11406
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11390'.
+     1/1: $11389
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11341'.
+     1/1: $11340
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11324'.
+     1/1: $11323
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11275'.
+     1/1: $11274
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11267'.
+     1/1: $11266
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11250'.
+     1/1: $11249
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11201'.
+     1/1: $11200
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11184'.
+     1/1: $11183
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11135'.
+     1/1: $11134
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11118'.
+     1/1: $11117
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11069'.
+     1/1: $11068
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11052'.
+     1/1: $11051
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$11003'.
+     1/1: $11002
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10986'.
+     1/1: $10985
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10937'.
+     1/1: $10936
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10920'.
+     1/1: $10919
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10871'.
+     1/1: $10870
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10854'.
+     1/1: $10853
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10805'.
+     1/1: $10804
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10788'.
+     1/1: $10787
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10739'.
+     1/1: $10738
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10722'.
+     1/1: $10721
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10673'.
+     1/1: $10672
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10656'.
+     1/1: $10655
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10607'.
+     1/1: $10606
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10590'.
+     1/1: $10589
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10541'.
+     1/1: $10540
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10524'.
+     1/1: $10523
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10475'.
+     1/1: $10474
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10458'.
+     1/1: $10457
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10409'.
+     1/1: $10408
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10392'.
+     1/1: $10391
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10343'.
+     1/1: $10342
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10326'.
+     1/1: $10325
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10277'.
+     1/1: $10276
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10260'.
+     1/1: $10259
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10211'.
+     1/1: $10210
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10194'.
+     1/1: $10193
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10145'.
+     1/1: $10144
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10128'.
+     1/1: $10127
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10079'.
+     1/1: $10078
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10062'.
+     1/1: $10061
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$10013'.
+     1/1: $10012
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9996'.
+     1/1: $9995
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9947'.
+     1/1: $9946
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9930'.
+     1/1: $9929
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9881'.
+     1/1: $9880
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9864'.
+     1/1: $9863
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9815'.
+     1/1: $9814
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9798'.
+     1/1: $9797
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9749'.
+     1/1: $9748
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9732'.
+     1/1: $9731
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9683'.
+     1/1: $9682
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9666'.
+     1/1: $9665
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9617'.
+     1/1: $9616
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9600'.
+     1/1: $9599
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9551'.
+     1/1: $9550
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9534'.
+     1/1: $9533
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9485'.
+     1/1: $9484
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9468'.
+     1/1: $9467
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9419'.
+     1/1: $9418
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9402'.
+     1/1: $9401
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9353'.
+     1/1: $9352
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9336'.
+     1/1: $9335
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9287'.
+     1/1: $9286
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9270'.
+     1/1: $9269
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9221'.
+     1/1: $9220
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9204'.
+     1/1: $9203
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9155'.
+     1/1: $9154
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9138'.
+     1/1: $9137
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9089'.
+     1/1: $9088
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9072'.
+     1/1: $9071
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9023'.
+     1/1: $9022
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$9006'.
+     1/1: $9005
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8957'.
+     1/1: $8956
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8940'.
+     1/1: $8939
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8891'.
+     1/1: $8890
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8874'.
+     1/1: $8873
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8825'.
+     1/1: $8824
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8808'.
+     1/1: $8807
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8759'.
+     1/1: $8758
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8742'.
+     1/1: $8741
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8693'.
+     1/1: $8692
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8676'.
+     1/1: $8675
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8627'.
+     1/1: $8626
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8610'.
+     1/1: $8609
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8561'.
+     1/1: $8560
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8544'.
+     1/1: $8543
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8495'.
+     1/1: $8494
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8478'.
+     1/1: $8477
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8429'.
+     1/1: $8428
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8412'.
+     1/1: $8411
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8363'.
+     1/1: $8362
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8346'.
+     1/1: $8345
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8297'.
+     1/1: $8296
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8280'.
+     1/1: $8279
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8231'.
+     1/1: $8230
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8214'.
+     1/1: $8213
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8165'.
+     1/1: $8164
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8148'.
+     1/1: $8147
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8099'.
+     1/1: $8098
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8082'.
+     1/1: $8081
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8033'.
+     1/1: $8032
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$8016'.
+     1/1: $8015
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7967'.
+     1/1: $7966
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7950'.
+     1/1: $7949
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7901'.
+     1/1: $7900
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7884'.
+     1/1: $7883
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7835'.
+     1/1: $7834
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7818'.
+     1/1: $7817
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7769'.
+     1/1: $7768
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7752'.
+     1/1: $7751
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7703'.
+     1/1: $7702
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7686'.
+     1/1: $7685
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7637'.
+     1/1: $7636
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7620'.
+     1/1: $7619
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7571'.
+     1/1: $7570
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7554'.
+     1/1: $7553
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7505'.
+     1/1: $7504
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7488'.
+     1/1: $7487
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7439'.
+     1/1: $7438
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7422'.
+     1/1: $7421
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7373'.
+     1/1: $7372
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7356'.
+     1/1: $7355
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7307'.
+     1/1: $7306
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7290'.
+     1/1: $7289
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7241'.
+     1/1: $7240
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7214'.
+     1/1: $7213
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7165'.
+     1/1: $7164
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7148'.
+     1/1: $7147
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7099'.
+     1/1: $7098
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7082'.
+     1/1: $7081
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7033'.
+     1/1: $7032
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$7016'.
+     1/1: $7015
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6967'.
+     1/1: $6966
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6950'.
+     1/1: $6949
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6901'.
+     1/1: $6900
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6882'.
+     1/1: $6881
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6833'.
+     1/1: $6832
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6816'.
+     1/1: $6815
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6767'.
+     1/1: $6766
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6750'.
+     1/1: $6749
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6701'.
+     1/1: $6700
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6693'.
+     1/1: $6692
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6676'.
+     1/1: $6675
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6627'.
+     1/1: $6626
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6610'.
+     1/1: $6609
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6561'.
+     1/1: $6560
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6544'.
+     1/1: $6543
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6495'.
+     1/1: $6494
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6478'.
+     1/1: $6477
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6429'.
+     1/1: $6428
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6412'.
+     1/1: $6411
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6363'.
+     1/1: $6362
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6346'.
+     1/1: $6345
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6297'.
+     1/1: $6296
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6280'.
+     1/1: $6279
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6231'.
+     1/1: $6230
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6214'.
+     1/1: $6213
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6165'.
+     1/1: $6164
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6148'.
+     1/1: $6147
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6099'.
+     1/1: $6098
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6082'.
+     1/1: $6081
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6033'.
+     1/1: $6032
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$6016'.
+     1/1: $6015
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5967'.
+     1/1: $5966
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5950'.
+     1/1: $5949
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5901'.
+     1/1: $5900
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5884'.
+     1/1: $5883
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5835'.
+     1/1: $5834
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5818'.
+     1/1: $5817
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5769'.
+     1/1: $5768
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5752'.
+     1/1: $5751
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5703'.
+     1/1: $5702
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5686'.
+     1/1: $5685
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5637'.
+     1/1: $5636
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5620'.
+     1/1: $5619
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5571'.
+     1/1: $5570
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5554'.
+     1/1: $5553
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5505'.
+     1/1: $5504
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5488'.
+     1/1: $5487
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5439'.
+     1/1: $5438
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5422'.
+     1/1: $5421
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5373'.
+     1/1: $5372
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5356'.
+     1/1: $5355
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5307'.
+     1/1: $5306
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5290'.
+     1/1: $5289
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5241'.
+     1/1: $5240
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5224'.
+     1/1: $5223
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5175'.
+     1/1: $5174
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5158'.
+     1/1: $5157
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5109'.
+     1/1: $5108
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5092'.
+     1/1: $5091
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5043'.
+     1/1: $5042
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$5026'.
+     1/1: $5025
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4977'.
+     1/1: $4976
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4960'.
+     1/1: $4959
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4911'.
+     1/1: $4910
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4894'.
+     1/1: $4893
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4845'.
+     1/1: $4844
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4828'.
+     1/1: $4827
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4779'.
+     1/1: $4778
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4762'.
+     1/1: $4761
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4713'.
+     1/1: $4712
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4696'.
+     1/1: $4695
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4647'.
+     1/1: $4646
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4630'.
+     1/1: $4629
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4581'.
+     1/1: $4580
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4564'.
+     1/1: $4563
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4515'.
+     1/1: $4514
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4498'.
+     1/1: $4497
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4449'.
+     1/1: $4448
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4432'.
+     1/1: $4431
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4383'.
+     1/1: $4382
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4366'.
+     1/1: $4365
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4317'.
+     1/1: $4316
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4300'.
+     1/1: $4299
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4251'.
+     1/1: $4250
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4234'.
+     1/1: $4233
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4185'.
+     1/1: $4184
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4168'.
+     1/1: $4167
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4119'.
+     1/1: $4118
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4102'.
+     1/1: $4101
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4053'.
+     1/1: $4052
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$4036'.
+     1/1: $4035
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3987'.
+     1/1: $3986
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3970'.
+     1/1: $3969
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3921'.
+     1/1: $3920
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3904'.
+     1/1: $3903
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3855'.
+     1/1: $3854
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3838'.
+     1/1: $3837
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3789'.
+     1/1: $3788
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3772'.
+     1/1: $3771
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3723'.
+     1/1: $3722
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3706'.
+     1/1: $3705
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3657'.
+     1/1: $3656
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3640'.
+     1/1: $3639
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3591'.
+     1/1: $3590
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3574'.
+     1/1: $3573
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3525'.
+     1/1: $3524
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3508'.
+     1/1: $3507
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3459'.
+     1/1: $3458
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3442'.
+     1/1: $3441
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3393'.
+     1/1: $3392
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3376'.
+     1/1: $3375
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3327'.
+     1/1: $3326
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3310'.
+     1/1: $3309
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3261'.
+     1/1: $3260
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3244'.
+     1/1: $3243
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3195'.
+     1/1: $3194
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3178'.
+     1/1: $3177
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3129'.
+     1/1: $3128
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3112'.
+     1/1: $3111
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3063'.
+     1/1: $3062
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$3046'.
+     1/1: $3045
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2997'.
+     1/1: $2996
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2980'.
+     1/1: $2979
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2931'.
+     1/1: $2930
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2914'.
+     1/1: $2913
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2865'.
+     1/1: $2864
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2848'.
+     1/1: $2847
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2799'.
+     1/1: $2798
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2782'.
+     1/1: $2781
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2733'.
+     1/1: $2732
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2716'.
+     1/1: $2715
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2667'.
+     1/1: $2666
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2640'.
+     1/1: $2639
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2591'.
+     1/1: $2590
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2574'.
+     1/1: $2573
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2525'.
+     1/1: $2524
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2508'.
+     1/1: $2507
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2459'.
+     1/1: $2458
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2442'.
+     1/1: $2441
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2393'.
+     1/1: $2392
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2376'.
+     1/1: $2375
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2327'.
+     1/1: $2326
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2308'.
+     1/1: $2307
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2259'.
+     1/1: $2258
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2242'.
+     1/1: $2241
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2193'.
+     1/1: $2192
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2176'.
+     1/1: $2175
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2127'.
+     1/1: $2126
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2113'.
+     1/1: $2112
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2106'.
+     1/1: $2105
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$2094'.
+     1/1: $trace_checks.trace_cycle$2099
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$15737'.
+     1/1: $15736
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$1891'.
+     1/99: $dut.u_otb.done_q[8]$2042
+     2/99: $dut.u_otb.pc_err_q[8]$2041
+     3/99: $dut.u_otb.data_q[127:0]$2040
+     4/99: $dut.u_otb.done_q[8]$2046
+     5/99: $dut.u_otb.pc_err_q[8]$2044
+     6/99: $dut.u_otb.data_q[127:0]$2043
+     7/99: $dut.u_otb.reserved_q[8]$2045
+     8/99: $dut.u_otb.done_q[8]$2050
+     9/99: $dut.u_otb.reserved_q[8]$2049
+    10/99: $dut.u_otb.pc_err_q[8]$2048
+    11/99: $dut.u_otb.data_q[127:0]$2047
+    12/99: $dut.u_otb.done_q[7]$2025
+    13/99: $dut.u_otb.pc_err_q[7]$2024
+    14/99: $dut.u_otb.data_q[255:128]$2023
+    15/99: $dut.u_otb.done_q[7]$2029
+    16/99: $dut.u_otb.pc_err_q[7]$2027
+    17/99: $dut.u_otb.data_q[255:128]$2026
+    18/99: $dut.u_otb.reserved_q[7]$2028
+    19/99: $dut.u_otb.done_q[7]$2033
+    20/99: $dut.u_otb.reserved_q[7]$2032
+    21/99: $dut.u_otb.pc_err_q[7]$2031
+    22/99: $dut.u_otb.data_q[255:128]$2030
+    23/99: $dut.u_otb.done_q[6]$2008
+    24/99: $dut.u_otb.pc_err_q[6]$2007
+    25/99: $dut.u_otb.data_q[383:256]$2006
+    26/99: $dut.u_otb.done_q[6]$2012
+    27/99: $dut.u_otb.pc_err_q[6]$2010
+    28/99: $dut.u_otb.data_q[383:256]$2009
+    29/99: $dut.u_otb.reserved_q[6]$2011
+    30/99: $dut.u_otb.done_q[6]$2016
+    31/99: $dut.u_otb.reserved_q[6]$2015
+    32/99: $dut.u_otb.pc_err_q[6]$2014
+    33/99: $dut.u_otb.data_q[383:256]$2013
+    34/99: $dut.u_otb.done_q[5]$1991
+    35/99: $dut.u_otb.pc_err_q[5]$1990
+    36/99: $dut.u_otb.data_q[511:384]$1989
+    37/99: $dut.u_otb.done_q[5]$1995
+    38/99: $dut.u_otb.pc_err_q[5]$1993
+    39/99: $dut.u_otb.data_q[511:384]$1992
+    40/99: $dut.u_otb.reserved_q[5]$1994
+    41/99: $dut.u_otb.done_q[5]$1999
+    42/99: $dut.u_otb.reserved_q[5]$1998
+    43/99: $dut.u_otb.pc_err_q[5]$1997
+    44/99: $dut.u_otb.data_q[511:384]$1996
+    45/99: $dut.u_otb.done_q[4]$1974
+    46/99: $dut.u_otb.pc_err_q[4]$1973
+    47/99: $dut.u_otb.data_q[639:512]$1972
+    48/99: $dut.u_otb.done_q[4]$1978
+    49/99: $dut.u_otb.pc_err_q[4]$1976
+    50/99: $dut.u_otb.data_q[639:512]$1975
+    51/99: $dut.u_otb.reserved_q[4]$1977
+    52/99: $dut.u_otb.done_q[4]$1982
+    53/99: $dut.u_otb.reserved_q[4]$1981
+    54/99: $dut.u_otb.pc_err_q[4]$1980
+    55/99: $dut.u_otb.data_q[639:512]$1979
+    56/99: $dut.u_otb.done_q[3]$1957
+    57/99: $dut.u_otb.pc_err_q[3]$1956
+    58/99: $dut.u_otb.data_q[767:640]$1955
+    59/99: $dut.u_otb.done_q[3]$1961
+    60/99: $dut.u_otb.pc_err_q[3]$1959
+    61/99: $dut.u_otb.data_q[767:640]$1958
+    62/99: $dut.u_otb.reserved_q[3]$1960
+    63/99: $dut.u_otb.done_q[3]$1965
+    64/99: $dut.u_otb.reserved_q[3]$1964
+    65/99: $dut.u_otb.pc_err_q[3]$1963
+    66/99: $dut.u_otb.data_q[767:640]$1962
+    67/99: $dut.u_otb.done_q[2]$1940
+    68/99: $dut.u_otb.pc_err_q[2]$1939
+    69/99: $dut.u_otb.data_q[895:768]$1938
+    70/99: $dut.u_otb.done_q[2]$1944
+    71/99: $dut.u_otb.pc_err_q[2]$1942
+    72/99: $dut.u_otb.data_q[895:768]$1941
+    73/99: $dut.u_otb.reserved_q[2]$1943
+    74/99: $dut.u_otb.done_q[2]$1948
+    75/99: $dut.u_otb.reserved_q[2]$1947
+    76/99: $dut.u_otb.pc_err_q[2]$1946
+    77/99: $dut.u_otb.data_q[895:768]$1945
+    78/99: $dut.u_otb.done_q[1]$1923
+    79/99: $dut.u_otb.pc_err_q[1]$1922
+    80/99: $dut.u_otb.data_q[1023:896]$1921
+    81/99: $dut.u_otb.done_q[1]$1927
+    82/99: $dut.u_otb.pc_err_q[1]$1925
+    83/99: $dut.u_otb.data_q[1023:896]$1924
+    84/99: $dut.u_otb.reserved_q[1]$1926
+    85/99: $dut.u_otb.done_q[1]$1931
+    86/99: $dut.u_otb.reserved_q[1]$1930
+    87/99: $dut.u_otb.pc_err_q[1]$1929
+    88/99: $dut.u_otb.data_q[1023:896]$1928
+    89/99: $dut.u_otb.done_q[0]$1906
+    90/99: $dut.u_otb.pc_err_q[0]$1905
+    91/99: $dut.u_otb.data_q[1151:1024]$1904
+    92/99: $dut.u_otb.done_q[0]$1910
+    93/99: $dut.u_otb.pc_err_q[0]$1908
+    94/99: $dut.u_otb.data_q[1151:1024]$1907
+    95/99: $dut.u_otb.reserved_q[0]$1909
+    96/99: $dut.u_otb.done_q[0]$1914
+    97/99: $dut.u_otb.reserved_q[0]$1913
+    98/99: $dut.u_otb.pc_err_q[0]$1912
+    99/99: $dut.u_otb.data_q[1151:1024]$1911
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$1878'.
+     1/2: $dut.u_otb.rsp_pc_err$1889
+     2/2: $dut.u_otb.rsp_data$1888
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$1608'.
+     1/148: $dut.u_cmd.done_q[8]$1829
+     2/148: $dut.u_cmd.issued_q[8]$1826
+     3/148: $dut.u_cmd.done_q[8]$1831
+     4/148: $dut.u_cmd.issued_q[8]$1830
+     5/148: $dut.u_cmd.arresp_q[1:0]$1836
+     6/148: $dut.u_cmd.port_q[4:0]$1835
+     7/148: $dut.u_cmd.id_q[7:0]$1834
+     8/148: $dut.u_cmd.src_q[1:0]$1833
+     9/148: $dut.u_cmd.addr_q[17:0]$1832
+    10/148: $dut.u_cmd.arresp_q[1:0]$1843
+    11/148: $dut.u_cmd.port_q[4:0]$1842
+    12/148: $dut.u_cmd.id_q[7:0]$1841
+    13/148: $dut.u_cmd.src_q[1:0]$1840
+    14/148: $dut.u_cmd.addr_q[17:0]$1839
+    15/148: $dut.u_cmd.done_q[8]$1838
+    16/148: $dut.u_cmd.issued_q[8]$1837
+    17/148: $dut.u_cmd.done_q[7]$1807
+    18/148: $dut.u_cmd.issued_q[7]$1804
+    19/148: $dut.u_cmd.done_q[7]$1809
+    20/148: $dut.u_cmd.issued_q[7]$1808
+    21/148: $dut.u_cmd.arresp_q[3:2]$1814
+    22/148: $dut.u_cmd.port_q[9:5]$1813
+    23/148: $dut.u_cmd.id_q[15:8]$1812
+    24/148: $dut.u_cmd.src_q[3:2]$1811
+    25/148: $dut.u_cmd.addr_q[35:18]$1810
+    26/148: $dut.u_cmd.arresp_q[3:2]$1821
+    27/148: $dut.u_cmd.port_q[9:5]$1820
+    28/148: $dut.u_cmd.id_q[15:8]$1819
+    29/148: $dut.u_cmd.src_q[3:2]$1818
+    30/148: $dut.u_cmd.addr_q[35:18]$1817
+    31/148: $dut.u_cmd.done_q[7]$1816
+    32/148: $dut.u_cmd.issued_q[7]$1815
+    33/148: $dut.u_cmd.done_q[6]$1785
+    34/148: $dut.u_cmd.issued_q[6]$1782
+    35/148: $dut.u_cmd.done_q[6]$1787
+    36/148: $dut.u_cmd.issued_q[6]$1786
+    37/148: $dut.u_cmd.arresp_q[5:4]$1792
+    38/148: $dut.u_cmd.port_q[14:10]$1791
+    39/148: $dut.u_cmd.id_q[23:16]$1790
+    40/148: $dut.u_cmd.src_q[5:4]$1789
+    41/148: $dut.u_cmd.addr_q[53:36]$1788
+    42/148: $dut.u_cmd.arresp_q[5:4]$1799
+    43/148: $dut.u_cmd.port_q[14:10]$1798
+    44/148: $dut.u_cmd.id_q[23:16]$1797
+    45/148: $dut.u_cmd.src_q[5:4]$1796
+    46/148: $dut.u_cmd.addr_q[53:36]$1795
+    47/148: $dut.u_cmd.done_q[6]$1794
+    48/148: $dut.u_cmd.issued_q[6]$1793
+    49/148: $dut.u_cmd.done_q[5]$1763
+    50/148: $dut.u_cmd.issued_q[5]$1760
+    51/148: $dut.u_cmd.done_q[5]$1765
+    52/148: $dut.u_cmd.issued_q[5]$1764
+    53/148: $dut.u_cmd.arresp_q[7:6]$1770
+    54/148: $dut.u_cmd.port_q[19:15]$1769
+    55/148: $dut.u_cmd.id_q[31:24]$1768
+    56/148: $dut.u_cmd.src_q[7:6]$1767
+    57/148: $dut.u_cmd.addr_q[71:54]$1766
+    58/148: $dut.u_cmd.arresp_q[7:6]$1777
+    59/148: $dut.u_cmd.port_q[19:15]$1776
+    60/148: $dut.u_cmd.id_q[31:24]$1775
+    61/148: $dut.u_cmd.src_q[7:6]$1774
+    62/148: $dut.u_cmd.addr_q[71:54]$1773
+    63/148: $dut.u_cmd.done_q[5]$1772
+    64/148: $dut.u_cmd.issued_q[5]$1771
+    65/148: $dut.u_cmd.done_q[4]$1741
+    66/148: $dut.u_cmd.issued_q[4]$1738
+    67/148: $dut.u_cmd.done_q[4]$1743
+    68/148: $dut.u_cmd.issued_q[4]$1742
+    69/148: $dut.u_cmd.arresp_q[9:8]$1748
+    70/148: $dut.u_cmd.port_q[24:20]$1747
+    71/148: $dut.u_cmd.id_q[39:32]$1746
+    72/148: $dut.u_cmd.src_q[9:8]$1745
+    73/148: $dut.u_cmd.addr_q[89:72]$1744
+    74/148: $dut.u_cmd.arresp_q[9:8]$1755
+    75/148: $dut.u_cmd.port_q[24:20]$1754
+    76/148: $dut.u_cmd.id_q[39:32]$1753
+    77/148: $dut.u_cmd.src_q[9:8]$1752
+    78/148: $dut.u_cmd.addr_q[89:72]$1751
+    79/148: $dut.u_cmd.done_q[4]$1750
+    80/148: $dut.u_cmd.issued_q[4]$1749
+    81/148: $dut.u_cmd.done_q[3]$1719
+    82/148: $dut.u_cmd.issued_q[3]$1716
+    83/148: $dut.u_cmd.done_q[3]$1721
+    84/148: $dut.u_cmd.issued_q[3]$1720
+    85/148: $dut.u_cmd.arresp_q[11:10]$1726
+    86/148: $dut.u_cmd.port_q[29:25]$1725
+    87/148: $dut.u_cmd.id_q[47:40]$1724
+    88/148: $dut.u_cmd.src_q[11:10]$1723
+    89/148: $dut.u_cmd.addr_q[107:90]$1722
+    90/148: $dut.u_cmd.arresp_q[11:10]$1733
+    91/148: $dut.u_cmd.port_q[29:25]$1732
+    92/148: $dut.u_cmd.id_q[47:40]$1731
+    93/148: $dut.u_cmd.src_q[11:10]$1730
+    94/148: $dut.u_cmd.addr_q[107:90]$1729
+    95/148: $dut.u_cmd.done_q[3]$1728
+    96/148: $dut.u_cmd.issued_q[3]$1727
+    97/148: $dut.u_cmd.done_q[2]$1697
+    98/148: $dut.u_cmd.issued_q[2]$1694
+    99/148: $dut.u_cmd.done_q[2]$1699
+   100/148: $dut.u_cmd.issued_q[2]$1698
+   101/148: $dut.u_cmd.arresp_q[13:12]$1704
+   102/148: $dut.u_cmd.port_q[34:30]$1703
+   103/148: $dut.u_cmd.id_q[55:48]$1702
+   104/148: $dut.u_cmd.src_q[13:12]$1701
+   105/148: $dut.u_cmd.addr_q[125:108]$1700
+   106/148: $dut.u_cmd.arresp_q[13:12]$1711
+   107/148: $dut.u_cmd.port_q[34:30]$1710
+   108/148: $dut.u_cmd.id_q[55:48]$1709
+   109/148: $dut.u_cmd.src_q[13:12]$1708
+   110/148: $dut.u_cmd.addr_q[125:108]$1707
+   111/148: $dut.u_cmd.done_q[2]$1706
+   112/148: $dut.u_cmd.issued_q[2]$1705
+   113/148: $dut.u_cmd.done_q[1]$1675
+   114/148: $dut.u_cmd.issued_q[1]$1672
+   115/148: $dut.u_cmd.done_q[1]$1677
+   116/148: $dut.u_cmd.issued_q[1]$1676
+   117/148: $dut.u_cmd.arresp_q[15:14]$1682
+   118/148: $dut.u_cmd.port_q[39:35]$1681
+   119/148: $dut.u_cmd.id_q[63:56]$1680
+   120/148: $dut.u_cmd.src_q[15:14]$1679
+   121/148: $dut.u_cmd.addr_q[143:126]$1678
+   122/148: $dut.u_cmd.arresp_q[15:14]$1689
+   123/148: $dut.u_cmd.port_q[39:35]$1688
+   124/148: $dut.u_cmd.id_q[63:56]$1687
+   125/148: $dut.u_cmd.src_q[15:14]$1686
+   126/148: $dut.u_cmd.addr_q[143:126]$1685
+   127/148: $dut.u_cmd.done_q[1]$1684
+   128/148: $dut.u_cmd.issued_q[1]$1683
+   129/148: $dut.u_cmd.done_q[0]$1653
+   130/148: $dut.u_cmd.issued_q[0]$1650
+   131/148: $dut.u_cmd.done_q[0]$1655
+   132/148: $dut.u_cmd.issued_q[0]$1654
+   133/148: $dut.u_cmd.arresp_q[17:16]$1660
+   134/148: $dut.u_cmd.port_q[44:40]$1659
+   135/148: $dut.u_cmd.id_q[71:64]$1658
+   136/148: $dut.u_cmd.src_q[17:16]$1657
+   137/148: $dut.u_cmd.addr_q[161:144]$1656
+   138/148: $dut.u_cmd.arresp_q[17:16]$1667
+   139/148: $dut.u_cmd.port_q[44:40]$1666
+   140/148: $dut.u_cmd.id_q[71:64]$1665
+   141/148: $dut.u_cmd.src_q[17:16]$1664
+   142/148: $dut.u_cmd.addr_q[161:144]$1663
+   143/148: $dut.u_cmd.done_q[0]$1662
+   144/148: $dut.u_cmd.issued_q[0]$1661
+   145/148: $dut.u_cmd.issue_addr_q$1645
+   146/148: $dut.u_cmd.issue_bank_q$1644
+   147/148: $dut.u_cmd.issue_entry_q$1643
+   148/148: $dut.u_cmd.rr_ptr_q$1632
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$787'.
+     1/216: $dut.u_cmd.older_next[7]$1601
+     2/216: $dut.u_cmd.older_next[7]$1602
+     3/216: $dut.u_cmd.older_next[7]$1603
+     4/216: $dut.u_cmd.older_next[6]$1590
+     5/216: $dut.u_cmd.older_next[6]$1591
+     6/216: $dut.u_cmd.older_next[6]$1592
+     7/216: $dut.u_cmd.older_next[5]$1579
+     8/216: $dut.u_cmd.older_next[5]$1580
+     9/216: $dut.u_cmd.older_next[5]$1581
+    10/216: $dut.u_cmd.older_next[4]$1568
+    11/216: $dut.u_cmd.older_next[4]$1569
+    12/216: $dut.u_cmd.older_next[4]$1570
+    13/216: $dut.u_cmd.older_next[3]$1557
+    14/216: $dut.u_cmd.older_next[3]$1558
+    15/216: $dut.u_cmd.older_next[3]$1559
+    16/216: $dut.u_cmd.older_next[2]$1546
+    17/216: $dut.u_cmd.older_next[2]$1547
+    18/216: $dut.u_cmd.older_next[2]$1548
+    19/216: $dut.u_cmd.older_next[1]$1535
+    20/216: $dut.u_cmd.older_next[1]$1536
+    21/216: $dut.u_cmd.older_next[1]$1537
+    22/216: $dut.u_cmd.older_next[0]$1524
+    23/216: $dut.u_cmd.older_next[0]$1525
+    24/216: $dut.u_cmd.older_next[0]$1526
+    25/216: $dut.u_cmd.older_next[17]$1513
+    26/216: $dut.u_cmd.older_next[17]$1514
+    27/216: $dut.u_cmd.older_next[17]$1515
+    28/216: $dut.u_cmd.older_next[15]$1499
+    29/216: $dut.u_cmd.older_next[15]$1500
+    30/216: $dut.u_cmd.older_next[15]$1501
+    31/216: $dut.u_cmd.older_next[14]$1488
+    32/216: $dut.u_cmd.older_next[14]$1489
+    33/216: $dut.u_cmd.older_next[14]$1490
+    34/216: $dut.u_cmd.older_next[13]$1477
+    35/216: $dut.u_cmd.older_next[13]$1478
+    36/216: $dut.u_cmd.older_next[13]$1479
+    37/216: $dut.u_cmd.older_next[12]$1466
+    38/216: $dut.u_cmd.older_next[12]$1467
+    39/216: $dut.u_cmd.older_next[12]$1468
+    40/216: $dut.u_cmd.older_next[11]$1455
+    41/216: $dut.u_cmd.older_next[11]$1456
+    42/216: $dut.u_cmd.older_next[11]$1457
+    43/216: $dut.u_cmd.older_next[10]$1444
+    44/216: $dut.u_cmd.older_next[10]$1445
+    45/216: $dut.u_cmd.older_next[10]$1446
+    46/216: $dut.u_cmd.older_next[9]$1433
+    47/216: $dut.u_cmd.older_next[9]$1434
+    48/216: $dut.u_cmd.older_next[9]$1435
+    49/216: $dut.u_cmd.older_next[26]$1422
+    50/216: $dut.u_cmd.older_next[26]$1423
+    51/216: $dut.u_cmd.older_next[26]$1424
+    52/216: $dut.u_cmd.older_next[25]$1411
+    53/216: $dut.u_cmd.older_next[25]$1412
+    54/216: $dut.u_cmd.older_next[25]$1413
+    55/216: $dut.u_cmd.older_next[23]$1397
+    56/216: $dut.u_cmd.older_next[23]$1398
+    57/216: $dut.u_cmd.older_next[23]$1399
+    58/216: $dut.u_cmd.older_next[22]$1386
+    59/216: $dut.u_cmd.older_next[22]$1387
+    60/216: $dut.u_cmd.older_next[22]$1388
+    61/216: $dut.u_cmd.older_next[21]$1375
+    62/216: $dut.u_cmd.older_next[21]$1376
+    63/216: $dut.u_cmd.older_next[21]$1377
+    64/216: $dut.u_cmd.older_next[20]$1364
+    65/216: $dut.u_cmd.older_next[20]$1365
+    66/216: $dut.u_cmd.older_next[20]$1366
+    67/216: $dut.u_cmd.older_next[19]$1353
+    68/216: $dut.u_cmd.older_next[19]$1354
+    69/216: $dut.u_cmd.older_next[19]$1355
+    70/216: $dut.u_cmd.older_next[18]$1342
+    71/216: $dut.u_cmd.older_next[18]$1343
+    72/216: $dut.u_cmd.older_next[18]$1344
+    73/216: $dut.u_cmd.older_next[35]$1331
+    74/216: $dut.u_cmd.older_next[35]$1332
+    75/216: $dut.u_cmd.older_next[35]$1333
+    76/216: $dut.u_cmd.older_next[34]$1320
+    77/216: $dut.u_cmd.older_next[34]$1321
+    78/216: $dut.u_cmd.older_next[34]$1322
+    79/216: $dut.u_cmd.older_next[33]$1309
+    80/216: $dut.u_cmd.older_next[33]$1310
+    81/216: $dut.u_cmd.older_next[33]$1311
+    82/216: $dut.u_cmd.older_next[31]$1295
+    83/216: $dut.u_cmd.older_next[31]$1296
+    84/216: $dut.u_cmd.older_next[31]$1297
+    85/216: $dut.u_cmd.older_next[30]$1284
+    86/216: $dut.u_cmd.older_next[30]$1285
+    87/216: $dut.u_cmd.older_next[30]$1286
+    88/216: $dut.u_cmd.older_next[29]$1273
+    89/216: $dut.u_cmd.older_next[29]$1274
+    90/216: $dut.u_cmd.older_next[29]$1275
+    91/216: $dut.u_cmd.older_next[28]$1262
+    92/216: $dut.u_cmd.older_next[28]$1263
+    93/216: $dut.u_cmd.older_next[28]$1264
+    94/216: $dut.u_cmd.older_next[27]$1251
+    95/216: $dut.u_cmd.older_next[27]$1252
+    96/216: $dut.u_cmd.older_next[27]$1253
+    97/216: $dut.u_cmd.older_next[44]$1240
+    98/216: $dut.u_cmd.older_next[44]$1241
+    99/216: $dut.u_cmd.older_next[44]$1242
+   100/216: $dut.u_cmd.older_next[43]$1229
+   101/216: $dut.u_cmd.older_next[43]$1230
+   102/216: $dut.u_cmd.older_next[43]$1231
+   103/216: $dut.u_cmd.older_next[42]$1218
+   104/216: $dut.u_cmd.older_next[42]$1219
+   105/216: $dut.u_cmd.older_next[42]$1220
+   106/216: $dut.u_cmd.older_next[41]$1207
+   107/216: $dut.u_cmd.older_next[41]$1208
+   108/216: $dut.u_cmd.older_next[41]$1209
+   109/216: $dut.u_cmd.older_next[39]$1193
+   110/216: $dut.u_cmd.older_next[39]$1194
+   111/216: $dut.u_cmd.older_next[39]$1195
+   112/216: $dut.u_cmd.older_next[38]$1182
+   113/216: $dut.u_cmd.older_next[38]$1183
+   114/216: $dut.u_cmd.older_next[38]$1184
+   115/216: $dut.u_cmd.older_next[37]$1171
+   116/216: $dut.u_cmd.older_next[37]$1172
+   117/216: $dut.u_cmd.older_next[37]$1173
+   118/216: $dut.u_cmd.older_next[36]$1160
+   119/216: $dut.u_cmd.older_next[36]$1161
+   120/216: $dut.u_cmd.older_next[36]$1162
+   121/216: $dut.u_cmd.older_next[53]$1149
+   122/216: $dut.u_cmd.older_next[53]$1150
+   123/216: $dut.u_cmd.older_next[53]$1151
+   124/216: $dut.u_cmd.older_next[52]$1138
+   125/216: $dut.u_cmd.older_next[52]$1139
+   126/216: $dut.u_cmd.older_next[52]$1140
+   127/216: $dut.u_cmd.older_next[51]$1127
+   128/216: $dut.u_cmd.older_next[51]$1128
+   129/216: $dut.u_cmd.older_next[51]$1129
+   130/216: $dut.u_cmd.older_next[50]$1116
+   131/216: $dut.u_cmd.older_next[50]$1117
+   132/216: $dut.u_cmd.older_next[50]$1118
+   133/216: $dut.u_cmd.older_next[49]$1105
+   134/216: $dut.u_cmd.older_next[49]$1106
+   135/216: $dut.u_cmd.older_next[49]$1107
+   136/216: $dut.u_cmd.older_next[47]$1091
+   137/216: $dut.u_cmd.older_next[47]$1092
+   138/216: $dut.u_cmd.older_next[47]$1093
+   139/216: $dut.u_cmd.older_next[46]$1080
+   140/216: $dut.u_cmd.older_next[46]$1081
+   141/216: $dut.u_cmd.older_next[46]$1082
+   142/216: $dut.u_cmd.older_next[45]$1069
+   143/216: $dut.u_cmd.older_next[45]$1070
+   144/216: $dut.u_cmd.older_next[45]$1071
+   145/216: $dut.u_cmd.older_next[62]$1058
+   146/216: $dut.u_cmd.older_next[62]$1059
+   147/216: $dut.u_cmd.older_next[62]$1060
+   148/216: $dut.u_cmd.older_next[61]$1047
+   149/216: $dut.u_cmd.older_next[61]$1048
+   150/216: $dut.u_cmd.older_next[61]$1049
+   151/216: $dut.u_cmd.older_next[60]$1036
+   152/216: $dut.u_cmd.older_next[60]$1037
+   153/216: $dut.u_cmd.older_next[60]$1038
+   154/216: $dut.u_cmd.older_next[59]$1025
+   155/216: $dut.u_cmd.older_next[59]$1026
+   156/216: $dut.u_cmd.older_next[59]$1027
+   157/216: $dut.u_cmd.older_next[58]$1014
+   158/216: $dut.u_cmd.older_next[58]$1015
+   159/216: $dut.u_cmd.older_next[58]$1016
+   160/216: $dut.u_cmd.older_next[57]$1003
+   161/216: $dut.u_cmd.older_next[57]$1004
+   162/216: $dut.u_cmd.older_next[57]$1005
+   163/216: $dut.u_cmd.older_next[55]$989
+   164/216: $dut.u_cmd.older_next[55]$990
+   165/216: $dut.u_cmd.older_next[55]$991
+   166/216: $dut.u_cmd.older_next[54]$978
+   167/216: $dut.u_cmd.older_next[54]$979
+   168/216: $dut.u_cmd.older_next[54]$980
+   169/216: $dut.u_cmd.older_next[71]$967
+   170/216: $dut.u_cmd.older_next[71]$968
+   171/216: $dut.u_cmd.older_next[71]$969
+   172/216: $dut.u_cmd.older_next[70]$956
+   173/216: $dut.u_cmd.older_next[70]$957
+   174/216: $dut.u_cmd.older_next[70]$958
+   175/216: $dut.u_cmd.older_next[69]$945
+   176/216: $dut.u_cmd.older_next[69]$946
+   177/216: $dut.u_cmd.older_next[69]$947
+   178/216: $dut.u_cmd.older_next[68]$934
+   179/216: $dut.u_cmd.older_next[68]$935
+   180/216: $dut.u_cmd.older_next[68]$936
+   181/216: $dut.u_cmd.older_next[67]$923
+   182/216: $dut.u_cmd.older_next[67]$924
+   183/216: $dut.u_cmd.older_next[67]$925
+   184/216: $dut.u_cmd.older_next[66]$912
+   185/216: $dut.u_cmd.older_next[66]$913
+   186/216: $dut.u_cmd.older_next[66]$914
+   187/216: $dut.u_cmd.older_next[65]$901
+   188/216: $dut.u_cmd.older_next[65]$902
+   189/216: $dut.u_cmd.older_next[65]$903
+   190/216: $dut.u_cmd.older_next[63]$887
+   191/216: $dut.u_cmd.older_next[63]$888
+   192/216: $dut.u_cmd.older_next[63]$889
+   193/216: $dut.u_cmd.older_next[80]$876
+   194/216: $dut.u_cmd.older_next[80]$877
+   195/216: $dut.u_cmd.older_next[80]$878
+   196/216: $dut.u_cmd.older_next[79]$865
+   197/216: $dut.u_cmd.older_next[79]$866
+   198/216: $dut.u_cmd.older_next[79]$867
+   199/216: $dut.u_cmd.older_next[78]$854
+   200/216: $dut.u_cmd.older_next[78]$855
+   201/216: $dut.u_cmd.older_next[78]$856
+   202/216: $dut.u_cmd.older_next[77]$843
+   203/216: $dut.u_cmd.older_next[77]$844
+   204/216: $dut.u_cmd.older_next[77]$845
+   205/216: $dut.u_cmd.older_next[76]$832
+   206/216: $dut.u_cmd.older_next[76]$833
+   207/216: $dut.u_cmd.older_next[76]$834
+   208/216: $dut.u_cmd.older_next[75]$821
+   209/216: $dut.u_cmd.older_next[75]$822
+   210/216: $dut.u_cmd.older_next[75]$823
+   211/216: $dut.u_cmd.older_next[74]$810
+   212/216: $dut.u_cmd.older_next[74]$811
+   213/216: $dut.u_cmd.older_next[74]$812
+   214/216: $dut.u_cmd.older_next[73]$799
+   215/216: $dut.u_cmd.older_next[73]$800
+   216/216: $dut.u_cmd.older_next[73]$801
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$420'.
+     1/91: $dut.u_cmd.select_entry$784
+     2/91: $dut.u_cmd.select_entry$780
+     3/91: $dut.u_cmd.select_entry$776
+     4/91: $dut.u_cmd.select_entry$772
+     5/91: $dut.u_cmd.select_entry$768
+     6/91: $dut.u_cmd.select_entry$764
+     7/91: $dut.u_cmd.select_entry$760
+     8/91: $dut.u_cmd.select_entry$756
+     9/91: $dut.u_cmd.select_entry$752
+    10/91: $dut.u_cmd.rank_count[31:0]$738
+    11/91: $dut.u_cmd.rank_count[31:0]$735
+    12/91: $dut.u_cmd.rank_count[31:0]$732
+    13/91: $dut.u_cmd.rank_count[31:0]$729
+    14/91: $dut.u_cmd.rank_count[31:0]$726
+    15/91: $dut.u_cmd.rank_count[31:0]$723
+    16/91: $dut.u_cmd.rank_count[31:0]$720
+    17/91: $dut.u_cmd.rank_count[31:0]$717
+    18/91: $dut.u_cmd.rank_count[31:0]$714
+    19/91: $dut.u_cmd.rank_count[63:32]$703
+    20/91: $dut.u_cmd.rank_count[63:32]$700
+    21/91: $dut.u_cmd.rank_count[63:32]$697
+    22/91: $dut.u_cmd.rank_count[63:32]$694
+    23/91: $dut.u_cmd.rank_count[63:32]$691
+    24/91: $dut.u_cmd.rank_count[63:32]$688
+    25/91: $dut.u_cmd.rank_count[63:32]$685
+    26/91: $dut.u_cmd.rank_count[63:32]$682
+    27/91: $dut.u_cmd.rank_count[63:32]$679
+    28/91: $dut.u_cmd.rank_count[95:64]$668
+    29/91: $dut.u_cmd.rank_count[95:64]$665
+    30/91: $dut.u_cmd.rank_count[95:64]$662
+    31/91: $dut.u_cmd.rank_count[95:64]$659
+    32/91: $dut.u_cmd.rank_count[95:64]$656
+    33/91: $dut.u_cmd.rank_count[95:64]$653
+    34/91: $dut.u_cmd.rank_count[95:64]$650
+    35/91: $dut.u_cmd.rank_count[95:64]$647
+    36/91: $dut.u_cmd.rank_count[95:64]$644
+    37/91: $dut.u_cmd.rank_count[127:96]$633
+    38/91: $dut.u_cmd.rank_count[127:96]$630
+    39/91: $dut.u_cmd.rank_count[127:96]$627
+    40/91: $dut.u_cmd.rank_count[127:96]$624
+    41/91: $dut.u_cmd.rank_count[127:96]$621
+    42/91: $dut.u_cmd.rank_count[127:96]$618
+    43/91: $dut.u_cmd.rank_count[127:96]$615
+    44/91: $dut.u_cmd.rank_count[127:96]$612
+    45/91: $dut.u_cmd.rank_count[127:96]$609
+    46/91: $dut.u_cmd.rank_count[159:128]$598
+    47/91: $dut.u_cmd.rank_count[159:128]$595
+    48/91: $dut.u_cmd.rank_count[159:128]$592
+    49/91: $dut.u_cmd.rank_count[159:128]$589
+    50/91: $dut.u_cmd.rank_count[159:128]$586
+    51/91: $dut.u_cmd.rank_count[159:128]$583
+    52/91: $dut.u_cmd.rank_count[159:128]$580
+    53/91: $dut.u_cmd.rank_count[159:128]$577
+    54/91: $dut.u_cmd.rank_count[159:128]$574
+    55/91: $dut.u_cmd.rank_count[191:160]$563
+    56/91: $dut.u_cmd.rank_count[191:160]$560
+    57/91: $dut.u_cmd.rank_count[191:160]$557
+    58/91: $dut.u_cmd.rank_count[191:160]$554
+    59/91: $dut.u_cmd.rank_count[191:160]$551
+    60/91: $dut.u_cmd.rank_count[191:160]$548
+    61/91: $dut.u_cmd.rank_count[191:160]$545
+    62/91: $dut.u_cmd.rank_count[191:160]$542
+    63/91: $dut.u_cmd.rank_count[191:160]$539
+    64/91: $dut.u_cmd.rank_count[223:192]$528
+    65/91: $dut.u_cmd.rank_count[223:192]$525
+    66/91: $dut.u_cmd.rank_count[223:192]$522
+    67/91: $dut.u_cmd.rank_count[223:192]$519
+    68/91: $dut.u_cmd.rank_count[223:192]$516
+    69/91: $dut.u_cmd.rank_count[223:192]$513
+    70/91: $dut.u_cmd.rank_count[223:192]$510
+    71/91: $dut.u_cmd.rank_count[223:192]$507
+    72/91: $dut.u_cmd.rank_count[223:192]$504
+    73/91: $dut.u_cmd.rank_count[255:224]$493
+    74/91: $dut.u_cmd.rank_count[255:224]$490
+    75/91: $dut.u_cmd.rank_count[255:224]$487
+    76/91: $dut.u_cmd.rank_count[255:224]$484
+    77/91: $dut.u_cmd.rank_count[255:224]$481
+    78/91: $dut.u_cmd.rank_count[255:224]$478
+    79/91: $dut.u_cmd.rank_count[255:224]$475
+    80/91: $dut.u_cmd.rank_count[255:224]$472
+    81/91: $dut.u_cmd.rank_count[255:224]$469
+    82/91: $dut.u_cmd.rank_count[287:256]$458
+    83/91: $dut.u_cmd.rank_count[287:256]$455
+    84/91: $dut.u_cmd.rank_count[287:256]$452
+    85/91: $dut.u_cmd.rank_count[287:256]$449
+    86/91: $dut.u_cmd.rank_count[287:256]$446
+    87/91: $dut.u_cmd.rank_count[287:256]$443
+    88/91: $dut.u_cmd.rank_count[287:256]$440
+    89/91: $dut.u_cmd.rank_count[287:256]$437
+    90/91: $dut.u_cmd.rank_count[287:256]$434
+    91/91: $dut.u_cmd.current_issue_mask$429
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$304'.
+     1/27: $dut.u_cmd.valid_next$418
+     2/27: $dut.u_cmd.free_found$409
+     3/27: $dut.u_cmd.alloc_entry$408
+     4/27: $dut.u_cmd.free_found$405
+     5/27: $dut.u_cmd.alloc_entry$404
+     6/27: $dut.u_cmd.free_found$401
+     7/27: $dut.u_cmd.alloc_entry$400
+     8/27: $dut.u_cmd.free_found$397
+     9/27: $dut.u_cmd.alloc_entry$396
+    10/27: $dut.u_cmd.free_found$393
+    11/27: $dut.u_cmd.alloc_entry$392
+    12/27: $dut.u_cmd.free_found$389
+    13/27: $dut.u_cmd.alloc_entry$388
+    14/27: $dut.u_cmd.free_found$385
+    15/27: $dut.u_cmd.alloc_entry$384
+    16/27: $dut.u_cmd.free_found$381
+    17/27: $dut.u_cmd.alloc_entry$380
+    18/27: $dut.u_cmd.free_found$377
+    19/27: $dut.u_cmd.alloc_entry$376
+    20/27: $dut.u_cmd.src_ready$371
+    21/27: $dut.u_cmd.shared_after$344
+    22/27: $dut.u_cmd.occ_after[31:0]$339
+    23/27: $dut.u_cmd.shared_after$332
+    24/27: $dut.u_cmd.occ_after[63:32]$327
+    25/27: $dut.u_cmd.shared_after$320
+    26/27: $dut.u_cmd.occ_after[95:64]$315
+    27/27: $dut.u_cmd.retire_mask$311
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$292'.
+     1/3: $dut.u_cmd.rresp$300
+     2/3: $dut.u_cmd.rresp$301
+     3/3: $dut.u_cmd.rresp$302
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$226'.
+     1/14: $dut.u_cmd.rsp_entry$290
+     2/14: $dut.u_cmd.raddr$289
+     3/14: $dut.u_cmd.r_port_id$288
+     4/14: $dut.u_cmd.rid$287
+     5/14: $dut.u_cmd.rvalid$286
+     6/14: $dut.u_cmd.winner$258
+     7/14: $dut.u_cmd.winner_valid$257
+     8/14: $dut.u_cmd.scan$251
+     9/14: $dut.u_cmd.winner$247
+    10/14: $dut.u_cmd.winner_valid$246
+    11/14: $dut.u_cmd.scan$240
+    12/14: $dut.u_cmd.winner$236
+    13/14: $dut.u_cmd.winner_valid$235
+    14/14: $dut.u_cmd.scan$230
+Creating decoders for process `\cmdbuf_fsdb_formal_top.$20'.
+     1/57: $dut.u_cmd.r_candidate[2]$224
+     2/57: $dut.u_cmd.head_valid[2]$219
+     3/57: $dut.u_cmd.head_entry[3:0]$218
+     4/57: $dut.u_cmd.head_valid[2]$214
+     5/57: $dut.u_cmd.head_entry[3:0]$213
+     6/57: $dut.u_cmd.head_valid[2]$209
+     7/57: $dut.u_cmd.head_entry[3:0]$208
+     8/57: $dut.u_cmd.head_valid[2]$204
+     9/57: $dut.u_cmd.head_entry[3:0]$203
+    10/57: $dut.u_cmd.head_valid[2]$199
+    11/57: $dut.u_cmd.head_entry[3:0]$198
+    12/57: $dut.u_cmd.head_valid[2]$194
+    13/57: $dut.u_cmd.head_entry[3:0]$193
+    14/57: $dut.u_cmd.head_valid[2]$189
+    15/57: $dut.u_cmd.head_entry[3:0]$188
+    16/57: $dut.u_cmd.head_valid[2]$184
+    17/57: $dut.u_cmd.head_entry[3:0]$183
+    18/57: $dut.u_cmd.head_valid[2]$179
+    19/57: $dut.u_cmd.head_entry[3:0]$178
+    20/57: $dut.u_cmd.r_candidate[1]$156
+    21/57: $dut.u_cmd.head_valid[1]$151
+    22/57: $dut.u_cmd.head_entry[7:4]$150
+    23/57: $dut.u_cmd.head_valid[1]$146
+    24/57: $dut.u_cmd.head_entry[7:4]$145
+    25/57: $dut.u_cmd.head_valid[1]$141
+    26/57: $dut.u_cmd.head_entry[7:4]$140
+    27/57: $dut.u_cmd.head_valid[1]$136
+    28/57: $dut.u_cmd.head_entry[7:4]$135
+    29/57: $dut.u_cmd.head_valid[1]$131
+    30/57: $dut.u_cmd.head_entry[7:4]$130
+    31/57: $dut.u_cmd.head_valid[1]$126
+    32/57: $dut.u_cmd.head_entry[7:4]$125
+    33/57: $dut.u_cmd.head_valid[1]$121
+    34/57: $dut.u_cmd.head_entry[7:4]$120
+    35/57: $dut.u_cmd.head_valid[1]$116
+    36/57: $dut.u_cmd.head_entry[7:4]$115
+    37/57: $dut.u_cmd.head_valid[1]$111
+    38/57: $dut.u_cmd.head_entry[7:4]$110
+    39/57: $dut.u_cmd.r_candidate[0]$88
+    40/57: $dut.u_cmd.head_valid[0]$83
+    41/57: $dut.u_cmd.head_entry[11:8]$82
+    42/57: $dut.u_cmd.head_valid[0]$78
+    43/57: $dut.u_cmd.head_entry[11:8]$77
+    44/57: $dut.u_cmd.head_valid[0]$73
+    45/57: $dut.u_cmd.head_entry[11:8]$72
+    46/57: $dut.u_cmd.head_valid[0]$68
+    47/57: $dut.u_cmd.head_entry[11:8]$67
+    48/57: $dut.u_cmd.head_valid[0]$63
+    49/57: $dut.u_cmd.head_entry[11:8]$62
+    50/57: $dut.u_cmd.head_valid[0]$58
+    51/57: $dut.u_cmd.head_entry[11:8]$57
+    52/57: $dut.u_cmd.head_valid[0]$53
+    53/57: $dut.u_cmd.head_entry[11:8]$52
+    54/57: $dut.u_cmd.head_valid[0]$48
+    55/57: $dut.u_cmd.head_entry[11:8]$47
+    56/57: $dut.u_cmd.head_valid[0]$43
+    57/57: $dut.u_cmd.head_entry[11:8]$42
+
+1.8. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$15729'.
+Removing empty process `cmdbuf_fsdb_formal_top.$15729'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$15712'.
+Removing empty process `cmdbuf_fsdb_formal_top.$15712'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$15663'.
+Removing empty process `cmdbuf_fsdb_formal_top.$15663'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$15646'.
+Removing empty process `cmdbuf_fsdb_formal_top.$15646'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$15597'.
+Removing empty process `cmdbuf_fsdb_formal_top.$15597'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$15580'.
+Removing empty process `cmdbuf_fsdb_formal_top.$15580'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$15531'.
+Removing empty process `cmdbuf_fsdb_formal_top.$15531'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$15514'.
+Removing empty process `cmdbuf_fsdb_formal_top.$15514'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$15465'.
+Removing empty process `cmdbuf_fsdb_formal_top.$15465'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$15448'.
+Removing empty process `cmdbuf_fsdb_formal_top.$15448'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$15399'.
+Removing empty process `cmdbuf_fsdb_formal_top.$15399'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$15382'.
+Removing empty process `cmdbuf_fsdb_formal_top.$15382'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$15333'.
+Removing empty process `cmdbuf_fsdb_formal_top.$15333'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$15316'.
+Removing empty process `cmdbuf_fsdb_formal_top.$15316'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$15267'.
+Removing empty process `cmdbuf_fsdb_formal_top.$15267'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$15250'.
+Removing empty process `cmdbuf_fsdb_formal_top.$15250'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$15201'.
+Removing empty process `cmdbuf_fsdb_formal_top.$15201'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$15184'.
+Removing empty process `cmdbuf_fsdb_formal_top.$15184'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$15135'.
+Removing empty process `cmdbuf_fsdb_formal_top.$15135'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$15118'.
+Removing empty process `cmdbuf_fsdb_formal_top.$15118'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$15069'.
+Removing empty process `cmdbuf_fsdb_formal_top.$15069'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$15052'.
+Removing empty process `cmdbuf_fsdb_formal_top.$15052'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$15003'.
+Removing empty process `cmdbuf_fsdb_formal_top.$15003'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14986'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14986'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14937'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14937'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14920'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14920'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14871'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14871'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14854'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14854'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14805'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14805'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14788'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14788'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14739'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14739'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14722'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14722'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14673'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14673'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14656'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14656'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14607'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14607'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14590'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14590'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14541'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14541'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14524'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14524'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14475'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14475'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14458'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14458'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14409'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14409'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14392'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14392'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14343'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14343'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14326'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14326'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14277'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14277'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14260'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14260'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14211'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14211'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14194'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14194'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14145'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14145'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14128'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14128'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14079'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14079'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14062'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14062'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$14013'.
+Removing empty process `cmdbuf_fsdb_formal_top.$14013'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13996'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13996'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13947'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13947'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13930'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13930'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13881'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13881'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13864'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13864'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13815'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13815'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13798'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13798'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13749'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13749'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13732'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13732'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13683'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13683'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13666'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13666'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13617'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13617'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13600'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13600'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13551'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13551'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13534'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13534'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13485'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13485'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13468'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13468'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13419'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13419'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13402'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13402'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13353'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13353'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13336'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13336'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13287'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13287'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13270'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13270'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13221'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13221'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13204'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13204'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13155'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13155'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13138'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13138'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13089'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13089'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13062'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13062'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$13013'.
+Removing empty process `cmdbuf_fsdb_formal_top.$13013'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12996'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12996'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12947'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12947'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12930'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12930'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12881'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12881'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12864'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12864'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12815'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12815'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12798'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12798'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12749'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12749'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12730'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12730'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12681'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12681'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12664'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12664'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12615'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12615'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12598'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12598'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12549'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12549'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12532'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12532'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12483'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12483'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12466'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12466'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12417'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12417'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12400'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12400'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12351'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12351'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12334'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12334'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12285'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12285'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12268'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12268'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12219'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12219'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12211'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12211'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12194'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12194'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12145'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12145'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12128'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12128'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12079'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12079'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12062'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12062'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$12013'.
+Removing empty process `cmdbuf_fsdb_formal_top.$12013'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11994'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11994'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11945'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11945'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11928'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11928'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11879'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11879'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11862'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11862'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11813'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11813'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11796'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11796'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11747'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11747'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11730'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11730'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11681'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11681'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11664'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11664'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11615'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11615'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11607'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11607'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11590'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11590'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11541'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11541'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11524'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11524'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11475'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11475'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11456'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11456'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11407'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11407'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11390'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11390'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11341'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11341'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11324'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11324'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11275'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11275'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11267'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11267'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11250'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11250'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11201'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11201'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11184'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11184'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11135'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11135'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11118'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11118'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11069'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11069'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11052'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11052'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$11003'.
+Removing empty process `cmdbuf_fsdb_formal_top.$11003'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10986'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10986'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10937'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10937'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10920'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10920'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10871'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10871'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10854'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10854'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10805'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10805'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10788'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10788'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10739'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10739'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10722'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10722'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10673'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10673'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10656'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10656'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10607'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10607'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10590'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10590'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10541'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10541'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10524'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10524'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10475'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10475'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10458'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10458'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10409'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10409'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10392'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10392'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10343'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10343'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10326'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10326'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10277'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10277'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10260'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10260'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10211'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10211'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10194'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10194'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10145'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10145'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10128'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10128'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10079'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10079'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10062'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10062'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$10013'.
+Removing empty process `cmdbuf_fsdb_formal_top.$10013'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9996'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9996'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9947'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9947'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9930'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9930'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9881'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9881'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9864'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9864'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9815'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9815'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9798'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9798'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9749'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9749'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9732'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9732'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9683'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9683'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9666'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9666'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9617'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9617'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9600'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9600'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9551'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9551'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9534'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9534'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9485'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9485'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9468'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9468'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9419'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9419'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9402'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9402'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9353'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9353'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9336'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9336'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9287'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9287'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9270'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9270'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9221'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9221'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9204'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9204'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9155'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9155'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9138'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9138'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9089'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9089'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9072'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9072'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9023'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9023'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$9006'.
+Removing empty process `cmdbuf_fsdb_formal_top.$9006'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8957'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8957'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8940'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8940'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8891'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8891'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8874'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8874'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8825'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8825'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8808'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8808'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8759'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8759'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8742'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8742'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8693'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8693'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8676'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8676'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8627'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8627'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8610'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8610'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8561'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8561'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8544'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8544'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8495'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8495'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8478'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8478'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8429'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8429'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8412'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8412'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8363'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8363'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8346'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8346'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8297'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8297'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8280'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8280'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8231'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8231'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8214'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8214'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8165'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8165'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8148'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8148'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8099'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8099'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8082'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8082'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8033'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8033'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$8016'.
+Removing empty process `cmdbuf_fsdb_formal_top.$8016'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7967'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7967'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7950'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7950'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7901'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7901'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7884'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7884'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7835'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7835'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7818'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7818'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7769'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7769'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7752'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7752'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7703'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7703'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7686'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7686'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7637'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7637'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7620'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7620'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7571'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7571'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7554'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7554'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7505'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7505'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7488'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7488'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7439'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7439'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7422'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7422'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7373'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7373'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7356'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7356'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7307'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7307'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7290'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7290'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7241'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7241'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7214'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7214'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7165'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7165'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7148'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7148'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7099'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7099'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7082'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7082'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7033'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7033'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$7016'.
+Removing empty process `cmdbuf_fsdb_formal_top.$7016'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6967'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6967'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6950'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6950'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6901'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6901'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6882'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6882'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6833'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6833'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6816'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6816'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6767'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6767'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6750'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6750'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6701'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6701'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6693'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6693'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6676'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6676'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6627'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6627'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6610'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6610'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6561'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6561'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6544'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6544'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6495'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6495'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6478'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6478'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6429'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6429'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6412'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6412'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6363'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6363'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6346'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6346'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6297'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6297'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6280'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6280'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6231'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6231'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6214'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6214'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6165'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6165'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6148'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6148'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6099'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6099'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6082'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6082'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6033'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6033'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$6016'.
+Removing empty process `cmdbuf_fsdb_formal_top.$6016'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5967'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5967'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5950'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5950'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5901'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5901'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5884'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5884'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5835'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5835'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5818'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5818'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5769'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5769'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5752'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5752'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5703'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5703'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5686'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5686'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5637'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5637'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5620'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5620'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5571'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5571'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5554'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5554'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5505'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5505'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5488'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5488'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5439'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5439'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5422'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5422'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5373'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5373'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5356'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5356'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5307'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5307'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5290'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5290'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5241'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5241'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5224'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5224'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5175'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5175'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5158'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5158'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5109'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5109'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5092'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5092'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5043'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5043'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$5026'.
+Removing empty process `cmdbuf_fsdb_formal_top.$5026'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4977'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4977'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4960'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4960'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4911'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4911'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4894'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4894'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4845'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4845'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4828'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4828'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4779'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4779'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4762'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4762'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4713'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4713'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4696'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4696'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4647'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4647'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4630'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4630'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4581'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4581'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4564'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4564'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4515'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4515'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4498'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4498'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4449'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4449'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4432'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4432'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4383'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4383'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4366'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4366'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4317'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4317'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4300'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4300'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4251'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4251'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4234'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4234'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4185'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4185'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4168'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4168'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4119'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4119'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4102'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4102'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4053'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4053'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$4036'.
+Removing empty process `cmdbuf_fsdb_formal_top.$4036'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3987'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3987'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3970'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3970'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3921'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3921'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3904'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3904'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3855'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3855'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3838'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3838'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3789'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3789'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3772'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3772'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3723'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3723'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3706'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3706'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3657'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3657'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3640'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3640'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3591'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3591'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3574'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3574'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3525'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3525'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3508'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3508'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3459'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3459'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3442'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3442'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3393'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3393'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3376'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3376'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3327'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3327'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3310'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3310'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3261'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3261'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3244'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3244'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3195'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3195'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3178'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3178'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3129'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3129'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3112'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3112'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3063'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3063'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$3046'.
+Removing empty process `cmdbuf_fsdb_formal_top.$3046'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2997'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2997'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2980'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2980'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2931'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2931'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2914'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2914'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2865'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2865'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2848'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2848'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2799'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2799'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2782'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2782'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2733'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2733'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2716'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2716'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2667'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2667'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2640'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2640'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2591'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2591'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2574'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2574'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2525'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2525'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2508'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2508'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2459'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2459'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2442'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2442'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2393'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2393'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2376'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2376'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2327'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2327'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2308'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2308'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2259'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2259'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2242'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2242'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2193'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2193'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2176'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2176'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2127'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2127'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2113'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2113'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2106'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2106'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$2094'.
+Removing empty process `cmdbuf_fsdb_formal_top.$2094'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$15737'.
+Removing empty process `cmdbuf_fsdb_formal_top.$15737'.
+Found and cleaned up 53 empty switches in `\cmdbuf_fsdb_formal_top.$1891'.
+Removing empty process `cmdbuf_fsdb_formal_top.$1891'.
+Found and cleaned up 1 empty switch in `\cmdbuf_fsdb_formal_top.$1878'.
+Removing empty process `cmdbuf_fsdb_formal_top.$1878'.
+Found and cleaned up 75 empty switches in `\cmdbuf_fsdb_formal_top.$1608'.
+Removing empty process `cmdbuf_fsdb_formal_top.$1608'.
+Found and cleaned up 431 empty switches in `\cmdbuf_fsdb_formal_top.$787'.
+Removing empty process `cmdbuf_fsdb_formal_top.$787'.
+Found and cleaned up 181 empty switches in `\cmdbuf_fsdb_formal_top.$420'.
+Removing empty process `cmdbuf_fsdb_formal_top.$420'.
+Found and cleaned up 35 empty switches in `\cmdbuf_fsdb_formal_top.$304'.
+Removing empty process `cmdbuf_fsdb_formal_top.$304'.
+Found and cleaned up 5 empty switches in `\cmdbuf_fsdb_formal_top.$292'.
+Removing empty process `cmdbuf_fsdb_formal_top.$292'.
+Found and cleaned up 13 empty switches in `\cmdbuf_fsdb_formal_top.$226'.
+Removing empty process `cmdbuf_fsdb_formal_top.$226'.
+Found and cleaned up 59 empty switches in `\cmdbuf_fsdb_formal_top.$20'.
+Removing empty process `cmdbuf_fsdb_formal_top.$20'.
+Cleaned up 1272 empty switches.
+
+1.9. Executing OPT_EXPR pass (perform const folding).
+Optimizing module cmdbuf_fsdb_formal_top.
+<suppressed ~4841 debug messages>
+
+2. Executing PREP pass.
+
+2.1. Executing HIERARCHY pass (managing design hierarchy).
+
+2.1.1. Analyzing design hierarchy..
+Top module:  \cmdbuf_fsdb_formal_top
+
+2.1.2. Analyzing design hierarchy..
+Top module:  \cmdbuf_fsdb_formal_top
+Removed 0 unused modules.
+Module cmdbuf_fsdb_formal_top directly or indirectly contains formal properties -> setting "keep" attribute.
+
+2.2. Executing PROC pass (convert processes to netlists).
+
+2.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+2.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Removed a total of 0 dead cases.
+
+2.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 0 assignments to connections.
+
+2.2.4. Executing PROC_INIT pass (extract init attributes).
+
+2.2.5. Executing PROC_ARST pass (detect async resets in processes).
+
+2.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+
+2.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+
+2.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+
+2.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+
+2.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+2.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+2.2.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module cmdbuf_fsdb_formal_top.
+
+2.3. Executing FUTURE pass.
+
+2.4. Executing OPT_EXPR pass (perform const folding).
+Optimizing module cmdbuf_fsdb_formal_top.
+
+2.5. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \cmdbuf_fsdb_formal_top..
+Removed 545 unused cells and 3607 unused wires.
+<suppressed ~667 debug messages>
+
+2.6. Executing CHECK pass (checking for obvious problems).
+Checking module cmdbuf_fsdb_formal_top...
+Found and reported 0 problems.
+
+2.7. Executing OPT pass (performing simple optimizations).
+
+2.7.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module cmdbuf_fsdb_formal_top.
+
+2.7.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 15298 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 9117 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 8094 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 7483 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 6878 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 6673 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 6472 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 6272 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 6073 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 5874 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 5676 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 5481 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 5286 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 5091 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 4896 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 4701 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 4506 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 4311 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 4116 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 3923 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 3732 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+<suppressed ~34698 debug messages>
+Removed a total of 11566 cells.
+
+2.7.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \cmdbuf_fsdb_formal_top..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 1/2 on $mux $procmux$3602.
+    dead port 1/2 on $mux $procmux$3605.
+    dead port 1/2 on $mux $procmux$2882.
+    dead port 1/2 on $mux $procmux$1938.
+    dead port 1/2 on $mux $procmux$3422.
+    dead port 1/2 on $mux $procmux$3542.
+    dead port 1/2 on $mux $procmux$942.
+    dead port 1/2 on $mux $procmux$1932.
+    dead port 1/2 on $mux $procmux$2765.
+    dead port 1/2 on $mux $procmux$2632.
+    dead port 1/2 on $mux $procmux$1926.
+    dead port 1/2 on $mux $procmux$1210.
+    dead port 1/2 on $mux $procmux$3272.
+    dead port 1/2 on $mux $procmux$1920.
+    dead port 1/2 on $mux $procmux$3065.
+    dead port 1/2 on $mux $procmux$2027.
+    dead port 1/2 on $mux $procmux$920.
+    dead port 1/2 on $mux $procmux$1992.
+    dead port 1/2 on $mux $procmux$1913.
+    dead port 1/2 on $mux $procmux$1906.
+    dead port 1/2 on $mux $procmux$2432.
+    dead port 1/2 on $mux $procmux$2352.
+    dead port 1/2 on $mux $procmux$2382.
+    dead port 1/2 on $mux $procmux$1903.
+    dead port 1/2 on $mux $procmux$1898.
+    dead port 1/2 on $mux $procmux$1895.
+    dead port 1/2 on $mux $procmux$2685.
+    dead port 1/2 on $mux $procmux$2110.
+    dead port 1/2 on $mux $procmux$2180.
+    dead port 1/2 on $mux $procmux$3585.
+    dead port 1/2 on $mux $procmux$853.
+    dead port 1/2 on $mux $procmux$3442.
+    dead port 1/2 on $mux $procmux$3325.
+    dead port 1/2 on $mux $procmux$2885.
+    dead port 1/2 on $mux $procmux$3242.
+    dead port 1/2 on $mux $procmux$2642.
+    dead port 1/2 on $mux $procmux$1252.
+    dead port 1/2 on $mux $procmux$1255.
+    dead port 1/2 on $mux $procmux$2962.
+    dead port 1/2 on $mux $procmux$1059.
+    dead port 1/2 on $mux $procmux$3612.
+    dead port 1/2 on $mux $procmux$1260.
+    dead port 1/2 on $mux $procmux$3072.
+    dead port 1/2 on $mux $procmux$1263.
+    dead port 1/2 on $mux $procmux$2812.
+    dead port 1/2 on $mux $procmux$2792.
+    dead port 1/2 on $mux $procmux$3545.
+    dead port 1/2 on $mux $procmux$2482.
+    dead port 1/2 on $mux $procmux$2992.
+    dead port 1/2 on $mux $procmux$2104.
+    dead port 1/2 on $mux $procmux$1118.
+    dead port 1/2 on $mux $procmux$3132.
+    dead port 1/2 on $mux $procmux$2625.
+    dead port 1/2 on $mux $procmux$3102.
+    dead port 1/2 on $mux $procmux$1277.
+    dead port 1/2 on $mux $procmux$2692.
+    dead port 1/2 on $mux $procmux$2412.
+    dead port 1/2 on $mux $procmux$3445.
+    dead port 1/2 on $mux $procmux$2162.
+    dead port 1/2 on $mux $procmux$3245.
+    dead port 1/2 on $mux $procmux$984.
+    dead port 1/2 on $mux $procmux$1284.
+    dead port 1/2 on $mux $procmux$2922.
+    dead port 1/2 on $mux $procmux$3042.
+    dead port 1/2 on $mux $procmux$992.
+    dead port 1/2 on $mux $procmux$882.
+    dead port 1/2 on $mux $procmux$2442.
+    dead port 1/2 on $mux $procmux$2892.
+    dead port 1/2 on $mux $procmux$2682.
+    dead port 1/2 on $mux $procmux$2265.
+    dead port 1/2 on $mux $procmux$3302.
+    dead port 1/2 on $mux $procmux$1062.
+    dead port 1/2 on $mux $procmux$2445.
+    dead port 1/2 on $mux $procmux$3162.
+    dead port 1/2 on $mux $procmux$925.
+    dead port 1/2 on $mux $procmux$1083.
+    dead port 1/2 on $mux $procmux$1193.
+    dead port 1/2 on $mux $procmux$3622.
+    dead port 1/2 on $mux $procmux$2098.
+    dead port 1/2 on $mux $procmux$2292.
+    dead port 1/2 on $mux $procmux$3022.
+    dead port 1/2 on $mux $procmux$2015.
+    dead port 1/2 on $mux $procmux$2805.
+    dead port 1/2 on $mux $procmux$995.
+    dead port 1/2 on $mux $procmux$3185.
+    dead port 1/2 on $mux $procmux$3332.
+    dead port 1/2 on $mux $procmux$2802.
+    dead port 1/2 on $mux $procmux$1121.
+    dead port 1/2 on $mux $procmux$3362.
+    dead port 1/2 on $mux $procmux$3685.
+    dead port 1/2 on $mux $procmux$3482.
+    dead port 1/2 on $mux $procmux$3625.
+    dead port 1/2 on $mux $procmux$2405.
+    dead port 1/2 on $mux $procmux$1196.
+    dead port 1/2 on $mux $procmux$3525.
+    dead port 1/2 on $mux $procmux$3512.
+    dead port 1/2 on $mux $procmux$1319.
+    dead port 1/2 on $mux $procmux$3305.
+    dead port 1/2 on $mux $procmux$3182.
+    dead port 1/2 on $mux $procmux$3192.
+    dead port 1/2 on $mux $procmux$1322.
+    dead port 1/2 on $mux $procmux$3222.
+    dead port 1/2 on $mux $procmux$3405.
+    dead port 1/2 on $mux $procmux$2342.
+    dead port 1/2 on $mux $procmux$2039.
+    dead port 1/2 on $mux $procmux$2285.
+    dead port 1/2 on $mux $procmux$2262.
+    dead port 1/2 on $mux $procmux$1217.
+    dead port 1/2 on $mux $procmux$2485.
+    dead port 1/2 on $mux $procmux$3582.
+    dead port 1/2 on $mux $procmux$2702.
+    dead port 1/2 on $mux $procmux$3105.
+    dead port 1/2 on $mux $procmux$2091.
+    dead port 1/2 on $mux $procmux$1327.
+    dead port 1/2 on $mux $procmux$3485.
+    dead port 1/2 on $mux $procmux$1330.
+    dead port 1/2 on $mux $procmux$2122.
+    dead port 1/2 on $mux $procmux$2842.
+    dead port 1/2 on $mux $procmux$2282.
+    dead port 1/2 on $mux $procmux$3165.
+    dead port 1/2 on $mux $procmux$3552.
+    dead port 1/2 on $mux $procmux$3052.
+    dead port 1/2 on $mux $procmux$2965.
+    dead port 1/2 on $mux $procmux$2452.
+    dead port 1/2 on $mux $procmux$2782.
+    dead port 1/2 on $mux $procmux$2492.
+    dead port 1/2 on $mux $procmux$3125.
+    dead port 1/2 on $mux $procmux$3082.
+    dead port 1/2 on $mux $procmux$3252.
+    dead port 1/2 on $mux $procmux$3632.
+    dead port 1/2 on $mux $procmux$2942.
+    dead port 1/2 on $mux $procmux$2985.
+    dead port 1/2 on $mux $procmux$2822.
+    dead port 1/2 on $mux $procmux$1344.
+    dead port 1/2 on $mux $procmux$3452.
+    dead port 1/2 on $mux $procmux$3565.
+    dead port 1/2 on $mux $procmux$3025.
+    dead port 1/2 on $mux $procmux$3045.
+    dead port 1/2 on $mux $procmux$861.
+    dead port 1/2 on $mux $procmux$2705.
+    dead port 1/2 on $mux $procmux$1351.
+    dead port 1/2 on $mux $procmux$3282.
+    dead port 1/2 on $mux $procmux$2785.
+    dead port 1/2 on $mux $procmux$2312.
+    dead port 1/2 on $mux $procmux$3005.
+    dead port 1/2 on $mux $procmux$2925.
+    dead port 1/2 on $mux $procmux$2173.
+    dead port 1/2 on $mux $procmux$3505.
+    dead port 1/2 on $mux $procmux$2902.
+    dead port 1/2 on $mux $procmux$2502.
+    dead port 1/2 on $mux $procmux$2128.
+    dead port 1/2 on $mux $procmux$2084.
+    dead port 1/2 on $mux $procmux$3225.
+    dead port 1/2 on $mux $procmux$2865.
+    dead port 1/2 on $mux $procmux$3152.
+    dead port 1/2 on $mux $procmux$2505.
+    dead port 1/2 on $mux $procmux$3502.
+    dead port 1/2 on $mux $procmux$2302.
+    dead port 1/2 on $mux $procmux$2932.
+    dead port 1/2 on $mux $procmux$2116.
+    dead port 1/2 on $mux $procmux$1076.
+    dead port 1/2 on $mux $procmux$2199.
+    dead port 1/2 on $mux $procmux$2512.
+    dead port 1/2 on $mux $procmux$2772.
+    dead port 1/2 on $mux $procmux$2845.
+    dead port 1/2 on $mux $procmux$3352.
+    dead port 1/2 on $mux $procmux$2081.
+    dead port 1/2 on $mux $procmux$2762.
+    dead port 1/2 on $mux $procmux$2462.
+    dead port 1/2 on $mux $procmux$3312.
+    dead port 1/2 on $mux $procmux$2862.
+    dead port 1/2 on $mux $procmux$2465.
+    dead port 1/2 on $mux $procmux$2652.
+    dead port 1/2 on $mux $procmux$2522.
+    dead port 1/2 on $mux $procmux$2402.
+    dead port 1/2 on $mux $procmux$3642.
+    dead port 1/2 on $mux $procmux$2825.
+    dead port 1/2 on $mux $procmux$1386.
+    dead port 1/2 on $mux $procmux$1143.
+    dead port 1/2 on $mux $procmux$2525.
+    dead port 1/2 on $mux $procmux$1389.
+    dead port 1/2 on $mux $procmux$875.
+    dead port 1/2 on $mux $procmux$3682.
+    dead port 1/2 on $mux $procmux$2422.
+    dead port 1/2 on $mux $procmux$2872.
+    dead port 1/2 on $mux $procmux$2645.
+    dead port 1/2 on $mux $procmux$2982.
+    dead port 1/2 on $mux $procmux$2325.
+    dead port 1/2 on $mux $procmux$2712.
+    dead port 1/2 on $mux $procmux$2392.
+    dead port 1/2 on $mux $procmux$1394.
+    dead port 1/2 on $mux $procmux$1150.
+    dead port 1/2 on $mux $procmux$2905.
+    dead port 1/2 on $mux $procmux$2165.
+    dead port 1/2 on $mux $procmux$3645.
+    dead port 1/2 on $mux $procmux$2385.
+    dead port 1/2 on $mux $procmux$949.
+    dead port 1/2 on $mux $procmux$2345.
+    dead port 1/2 on $mux $procmux$2532.
+    dead port 1/2 on $mux $procmux$3142.
+    dead port 1/2 on $mux $procmux$2425.
+    dead port 1/2 on $mux $procmux$2076.
+    dead port 1/2 on $mux $procmux$1397.
+    dead port 1/2 on $mux $procmux$2193.
+    dead port 1/2 on $mux $procmux$987.
+    dead port 1/2 on $mux $procmux$2852.
+    dead port 1/2 on $mux $procmux$1009.
+    dead port 1/2 on $mux $procmux$2665.
+    dead port 1/2 on $mux $procmux$3112.
+    dead port 1/2 on $mux $procmux$3285.
+    dead port 1/2 on $mux $procmux$3402.
+    dead port 1/2 on $mux $procmux$3002.
+    dead port 1/2 on $mux $procmux$1016.
+    dead port 1/2 on $mux $procmux$3392.
+    dead port 1/2 on $mux $procmux$1411.
+    dead port 1/2 on $mux $procmux$2073.
+    dead port 1/2 on $mux $procmux$2322.
+    dead port 1/2 on $mux $procmux$3212.
+    dead port 1/2 on $mux $procmux$2542.
+    dead port 1/2 on $mux $procmux$2972.
+    dead port 1/2 on $mux $procmux$3342.
+    dead port 1/2 on $mux $procmux$1418.
+    dead port 1/2 on $mux $procmux$2009.
+    dead port 1/2 on $mux $procmux$2021.
+    dead port 1/2 on $mux $procmux$2332.
+    dead port 1/2 on $mux $procmux$3172.
+    dead port 1/2 on $mux $procmux$1126.
+    dead port 1/2 on $mux $procmux$1185.
+    dead port 1/2 on $mux $procmux$928.
+    dead port 1/2 on $mux $procmux$2545.
+    dead port 1/2 on $mux $procmux$2472.
+    dead port 1/2 on $mux $procmux$1051.
+    dead port 1/2 on $mux $procmux$3085.
+    dead port 1/2 on $mux $procmux$3652.
+    dead port 1/2 on $mux $procmux$2552.
+    dead port 1/2 on $mux $procmux$3592.
+    dead port 1/2 on $mux $procmux$1950.
+    dead port 1/2 on $mux $procmux$2205.
+    dead port 1/2 on $mux $procmux$2033.
+    dead port 1/2 on $mux $procmux$3462.
+    dead port 1/2 on $mux $procmux$2170.
+    dead port 1/2 on $mux $procmux$2912.
+    dead port 1/2 on $mux $procmux$1054.
+    dead port 1/2 on $mux $procmux$1450.
+    dead port 1/2 on $mux $procmux$2945.
+    dead port 1/2 on $mux $procmux$1453.
+    dead port 1/2 on $mux $procmux$1861.
+    dead port 1/2 on $mux $procmux$1855.
+    dead port 1/2 on $mux $procmux$1849.
+    dead port 1/2 on $mux $procmux$1843.
+    dead port 1/2 on $mux $procmux$1837.
+    dead port 1/2 on $mux $procmux$1831.
+    dead port 1/2 on $mux $procmux$1824.
+    dead port 1/2 on $mux $procmux$1817.
+    dead port 1/2 on $mux $procmux$1814.
+    dead port 1/2 on $mux $procmux$1809.
+    dead port 1/2 on $mux $procmux$1806.
+    dead port 1/2 on $mux $procmux$1772.
+    dead port 1/2 on $mux $procmux$1766.
+    dead port 1/2 on $mux $procmux$1760.
+    dead port 1/2 on $mux $procmux$1458.
+    dead port 1/2 on $mux $procmux$1461.
+    dead port 1/2 on $mux $procmux$1468.
+    dead port 1/2 on $mux $procmux$1754.
+    dead port 1/2 on $mux $procmux$1748.
+    dead port 1/2 on $mux $procmux$1742.
+    dead port 1/2 on $mux $procmux$1735.
+    dead port 1/2 on $mux $procmux$1728.
+    dead port 1/2 on $mux $procmux$1725.
+    dead port 1/2 on $mux $procmux$1720.
+    dead port 1/2 on $mux $procmux$1717.
+    dead port 1/2 on $mux $procmux$1683.
+    dead port 1/2 on $mux $procmux$1677.
+    dead port 1/2 on $mux $procmux$1671.
+    dead port 1/2 on $mux $procmux$1665.
+    dead port 1/2 on $mux $procmux$1659.
+    dead port 1/2 on $mux $procmux$1653.
+    dead port 1/2 on $mux $procmux$1646.
+    dead port 1/2 on $mux $procmux$1475.
+    dead port 1/2 on $mux $procmux$2305.
+    dead port 1/2 on $mux $procmux$2562.
+    dead port 1/2 on $mux $procmux$2187.
+    dead port 1/2 on $mux $procmux$2722.
+    dead port 1/2 on $mux $procmux$2952.
+    dead port 1/2 on $mux $procmux$1481.
+    dead port 1/2 on $mux $procmux$1487.
+    dead port 1/2 on $mux $procmux$1129.
+    dead port 1/2 on $mux $procmux$4051.
+    dead port 1/2 on $mux $procmux$2565.
+    dead port 2/2 on $mux $procmux$4053.
+    dead port 1/2 on $mux $procmux$2372.
+    dead port 2/2 on $mux $procmux$4059.
+    dead port 1/2 on $mux $procmux$3412.
+    dead port 1/2 on $mux $procmux$2725.
+    dead port 1/2 on $mux $procmux$1493.
+    dead port 1/2 on $mux $procmux$1499.
+    dead port 1/2 on $mux $procmux$3345.
+    dead port 1/2 on $mux $procmux$858.
+    dead port 1/2 on $mux $procmux$2211.
+    dead port 1/2 on $mux $procmux$2572.
+    dead port 1/2 on $mux $procmux$3562.
+    dead port 1/2 on $mux $procmux$1505.
+    dead port 1/2 on $mux $procmux$3232.
+    dead port 1/2 on $mux $procmux$3382.
+    dead port 1/2 on $mux $procmux$3032.
+    dead port 1/2 on $mux $procmux$2612.
+    dead port 1/2 on $mux $procmux$3662.
+    dead port 1/2 on $mux $procmux$2832.
+    dead port 1/2 on $mux $procmux$3262.
+    dead port 1/2 on $mux $procmux$3012.
+    dead port 1/2 on $mux $procmux$2672.
+    dead port 1/2 on $mux $procmux$3465.
+    dead port 1/2 on $mux $procmux$850.
+    dead port 1/2 on $mux $procmux$3432.
+    dead port 1/2 on $mux $procmux$2732.
+    dead port 1/2 on $mux $procmux$2002.
+    dead port 1/2 on $mux $procmux$3202.
+    dead port 1/2 on $mux $procmux$3122.
+    dead port 1/2 on $mux $procmux$2362.
+    dead port 1/2 on $mux $procmux$2582.
+    dead port 1/2 on $mux $procmux$1944.
+    dead port 1/2 on $mux $procmux$3092.
+    dead port 1/2 on $mux $procmux$2662.
+    dead port 1/2 on $mux $procmux$3665.
+    dead port 1/2 on $mux $procmux$2585.
+    dead port 1/2 on $mux $procmux$3692.
+    dead port 1/2 on $mux $procmux$2365.
+    dead port 1/2 on $mux $procmux$3572.
+    dead port 1/2 on $mux $procmux$1539.
+    dead port 1/2 on $mux $procmux$1542.
+    dead port 1/2 on $mux $procmux$3322.
+    dead port 1/2 on $mux $procmux$2622.
+    dead port 1/2 on $mux $procmux$3062.
+    dead port 1/2 on $mux $procmux$2742.
+    dead port 1/2 on $mux $procmux$3492.
+    dead port 1/2 on $mux $procmux$3145.
+    dead port 1/2 on $mux $procmux$3472.
+    dead port 1/2 on $mux $procmux$1984.
+    dead port 1/2 on $mux $procmux$2592.
+    dead port 1/2 on $mux $procmux$1547.
+    dead port 1/2 on $mux $procmux$1550.
+    dead port 1/2 on $mux $procmux$1987.
+    dead port 1/2 on $mux $procmux$2745.
+    dead port 1/2 on $mux $procmux$2272.
+    dead port 1/2 on $mux $procmux$1557.
+    dead port 1/2 on $mux $procmux$3532.
+    dead port 1/2 on $mux $procmux$3205.
+    dead port 1/2 on $mux $procmux$2217.
+    dead port 1/2 on $mux $procmux$3425.
+    dead port 1/2 on $mux $procmux$1188.
+    dead port 1/2 on $mux $procmux$2602.
+    dead port 1/2 on $mux $procmux$3385.
+    dead port 1/2 on $mux $procmux$2752.
+    dead port 1/2 on $mux $procmux$3672.
+    dead port 1/2 on $mux $procmux$3522.
+    dead port 1/2 on $mux $procmux$3292.
+    dead port 1/2 on $mux $procmux$1995.
+    dead port 1/2 on $mux $procmux$1564.
+    dead port 1/2 on $mux $procmux$1570.
+    dead port 1/2 on $mux $procmux$1639.
+    dead port 1/2 on $mux $procmux$3372.
+    dead port 1/2 on $mux $procmux$1636.
+    dead port 1/2 on $mux $procmux$1576.
+    dead port 1/2 on $mux $procmux$3265.
+    dead port 1/2 on $mux $procmux$1582.
+    dead port 1/2 on $mux $procmux$1588.
+    dead port 1/2 on $mux $procmux$917.
+    dead port 1/2 on $mux $procmux$1594.
+    dead port 1/2 on $mux $procmux$3365.
+    dead port 1/2 on $mux $procmux$2605.
+    dead port 1/2 on $mux $procmux$1631.
+    dead port 1/2 on $mux $procmux$1628.
+Removed 372 multiplexer ports.
+<suppressed ~2191 debug messages>
+
+2.7.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \cmdbuf_fsdb_formal_top.
+  Optimizing cells in module \cmdbuf_fsdb_formal_top.
+Performed a total of 9 changes.
+
+2.7.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 3360 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 2942 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 2941 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+<suppressed ~1257 debug messages>
+Removed a total of 419 cells.
+
+2.7.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \cmdbuf_fsdb_formal_top..
+Removed 0 unused cells and 12357 unused wires.
+<suppressed ~1 debug messages>
+
+2.7.7. Executing OPT_EXPR pass (perform const folding).
+Optimizing module cmdbuf_fsdb_formal_top.
+
+2.7.8. Rerunning OPT passes. (Maybe there is more to do..)
+
+2.7.9. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \cmdbuf_fsdb_formal_top..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~997 debug messages>
+
+2.7.10. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \cmdbuf_fsdb_formal_top.
+Performed a total of 0 changes.
+
+2.7.11. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 2941 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Removed a total of 0 cells.
+
+2.7.12. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \cmdbuf_fsdb_formal_top..
+
+2.7.13. Executing OPT_EXPR pass (perform const folding).
+Optimizing module cmdbuf_fsdb_formal_top.
+
+2.7.14. Finished fast OPT passes. (There is nothing left to do.)
+
+2.8. Executing WREDUCE pass (reducing word size of cells).
+Removed top 7 bits (of 8) from port A of cell cmdbuf_fsdb_formal_top.$0 ($shl).
+Removed top 3 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$12 ($add).
+Removed top 3 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$13 ($sub).
+Converting cell cmdbuf_fsdb_formal_top.$84 ($lt) from signed to unsigned.
+Removed top 1 bits (of 5) from port A of cell cmdbuf_fsdb_formal_top.$84 ($lt).
+Removed top 1 bits (of 6) from port B of cell cmdbuf_fsdb_formal_top.$84 ($lt).
+Removed top 1 bits (of 2) from port B of cell cmdbuf_fsdb_formal_top.$89 ($eq).
+Removed top 1 bits (of 2) from port B of cell cmdbuf_fsdb_formal_top.$91 ($eq).
+Removed top 1 bits (of 2) from port B of cell cmdbuf_fsdb_formal_top.$93 ($eq).
+Removed top 1 bits (of 2) from port B of cell cmdbuf_fsdb_formal_top.$95 ($eq).
+Removed top 1 bits (of 2) from port B of cell cmdbuf_fsdb_formal_top.$97 ($eq).
+Removed top 1 bits (of 2) from port B of cell cmdbuf_fsdb_formal_top.$99 ($eq).
+Removed top 1 bits (of 2) from port B of cell cmdbuf_fsdb_formal_top.$101 ($eq).
+Removed top 1 bits (of 2) from port B of cell cmdbuf_fsdb_formal_top.$103 ($eq).
+Removed top 1 bits (of 2) from port B of cell cmdbuf_fsdb_formal_top.$105 ($eq).
+Converting cell cmdbuf_fsdb_formal_top.$152 ($lt) from signed to unsigned.
+Removed top 1 bits (of 5) from port A of cell cmdbuf_fsdb_formal_top.$152 ($lt).
+Removed top 1 bits (of 6) from port B of cell cmdbuf_fsdb_formal_top.$152 ($lt).
+Converting cell cmdbuf_fsdb_formal_top.$220 ($lt) from signed to unsigned.
+Removed top 1 bits (of 5) from port A of cell cmdbuf_fsdb_formal_top.$220 ($lt).
+Removed top 1 bits (of 6) from port B of cell cmdbuf_fsdb_formal_top.$220 ($lt).
+Removed top 30 bits (of 32) from port A of cell cmdbuf_fsdb_formal_top.$227 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$227 ($add).
+Removed top 29 bits (of 32) from port Y of cell cmdbuf_fsdb_formal_top.$227 ($add).
+Removed top 29 bits (of 32) from port A of cell cmdbuf_fsdb_formal_top.$228 ($ge).
+Removed top 30 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$228 ($ge).
+Removed top 29 bits (of 32) from port A of cell cmdbuf_fsdb_formal_top.$229 ($sub).
+Removed top 30 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$229 ($sub).
+Removed top 28 bits (of 32) from port Y of cell cmdbuf_fsdb_formal_top.$229 ($sub).
+Converting cell cmdbuf_fsdb_formal_top.$231 ($lt) from signed to unsigned.
+Removed top 1 bits (of 33) from port A of cell cmdbuf_fsdb_formal_top.$231 ($lt).
+Removed top 1 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$231 ($lt).
+Removed top 30 bits (of 32) from port A of cell cmdbuf_fsdb_formal_top.$237 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$237 ($add).
+Removed top 29 bits (of 32) from port Y of cell cmdbuf_fsdb_formal_top.$237 ($add).
+Removed top 29 bits (of 32) from port A of cell cmdbuf_fsdb_formal_top.$238 ($ge).
+Removed top 30 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$238 ($ge).
+Removed top 29 bits (of 32) from port A of cell cmdbuf_fsdb_formal_top.$239 ($sub).
+Removed top 30 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$239 ($sub).
+Removed top 28 bits (of 32) from port Y of cell cmdbuf_fsdb_formal_top.$239 ($sub).
+Converting cell cmdbuf_fsdb_formal_top.$242 ($lt) from signed to unsigned.
+Removed top 1 bits (of 33) from port A of cell cmdbuf_fsdb_formal_top.$242 ($lt).
+Removed top 1 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$242 ($lt).
+Removed top 30 bits (of 32) from port A of cell cmdbuf_fsdb_formal_top.$248 ($add).
+Removed top 30 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$248 ($add).
+Removed top 29 bits (of 32) from port Y of cell cmdbuf_fsdb_formal_top.$248 ($add).
+Removed top 29 bits (of 32) from port A of cell cmdbuf_fsdb_formal_top.$249 ($ge).
+Removed top 30 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$249 ($ge).
+Removed top 29 bits (of 32) from port A of cell cmdbuf_fsdb_formal_top.$250 ($sub).
+Removed top 30 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$250 ($sub).
+Removed top 28 bits (of 32) from port Y of cell cmdbuf_fsdb_formal_top.$250 ($sub).
+Converting cell cmdbuf_fsdb_formal_top.$253 ($lt) from signed to unsigned.
+Removed top 1 bits (of 33) from port A of cell cmdbuf_fsdb_formal_top.$253 ($lt).
+Removed top 1 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$253 ($lt).
+Removed top 1 bits (of 3) from port A of cell cmdbuf_fsdb_formal_top.$260 ($not).
+Converting cell cmdbuf_fsdb_formal_top.$265 ($ge) from signed to unsigned.
+Removed top 1 bits (of 3) from port A of cell cmdbuf_fsdb_formal_top.$265 ($ge).
+Converting cell cmdbuf_fsdb_formal_top.$266 ($lt) from signed to unsigned.
+Removed top 1 bits (of 3) from port A of cell cmdbuf_fsdb_formal_top.$266 ($lt).
+Removed top 1 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$266 ($lt).
+Removed top 1 bits (of 5) from port A of cell cmdbuf_fsdb_formal_top.$281 ($not).
+Removed top 15 bits (of 18) from mux cell cmdbuf_fsdb_formal_top.$285 ($mux).
+Converting cell cmdbuf_fsdb_formal_top.$305 ($ge) from signed to unsigned.
+Removed top 1 bits (of 5) from port A of cell cmdbuf_fsdb_formal_top.$305 ($ge).
+Removed top 28 bits (of 32) from port A of cell cmdbuf_fsdb_formal_top.$314 ($sub).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$314 ($sub).
+Removed top 27 bits (of 32) from port Y of cell cmdbuf_fsdb_formal_top.$314 ($sub).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$317 ($gt).
+Removed top 31 bits (of 32) from port A of cell cmdbuf_fsdb_formal_top.$318 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$319 ($sub).
+Removed top 28 bits (of 32) from port A of cell cmdbuf_fsdb_formal_top.$326 ($sub).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$326 ($sub).
+Removed top 27 bits (of 32) from port Y of cell cmdbuf_fsdb_formal_top.$326 ($sub).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$329 ($gt).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$331 ($sub).
+Removed top 28 bits (of 32) from port A of cell cmdbuf_fsdb_formal_top.$338 ($sub).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$338 ($sub).
+Removed top 27 bits (of 32) from port Y of cell cmdbuf_fsdb_formal_top.$338 ($sub).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$341 ($gt).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$343 ($sub).
+Removed top 28 bits (of 32) from port A of cell cmdbuf_fsdb_formal_top.$348 ($sub).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$361 ($gt).
+Removed top 29 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$364 ($lt).
+Removed top 30 bits (of 32) from port A of cell cmdbuf_fsdb_formal_top.$367 ($lt).
+Removed top 30 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$367 ($lt).
+Converting cell cmdbuf_fsdb_formal_top.$368 ($lt) from signed to unsigned.
+Removed top 1 bits (of 3) from port A of cell cmdbuf_fsdb_formal_top.$368 ($lt).
+Removed top 1 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$368 ($lt).
+Converting cell cmdbuf_fsdb_formal_top.$412 ($ge) from signed to unsigned.
+Removed top 1 bits (of 5) from port A of cell cmdbuf_fsdb_formal_top.$412 ($ge).
+Converting cell cmdbuf_fsdb_formal_top.$413 ($lt) from signed to unsigned.
+Removed top 1 bits (of 5) from port A of cell cmdbuf_fsdb_formal_top.$413 ($lt).
+Removed top 1 bits (of 6) from port B of cell cmdbuf_fsdb_formal_top.$413 ($lt).
+Converting cell cmdbuf_fsdb_formal_top.$423 ($ge) from signed to unsigned.
+Removed top 1 bits (of 5) from port A of cell cmdbuf_fsdb_formal_top.$423 ($ge).
+Converting cell cmdbuf_fsdb_formal_top.$424 ($lt) from signed to unsigned.
+Removed top 1 bits (of 5) from port A of cell cmdbuf_fsdb_formal_top.$424 ($lt).
+Removed top 1 bits (of 6) from port B of cell cmdbuf_fsdb_formal_top.$424 ($lt).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$436 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$439 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$442 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$445 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$448 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$451 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$454 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$457 ($add).
+Removed top 29 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$459 ($lt).
+Converting cell cmdbuf_fsdb_formal_top.$461 ($lt) from signed to unsigned.
+Removed top 1 bits (of 4) from port A of cell cmdbuf_fsdb_formal_top.$461 ($lt).
+Removed top 1 bits (of 5) from port B of cell cmdbuf_fsdb_formal_top.$461 ($lt).
+Converting cell cmdbuf_fsdb_formal_top.$464 ($lt) from signed to unsigned.
+Removed top 1 bits (of 2) from port A of cell cmdbuf_fsdb_formal_top.$464 ($lt).
+Removed top 1 bits (of 3) from port B of cell cmdbuf_fsdb_formal_top.$464 ($lt).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$471 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$474 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$477 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$480 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$483 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$486 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$489 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$492 ($add).
+Removed top 29 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$494 ($lt).
+Converting cell cmdbuf_fsdb_formal_top.$496 ($lt) from signed to unsigned.
+Removed top 1 bits (of 4) from port A of cell cmdbuf_fsdb_formal_top.$496 ($lt).
+Removed top 1 bits (of 5) from port B of cell cmdbuf_fsdb_formal_top.$496 ($lt).
+Converting cell cmdbuf_fsdb_formal_top.$499 ($lt) from signed to unsigned.
+Removed top 1 bits (of 2) from port A of cell cmdbuf_fsdb_formal_top.$499 ($lt).
+Removed top 1 bits (of 3) from port B of cell cmdbuf_fsdb_formal_top.$499 ($lt).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$506 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$509 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$512 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$515 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$518 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$521 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$524 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$527 ($add).
+Removed top 29 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$529 ($lt).
+Converting cell cmdbuf_fsdb_formal_top.$531 ($lt) from signed to unsigned.
+Removed top 1 bits (of 4) from port A of cell cmdbuf_fsdb_formal_top.$531 ($lt).
+Removed top 1 bits (of 5) from port B of cell cmdbuf_fsdb_formal_top.$531 ($lt).
+Converting cell cmdbuf_fsdb_formal_top.$534 ($lt) from signed to unsigned.
+Removed top 1 bits (of 2) from port A of cell cmdbuf_fsdb_formal_top.$534 ($lt).
+Removed top 1 bits (of 3) from port B of cell cmdbuf_fsdb_formal_top.$534 ($lt).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$541 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$544 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$547 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$550 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$553 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$556 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$559 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$562 ($add).
+Removed top 29 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$564 ($lt).
+Converting cell cmdbuf_fsdb_formal_top.$566 ($lt) from signed to unsigned.
+Removed top 1 bits (of 4) from port A of cell cmdbuf_fsdb_formal_top.$566 ($lt).
+Removed top 1 bits (of 5) from port B of cell cmdbuf_fsdb_formal_top.$566 ($lt).
+Converting cell cmdbuf_fsdb_formal_top.$569 ($lt) from signed to unsigned.
+Removed top 1 bits (of 2) from port A of cell cmdbuf_fsdb_formal_top.$569 ($lt).
+Removed top 1 bits (of 3) from port B of cell cmdbuf_fsdb_formal_top.$569 ($lt).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$576 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$579 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$582 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$585 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$588 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$591 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$594 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$597 ($add).
+Removed top 29 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$599 ($lt).
+Converting cell cmdbuf_fsdb_formal_top.$601 ($lt) from signed to unsigned.
+Removed top 1 bits (of 4) from port A of cell cmdbuf_fsdb_formal_top.$601 ($lt).
+Removed top 1 bits (of 5) from port B of cell cmdbuf_fsdb_formal_top.$601 ($lt).
+Converting cell cmdbuf_fsdb_formal_top.$604 ($lt) from signed to unsigned.
+Removed top 1 bits (of 2) from port A of cell cmdbuf_fsdb_formal_top.$604 ($lt).
+Removed top 1 bits (of 3) from port B of cell cmdbuf_fsdb_formal_top.$604 ($lt).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$611 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$614 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$617 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$620 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$623 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$626 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$629 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$632 ($add).
+Removed top 29 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$634 ($lt).
+Converting cell cmdbuf_fsdb_formal_top.$636 ($lt) from signed to unsigned.
+Removed top 1 bits (of 4) from port A of cell cmdbuf_fsdb_formal_top.$636 ($lt).
+Removed top 1 bits (of 5) from port B of cell cmdbuf_fsdb_formal_top.$636 ($lt).
+Converting cell cmdbuf_fsdb_formal_top.$639 ($lt) from signed to unsigned.
+Removed top 1 bits (of 2) from port A of cell cmdbuf_fsdb_formal_top.$639 ($lt).
+Removed top 1 bits (of 3) from port B of cell cmdbuf_fsdb_formal_top.$639 ($lt).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$646 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$649 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$652 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$655 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$658 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$661 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$664 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$667 ($add).
+Removed top 29 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$669 ($lt).
+Converting cell cmdbuf_fsdb_formal_top.$671 ($lt) from signed to unsigned.
+Removed top 1 bits (of 4) from port A of cell cmdbuf_fsdb_formal_top.$671 ($lt).
+Removed top 1 bits (of 5) from port B of cell cmdbuf_fsdb_formal_top.$671 ($lt).
+Converting cell cmdbuf_fsdb_formal_top.$674 ($lt) from signed to unsigned.
+Removed top 1 bits (of 2) from port A of cell cmdbuf_fsdb_formal_top.$674 ($lt).
+Removed top 1 bits (of 3) from port B of cell cmdbuf_fsdb_formal_top.$674 ($lt).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$681 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$684 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$687 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$690 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$693 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$696 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$699 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$702 ($add).
+Removed top 29 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$704 ($lt).
+Converting cell cmdbuf_fsdb_formal_top.$706 ($lt) from signed to unsigned.
+Removed top 1 bits (of 4) from port A of cell cmdbuf_fsdb_formal_top.$706 ($lt).
+Removed top 1 bits (of 5) from port B of cell cmdbuf_fsdb_formal_top.$706 ($lt).
+Converting cell cmdbuf_fsdb_formal_top.$709 ($lt) from signed to unsigned.
+Removed top 1 bits (of 2) from port A of cell cmdbuf_fsdb_formal_top.$709 ($lt).
+Removed top 1 bits (of 3) from port B of cell cmdbuf_fsdb_formal_top.$709 ($lt).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$716 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$719 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$722 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$725 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$728 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$731 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$734 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$737 ($add).
+Removed top 29 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$739 ($lt).
+Converting cell cmdbuf_fsdb_formal_top.$741 ($lt) from signed to unsigned.
+Removed top 1 bits (of 4) from port A of cell cmdbuf_fsdb_formal_top.$741 ($lt).
+Removed top 1 bits (of 5) from port B of cell cmdbuf_fsdb_formal_top.$741 ($lt).
+Converting cell cmdbuf_fsdb_formal_top.$744 ($lt) from signed to unsigned.
+Removed top 1 bits (of 2) from port A of cell cmdbuf_fsdb_formal_top.$744 ($lt).
+Removed top 1 bits (of 3) from port B of cell cmdbuf_fsdb_formal_top.$744 ($lt).
+Removed top 3 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1613 ($add).
+Removed top 3 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1616 ($sub).
+Removed top 1 bits (of 2) from port B of cell cmdbuf_fsdb_formal_top.$1617 ($eq).
+Removed top 3 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1619 ($add).
+Removed top 1 bits (of 2) from port B of cell cmdbuf_fsdb_formal_top.$1620 ($eq).
+Removed top 3 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1622 ($sub).
+Removed top 3 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1625 ($add).
+Removed top 3 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1628 ($sub).
+Removed top 1 bits (of 2) from port B of cell cmdbuf_fsdb_formal_top.$1629 ($add).
+Removed top 1 bits (of 5) from port A of cell cmdbuf_fsdb_formal_top.$1638 ($not).
+Removed top 3 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1670 ($eq).
+Removed top 2 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1692 ($eq).
+Removed top 2 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1714 ($eq).
+Removed top 1 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1736 ($eq).
+Removed top 1 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1758 ($eq).
+Removed top 1 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1780 ($eq).
+Removed top 1 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1802 ($eq).
+Removed top 28 bits (of 32) from port A of cell cmdbuf_fsdb_formal_top.$1879 ($lt).
+Removed top 28 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$1879 ($lt).
+Removed top 1 bits (of 5) from port A of cell cmdbuf_fsdb_formal_top.$1880 ($not).
+Converting cell cmdbuf_fsdb_formal_top.$1885 ($lt) from signed to unsigned.
+Removed top 1 bits (of 5) from port A of cell cmdbuf_fsdb_formal_top.$1885 ($lt).
+Removed top 1 bits (of 6) from port B of cell cmdbuf_fsdb_formal_top.$1885 ($lt).
+Removed top 3 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1915 ($eq).
+Removed top 3 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1917 ($eq).
+Removed top 3 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1919 ($eq).
+Removed top 2 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1932 ($eq).
+Removed top 2 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1934 ($eq).
+Removed top 2 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1936 ($eq).
+Removed top 2 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1949 ($eq).
+Removed top 2 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1951 ($eq).
+Removed top 2 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1953 ($eq).
+Removed top 1 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1966 ($eq).
+Removed top 1 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1968 ($eq).
+Removed top 1 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1970 ($eq).
+Removed top 1 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1983 ($eq).
+Removed top 1 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1985 ($eq).
+Removed top 1 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$1987 ($eq).
+Removed top 1 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$2000 ($eq).
+Removed top 1 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$2002 ($eq).
+Removed top 1 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$2004 ($eq).
+Removed top 1 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$2017 ($eq).
+Removed top 1 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$2019 ($eq).
+Removed top 1 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$2021 ($eq).
+Removed top 25 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$2097 ($lt).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$2098 ($add).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$2119 ($lt).
+Removed top 30 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$2123 ($lt).
+Removed top 2 bits (of 8) from port B of cell cmdbuf_fsdb_formal_top.$2653 ($eq).
+Removed top 2 bits (of 8) from port B of cell cmdbuf_fsdb_formal_top.$6114 ($eq).
+Removed top 28 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$6695 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$10265 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$10331 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$10397 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$10463 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$10529 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$10595 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$10661 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$10727 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$10793 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$10859 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$10925 ($eq).
+Removed top 25 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$10991 ($eq).
+Removed top 25 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$11057 ($eq).
+Removed top 25 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$11123 ($eq).
+Removed top 25 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$11189 ($eq).
+Removed top 27 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$11269 ($eq).
+Removed top 25 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$11272 ($eq).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$12214 ($eq).
+Removed top 31 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$12339 ($eq).
+Removed top 30 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$12405 ($eq).
+Removed top 30 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$12471 ($eq).
+Removed top 29 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$12537 ($eq).
+Removed top 29 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$12603 ($eq).
+Removed top 29 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$12669 ($eq).
+Removed top 3 bits (of 4) from port B of cell cmdbuf_fsdb_formal_top.$12677 ($eq).
+Removed top 1 bits (of 2) from port B of cell cmdbuf_fsdb_formal_top.$12708 ($eq).
+Removed top 29 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$12735 ($eq).
+Removed top 7 bits (of 8) from port B of cell cmdbuf_fsdb_formal_top.$12741 ($eq).
+Removed top 1 bits (of 12) from port B of cell cmdbuf_fsdb_formal_top.$12743 ($eq).
+Removed top 28 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$12803 ($eq).
+Removed top 28 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$12869 ($eq).
+Removed top 28 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$12935 ($eq).
+Removed top 7 bits (of 128) from port B of cell cmdbuf_fsdb_formal_top.$12990 ($eq).
+Removed top 28 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$13001 ($eq).
+Removed top 28 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$13067 ($eq).
+Removed top 2 bits (of 3) from port B of cell cmdbuf_fsdb_formal_top.$13071 ($eq).
+Removed top 7 bits (of 128) from port B of cell cmdbuf_fsdb_formal_top.$13073 ($eq).
+Removed top 2 bits (of 8) from port B of cell cmdbuf_fsdb_formal_top.$13075 ($eq).
+Removed top 2 bits (of 5) from port B of cell cmdbuf_fsdb_formal_top.$13077 ($eq).
+Removed top 2 bits (of 3) from port B of cell cmdbuf_fsdb_formal_top.$13079 ($eq).
+Removed top 28 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$13143 ($eq).
+Removed top 28 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$13209 ($eq).
+Removed top 28 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$13275 ($eq).
+Removed top 27 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$13341 ($eq).
+Removed top 27 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$13407 ($eq).
+Removed top 27 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$13473 ($eq).
+Removed top 27 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$13539 ($eq).
+Removed top 27 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$13605 ($eq).
+Removed top 27 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$13671 ($eq).
+Removed top 27 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$13737 ($eq).
+Removed top 27 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$13803 ($eq).
+Removed top 27 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$13869 ($eq).
+Removed top 27 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$13935 ($eq).
+Removed top 27 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$14001 ($eq).
+Removed top 27 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$14067 ($eq).
+Removed top 27 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$14133 ($eq).
+Removed top 27 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$14199 ($eq).
+Removed top 27 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$14265 ($eq).
+Removed top 27 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$14331 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$14397 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$14463 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$14529 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$14595 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$14661 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$14727 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$14793 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$14859 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$14925 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$14991 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$15057 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$15123 ($eq).
+Removed top 1 bits (of 18) from port B of cell cmdbuf_fsdb_formal_top.$15146 ($eq).
+Removed top 2 bits (of 8) from port B of cell cmdbuf_fsdb_formal_top.$15150 ($eq).
+Removed top 2 bits (of 5) from port B of cell cmdbuf_fsdb_formal_top.$15152 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$15189 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$15255 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$15321 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$15387 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$15453 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$15519 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$15585 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$15651 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$15731 ($eq).
+Removed top 30 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$15732 ($eq).
+Removed top 26 bits (of 32) from port B of cell cmdbuf_fsdb_formal_top.$15734 ($eq).
+Removed top 3 bits (of 4) from mux cell cmdbuf_fsdb_formal_top.$procmux$3720 ($mux).
+Removed top 31 bits (of 32) from mux cell cmdbuf_fsdb_formal_top.$procmux$3749 ($mux).
+Removed top 31 bits (of 32) from mux cell cmdbuf_fsdb_formal_top.$procmux$3776 ($mux).
+Removed top 31 bits (of 32) from mux cell cmdbuf_fsdb_formal_top.$procmux$3803 ($mux).
+Removed top 31 bits (of 32) from mux cell cmdbuf_fsdb_formal_top.$procmux$3830 ($mux).
+Removed top 31 bits (of 32) from mux cell cmdbuf_fsdb_formal_top.$procmux$3857 ($mux).
+Removed top 31 bits (of 32) from mux cell cmdbuf_fsdb_formal_top.$procmux$3884 ($mux).
+Removed top 31 bits (of 32) from mux cell cmdbuf_fsdb_formal_top.$procmux$3911 ($mux).
+Removed top 31 bits (of 32) from mux cell cmdbuf_fsdb_formal_top.$procmux$3938 ($mux).
+Removed top 31 bits (of 32) from mux cell cmdbuf_fsdb_formal_top.$procmux$3965 ($mux).
+Removed top 3 bits (of 4) from mux cell cmdbuf_fsdb_formal_top.$procmux$4018 ($mux).
+Removed top 1 bits (of 2) from mux cell cmdbuf_fsdb_formal_top.$procmux$4048 ($mux).
+Removed top 3 bits (of 4) from mux cell cmdbuf_fsdb_formal_top.$procmux$4154 ($mux).
+Removed top 3 bits (of 4) from mux cell cmdbuf_fsdb_formal_top.$procmux$4210 ($mux).
+Removed top 3 bits (of 4) from mux cell cmdbuf_fsdb_formal_top.$procmux$4266 ($mux).
+Removed top 15 bits (of 18) from mux cell cmdbuf_fsdb_formal_top.$284 ($mux).
+Removed top 3 bits (of 4) from wire cmdbuf_fsdb_formal_top.$dut.u_cmd.select_entry$756.
+Removed top 31 bits (of 32) from wire cmdbuf_fsdb_formal_top.$dut.u_cmd.rank_count[31:0]$714.
+Removed top 31 bits (of 32) from wire cmdbuf_fsdb_formal_top.$dut.u_cmd.rank_count[63:32]$679.
+Removed top 31 bits (of 32) from wire cmdbuf_fsdb_formal_top.$dut.u_cmd.rank_count[95:64]$644.
+Removed top 31 bits (of 32) from wire cmdbuf_fsdb_formal_top.$dut.u_cmd.rank_count[127:96]$609.
+Removed top 31 bits (of 32) from wire cmdbuf_fsdb_formal_top.$dut.u_cmd.rank_count[159:128]$574.
+Removed top 31 bits (of 32) from wire cmdbuf_fsdb_formal_top.$dut.u_cmd.rank_count[191:160]$539.
+Removed top 31 bits (of 32) from wire cmdbuf_fsdb_formal_top.$dut.u_cmd.rank_count[223:192]$504.
+Removed top 31 bits (of 32) from wire cmdbuf_fsdb_formal_top.$dut.u_cmd.rank_count[255:224]$469.
+Removed top 31 bits (of 32) from wire cmdbuf_fsdb_formal_top.$dut.u_cmd.rank_count[287:256]$434.
+Removed top 3 bits (of 4) from wire cmdbuf_fsdb_formal_top.$dut.u_cmd.alloc_entry$380.
+Removed top 1 bits (of 2) from wire cmdbuf_fsdb_formal_top.$dut.u_cmd.rresp$300.
+Removed top 15 bits (of 18) from wire cmdbuf_fsdb_formal_top.$285y.
+Removed top 15 bits (of 18) from wire cmdbuf_fsdb_formal_top.$284y.
+Removed top 29 bits (of 32) from wire cmdbuf_fsdb_formal_top.$248y.
+Removed top 29 bits (of 32) from wire cmdbuf_fsdb_formal_top.$237y.
+Removed top 29 bits (of 32) from wire cmdbuf_fsdb_formal_top.$227y.
+Removed top 3 bits (of 4) from wire cmdbuf_fsdb_formal_top.$dut.u_cmd.head_entry[3:0]$183.
+Removed top 3 bits (of 4) from wire cmdbuf_fsdb_formal_top.$dut.u_cmd.head_entry[7:4]$115.
+Removed top 3 bits (of 4) from wire cmdbuf_fsdb_formal_top.$dut.u_cmd.head_entry[11:8]$47.
+
+2.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \cmdbuf_fsdb_formal_top..
+Removed 0 unused cells and 20 unused wires.
+<suppressed ~1 debug messages>
+
+2.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+2.11. Executing OPT pass (performing simple optimizations).
+
+2.11.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module cmdbuf_fsdb_formal_top.
+
+2.11.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\cmdbuf_fsdb_formal_top'.
+Computing hashes of 2941 cells of `\cmdbuf_fsdb_formal_top'.
+Finding duplicate cells in `\cmdbuf_fsdb_formal_top'.
+Removed a total of 0 cells.
+
+2.11.3. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \cmdbuf_fsdb_formal_top..
+
+2.11.4. Finished fast OPT passes.
+
+2.12. Executing SORT pass.
+
+2.13. Printing statistics.
+
+=== cmdbuf_fsdb_formal_top ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2421 wires
+    17001 wire bits
+      193 public wires
+     4644 public wire bits
+       26 ports
+      442 port bits
+     2941 cells
+       86   $add
+       82   $aldff
+       43   $and
+       24   $bmux
+      418   $check
+        4   $demux
+        2   $dff
+      151   $eq
+       11   $ge
+        4   $gt
+      608   $logic_and
+      308   $logic_not
+      453   $logic_or
+       44   $lt
+      671   $mux
+       10   $not
+        2   $or
+        1   $reduce_bool
+        4   $reduce_or
+        1   $shl
+       14   $sub
+
+2.14. Executing CHECK pass (checking for obvious problems).
+Checking module cmdbuf_fsdb_formal_top...
+Found and reported 0 problems.
+
+3. Executing ASYNC2SYNC pass.
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.addr_q[0] ($aldff): ALOAD=\rst_n, AD=18'000000000000000000, D=$dut.u_cmd.addr_q[161:144]$1663, Q=\dut.u_cmd.addr_q [161:144]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.addr_q[1] ($aldff): ALOAD=\rst_n, AD=18'000000000000000000, D=$dut.u_cmd.addr_q[143:126]$1685, Q=\dut.u_cmd.addr_q [143:126]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.addr_q[2] ($aldff): ALOAD=\rst_n, AD=18'000000000000000000, D=$dut.u_cmd.addr_q[125:108]$1707, Q=\dut.u_cmd.addr_q [125:108]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.addr_q[3] ($aldff): ALOAD=\rst_n, AD=18'000000000000000000, D=$dut.u_cmd.addr_q[107:90]$1729, Q=\dut.u_cmd.addr_q [107:90]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.addr_q[4] ($aldff): ALOAD=\rst_n, AD=18'000000000000000000, D=$dut.u_cmd.addr_q[89:72]$1751, Q=\dut.u_cmd.addr_q [89:72]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.addr_q[5] ($aldff): ALOAD=\rst_n, AD=18'000000000000000000, D=$dut.u_cmd.addr_q[71:54]$1773, Q=\dut.u_cmd.addr_q [71:54]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.addr_q[6] ($aldff): ALOAD=\rst_n, AD=18'000000000000000000, D=$dut.u_cmd.addr_q[53:36]$1795, Q=\dut.u_cmd.addr_q [53:36]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.addr_q[7] ($aldff): ALOAD=\rst_n, AD=18'000000000000000000, D=$dut.u_cmd.addr_q[35:18]$1817, Q=\dut.u_cmd.addr_q [35:18]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.addr_q[8] ($aldff): ALOAD=\rst_n, AD=18'000000000000000000, D=$dut.u_cmd.addr_q[17:0]$1839, Q=\dut.u_cmd.addr_q [17:0]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.arresp_q[0] ($aldff): ALOAD=\rst_n, AD=2'00, D=$dut.u_cmd.arresp_q[17:16]$1667, Q=\dut.u_cmd.arresp_q [17:16]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.arresp_q[1] ($aldff): ALOAD=\rst_n, AD=2'00, D=$dut.u_cmd.arresp_q[15:14]$1689, Q=\dut.u_cmd.arresp_q [15:14]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.arresp_q[2] ($aldff): ALOAD=\rst_n, AD=2'00, D=$dut.u_cmd.arresp_q[13:12]$1711, Q=\dut.u_cmd.arresp_q [13:12]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.arresp_q[3] ($aldff): ALOAD=\rst_n, AD=2'00, D=$dut.u_cmd.arresp_q[11:10]$1733, Q=\dut.u_cmd.arresp_q [11:10]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.arresp_q[4] ($aldff): ALOAD=\rst_n, AD=2'00, D=$dut.u_cmd.arresp_q[9:8]$1755, Q=\dut.u_cmd.arresp_q [9:8]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.arresp_q[5] ($aldff): ALOAD=\rst_n, AD=2'00, D=$dut.u_cmd.arresp_q[7:6]$1777, Q=\dut.u_cmd.arresp_q [7:6]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.arresp_q[6] ($aldff): ALOAD=\rst_n, AD=2'00, D=$dut.u_cmd.arresp_q[5:4]$1799, Q=\dut.u_cmd.arresp_q [5:4]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.arresp_q[7] ($aldff): ALOAD=\rst_n, AD=2'00, D=$dut.u_cmd.arresp_q[3:2]$1821, Q=\dut.u_cmd.arresp_q [3:2]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.arresp_q[8] ($aldff): ALOAD=\rst_n, AD=2'00, D=$dut.u_cmd.arresp_q[1:0]$1843, Q=\dut.u_cmd.arresp_q [1:0]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.done_q ($aldff): ALOAD=\rst_n, AD=9'000000000, D={ $dut.u_cmd.done_q[8]$1838 $dut.u_cmd.done_q[7]$1816 $dut.u_cmd.done_q[6]$1794 $dut.u_cmd.done_q[5]$1772 $dut.u_cmd.done_q[4]$1750 $dut.u_cmd.done_q[3]$1728 $dut.u_cmd.done_q[2]$1706 $dut.u_cmd.done_q[1]$1684 $dut.u_cmd.done_q[0]$1662 }, Q=\dut.u_cmd.done_q
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.id_q[0] ($aldff): ALOAD=\rst_n, AD=8'00000000, D=$dut.u_cmd.id_q[71:64]$1665, Q=\dut.u_cmd.id_q [71:64]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.id_q[1] ($aldff): ALOAD=\rst_n, AD=8'00000000, D=$dut.u_cmd.id_q[63:56]$1687, Q=\dut.u_cmd.id_q [63:56]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.id_q[2] ($aldff): ALOAD=\rst_n, AD=8'00000000, D=$dut.u_cmd.id_q[55:48]$1709, Q=\dut.u_cmd.id_q [55:48]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.id_q[3] ($aldff): ALOAD=\rst_n, AD=8'00000000, D=$dut.u_cmd.id_q[47:40]$1731, Q=\dut.u_cmd.id_q [47:40]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.id_q[4] ($aldff): ALOAD=\rst_n, AD=8'00000000, D=$dut.u_cmd.id_q[39:32]$1753, Q=\dut.u_cmd.id_q [39:32]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.id_q[5] ($aldff): ALOAD=\rst_n, AD=8'00000000, D=$dut.u_cmd.id_q[31:24]$1775, Q=\dut.u_cmd.id_q [31:24]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.id_q[6] ($aldff): ALOAD=\rst_n, AD=8'00000000, D=$dut.u_cmd.id_q[23:16]$1797, Q=\dut.u_cmd.id_q [23:16]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.id_q[7] ($aldff): ALOAD=\rst_n, AD=8'00000000, D=$dut.u_cmd.id_q[15:8]$1819, Q=\dut.u_cmd.id_q [15:8]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.id_q[8] ($aldff): ALOAD=\rst_n, AD=8'00000000, D=$dut.u_cmd.id_q[7:0]$1841, Q=\dut.u_cmd.id_q [7:0]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.issue_addr_q ($aldff): ALOAD=\rst_n, AD=12'000000000000, D=$dut.u_cmd.issue_addr_q$1645, Q=\dut.u_cmd.issue_addr_q
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.issue_bank_q ($aldff): ALOAD=\rst_n, AD=3'000, D=$dut.u_cmd.issue_bank_q$1644, Q=\dut.u_cmd.issue_bank_q
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.issue_entry_q ($aldff): ALOAD=\rst_n, AD=4'0000, D=$dut.u_cmd.issue_entry_q$1643, Q=\dut.u_cmd.issue_entry_q
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.issue_valid_q ($aldff): ALOAD=\rst_n, AD=1'0, D=\dut.u_cmd.select_valid, Q=\dut.u_cmd.issue_valid_q
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.issued_q ($aldff): ALOAD=\rst_n, AD=9'000000000, D={ $dut.u_cmd.issued_q[8]$1837 $dut.u_cmd.issued_q[7]$1815 $dut.u_cmd.issued_q[6]$1793 $dut.u_cmd.issued_q[5]$1771 $dut.u_cmd.issued_q[4]$1749 $dut.u_cmd.issued_q[3]$1727 $dut.u_cmd.issued_q[2]$1705 $dut.u_cmd.issued_q[1]$1683 $dut.u_cmd.issued_q[0]$1661 }, Q=\dut.u_cmd.issued_q
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.occ_q[0] ($aldff): ALOAD=\rst_n, AD=4'0000, D=$1616y, Q=\dut.u_cmd.occ_q [11:8]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.occ_q[1] ($aldff): ALOAD=\rst_n, AD=4'0000, D=$1622y, Q=\dut.u_cmd.occ_q [7:4]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.occ_q[2] ($aldff): ALOAD=\rst_n, AD=4'0000, D=$1628y, Q=\dut.u_cmd.occ_q [3:0]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.older_q[0] ($aldff): ALOAD=\rst_n, AD=9'000000000, D={ \dut.u_cmd.older_next [80:73] 1'0 }, Q=\dut.u_cmd.older_q [80:72]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.older_q[1] ($aldff): ALOAD=\rst_n, AD=9'000000000, D={ \dut.u_cmd.older_next [71:65] 1'0 \dut.u_cmd.older_next [63] }, Q=\dut.u_cmd.older_q [71:63]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.older_q[2] ($aldff): ALOAD=\rst_n, AD=9'000000000, D={ \dut.u_cmd.older_next [62:57] 1'0 \dut.u_cmd.older_next [55:54] }, Q=\dut.u_cmd.older_q [62:54]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.older_q[3] ($aldff): ALOAD=\rst_n, AD=9'000000000, D={ \dut.u_cmd.older_next [53:49] 1'0 \dut.u_cmd.older_next [47:45] }, Q=\dut.u_cmd.older_q [53:45]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.older_q[4] ($aldff): ALOAD=\rst_n, AD=9'000000000, D={ \dut.u_cmd.older_next [44:41] 1'0 \dut.u_cmd.older_next [39:36] }, Q=\dut.u_cmd.older_q [44:36]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.older_q[5] ($aldff): ALOAD=\rst_n, AD=9'000000000, D={ \dut.u_cmd.older_next [35:33] 1'0 \dut.u_cmd.older_next [31:27] }, Q=\dut.u_cmd.older_q [35:27]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.older_q[6] ($aldff): ALOAD=\rst_n, AD=9'000000000, D={ \dut.u_cmd.older_next [26:25] 1'0 \dut.u_cmd.older_next [23:18] }, Q=\dut.u_cmd.older_q [26:18]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.older_q[7] ($aldff): ALOAD=\rst_n, AD=9'000000000, D={ \dut.u_cmd.older_next [17] 1'0 \dut.u_cmd.older_next [15:9] }, Q=\dut.u_cmd.older_q [17:9]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.older_q[8] ($aldff): ALOAD=\rst_n, AD=9'000000000, D={ 1'0 \dut.u_cmd.older_next [7:0] }, Q=\dut.u_cmd.older_q [8:0]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.pending_q ($aldff): ALOAD=\rst_n, AD=4'0000, D=\dut.u_cmd.pending_cnt, Q=\dut.u_cmd.pending_q
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.port_q[0] ($aldff): ALOAD=\rst_n, AD=5'00000, D=$dut.u_cmd.port_q[44:40]$1666, Q=\dut.u_cmd.port_q [44:40]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.port_q[1] ($aldff): ALOAD=\rst_n, AD=5'00000, D=$dut.u_cmd.port_q[39:35]$1688, Q=\dut.u_cmd.port_q [39:35]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.port_q[2] ($aldff): ALOAD=\rst_n, AD=5'00000, D=$dut.u_cmd.port_q[34:30]$1710, Q=\dut.u_cmd.port_q [34:30]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.port_q[3] ($aldff): ALOAD=\rst_n, AD=5'00000, D=$dut.u_cmd.port_q[29:25]$1732, Q=\dut.u_cmd.port_q [29:25]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.port_q[4] ($aldff): ALOAD=\rst_n, AD=5'00000, D=$dut.u_cmd.port_q[24:20]$1754, Q=\dut.u_cmd.port_q [24:20]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.port_q[5] ($aldff): ALOAD=\rst_n, AD=5'00000, D=$dut.u_cmd.port_q[19:15]$1776, Q=\dut.u_cmd.port_q [19:15]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.port_q[6] ($aldff): ALOAD=\rst_n, AD=5'00000, D=$dut.u_cmd.port_q[14:10]$1798, Q=\dut.u_cmd.port_q [14:10]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.port_q[7] ($aldff): ALOAD=\rst_n, AD=5'00000, D=$dut.u_cmd.port_q[9:5]$1820, Q=\dut.u_cmd.port_q [9:5]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.port_q[8] ($aldff): ALOAD=\rst_n, AD=5'00000, D=$dut.u_cmd.port_q[4:0]$1842, Q=\dut.u_cmd.port_q [4:0]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.rr_ptr_q ($aldff): ALOAD=\rst_n, AD=2'00, D=$dut.u_cmd.rr_ptr_q$1632, Q=\dut.u_cmd.rr_ptr_q
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.src_q[0] ($aldff): ALOAD=\rst_n, AD=2'00, D=$dut.u_cmd.src_q[17:16]$1664, Q=\dut.u_cmd.src_q [17:16]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.src_q[1] ($aldff): ALOAD=\rst_n, AD=2'00, D=$dut.u_cmd.src_q[15:14]$1686, Q=\dut.u_cmd.src_q [15:14]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.src_q[2] ($aldff): ALOAD=\rst_n, AD=2'00, D=$dut.u_cmd.src_q[13:12]$1708, Q=\dut.u_cmd.src_q [13:12]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.src_q[3] ($aldff): ALOAD=\rst_n, AD=2'00, D=$dut.u_cmd.src_q[11:10]$1730, Q=\dut.u_cmd.src_q [11:10]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.src_q[4] ($aldff): ALOAD=\rst_n, AD=2'00, D=$dut.u_cmd.src_q[9:8]$1752, Q=\dut.u_cmd.src_q [9:8]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.src_q[5] ($aldff): ALOAD=\rst_n, AD=2'00, D=$dut.u_cmd.src_q[7:6]$1774, Q=\dut.u_cmd.src_q [7:6]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.src_q[6] ($aldff): ALOAD=\rst_n, AD=2'00, D=$dut.u_cmd.src_q[5:4]$1796, Q=\dut.u_cmd.src_q [5:4]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.src_q[7] ($aldff): ALOAD=\rst_n, AD=2'00, D=$dut.u_cmd.src_q[3:2]$1818, Q=\dut.u_cmd.src_q [3:2]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.src_q[8] ($aldff): ALOAD=\rst_n, AD=2'00, D=$dut.u_cmd.src_q[1:0]$1840, Q=\dut.u_cmd.src_q [1:0]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_cmd.valid_q ($aldff): ALOAD=\rst_n, AD=9'000000000, D=\dut.u_cmd.valid_next, Q=\dut.u_cmd.valid_q
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_otb.data_q[0] ($aldff): ALOAD=\rst_n, AD=128'00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, D=$dut.u_otb.data_q[1151:1024]$1911, Q=\dut.u_otb.data_q [1151:1024]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_otb.data_q[1] ($aldff): ALOAD=\rst_n, AD=128'00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, D=$dut.u_otb.data_q[1023:896]$1928, Q=\dut.u_otb.data_q [1023:896]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_otb.data_q[2] ($aldff): ALOAD=\rst_n, AD=128'00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, D=$dut.u_otb.data_q[895:768]$1945, Q=\dut.u_otb.data_q [895:768]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_otb.data_q[3] ($aldff): ALOAD=\rst_n, AD=128'00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, D=$dut.u_otb.data_q[767:640]$1962, Q=\dut.u_otb.data_q [767:640]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_otb.data_q[4] ($aldff): ALOAD=\rst_n, AD=128'00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, D=$dut.u_otb.data_q[639:512]$1979, Q=\dut.u_otb.data_q [639:512]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_otb.data_q[5] ($aldff): ALOAD=\rst_n, AD=128'00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, D=$dut.u_otb.data_q[511:384]$1996, Q=\dut.u_otb.data_q [511:384]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_otb.data_q[6] ($aldff): ALOAD=\rst_n, AD=128'00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, D=$dut.u_otb.data_q[383:256]$2013, Q=\dut.u_otb.data_q [383:256]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_otb.data_q[7] ($aldff): ALOAD=\rst_n, AD=128'00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, D=$dut.u_otb.data_q[255:128]$2030, Q=\dut.u_otb.data_q [255:128]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_otb.data_q[8] ($aldff): ALOAD=\rst_n, AD=128'00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, D=$dut.u_otb.data_q[127:0]$2047, Q=\dut.u_otb.data_q [127:0]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_otb.pc_err_q ($aldff): ALOAD=\rst_n, AD=9'000000000, D={ $dut.u_otb.pc_err_q[8]$2048 $dut.u_otb.pc_err_q[7]$2031 $dut.u_otb.pc_err_q[6]$2014 $dut.u_otb.pc_err_q[5]$1997 $dut.u_otb.pc_err_q[4]$1980 $dut.u_otb.pc_err_q[3]$1963 $dut.u_otb.pc_err_q[2]$1946 $dut.u_otb.pc_err_q[1]$1929 $dut.u_otb.pc_err_q[0]$1912 }, Q=\dut.u_otb.pc_err_q
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_otb.ret_entry_q[0] ($aldff): ALOAD=\rst_n, AD=4'0000, D=$1894y, Q=\dut.u_otb.ret_entry_q [15:12]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_otb.ret_entry_q[1] ($aldff): ALOAD=\rst_n, AD=4'0000, D=$1895y, Q=\dut.u_otb.ret_entry_q [11:8]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_otb.ret_entry_q[2] ($aldff): ALOAD=\rst_n, AD=4'0000, D=$1896y, Q=\dut.u_otb.ret_entry_q [7:4]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_otb.ret_entry_q[3] ($aldff): ALOAD=\rst_n, AD=4'0000, D=$1897y, Q=\dut.u_otb.ret_entry_q [3:0]
+Replacing cmdbuf_fsdb_formal_top.$driver$dut.u_otb.ret_valid_q ($aldff): ALOAD=\rst_n, AD=4'0000, D={ \dut.u_otb.ret_valid_q [2:0] \dut.u_cmd.issue_success }, Q=\dut.u_otb.ret_valid_q
+Replacing cmdbuf_fsdb_formal_top.$driver$trace_checks.trace_cycle ($aldff): ALOAD=\rst_n, AD=0, D=$procmux$835_Y, Q=\trace_checks.trace_cycle
+
+4. Executing DFFUNMAP pass (unmap clock enable and synchronous reset from FFs).
+
+5. Executing SIM pass (simulate the circuit).
+Simulating cycle 0.
+Simulating cycle 1.
+Simulating cycle 2.
+
+6. Executing HIERARCHY pass (managing design hierarchy).
+Attribute `top' found on module `cmdbuf_fsdb_formal_top'. Setting top module to cmdbuf_fsdb_formal_top.
+
+6.1. Analyzing design hierarchy..
+Top module:  \cmdbuf_fsdb_formal_top
+
+6.2. Analyzing design hierarchy..
+Top module:  \cmdbuf_fsdb_formal_top
+Removed 0 unused modules.
+Module cmdbuf_fsdb_formal_top directly or indirectly contains formal properties -> setting "keep" attribute.
+
+7. Executing jny backend.
+
+8. Executing RTLIL backend.
+Output filename: ../model/design.il
+
+End of script. Logfile hash: 5460d39721, time: 1.27s, user: 1.38s, system: 0.08s, MEM: 88.61 MB peak
+Yosys 0.67+94 (git sha1 7defa5186-dirty, Release, Clang /usr/bin/clang++ 18.1.8)
+Time spent: 20% 7x opt_expr (0 sec), 18% 5x opt_clean (0 sec), ...

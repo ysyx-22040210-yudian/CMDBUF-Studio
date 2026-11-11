@@ -1,0 +1,16 @@
+{
+  "description": "同源 3 1 2 发射返回 MEM，R 必须按 1 2 3；重复 ID 不掩盖顺序",
+  "sequence": [
+    {"set": {"status": "0x0303"}},
+    {"send": {"src": 0, "addr": 65536, "id": 90, "port": 7}},
+    {"send": {"src": 0, "addr": 65609, "id": 90, "port": 7}},
+    {"send": {"src": 0, "addr": 65682, "id": 90, "port": 7, "resp": 3}},
+    {"send": {"src": 1, "addr": 65755, "id": 90, "port": 7}},
+    {"wait": 12},
+    {"set": {"status": "0x0202"}},
+    {"wait": 10},
+    {"set": {"status": 0}},
+    {"wait": 12}
+  ],
+  "require": {"accepted": 4, "retired": 4, "head_blocked": 1}
+}

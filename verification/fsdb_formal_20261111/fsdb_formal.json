@@ -1,0 +1,27 @@
+{
+  "id": "20261111_051214_8d079772",
+  "kind": "fsdb_formal",
+  "state": "DONE",
+  "started": 1794345134.7609751,
+  "completed": 3,
+  "total": 3,
+  "stage": "已完成",
+  "log": "\n› make sync\nVM workspace: /root/cmdbuf_rd_vcs_eda/workspace\nMake entry: cd /root/cmdbuf_rd_vcs_eda && make help\nUpdated 0 files; retained 0 VM edits. Untracked VM files were kept.\n上传 FSDB: imported_demo.fsdb\n\n› make fsdb-formal REQUEST=/root/cmdbuf_rd_vcs_eda/results/fsdb_requests/20261111_051214_8d079772.json\npython3 \"/root/cmdbuf_rd_vcs_eda/workspace/simulation/vcs/fsdb_formal/engine.py\" --action export --request \"/root/cmdbuf_rd_vcs_eda/results/fsdb_requests/20261111_051214_8d079772.json\"\nNPI_FORMAL 20261111_051214_8d079772 TOTAL 3\nNPI_PROGRESS 1/3 pattern=11\nNPI_PROGRESS 2/3 pattern=22\nNPI_PROGRESS 3/3 pattern=33\nNPI_PACKAGE /root/cmdbuf_rd_vcs_eda/results/fsdb_formal/20261111_051214_8d079772/package.zip\n",
+  "commands": [
+    {
+      "argv": [
+        "sync"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "fsdb-formal",
+        "REQUEST=/root/cmdbuf_rd_vcs_eda/results/fsdb_requests/20261111_051214_8d079772.json"
+      ],
+      "returncode": 0
+    }
+  ],
+  "formal_id": "20261111_051214_8d079772",
+  "ended": 1794345141.4907253
+}

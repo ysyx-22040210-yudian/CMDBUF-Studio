@@ -1,0 +1,12 @@
+{
+  "command": ".\\make.cmd gui",
+  "exit_code": 0,
+  "windows": [
+    {
+      "pid": 28920,
+      "title": "CMDBUF Studio · 验证工作台",
+      "has_window": true
+    }
+  ],
+  "visible": true
+}

@@ -1,0 +1,9 @@
+{
+  "description": "复制此文件并改名；send 自动等握手，wait 空拍，set 更新背景环境",
+  "sequence": [
+    {"set": {"ready": 7, "status": 0, "argrant": 255, "rwgrant": 255, "parity": 0}},
+    {"send": {"src": 2, "addr": "0x12345", "id": 42, "port": 6, "resp": 0}, "timeout": 100},
+    {"wait": 12}
+  ],
+  "require": {"accepted": 1, "retired": 1}
+}

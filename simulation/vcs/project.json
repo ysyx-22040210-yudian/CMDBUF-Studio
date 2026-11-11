@@ -1,0 +1,16 @@
+{
+  "name": "cmdbuf_rd",
+  "top": "tb_cmdbuf_rd",
+  "rtl_filelist": "rtl/files.f",
+  "checker": "formal/protocol_20261021/cmdbuf_rd_port_sva.sv",
+  "checker_includes": [
+    "formal/protocol_20261021/cmdbuf_rd_reference_model.svh",
+    "formal/protocol_20261021/cmdbuf_rd_xau_order_model.svh"
+  ],
+  "testbench": "simulation/vcs/tb/tb_cmdbuf_rd.sv",
+  "coverage": "line+cond+branch+tgl+fsm",
+  "vm": {
+    "host": "",
+    "root": ""
+  }
+}

@@ -1,0 +1,75 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.67+94 (git sha1 7defa5186-dirty, Release, Clang /usr/bin/clang++ 18.1.8)
+
+-- Executing script file `design_smt2.ys' --
+
+1. Executing RTLIL frontend.
+Input filename: design_prep.il
+
+2. Executing HIERARCHY pass (managing design hierarchy).
+Attribute `top' found on module `cmdbuf_fsdb_formal_top'. Setting top module to cmdbuf_fsdb_formal_top.
+
+2.1. Analyzing design hierarchy..
+Top module:  \cmdbuf_fsdb_formal_top
+
+2.2. Analyzing design hierarchy..
+Top module:  \cmdbuf_fsdb_formal_top
+Removed 0 unused modules.
+Module cmdbuf_fsdb_formal_top directly or indirectly contains formal properties -> setting "keep" attribute.
+
+3. Executing FORMALFF pass.
+
+4. Executing DFFUNMAP pass (unmap clock enable and synchronous reset from FFs).
+
+5. Printing statistics.
+
+=== cmdbuf_fsdb_formal_top ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2398 wires
+    21734 wire bits
+      248 public wires
+     6304 public wire bits
+       26 ports
+      442 port bits
+     2714 cells
+       84   $add
+       43   $and
+        2   $anyinit
+       55   $anyseq
+      209   $assume
+       24   $bmux
+        5   $cover
+        4   $demux
+      139   $eq
+       88   $ff
+       11   $ge
+        4   $gt
+      582   $logic_and
+      304   $logic_not
+      248   $logic_or
+       44   $lt
+      835   $mux
+       11   $not
+        2   $or
+        1   $reduce_bool
+        4   $reduce_or
+        1   $shl
+       14   $sub
+
+6. Executing SMT2 backend.
+
+6.1. Executing BMUXMAP pass.
+
+6.2. Executing DEMUXMAP pass.
+Creating SMT-LIBv2 representation of module cmdbuf_fsdb_formal_top.
+
+End of script. Logfile hash: 7ad16f64c7, time: 0.06s, user: 0.05s, system: 0.01s, MEM: 17.07 MB peak
+Yosys 0.67+94 (git sha1 7defa5186-dirty, Release, Clang /usr/bin/clang++ 18.1.8)
+Time spent: 76% 2x write_smt2 (0 sec), 15% 2x read_rtlil (0 sec), ...

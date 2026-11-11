@@ -1,0 +1,58 @@
+test_directed_environment_and_wait_handshake (test_adapter.AdapterTests) ... ok
+test_instrumentation_preserves_every_property_expression (test_adapter.AdapterTests) ... ok
+test_reject_invalid_ports_and_typographical_errors (test_adapter.AdapterTests) ... ok
+test_seed_reproduction_and_legal_ranges (test_adapter.AdapterTests) ... ok
+test_actual_widths_banks_and_pattern_literals (test_fsdb_formal.FsdbFormalTests) ... ok
+test_all_reset_intervals_keep_cycle_positions (test_fsdb_formal.FsdbFormalTests) ... ok
+test_dump_off_and_missing_reset_fail_closed (test_fsdb_formal.FsdbFormalTests) ... ok
+test_invalid_payload_retained_but_not_asserted (test_fsdb_formal.FsdbFormalTests) ... ok
+test_native_and_sby_copies_are_separate (test_fsdb_formal.FsdbFormalTests) ... ok
+test_unknown_input_and_valid_output_are_errors (test_fsdb_formal.FsdbFormalTests) ... ok
+test_archive_captures_controls_and_prepare_before_every_edge (test_protocol.ProtocolTests) ... ok
+test_conflicting_owners_and_unknown_policies_rejected (test_protocol.ProtocolTests) ... ok
+test_current_catalog_is_complete (test_protocol.ProtocolTests) ... ok
+test_new_or_changed_contract_cannot_silently_run (test_protocol.ProtocolTests) ... ok
+test_offers_are_one_shot_and_timeline_is_not_paused (test_protocol.ProtocolTests) ... ok
+test_requests_have_legal_domains (test_protocol.ProtocolTests) ... ok
+test_dut_files_and_four_state_interface_unchanged (test_studio.StudioTests) ... ok
+test_extract_phase_ignores_keywords_in_comments_and_strings (test_studio.StudioTests) ... ok
+test_plan_exact_per_case_counts_and_seed_ranges (test_studio.StudioTests) ... ok
+test_plan_invalid_counts_seeds_and_fractional_values (test_studio.StudioTests) ... ok
+test_save_preserves_constructor_and_rejects_external_conflict (test_studio.StudioTests) ... ok
+test_vcd_actual_edges_four_state_aliases_and_window_initial_value (test_studio.StudioTests) ... ok
+test_archived_source_hash_and_override (test_sv_cases.SvAuthoringTests) ... ok
+test_copy_renames_class_and_refuses_overwrite (test_sv_cases.SvAuthoringTests) ... ok
+test_filename_and_class_must_agree (test_sv_cases.SvAuthoringTests) ... ok
+test_conflict_stops_before_any_source_copy (test_sync.SyncTests) ... ok
+test_preserves_vm_edit_and_new_case (test_sync.SyncTests) ... ok
+test_updates_unchanged_files_and_retains_modified_removed_file (test_sync.SyncTests) ... ok
+test_audit_detects_driver_changes_and_uses_archived_program (test_wavedrom.WaveDromTests) ... ok
+test_explicit_reset_during_clock_pause_is_preserved (test_wavedrom.WaveDromTests) ... ok
+test_gate_clock_counts_real_edges_and_manual_mem (test_wavedrom.WaveDromTests) ... ok
+test_numeric_and_four_state_values_keep_port_width (test_wavedrom.WaveDromTests) ... ok
+test_period_and_literal_clock_have_same_positive_edges (test_wavedrom.WaveDromTests) ... ok
+test_reject_ambiguous_or_missing_input_descriptions (test_wavedrom.WaveDromTests) ... ok
+test_symbols_are_resolved_without_changing_diagram_labels (test_wavedrom.WaveDromTests) ... ok
+
+----------------------------------------------------------------------
+Ran 35 tests in 0.185s
+
+OK
+VM workspace: /tmp/tmp18d836aq/vm/workspace
+Make entry: cd /tmp/tmp18d836aq/vm && make help
+Updated 1 files; retained 0 VM edits. Untracked VM files were kept.
+VM workspace: /tmp/tmp118yfhtn/vm/workspace
+Make entry: cd /tmp/tmp118yfhtn/vm && make help
+Updated 1 files; retained 0 VM edits. Untracked VM files were kept.
+VM workspace: /tmp/tmp118yfhtn/vm/workspace
+Make entry: cd /tmp/tmp118yfhtn/vm && make help
+Updated 0 files; retained 1 VM edits. Untracked VM files were kept.
+VM workspace: /tmp/tmpzt58eli8/vm/workspace
+Make entry: cd /tmp/tmpzt58eli8/vm && make help
+Updated 1 files; retained 0 VM edits. Untracked VM files were kept.
+VM workspace: /tmp/tmpzt58eli8/vm/workspace
+Make entry: cd /tmp/tmpzt58eli8/vm && make help
+Updated 2 files; retained 0 VM edits. Untracked VM files were kept.
+VM workspace: /tmp/tmpzt58eli8/vm/workspace
+Make entry: cd /tmp/tmpzt58eli8/vm && make help
+Updated 0 files; retained 1 VM edits. Untracked VM files were kept.

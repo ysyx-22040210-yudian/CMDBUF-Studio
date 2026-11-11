@@ -1,0 +1,153 @@
+{
+  "description": "负向检查：只发 AR 后立即结束，不允许自动排空",
+  "sim": {
+    "tick_ps": 10000,
+    "clock_skew_ps": 1,
+    "finish": "require_empty"
+  },
+  "signal": [
+    {
+      "name": "clk",
+      "wave": "p.."
+    },
+    {
+      "name": "rst_n",
+      "wave": "0.1"
+    },
+    {
+      "name": "arvalid",
+      "wave": "0.1"
+    },
+    {
+      "name": "src",
+      "wave": "=..",
+      "data": [
+        "0x1"
+      ]
+    },
+    {
+      "name": "araddr",
+      "wave": "=..",
+      "data": [
+        "0x12345"
+      ]
+    },
+    {
+      "name": "arid",
+      "wave": "=..",
+      "data": [
+        "0x2a"
+      ]
+    },
+    {
+      "name": "ar_port_id",
+      "wave": "=..",
+      "data": [
+        "0x6"
+      ]
+    },
+    {
+      "name": "arresp",
+      "wave": "=..",
+      "data": [
+        "0x0"
+      ]
+    },
+    {
+      "name": "rready",
+      "wave": "=..",
+      "data": [
+        "0x7"
+      ]
+    },
+    {
+      "name": "ar_rd_gnt",
+      "wave": "=..",
+      "data": [
+        "0xff"
+      ]
+    },
+    {
+      "name": "rw_rd_gnt",
+      "wave": "=..",
+      "data": [
+        "0xff"
+      ]
+    },
+    {
+      "name": "rd_mem_status[0]",
+      "wave": "=..",
+      "data": [
+        "0x0"
+      ]
+    },
+    {
+      "name": "rd_mem_status[1]",
+      "wave": "=..",
+      "data": [
+        "0x0"
+      ]
+    },
+    {
+      "name": "rd_mem_status[2]",
+      "wave": "=..",
+      "data": [
+        "0x0"
+      ]
+    },
+    {
+      "name": "rd_mem_status[3]",
+      "wave": "=..",
+      "data": [
+        "0x0"
+      ]
+    },
+    {
+      "name": "rd_mem_status[4]",
+      "wave": "=..",
+      "data": [
+        "0x0"
+      ]
+    },
+    {
+      "name": "rd_mem_status[5]",
+      "wave": "=..",
+      "data": [
+        "0x0"
+      ]
+    },
+    {
+      "name": "rd_mem_status[6]",
+      "wave": "=..",
+      "data": [
+        "0x0"
+      ]
+    },
+    {
+      "name": "rd_mem_status[7]",
+      "wave": "=..",
+      "data": [
+        "0x0"
+      ]
+    },
+    {
+      "name": "mem_rdata",
+      "wave": "=..",
+      "data": [
+        "0x0"
+      ]
+    },
+    {
+      "name": "pc_err",
+      "wave": "0.."
+    }
+  ],
+  "head": {
+    "text": "WaveDrom：Bank0 odd 读，column 5..7 停钟；column 11 手工返回数据，pc_err=1",
+    "tick": 0
+  },
+  "config": {
+    "hscale": 1
+  },
+  "require": {}
+}

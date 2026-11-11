@@ -1,0 +1,22 @@
+{
+  "package": "wavedrom",
+  "version": "3.8.0",
+  "license": "MIT",
+  "files": {
+    "wavedrom.min.js": {
+      "url": "https://cdn.jsdelivr.net/npm/wavedrom@3.8.0/wavedrom.min.js",
+      "sha256": "c02e6212b9515036b9531cb708996e95eef50bc8a030eb13d128c77b550a79e5",
+      "bytes": 55047
+    },
+    "default.js": {
+      "url": "https://cdn.jsdelivr.net/npm/wavedrom@3.8.0/skins/default.js",
+      "sha256": "6d42a35297a5faa2e07e565ddc47dd6e1228af045881291a64a336b3f062d152",
+      "bytes": 43409
+    },
+    "LICENSE": {
+      "url": "https://cdn.jsdelivr.net/npm/wavedrom@3.8.0/LICENSE",
+      "sha256": "68f6442e5967ddb6a75ec8a4570215cac8cc415ea293c05cf857843c73fa5a57",
+      "bytes": 1092
+    }
+  }
+}

@@ -1,0 +1,21 @@
+./simv 
+Chronologic VCS simulator copyright 1991-2018
+Contains Synopsys proprietary information.
+Compiler version O-2018.09-1_Full64; Runtime version O-2018.09-1_Full64;  Nov 11 05:13 2026
+TRACE_END pattern=11 segment=0 cycles=69
+TRACE_END pattern=22 segment=0 cycles=69
+TRACE_END pattern=33 segment=0 cycles=5
+TRACE_END pattern=33 segment=1 cycles=9
+TRACE_END pattern=33 segment=2 cycles=53
+TRACE_REPLAY_PASS
+$finish called from file "replay_tb.sv", line 258.
+$finish at simulation time              2156000
+"trace_properties.sv", 2058: fsdb_replay_tb.dut_wrap.trace_checks.C_END_P11_S0, 216 attempts, 1 match
+"trace_properties.sv", 4069: fsdb_replay_tb.dut_wrap.trace_checks.C_END_P22_S0, 216 attempts, 1 match
+"trace_properties.sv", 4219: fsdb_replay_tb.dut_wrap.trace_checks.C_END_P33_S0, 216 attempts, 1 match
+"trace_properties.sv", 4485: fsdb_replay_tb.dut_wrap.trace_checks.C_END_P33_S1, 216 attempts, 1 match
+"trace_properties.sv", 6032: fsdb_replay_tb.dut_wrap.trace_checks.C_END_P33_S2, 216 attempts, 1 match
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 2156000 ps
+CPU Time:      0.170 seconds;       Data structure size:   0.1Mb
+Wed Nov 11 05:13:53 2026

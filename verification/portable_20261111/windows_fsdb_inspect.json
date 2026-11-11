@@ -1,0 +1,27 @@
+{
+  "id": "20261111_054859_0c04f93d",
+  "kind": "fsdb_inspect",
+  "state": "DONE",
+  "started": 1794347339.48094,
+  "completed": 0,
+  "total": 0,
+  "stage": "已完成",
+  "log": "\n› make sync\nVM workspace: /tmp/cmdbuf_portable_20261111_054023_e347ff/windows_remote/workspace\nMake entry: cd /tmp/cmdbuf_portable_20261111_054023_e347ff/windows_remote && make help\nUpdated 0 files; retained 0 VM edits. Untracked VM files were kept.\n上传 FSDB: imported_demo.fsdb\n\n› make fsdb-inspect REQUEST=/tmp/cmdbuf_portable_20261111_054023_e347ff/windows_remote/results/fsdb_requests/20261111_054859_0c04f93d.json\npython3 \"/tmp/cmdbuf_portable_20261111_054023_e347ff/windows_remote/workspace/simulation/vcs/fsdb_formal/engine.py\" --action inspect --request \"/tmp/cmdbuf_portable_20261111_054023_e347ff/windows_remote/results/fsdb_requests/20261111_054859_0c04f93d.json\"\nNPI_PACKAGE /tmp/cmdbuf_portable_20261111_054023_e347ff/windows_remote/results/fsdb_formal/20261111_054859_0c04f93d/package.zip\n",
+  "commands": [
+    {
+      "argv": [
+        "sync"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "fsdb-inspect",
+        "REQUEST=/tmp/cmdbuf_portable_20261111_054023_e347ff/windows_remote/results/fsdb_requests/20261111_054859_0c04f93d.json"
+      ],
+      "returncode": 0
+    }
+  ],
+  "formal_id": "20261111_054859_0c04f93d",
+  "ended": 1794347343.3077223
+}
