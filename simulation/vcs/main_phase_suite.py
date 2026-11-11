@@ -30,7 +30,7 @@ def mutation_checks(directory):
       ('busy_clear',busy,'rd_mem_status[{}]'.format(bank),format(int(samples[busy]['rd_mem_status[{}]'.format(bank)],2)&~(1<<half),'02b'),True,'E06_SUCCESS_BUSY'),
       ('mem_corrupt',mem,'mem_rdata',format(int(samples[mem]['mem_rdata'],2)^1,'0128b'),True,'T_MEM4'),
       ('fifo_id',response,'rid',format(int(samples[response]['rid'],16)^1,'02x'),False,'T_ASSOCIATION_FIFO_DATA'),
-      ('clock_time',active,'time_ps',str(int(samples[active]['time_ps'])+1),False,'MAIN_CLOCK_TIME'),
+      ('clock_time',active,'time_ps',str(int(samples[active]['time_ps'])+1),False,'MAIN_CLOCK_RISING_TRACE'),
       ('context',busy,'req','00',False,'MAIN_CONTEXT_CHANGED')]
     for name,index,column,value,both,marker in mutations:
         s=copy.deepcopy(samples);q=copy.deepcopy(solutions)
@@ -42,6 +42,7 @@ def mutation_checks(directory):
                 with (dest/filename).open('w',newline='') as f:
                     writer=csv.DictWriter(f,fieldnames=list(rows[0]));writer.writeheader();writer.writerows(rows)
             (dest/'tc_config.json').write_bytes((root/'tc_config.json').read_bytes())
+            (dest/'clock_reset.csv').write_bytes((root/'clock_reset.csv').read_bytes())
             report=verify_execution(dest,(root/'stimulus.txt').read_text())
             checks.append(dict(name=name,expected=marker,detected=report['status']=='FAIL' and marker in ' '.join(report['failures']),failures=report['failures']))
     return checks
@@ -55,10 +56,12 @@ def run_suite(args,env):
     tests=[(name,1,None,'',None) for name in ['tc_directed','tc_retry','tc_backpressure','tc_same_id','tc_banks','tc_reset','tc_user_example']]
     tests += [('tc_random',seed,2000,'',None) for seed in (1,42)]
     tests += [(str(fixtures/'main_user_values.sv'),17,500,'',None)]
+    tests += [(str(fixtures/'main_first_cycle.sv'),17,None,'',None)]
     negatives={'src':'MAIN_E03_SRC','resp':'MAIN_E04_ARRESP','busy':'MAIN_E06_SUCCESS_BUSY',
       'mem':'MAIN_T_MEM4','zero_ready':'MAIN_E05_ZERO_READY','control':'MAIN_CONTROL_INVALID',
       'unknown':'MAIN_P_KNOWN','missing':'MAIN_MISSING_ASSIGNMENT','duplicate':'MAIN_DRIVE_ORDER',
-      'race':'MAIN_ONCE_AFTER_POSEDGE','stale_context':'MAIN_CONTEXT_TIMING'}
+      'race':'MAIN_ONCE_AFTER_POSEDGE','stale_context':'MAIN_CONTEXT_TIMING',
+      'reset':'MAIN_RESET_FIXED_HIGH_AFTER_1NS'}
     for name,marker in sorted(negatives.items()):
         tests.append((str(fixtures/('main_bad_'+name+'.sv')),1,None,'',marker))
     tests += [('tc_random',1,20,'main_post','MAIN_PIN_MODIFICATION')]
@@ -84,7 +87,8 @@ def run_suite(args,env):
     checks={'all_cases_match_expectation':all(r['acceptance_pass'] for r in results),
             'new_case_template_edits_sent_three_requests':bycase['tc_user_example']['metrics']['accepted']==3 and bycase['tc_user_example']['metrics']['retired']==3,
             'all_bank_half_contracts_exercised':all(hits),
-            'stopped_clock_reset_cancels_two_requests':reset['paused_intervals']==4 and reset['cancelled']==2 and reset['reset_assertions']==3,
+            'startup_reset_only_and_paused_clock_preserves_requests':reset['paused_intervals']==4 and reset['cancelled']==0 and reset['reset_assertions']==1,
+            'first_procedural_cycle_can_send':bycase['main_first_cycle']['metrics']['accepted']==1 and bycase['main_first_cycle']['metrics']['retired']==1,
             'user_assignments_and_ranges_preserved':user_ok,
             'independent_audit_detects_mutations':all(m['detected'] for m in mutations),
             'coverage_contains_positive_only':cov['status']=='PASS' and len(cov['included'])==len(positive)}

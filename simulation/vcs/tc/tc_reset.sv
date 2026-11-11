@@ -1,4 +1,4 @@
-// 过程式复位与停钟：时钟低电平暂停，取消在途事务，之后恢复。
+// 启动复位与停钟：环境在 1 ns 释放复位，暂停时钟时保留在途事务。
 // 用户只需修改 main_phase 的赋值和 if 条件；没有 constraint/randomize。
 // 每次 @(posedge clk) 后执行一组带条件赋值，供下一上升沿采样。
 class tc_reset extends cmdbuf_main_tc;
@@ -10,15 +10,15 @@ class tc_reset extends cmdbuf_main_tc;
             #1; // DUT 本拍的 NBA 更新完成后再驱动，避免采样竞争。
             begin_cycle(cycle);
 
-            // 编辑区 A：时钟、复位、响应接收。单位 ns；pause 延长下一段低电平。
-            rst_n = (cycle >= 3 && cycle != 8 && cycle != 18);
+            // 编辑区 A：复位保持 1；时钟单位 ns，pause 延长下一段低电平。
+            rst_n = 1; // Environment: low at t=0, released at #1 (1 ns).
             if (cycle >= 20) rready = 7; else rready = 0;
             clk_low_ns = 7; clk_high_ns = 3;
             if (cycle == 5 || cycle == 6 || cycle == 8 || cycle == 18)
                 clk_pause_ns = 40;
             else clk_pause_ns = 0;
             drive_control();
-            #1; // rst_n/rready 影响组合反馈，先等待稳定，再读取。
+            #1; // rready 影响组合反馈，先等待稳定，再读取。
             sample_context();
 
             // 编辑区 B：AR 输入。E05 必须显式处理 ready 全零的分支。

@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "g++",
+    "-shared",
+    "-fPIC",
+    "-O2",
+    "-I/home/synopsys/vcs-mx/O-2018.09-1/include",
+    "/root/cmdbuf_checks_20261111/build/vcs/builds/6cc07942f23a73d1/execution_start.c",
+    "-o",
+    "/root/cmdbuf_checks_20261111/build/vcs/builds/6cc07942f23a73d1/execution_start.so"
+  ],
+  "cwd": "/root/cmdbuf_checks_20261111/build/vcs/builds/6cc07942f23a73d1",
+  "timeout_seconds": 120,
+  "timeout_scope": "process",
+  "license_wait_limit_seconds": "not_a_license_wait_command"
+}

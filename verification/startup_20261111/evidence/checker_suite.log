@@ -1,0 +1,14 @@
+python3 "/root/cmdbuf_checks_20261111/simulation/vcs/check_suite.py" --jobs "2"
+FAIL tc_directed_seed_17_rid (0.42s)
+PASS tc_directed_seed_17 (0.47s)
+PASS tc_directed_seed_17_pending_registered (0.42s)
+PASS tc_directed_seed_27 (0.42s)
+FAIL tc_directed_seed_27_rid (0.42s)
+PASS tc_directed_seed_27_pending_registered (0.42s)
+PASS tc_directed_seed_117 (0.42s)
+FAIL tc_directed_seed_117_rid (0.42s)
+FAIL tc_directed_seed_117_pending_registered (0.42s)
+PASS tc_directed_seed_127 (0.42s)
+FAIL tc_directed_seed_127_rid (0.42s)
+FAIL tc_directed_seed_127_pending_registered (0.42s)
+CHECK_TEST PASS 76/76 /root/cmdbuf_checks_20261111/build/vcs/check_tests/20261111_215811_203a2d

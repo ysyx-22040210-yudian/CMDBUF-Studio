@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "protocol": "CMDBUF 20261021",
+  "new_run_default": "transaction",
+  "legacy_plan_default": "strict",
+  "native_properties": "formal/protocol_20261021/cmdbuf_rd_port_sva.sv",
+  "simulation_monitor": "simulation/vcs/tb/cmdbuf_check_monitor.sv",
+  "validation": "make check-test",
+  "common_native": ["E03_SRC", "E04_ARRESP", "E05_ZERO_READY", "E06_SUCCESS_BUSY", "A_REQ_ONEHOT", "A_R_ONEHOT", "A_R_READY", "A_PENDING_RANGE"],
+  "transaction": {
+    "memory_capture_delay_edges": 4,
+    "max_outstanding": 9,
+    "issue_identity": "Keep all consistent associations of observed Bank/address to accepted tokens; repeated IDs are not identities.",
+    "hypothesis_limit": 4096,
+    "on_limit": "INCOMPLETE; do not choose or silently discard hypotheses",
+    "response_order": "AR acceptance order within each source",
+    "response_latency": "MEM capture edge or later; no exact scheduling or maximum deadline asserted",
+    "not_checked": ["pending update timing and exact count", "exact arready reservation policy", "five-entry issue window and exact retry/refill cycle", "cross-source RR", "earliest N+5 response"],
+    "rules": {
+      "P_KNOWN_FRAME": "Preserve four-state values; reject unknown active inputs/control/status and valid payload.",
+      "T_R_HAS_PENDING": "Each observed R handshake belongs to an accepted, not-yet-returned source head.",
+      "T_R_ID_ORDER": "RID equals the head's accepted ARID; validate even when IDs repeat.",
+      "T_R_PORT_ORDER": "Return port equals the same source head's AR port.",
+      "T_R_ADDR_ORDER": "Return low address equals the same source head's AR low address.",
+      "T_R_DATA_RESP_OR_EARLY": "At least one complete global issue association must match the head's MEM data and error priority at each R.",
+      "T_CAPACITY": "At most nine accepted outstanding transactions, including simultaneous return/accept.",
+      "T_REQ_HAS_ACCEPTED": "Each visible request matches a not-yet-issued accepted request in a consistent global association."
+    }
+  },
+  "strict": {
+    "native_property_expressions": "unchanged",
+    "pending_timing": "combinational lookahead including current AR accept and issue success",
+    "validation": "Full native SVA plus input audit; no learning or per-cycle latency matching."
+  },
+  "fatal_policy": {
+    "default": true,
+    "on": "Archive the sampled failure, then $fatal.",
+    "off": "Archive every failure and $error; final run/regression FAIL; exclude its coverage.",
+    "not_configurable": ["TC pre-drive legality", "driver phase/ownership", "file/tool errors", "watchdog"]
+  },
+  "sampling": "Complete pre-edge #1step frames. Registered consumer, explicit final flush, asynchronous reset epochs. Native SVA retains its own Preponed sampling and sampled failure operands."
+}

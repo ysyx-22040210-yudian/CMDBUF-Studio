@@ -1,0 +1,1 @@
+cycle,edge,phase,time_ps,launch_ps,expected_sample_ps,clk,clk_low_ns,clk_high_ns,clk_pause_ns,rst_n,arvalid,src,araddr,arid,ar_port_id,arresp,rready,ar_rd_gnt,rw_rd_gnt,rd_mem_status[0],rd_mem_status[1],rd_mem_status[2],rd_mem_status[3],rd_mem_status[4],rd_mem_status[5],rd_mem_status[6],rd_mem_status[7],mem_rdata,pc_err,arready,req,arb_addr,issue_data,issue_error

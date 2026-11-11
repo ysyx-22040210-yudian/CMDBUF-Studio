@@ -58,6 +58,7 @@ def tree(parent, columns, height=7, selectmode='browse'):
     widget.grid(row=0, column=0, sticky='nsew'); y.grid(row=0, column=1, sticky='ns'); x.grid(row=1, column=0, sticky='ew')
     frame.rowconfigure(0, weight=1); frame.columnconfigure(0, weight=1)
     widget.tag_configure('PASS', foreground='#087d69'); widget.tag_configure('FAIL', foreground='#bc3d4f')
+    widget.tag_configure('INCOMPLETE', foreground='#9b6b10'); widget.tag_configure('TIMEOUT', foreground='#9b6b10')
     return frame, widget
 
 

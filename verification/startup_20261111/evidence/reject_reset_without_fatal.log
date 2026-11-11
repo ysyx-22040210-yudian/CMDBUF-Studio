@@ -1,0 +1,6 @@
+python3 "/root/cmdbuf_checks_20261111/simulation/vcs/eda.py" --local run --case "simulation/vcs/tests/main_phase/main_bad_reset.sv" --seed "1"  --timeout "120" --waves "0" --check-mode "transaction" --assert-fatal "0"
+BATCH 20261111_215828_run_952da5 TOTAL 1
+FAIL main_bad_reset_seed_1 (0.42s)
+PROGRESS 20261111_215828_run_952da5 1/1
+REPORT /root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215828_run_952da5/index.html
+make: *** [/root/cmdbuf_checks_20261111/simulation/vcs/Makefile:121: run] Error 1

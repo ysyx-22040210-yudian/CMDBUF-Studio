@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "fsdb2vcd",
+    "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222126_regress_7ce889/cases/tc_random_seed_42/waves.fsdb",
+    "-o",
+    "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222126_regress_7ce889/cases/tc_random_seed_42/waves.vcd",
+    "-sv",
+    "-keep_last_time"
+  ],
+  "cwd": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222126_regress_7ce889/cases/tc_random_seed_42",
+  "timeout_seconds": 120,
+  "timeout_scope": "process",
+  "license_wait_limit_seconds": "not_a_license_wait_command"
+}

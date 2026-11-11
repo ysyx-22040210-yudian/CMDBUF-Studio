@@ -1,0 +1,12 @@
+{
+  "phase": "simulation",
+  "task": "tc_random_seed_123",
+  "state": "FINISHED",
+  "timeout_scope": "execution_only",
+  "execution_timeout_seconds": 1,
+  "license_wait_limit_seconds": null,
+  "startup_wait_seconds": 0.403,
+  "execution_seconds": 0.602,
+  "seconds": 1.005,
+  "returncode": 0
+}

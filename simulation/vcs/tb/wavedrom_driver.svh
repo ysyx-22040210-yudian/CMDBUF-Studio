@@ -131,8 +131,8 @@ task automatic run_wavedrom;
         #0.001; // Let final event and concurrent assertion actions settle; no clock is added.
         if (require_empty && (accepted != retired + wave_aborted ||
             accepted != issued + wave_aborted_unissued || issued != captured + wave_aborted_mem ||
-            captured != retired + wave_aborted_response || due_data.num() != 0 || req != 0 || pending_cnt != 0))
-            $fatal(1, "WAVEDROM_PENDING accepted=%0d retired=%0d aborted=%0d", accepted, retired, wave_aborted);
+            captured != retired + wave_aborted_response || due_data.num() != 0 || req != 0 || (monitor.strict_mode && pending_cnt != 0)))
+            drain_failure($sformatf("WAVEDROM_PENDING accepted=%0d retired=%0d aborted=%0d", accepted, retired, wave_aborted));
         $fclose(wave_samples); $fclose(wave_driven);
     end
 endtask

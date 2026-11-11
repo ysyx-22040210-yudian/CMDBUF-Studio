@@ -1,0 +1,13 @@
+Note: Bumping stack limit from 8192 to unlimited Kbytes.
+URG Version O-2018.09-1 Copyright (c) 1991-2018 by Synopsys Inc.
+Load Failed: 
+Warning-[UCAPI-SNF] Shape Not Found
+  'Fsm' coverage shape is not there in the vdb 
+  '/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222130_run_9a6cb8/cases/tc_directed_seed_17/simv.vdb'.
+  Coverage of this metric will not be reported.
+  Please check if proper -cm option was used at compile time.
+
+Note-[URG-RDG] Report directory generated
+  Report written to directory 
+  /root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222130_run_9a6cb8/coverage/urgReport
+

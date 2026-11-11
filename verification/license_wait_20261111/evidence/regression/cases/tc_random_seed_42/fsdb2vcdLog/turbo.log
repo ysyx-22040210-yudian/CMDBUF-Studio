@@ -1,0 +1,6 @@
+Command Line: /home/synopsys/verdi/Verdi_O-2018.09-SP2/platform/LINUXAMD64/bin/fsdb2vcd /root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222126_regress_7ce889/cases/tc_random_seed_42/waves.fsdb -o /root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222126_regress_7ce889/cases/tc_random_seed_42/waves.vcd -sv -keep_last_time
+uname(Linux IC_EDA 3.10.0-1160.53.1.el7.x86_64 #1 SMP Fri Jan 14 13:59:45 UTC 2022 x86_64)
+Load signals (0)-(20221001) time 0.086826 0.148500 0.017167 delta 504823808 504823808 total 666386432 666386432
+Write signals (0)-(20221001) time 0.215353 0.214026 0.001310 delta 1658880 1658880 total 668045312 668045312
+Unload (0)-(20221001) time 0.003670 0.003671 0.000000 delta 0 0 total 668045312 668045312
+au time 0.322763 0.380605 0.021256 delta 530739200 530739200 total 629989376 629989376

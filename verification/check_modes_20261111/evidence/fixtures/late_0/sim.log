@@ -1,0 +1,12 @@
+Chronologic VCS simulator copyright 1991-2018
+Contains Synopsys proprietary information.
+Compiler version O-2018.09-1_Full64; Runtime version O-2018.09-1_Full64;  Nov 11 21:20 2026
+CHECK_POLICY mode=transaction assert_fatal=0 sampling=pre_edge snapshot_pipeline=1
+CHECK_COMPLETE mode=transaction failures=0 incomplete=0 frames=14 checked=14
+FIXTURE_DONE scenario=late failures=0
+$finish called from file "/root/cmdbuf_checks_20261111/simulation/vcs/tests/checks/monitor_fixture.sv", line 68.
+$finish at simulation time               140000
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 140000 ps
+CPU Time:      0.160 seconds;       Data structure size:   0.0Mb
+Wed Nov 11 21:20:09 2026

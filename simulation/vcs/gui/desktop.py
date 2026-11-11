@@ -286,7 +286,7 @@ class Studio:
         self.preview('main_phase 编写说明', '''每次 @(posedge clk) 后执行一组赋值，供下一个上升沿采样。
 
 1. 保留模板循环与 #1，避开 DUT 的 NBA 更新竞争。
-2. begin_cycle(cycle) 记录周期；设置 rst_n、rready、clk_low_ns / clk_high_ns / clk_pause_ns。
+2. begin_cycle(cycle) 记录周期；rst_n 保持 1，设置 rready、clk_low_ns / clk_high_ns / clk_pause_ns。
 3. drive_control(); #1; sample_context(); 更新控制后读取已稳定的 DUT 反馈。
 4. 用普通 if / else 约束 AR 和 Bank 输入，再给数据赋值。
    if (!rst_n || arready == 3'b000) arvalid = 0;
@@ -297,10 +297,11 @@ class Studio:
 定向用例：if (cycle == 8) ... 指定某一拍；其他拍在 else 给明确值。
 随机用例：将 $urandom / $urandom_range 写在满足已登记约束的分支内。
 时钟：在每拍设置三个 clk_*_ns 控制下一段低/高电平与暂停。
-复位：直接赋值 rst_n，复位分支中的输入仍按模板合法驱动。
+启动：clk 初始为 1；默认 5 ns 下降、10 ns 上升，cycle=0 在 12 ns 驱动供 20 ns 采样。
+复位：环境在 t=0 拉低 rst_n，#1（1 ns）释放，之后一直为 1。TC 再次拉低会明确报错。
 
 所有注册约束的正反例与检查器继续使用原环境；不能自动推断任意新 RTL 的全部约束。
-详细说明：documents/32_* 与 documents/36_*。''')
+详细说明：documents/38_*（最新启动时序）、documents/32_* 与 documents/36_*。''')
 
     def build_regression(self, page):
         bar = self.bar(page)
@@ -309,9 +310,21 @@ class Studio:
         self.plan_count = tk.StringVar(); ttk.Label(bar, textvariable=self.plan_count, style='Muted.TLabel').pack(side='right')
         config = ttk.Frame(page); config.pack(fill='x', pady=(0, 16))
         self.plan_name = tk.StringVar(); self.jobs_var = tk.StringVar(value='2'); self.timeout_var = tk.StringVar(value='120'); self.waves_var = tk.BooleanVar(value=True)
-        for title, var, width in [('计划名称', self.plan_name, 23), ('并行任务', self.jobs_var, 5), ('单用例超时 / 秒', self.timeout_var, 7)]:
+        for title, var, width in [('计划名称', self.plan_name, 23), ('并行任务', self.jobs_var, 5), ('仿真执行超时 / 秒', self.timeout_var, 7)]:
             ttk.Label(config, text=title).pack(side='left', padx=(0, 7)); ttk.Entry(config, textvariable=var, width=width).pack(side='left', padx=(0, 18))
         ttk.Checkbutton(config, text='生成 FSDB + VCD 波形', variable=self.waves_var).pack(side='left')
+        ttk.Label(page, text='等待 License 不限时；仿真启动后才计算执行超时，填 0 表示执行也不限时。', style='Muted.TLabel').pack(anchor='w', pady=(0, 10))
+        checks = ttk.Frame(page); checks.pack(fill='x', pady=(0, 8))
+        self.check_modes = {'通用事务检查': 'transaction', '完整时序检查 20261021': 'strict'}
+        self.check_mode_var = tk.StringVar(value='通用事务检查'); self.assert_fatal_var = tk.BooleanVar(value=True)
+        ttk.Label(checks, text='验证范围').pack(side='left', padx=(0, 10))
+        combo = ttk.Combobox(checks, textvariable=self.check_mode_var, values=list(self.check_modes), state='readonly', width=25)
+        combo.pack(side='left', padx=(0, 20))
+        combo.bind('<<ComboboxSelected>>', lambda e: self.update_check_note())
+        ttk.Checkbutton(checks, text='断言失败立即停止（$fatal）', variable=self.assert_fatal_var).pack(side='left')
+        self.button(checks, '检查范围说明', self.check_help)
+        self.check_note = tk.StringVar()
+        ttk.Label(page, textvariable=self.check_note, style='Muted.TLabel', wraplength=1060).pack(anchor='w', pady=(0, 12))
         f, self.plan_tree = tree(page, [('enabled', '启用', 65), ('case', '用例', 260), ('runs', '运行次数', 100), ('seed', '起始 seed', 110), ('cycles', '周期数', 100)], height=11)
         f.pack(fill='both', expand=True); self.plan_tree.bind('<<TreeviewSelect>>', self.select_plan_row); self.plan_tree.bind('<Double-1>', self.toggle_plan)
         edit = ttk.LabelFrame(page, text='编辑选中用例', padding=14); edit.pack(fill='x', pady=(14, 10))
@@ -327,6 +340,9 @@ class Studio:
         plan = self.settings.get('plan', model.default_plan())
         self.plan_name.set(plan.get('name', 'CMDBUF 功能回归')); self.jobs_var.set(str(plan.get('jobs', 2)))
         self.timeout_var.set(str(plan.get('timeout', 120))); self.waves_var.set(plan.get('waves', True))
+        mode = plan.get('check_mode', 'strict')
+        self.check_mode_var.set(next(title for title,value in self.check_modes.items() if value==mode))
+        self.assert_fatal_var.set(plan.get('assert_fatal', True)); self.update_check_note()
         self.plan_rows = copy.deepcopy(plan['cases']); self.reconcile_plan()
 
     def reconcile_plan(self):
@@ -362,7 +378,31 @@ class Studio:
         self.plan_rows = [new if r['case'] == names[0] else r for r in self.plan_rows]; self.draw_plan()
 
     def plan_value(self):
-        return dict(version=1, name=self.plan_name.get(), jobs=int(self.jobs_var.get()), timeout=int(self.timeout_var.get()), waves=self.waves_var.get(), cases=copy.deepcopy(self.plan_rows))
+        return dict(version=1, name=self.plan_name.get(), jobs=int(self.jobs_var.get()), timeout=int(self.timeout_var.get()), waves=self.waves_var.get(),
+                    check_mode=self.check_modes[self.check_mode_var.get()], assert_fatal=self.assert_fatal_var.get(), cases=copy.deepcopy(self.plan_rows))
+
+    def update_check_note(self):
+        self.check_note.set('通用模式按实际握手核对事务，pending 更新时点和精确调度标为未检查。关闭 $fatal 仍记录断言失败并判 FAIL。'
+                            if self.check_modes[self.check_mode_var.get()]=='transaction' else
+                            '完整模式执行 20261021 全部时序要求，包括 pending 组合输出；旧计划保留此模式。关闭 $fatal 仍判 FAIL。')
+
+    def check_help(self):
+        self.preview('验证范围与断言处理', '''通用事务检查
+以时钟沿前的完整四态快照检查真实握手。检查 ID、port、低地址、数据、错误优先级和单源顺序；MEM 输入仍按发射后 N+4 提供。
+不规定 pending 的组合或寄存时点，不规定精确 ready/req/R 调度及最早 N+5 返回；这些项目显示 NOT_CHECKED。
+同地址发射保留所有可能事务对应关系。候选超过上限或结束时仍有未完成事务，显示 INCOMPLETE，不当作 PASS。
+
+完整时序检查 20261021
+执行原协议的全部原生 SVA，包括 pending 组合计数、容量预留、五项窗口、RR 和精确响应时序。内部实现可以不同，公开接口时序必须一致。
+
+断言失败立即停止
+勾选：记录第一笔失败后执行 $fatal。
+取消：使用 $error 继续执行，保存多笔失败；用例和回归仍判 FAIL，失败用例不合并到通过覆盖率。
+本开关控制运行期协议和事务断言。TC 非法赋值、驱动时点错误、文件或工具错误、watchdog 仍终止。
+
+报告与复现
+结果页分别展示接口、事务、完整时序结论。check_frames.csv 保存原采样拍，assertions.jsonl 保存失败标签及原始拍号，check_scope.json 列出范围。
+make replay 使用原用例保存的检查模式和 fatal 开关。通用模式通过不代表完整时序或 Formal 证明通过。''')
 
     def save_plan(self):
         self.idle()
@@ -387,12 +427,15 @@ class Studio:
         f.pack(fill='x'); self.batch_tree.bind('<<TreeviewSelect>>', lambda e: self.guard(self.select_batch))
         self.coverage_note = tk.StringVar(value='选择批次查看代码覆盖率与用例')
         ttk.Label(page, textvariable=self.coverage_note, style='Muted.TLabel', wraplength=1080).pack(anchor='w', pady=10)
+        self.scope_note = tk.StringVar(value='每个用例单独列出接口、事务与时序结论')
+        ttk.Label(page, textvariable=self.scope_note, style='Muted.TLabel', wraplength=1080).pack(anchor='w', pady=(0, 8))
         f, self.run_tree = tree(page, [('id', '用例 / seed', 280), ('status', '状态', 85), ('cycles', '主体周期', 80), ('seconds', '耗时 / 秒', 100), ('waves', '波形', 65)], height=5, selectmode='extended')
         f.pack(fill='x'); self.run_tree.bind('<<TreeviewSelect>>', lambda e: self.guard(self.read_artifact))
         row = self.bar(page); self.artifact_var = tk.StringVar(value='sim.log')
         ttk.Label(row, text='运行记录').pack(side='left', padx=(0, 10))
         combo = ttk.Combobox(row, textvariable=self.artifact_var, state='readonly', width=26,
-                             values=['sim.log', 'case.sv', 'assigned.csv', 'samples.csv', 'events.csv', 'drive_audit.json', 'constraint_failure.json'])
+                             values=['sim.log', 'sim.process.json', 'check_scope.json', 'assertions.jsonl', 'check_frames.csv', 'check_runtime.json',
+                                     'clock_reset.csv', 'case.sv', 'assigned.csv', 'samples.csv', 'events.csv', 'drive_audit.json', 'constraint_failure.json'])
         combo.pack(side='left'); combo.bind('<<ComboboxSelected>>', lambda e: self.guard(self.read_artifact))
         self.result_code = CodeEditor(page, self.mono, readonly=True, height=8); self.result_code.pack(fill='both', expand=True)
 
@@ -428,6 +471,13 @@ class Studio:
     def read_artifact(self):
         if not self.run_tree.selection(): return
         batch, run = self.selected_run(); path = backend.result_path(batch, run)/self.artifact_var.get()
+        result = next(r for r in self.summary['results'] if r['id']==run)
+        checks = result.get('checks', {})
+        if checks:
+            labels = {'PASS':'通过', 'FAIL':'失败', 'INCOMPLETE':'未完成', 'NOT_CHECKED':'未检查'}
+            self.scope_note.set('  ·  '.join(g['title']+'：'+labels.get(g['status'],g['status']) for g in checks['groups']) +
+                                '  |  断言失败 %d 笔  |  $fatal %s'%(len(checks['failures']), '开' if checks['assert_fatal'] else '关'))
+        else: self.scope_note.set('历史结果未记录分项验证范围，保持原报告结论')
         if path.exists():
             with path.open(encoding='utf-8', errors='replace') as f: text = f.read(120000)
             if path.stat().st_size > 120000: text += '\n\n[预览截断；完整记录位于 '+str(path)+']'

@@ -2,9 +2,16 @@
 `default_nettype none
 // Legacy sequences use falling-edge drive. WaveJSON controls its own clock.
 module tb_cmdbuf_rd;
-    reg clk = 0;
+    // Explicit legacy waveform playback supplies its own first transition.
+    reg clk = !$test$plusargs("WAVEDROM");
     initial if (!$test$plusargs("WAVEDROM") && !$test$plusargs("SV_TC")) forever #5 clk = ~clk;
     reg rst_n;
+    // The ordinary SV/sequence environment owns the startup reset. #1 is 1 ns.
+    // Legacy explicit-waveform playback retains the levels recorded in its file.
+    initial if (!$test$plusargs("WAVEDROM")) begin
+        rst_n = 0;
+        #1 rst_n = 1;
+    end
     reg wave_mode = 0;
     reg arvalid = 0;
     wire [2:0] arready;
@@ -31,9 +38,17 @@ module tb_cmdbuf_rd;
 
     string inject = "";
     wire [7:0] checked_rid = (inject == "rid" && |rvalid) ? (rid ^ 8'h01) : rid;
-    // Build-time copy only adds fatal actions to the original native properties.
-    // The canonical checker and RTL remain unchanged.
-    cmdbuf_rd_port_sva checks (.rid(checked_rid), .*);
+    reg [3:0] registered_pending;
+    always @(posedge clk or negedge rst_n)
+        if (!rst_n) registered_pending <= 0;
+        else registered_pending <= pending_cnt;
+    // Self-test interface mutation: a registered status port with unchanged
+    // transactions must pass generic scope and fail the combinational baseline.
+    wire [3:0] checked_pending = inject == "pending_registered" ? registered_pending : pending_cnt;
+    cmdbuf_check_monitor monitor (.rid(checked_rid), .pending_cnt(checked_pending), .*);
+    // The canonical Formal properties remain unchanged. The simulation copy
+    // selects common/full scope and sends sampled failures to the monitor.
+    cmdbuf_rd_port_sva checks (.rid(checked_rid), .pending_cnt(checked_pending), .*);
 
     integer cycle = 0, seed = 1, accepted = 0, issued = 0, retired = 0;
     integer captured = 0, issue_failed = 0, ar_rejected = 0, ar_gated = 0;
@@ -64,23 +79,13 @@ module tb_cmdbuf_rd;
         end
     endfunction
 
-    // All incoming values are four-state. Environmental contracts fail loudly
-    // in simulation instead of silently relying on formal assume semantics.
-    always @(posedge clk) if (rst_n) begin : environment_monitor
-        if ($isunknown({arvalid, src, araddr, arid, ar_port_id, arresp,
-                        rready, ar_rd_gnt, rw_rd_gnt, mem_rdata, pc_err}))
-            $fatal(1, "ENV_X_INPUT cycle=%0d", cycle);
-        if (arvalid && src >= 3) $fatal(1, "ENV_SRC cycle=%0d", cycle);
-        if (arvalid && !(arresp == 0 || arresp == 3))
-            $fatal(1, "ENV_ARRESP cycle=%0d", cycle);
-        if (arready == 0 && arvalid) $fatal(1, "ENV_ZERO_READY cycle=%0d", cycle);
-        for (integer b = 0; b < 8; b = b + 1) begin
-            if ($isunknown(rd_mem_status[b])) $fatal(1, "ENV_X_STATUS");
-            if (req[b] && ar_rd_gnt[b] && rw_rd_gnt[b] &&
-                rd_mem_status[b][arb_addr[0]] !== 1'b1)
-                $fatal(1, "ENV_SUCCESS_BUSY cycle=%0d bank=%0d", cycle, b);
-        end
-    end
+    // Native E03--E06 check sampled input contracts; monitor keeps four-state
+    // snapshots. TC pre-drive validation still rejects unsafe stimulus immediately.
+
+    task automatic drain_failure(input string reason);
+        if (monitor.strict_mode) monitor.fail_check("A_DRAIN_COMPLETION", monitor.edge_count, $realtime/1ps, reason);
+        else monitor.mark_incomplete(reason);
+    endtask
 
     task automatic step(input integer v, sx, addr, idnum, pn, resp,
                         ready, status, argrant, rwgrant, pe);
@@ -140,7 +145,7 @@ module tb_cmdbuf_rd;
             if (rready == 0 && accepted > retired) ready_zero = ready_zero + 1;
             // Read checker state for functional coverage only, never stimulus.
             for (s = 0; s < 9; s = s + 1)
-                if (checks.m_live[s] && checks.m_done[s]) begin
+                if (monitor.strict_mode && checks.m_live[s] && checks.m_done[s]) begin
                     x = checks.m_src[s];
                     if (!checks.m_done[checks.head[x]]) head_blocked = head_blocked + 1;
                 end
@@ -189,7 +194,6 @@ module tb_cmdbuf_rd;
         protocol_mode = $test$plusargs("PROTOCOL");
         strict_random_mode = $test$plusargs("STRICT_RANDOM");
         sv_tc_mode = $test$plusargs("SV_TC");
-        if (!wave_mode && !sv_tc_mode) rst_n = 0;
         for (n = 0; n < 8; n = n + 1) rd_mem_status[n] = 0;
         for (n = 0; n < 3; n = n + 1) src_hits[n] = 0;
         for (n = 0; n < 4; n = n + 1) resp_hits[n] = 0;
@@ -215,9 +219,8 @@ module tb_cmdbuf_rd;
         end else if (wave_mode) begin
             run_wavedrom();
         end else begin
-        // Initialization only. No reset behavior is claimed as verified.
-        repeat (3) @(posedge clk);
-        @(negedge clk); rst_n = 1;
+        // Wait for the shared 1 ns reset pulse before preparing the first edge.
+        wait (rst_n === 1'b1);
         while (!$feof(fd)) begin
             n = $fscanf(fd, "%d %d %d %d %h %h %h %h %h %h %h %h %d\n",
                         mode, count, offer, source, address, ident, portnum, response,
@@ -237,20 +240,20 @@ module tb_cmdbuf_rd;
         end
         $fclose(fd);
         for (n = 0; n < drain_limit &&
-             (accepted != retired || due_data.num() != 0 || req != 0 || pending_cnt != 0);
+             (accepted != retired || due_data.num() != 0 || req != 0 || (monitor.strict_mode && pending_cnt != 0));
              n = n + 1)
             if (strict_random_mode) constrained_random_step(3);
             else step(0, 0, 0, 0, 0, 0, 7, 0, 255, 255, 0);
         if (accepted != retired || accepted != issued || issued != captured ||
-            due_data.num() != 0 || req != 0 || pending_cnt != 0)
-            $fatal(1, "DRAIN_FAILED accepted=%0d issued=%0d captured=%0d retired=%0d",
-                   accepted, issued, captured, retired);
+            due_data.num() != 0 || req != 0 || (monitor.strict_mode && pending_cnt != 0))
+            drain_failure($sformatf("DRAIN_FAILED accepted=%0d issued=%0d captured=%0d retired=%0d", accepted, issued, captured, retired));
         repeat (8) begin
             if (strict_random_mode) constrained_random_step(4);
             else step(0, 0, 0, 0, 0, 0, 7, 0, 255, 255, 0);
         end
         if (strict_random_mode) begin $fclose(random_samples); $fclose(random_solutions); end
         end
+        monitor.finish_checks();
         metrics = $fopen("metrics.json", "w");
         if (!metrics) $fatal(1, "Cannot create metrics.json");
         $fdisplay(metrics, "{");
@@ -267,7 +270,9 @@ module tb_cmdbuf_rd;
         for (n = 0; n < 16; n = n + 1) $fwrite(metrics, "%s%0d", n ? "," : "", bank_hits[n]);
         $fdisplay(metrics, "]}");
         $fclose(metrics); $fclose(events);
-        $display("TEST_PASS seed=%0d accepted=%0d retired=%0d cycles=%0d", seed, accepted, retired, cycle);
+        if (monitor.failures) $display("TEST_FAIL seed=%0d assertions=%0d", seed, monitor.failures);
+        else if (monitor.incomplete) $display("TEST_INCOMPLETE seed=%0d reasons=%0d", seed, monitor.incomplete);
+        else $display("TEST_PASS seed=%0d accepted=%0d retired=%0d cycles=%0d", seed, accepted, retired, cycle);
         $finish;
     end
 endmodule

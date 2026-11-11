@@ -189,7 +189,7 @@ task automatic run_protocol;
         $fclose(fd); #0.001;
         if (require_empty && (p_queue.size()!=0 || p_due_token.num()!=0 || accepted!=retired+wave_aborted ||
             accepted!=issued+wave_aborted_unissued || issued!=captured+wave_aborted_mem ||
-            captured!=retired+wave_aborted_response || req!=0 || pending_cnt!=0)) protocol_fail("P_QUEUE_PENDING");
+            captured!=retired+wave_aborted_response || req!=0 || (monitor.strict_mode && pending_cnt!=0))) drain_failure("P_QUEUE_PENDING");
         $fclose(wave_samples); $fclose(wave_driven); $fclose(p_actions);
     end
 endtask

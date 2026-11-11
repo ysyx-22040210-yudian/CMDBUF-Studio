@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help gui doctor compile build run regress wave coverage report open-report list \
+.PHONY: help gui doctor compile build run regress check-test wave coverage report open-report list \
         new-case validate explain diagram trace replay selftest export constraints constraint-test tc-test fsdb-inspect fsdb-formal smoke dist configure
 PYTHON ?= python3
 # Keep Chinese diagnostics readable on Linux installations with a C locale.
@@ -16,6 +16,7 @@ CASES ?=
 RANDOM_ONLY ?= 0
 RANDOM_CASE ?=
 TIMEOUT ?= 120
+# License wait is always unlimited. TIMEOUT starts at cbStartOfSimulation; 0 disables it.
 REGRESSION ?= latest
 RUN_ID ?=
 TEMPLATE ?= tc_directed
@@ -24,11 +25,14 @@ XAUTHORITY ?=
 LIMIT ?= 50
 ALL ?= 0
 WAVES ?= 1
+CHECK_MODE ?=
+ASSERT_FATAL ?=
 PLAN ?=
 REQUEST ?=
 EDA_RUN_CASE = $(if $(strip $(CASE)),$(CASE),tc_directed)
 EDA_SELECT = $(if $(strip $(RUN_ID)),--case "$(RUN_ID)",$(if $(strip $(CASE)),--case "$(CASE)_seed_$(SEED)"))
 EDA_CYCLES = $(if $(strip $(CYCLES)),--cycles "$(CYCLES)")
+EDA_CHECKS = $(if $(strip $(CHECK_MODE)),--check-mode "$(CHECK_MODE)") $(if $(strip $(ASSERT_FATAL)),--assert-fatal "$(ASSERT_FATAL)")
 EDA_REGRESSION = --regression "$(REGRESSION)"
 EDA_GUI = --display "$(DISPLAY)" $(if $(strip $(XAUTHORITY)),--xauthority "$(XAUTHORITY)")
 
@@ -44,7 +48,12 @@ help:
 	@echo '  make run CASE=tc_directed SEED=17           Compile if needed, simulate, merge coverage'
 	@echo '  make regress SEEDS=1,2,42 JOBS=2      Directed suite + random seeds'
 	@echo '       PLAN=simulation/vcs/plans/name.json WAVES=0|1 (FSDB + VCD)'
+	@echo '       CHECK_MODE=transaction|strict ASSERT_FATAL=0|1'
+	@echo '       New runs default to transaction + fatal; old plans retain strict scope.'
+	@echo '       ASSERT_FATAL=0 continues after assertion errors; the run still FAILS.'
 	@echo '       CYCLES=2000 CASES=tc_directed,tc_retry RANDOM_ONLY=1 TIMEOUT=120'
+	@echo '       License wait is unlimited. TIMEOUT counts simulation execution only; 0 disables it.'
+	@echo '       VCS automatically uses -lca -licqueue +vcs+lic+wait; simv/URG queue licenses too.'
 	@echo '       Unspecified SEEDS/CYCLES/CASES use regression.json'
 	@echo '       RANDOM_CASE=my_random RANDOM_ONLY=1  Seed sweep of your own SV TC'
 	@echo '  make wave CASE=tc_random SEED=42        Open selected FSDB in Verdi'
@@ -58,6 +67,7 @@ help:
 	@echo '  make constraints                      Audit complete versioned contract inventory'
 	@echo '  make constraint-test JOBS=2            Per-rule positive/negative/interaction checks'
 	@echo '  make tc-test JOBS=2                    main_phase timing/if/clock/negative acceptance'
+	@echo '  make check-test JOBS=2                 Snapshot / transaction / fatal positive and negative VCS tests'
 	@echo '       TEMPLATE=tc_random                 Start from constrained random inputs'
 	@echo '  make explain CASE=my_retry            Explain main_phase assignments and timing'
 	@echo '  make validate CASE=my_retry           Check SV TC with VCS compilation'
@@ -86,14 +96,14 @@ env-info:
 	$(PYTHON) "$(EDA_HERE)platform_config.py" $(if $(strip $(INFO)),--output "$(INFO)")
 
 smoke:
-	$(EDA) regress --cases tc_directed --seeds 17,42 --cycles 64 --jobs "$(JOBS)" --timeout "$(TIMEOUT)" --waves "$(WAVES)"
+	$(EDA) regress --cases tc_directed --seeds 17,42 --cycles 64 --jobs "$(JOBS)" --timeout "$(TIMEOUT)" --waves "$(WAVES)" $(EDA_CHECKS)
 
 fsdb-inspect fsdb-formal:
 	@test -n "$(REQUEST)" || { echo 'Specify REQUEST=path/to/request.json'; exit 2; }
 	$(PYTHON) "$(EDA_HERE)fsdb_formal/engine.py" --action $(if $(filter fsdb-inspect,$@),inspect,export) --request "$(REQUEST)"
 
 doctor selftest list:
-	$(EDA) $@ $(if $(filter selftest,$@),--jobs "$(JOBS)" --timeout "$(TIMEOUT)")
+	$(EDA) $@ $(if $(filter selftest,$@),--jobs "$(JOBS)" --timeout "$(TIMEOUT)" $(EDA_CHECKS))
 
 constraints:
 	$(EDA) constraints
@@ -104,17 +114,20 @@ constraint-test:
 tc-test:
 	$(EDA) tc-test --jobs "$(JOBS)" --timeout "$(TIMEOUT)"
 
+check-test:
+	$(PYTHON) "$(EDA_HERE)check_suite.py" --jobs "$(JOBS)"
+
 compile build:
 	$(EDA) build
 
 run:
-	$(EDA) run --case "$(EDA_RUN_CASE)" --seed "$(SEED)" $(EDA_CYCLES) --timeout "$(TIMEOUT)" --waves "$(WAVES)"
+	$(EDA) run --case "$(EDA_RUN_CASE)" --seed "$(SEED)" $(EDA_CYCLES) --timeout "$(TIMEOUT)" --waves "$(WAVES)" $(EDA_CHECKS)
 
 regress:
 	$(EDA) regress $(if $(strip $(SEEDS)),--seeds "$(SEEDS)") $(EDA_CYCLES) \
 	  $(if $(strip $(RANDOM_CASE)),--random-case "$(RANDOM_CASE)") \
 	  $(if $(strip $(CASES)),--cases "$(CASES)") $(if $(filter 1,$(RANDOM_ONLY)),--random-only) \
-	  --jobs "$(JOBS)" --timeout "$(TIMEOUT)" --waves "$(WAVES)" $(if $(strip $(PLAN)),--plan "$(PLAN)")
+	  --jobs "$(JOBS)" --timeout "$(TIMEOUT)" --waves "$(WAVES)" $(if $(strip $(PLAN)),--plan "$(PLAN)") $(EDA_CHECKS)
 
 wave:
 	$(EDA) view $(EDA_REGRESSION) $(EDA_SELECT) $(EDA_GUI)

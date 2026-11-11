@@ -3,10 +3,12 @@ import csv
 import json
 from pathlib import Path
 from wavedrom_adapter import PORTS
+from check_policy import audit_flags
 
 
 def verify_execution(directory, program):
     root=Path(directory); failures=[]
+    generic, incomplete = audit_flags(root)
     cov={'E03_SRC':0,'E04_ARRESP':0,'E05_ZERO_READY':0,'E06_SUCCESS_BUSY':[0]*16,
          'T_MEM4':0,'T_ASSOCIATION':0,'P_KNOWN':0,'assignment_equal_pins':0,
          'paused_intervals':0,'reset_assertions':1,'cancelled':0}
@@ -20,7 +22,27 @@ def verify_execution(directory, program):
         if tokens[:1]!=['MAIN_PHASE_V1'] or config['name']!=tokens[1] or config['seed']!=int(tokens[2]):
             raise ValueError('MAIN_CONFIG_ARCHIVE')
         if int(tokens[3]) and config['num_cycles']!=int(tokens[3]): raise ValueError('MAIN_CYCLES_OVERRIDE')
-        live=[];heads=[[],[],[]];due={};edge=1;previous_sample=5000;previous_high=5;old_reset=0;last_phase=0
+        fixed_startup='startup' in config
+        if fixed_startup:
+            with (root/'clock_reset.csv').open() as f: clock_reset=list(csv.DictReader(f))
+            transitions=[(int(row['time_ps']),row['clk'],row['rst_n']) for row in clock_reset]
+            if transitions[:4]!=[(0,'1','0'),(1000,'1','1'),(5000,'0','1'),(10000,'1','1')]:
+                raise ValueError('MAIN_STARTUP_CLOCK_RESET')
+            if any(reset!='1' for _,_,reset in transitions[1:]): raise ValueError('MAIN_RESET_FIXED_HIGH_AFTER_1NS')
+            if any(clock not in ('0','1') for _,clock,_ in transitions): raise ValueError('MAIN_CLOCK_UNKNOWN')
+            if any(a[0]>=b[0] for a,b in zip(transitions,transitions[1:])): raise ValueError('MAIN_CLOCK_TRANSITION_TIME')
+            rises=[b[0] for a,b in zip(transitions,transitions[1:]) if a[1]=='0' and b[1]=='1']
+            falls=[b[0] for a,b in zip(transitions,transitions[1:]) if a[1]=='1' and b[1]=='0']
+            if rises!=[10000]+[int(s['time_ps']) for s in samples]: raise ValueError('MAIN_CLOCK_RISING_TRACE')
+            expected_falls=[5000]; previous_high=5
+            for q in solutions:
+                expected_falls.append(int(q['launch_ps'])+previous_high*1000)
+                previous_high=int(q['clk_high_ns'])
+            if falls!=expected_falls: raise ValueError('MAIN_CLOCK_FALLING_TRACE')
+            if config['startup']!=dict(clock_initial=1,reset_release_ps=1000,first_posedge_ps=10000):
+                raise ValueError('MAIN_STARTUP_CONFIG')
+        # Archived simulators retain their original startup and exact replay.
+        live=[];heads=[[],[],[]];due={};edge=1;previous_sample=10000 if fixed_startup else 5000;previous_high=5;old_reset=1 if fixed_startup else 0;last_phase=0
         for slot,(s,q) in enumerate(zip(samples,solutions)):
             if None in s or None in q: raise ValueError('MAIN_ARCHIVE_COLUMNS')
             if int(s['cycle'])!=slot or int(q['cycle'])!=slot: raise ValueError('MAIN_CYCLE_GAP')
@@ -74,8 +96,8 @@ def verify_execution(directory, program):
                     if success:
                         bank=success.bit_length()-1
                         candidates=[x for x in live if not x['issued'] and x['addr']>>6==o['arb_addr'] and (x['addr']>>3)&7==bank]
-                        if not candidates: raise ValueError('T_ASSOCIATION_UNKNOWN_ISSUE')
-                        token=candidates[0];token['issued']=True
+                        if not candidates and not generic: raise ValueError('T_ASSOCIATION_UNKNOWN_ISSUE')
+                        token={} if generic else candidates[0];token['issued']=True
                         token.update(data=int(q['issue_data'],16),error=int(q['issue_error']))
                         if edge+4 in due: raise ValueError('T_MEM4_COLLISION')
                         due[edge+4]=token
@@ -86,8 +108,8 @@ def verify_execution(directory, program):
                         if not heads[src]: raise ValueError('T_ASSOCIATION_UNSOLICITED_R')
                         token=heads[src].pop(0)
                         resp=3 if token['resp']==3 else token.get('error',0)
-                        if not token['done'] or (o['rid'],o['r_port_id'],o['raddr'],o['rdata'],o['rresp'])!=(
-                            token['id'],token['port'],token['addr']&7,token.get('data'),resp):
+                        if not generic and (not token['done'] or (o['rid'],o['r_port_id'],o['raddr'],o['rdata'],o['rresp'])!=(
+                            token['id'],token['port'],token['addr']&7,token.get('data'),resp)):
                             raise ValueError('T_ASSOCIATION_FIFO_DATA')
                         live.remove(token);cov['T_ASSOCIATION']+=1
                     if v['arvalid'] and (o['arready']>>v['src'])&1:
@@ -99,10 +121,12 @@ def verify_execution(directory, program):
             if v['clk']:edge+=1
         if phases['body']!=config['num_cycles']:raise ValueError('MAIN_BODY_COUNT')
         if phases['quiet']!=8:raise ValueError('MAIN_QUIET_COUNT')
-        if live or due or any(heads) or o['req'] or o['pending_cnt']:raise ValueError('MAIN_PENDING')
+        if not incomplete and (live or due or any(heads) or o['req'] or (not generic and o['pending_cnt'])):raise ValueError('MAIN_PENDING')
     except (OSError,ValueError,KeyError,IndexError,TypeError) as exc:
         failures.append('main_phase audit cycle {} edge {}: {}'.format(locals().get('slot','?'),locals().get('edge','?'),exc))
     report=dict(status='FAIL' if failures else 'PASS',failures=failures,phases=phases,coverage=cov,
+                startup_policy='clock_high_reset_1ns' if locals().get('fixed_startup') else 'legacy_archived_tc',
+                transaction_association='check_scope.json hypothesis monitor' if generic else 'baseline FIFO audit',
                 body_histograms=hist,method='Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO',
                 distribution='Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim')
     (root/'constraint_coverage.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')

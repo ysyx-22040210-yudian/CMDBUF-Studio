@@ -1,0 +1,70 @@
+{
+  "status": "PASS",
+  "failures": [],
+  "phases": {
+    "body": 500,
+    "drain": 12,
+    "quiet": 8
+  },
+  "coverage": {
+    "E03_SRC": 139,
+    "E04_ARRESP": 139,
+    "E05_ZERO_READY": 226,
+    "E06_SUCCESS_BUSY": [
+      5,
+      6,
+      6,
+      13,
+      10,
+      8,
+      7,
+      9,
+      6,
+      8,
+      8,
+      8,
+      12,
+      5,
+      7,
+      10
+    ],
+    "T_MEM4": 128,
+    "T_ASSOCIATION": 128,
+    "P_KNOWN": 520,
+    "assignment_equal_pins": 520,
+    "paused_intervals": 0,
+    "reset_assertions": 1,
+    "cancelled": 0
+  },
+  "startup_policy": "clock_high_reset_1ns",
+  "transaction_association": "check_scope.json hypothesis monitor",
+  "body_histograms": {
+    "arvalid": {
+      "0": 361,
+      "1": 139
+    },
+    "rready": {
+      "7": 64,
+      "2": 68,
+      "6": 63,
+      "3": 65,
+      "5": 60,
+      "0": 64,
+      "1": 61,
+      "4": 55
+    },
+    "src_valid": {
+      "-1": 361,
+      "0": 44,
+      "2": 50,
+      "1": 45
+    },
+    "arresp_valid": {
+      "-1": 361,
+      "3": 67,
+      "0": 72
+    }
+  },
+  "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+  "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+}

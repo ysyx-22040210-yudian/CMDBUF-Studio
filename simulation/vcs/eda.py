@@ -30,6 +30,8 @@ sys.path.insert(0, str(HERE))
 from case_adapter import load_case, make_program
 import sv_cases
 import platform_config
+import check_policy
+import execution
 
 
 def load_input(path):
@@ -95,30 +97,26 @@ def tool_env():
     return platform_config.tool_env()
 
 
-def execute(cmd, cwd, log, env, timeout):
-    log = Path(log)
-    log.parent.mkdir(parents=True, exist_ok=True)
-    write_json(log.with_suffix('.command.json'), {'argv': cmd, 'cwd': str(cwd)})
-    start = time.time()
-    with log.open('w', encoding='utf-8') as out:
-        process = subprocess.Popen(cmd, cwd=str(cwd), env=env, stdout=out,
-                                   stderr=subprocess.STDOUT, start_new_session=True)
-        try:
-            rc = process.wait(timeout=timeout)
-        except subprocess.TimeoutExpired:
-            os.killpg(process.pid, signal.SIGTERM)
-            try:
-                process.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                os.killpg(process.pid, signal.SIGKILL)
-                process.wait()
-            out.write('\nEDA_RUNNER_TIMEOUT\n')
-            rc = 124
-    return rc, round(time.time() - start, 3)
+def execute(cmd, cwd, log, env, timeout, wait_for_start=False, phase='tool'):
+    return execution.run(cmd,cwd,log,env,timeout,wait_for_start,phase)
+
+
+def vcs_options(target,env):
+    """Shared flags for all VCS compilation paths, including acceptance fixtures."""
+    target=Path(target)
+    library=target/'execution_start.so'
+    source=target/'execution_start.c'
+    shutil.copyfile(str(HERE/'execution_start.c'),str(source))
+    include=Path(env['VCS_HOME'])/'include'
+    cmd=[env.get('CXX','g++'),'-shared','-fPIC','-O2','-I'+str(include),str(source),'-o',str(library)]
+    rc,_=execute(cmd,target,target/'execution_start_compile.log',env,120,phase='start_hook')
+    if rc:raise RuntimeError('Cannot build VCS start callback: '+str(target/'execution_start_compile.log'))
+    return ['vcs','-full64','-lca','-licqueue','+vcs+lic+wait',
+            '-load',platform_config.tool_path(str(library))+':cmdbuf_studio_register']
 
 
 def instrument_checker(destination):
-    """Same property expressions, fatal action blocks, assume -> runtime assert.
+    """Preserve native sampled expressions; select scope and failure policy at runtime.
 
     Canonical files are never rewritten. Record every converted property and
     require exact conversion counts so unsupported syntax cannot slip through.
@@ -133,11 +131,29 @@ def instrument_checker(destination):
         labels = []
         def replace(match):
             label = match.group(2)
-            labels.append({'label': label, 'original_kind': match.group(3)})
-            return match.group(1) + 'assert' + match.group(4) + ' else $fatal(1, "SVA_FAIL ' + label + '");'
+            common = label in check_policy.COMMON
+            labels.append({'label': label, 'original_kind': match.group(3),
+                           'scope': 'common' if common else 'strict'})
+            expression = match.group(4)
+            if not common:
+                if 'disable iff (!rst_n)' not in expression:
+                    raise RuntimeError('Property has unsupported reset/sampling contract: ' + label)
+                expression = expression.replace('disable iff (!rst_n)',
+                    'disable iff (!rst_n || !tb_cmdbuf_rd.monitor.strict_mode)')
+            detail = ('$sformatf("path=%m sampled_pending=%h last_pending=%h ar_fire=%b issue_fire=%b '
+                      'ready=%h req=%h rvalid=%h rid=%h expected_ready=%h expected_req=%h expected_rvalid=%h", '
+                      '$sampled(pending_cnt), $sampled(last_pending), $sampled(ar_fire), $sampled(issue_fire), '
+                      '$sampled(arready), $sampled(req), $sampled(rvalid), $sampled(rid), '
+                      '$sampled(expected_ready), $sampled(expected_req), $sampled(expected_rvalid))')
+            return (match.group(1) + 'assert' + expression +
+                    ' else tb_cmdbuf_rd.monitor.native_failure("' + label + '", $realtime/1ps, ' + detail + ');')
         rewritten = pattern.sub(replace, code)
         if len(labels) != expected:
             raise RuntimeError('Unsupported property syntax in ' + rel)
+        # Strict-model covers are not meaningful when that model's scheduling is
+        # intentionally outside the generic transaction contract.
+        rewritten = re.sub(r'(cover\s+property\s*\(\s*@\(posedge clk\)\s*)disable iff \(!rst_n\)',
+                           r'\1disable iff (!rst_n || !tb_cmdbuf_rd.monitor.strict_mode)', rewritten)
         (destination / path.name).write_text(rewritten, encoding='utf-8')
         changes.append({'source': rel, 'sha256': digest(path), 'properties': labels})
     write_json(destination / 'instrumentation.json', changes)
@@ -165,6 +181,11 @@ def build_at(target, identity, env):
     key = target.name
     receipt = target / 'build.json'
     if receipt.exists() and (target / 'simv').exists():
+        saved=read_json(receipt)
+        if saved.get('execution_start_hook'):
+            library=target/'execution_start.so'
+            if not library.is_file() or digest(library)!=saved.get('execution_start_sha256'):
+                raise RuntimeError('Saved VCS start callback is missing or changed')
         return target
     target.mkdir(parents=True, exist_ok=True)
     generated = target / 'checker'
@@ -177,8 +198,8 @@ def build_at(target, identity, env):
     rtl = [str(dut_config.project_path(f)) for f in dut['files']]
     filelist = target / 'files.f'
     filelist.write_text('\n'.join('"' + platform_config.tool_path(p) + '"' for p in rtl + [str(generated / Path(PROJECT['checker']).name),
-                           str(ROOT / PROJECT['testbench'])]) + '\n', encoding='utf-8')
-    cmd = ['vcs', '-full64', '-sverilog', '-timescale=1ns/1ps', '-debug_access+all', '-kdb',
+                           str(HERE / 'tb/cmdbuf_check_monitor.sv'), str(ROOT / PROJECT['testbench'])]) + '\n', encoding='utf-8')
+    cmd = vcs_options(target,env)+['-sverilog', '-timescale=1ns/1ps', '-debug_access+all', '-kdb',
            '+v2k', '-top', PROJECT['top'], '+incdir+' + str(generated), '+incdir+' + str(HERE / 'tb'),
            '-P', str(pli / 'novas.tab'), str(pli / 'pli.a'),
            '-cm', PROJECT['coverage'], '-cm_tgl', 'mda', '-cm_hier', str(HERE / 'coverage.hier'),
@@ -186,10 +207,12 @@ def build_at(target, identity, env):
     cmd += ['+incdir+' + str(dut_config.project_path(d, True)) for d in dut['include_dirs']]
     cmd += ['+define+' + d for d in dut['defines']]
     cmd = [platform_config.tool_path(arg) for arg in cmd]
-    rc, elapsed = execute(cmd, target, target / 'compile.log', env, 600)
+    rc, elapsed = execute(cmd, target, target / 'compile.log', env, None, phase='compile')
     if rc or not (target / 'simv').is_file():
         raise RuntimeError('VCS compile failed ({}): {}'.format(rc, target / 'compile.log'))
     write_json(receipt, dict(identity, build_id=key, argv=cmd, seconds=elapsed,
+                             execution_start_hook='vpi_cbStartOfSimulation',
+                             execution_start_sha256=digest(target/'execution_start.so'),
                              simv_sha256=digest(target / 'simv'),
                              simulator=str(target / 'simv'), built_at=stamp()))
     print('BUILD ' + str(target), flush=True)
@@ -210,13 +233,15 @@ def case_path(name):
 
 
 def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection='', replay_program=None,
-             saved_config=None, waves=True):
+             saved_config=None, waves=True, check_mode='strict', assert_fatal=True):
     path = Path(saved_config) if saved_config else case_path(name)
     cfg = read_json(path) if saved_config else load_input(path)
     case_name = name if saved_config else path.stem
     identifier = '{}_seed_{}{}'.format(case_name, seed, '_' + injection if injection else '')
     run = regression / 'cases' / identifier
     run.mkdir(parents=True)  # Never overwrite an earlier seed's evidence.
+    policy = check_policy.normalize(check_mode, assert_fatal)
+    write_json(run / 'check_policy.json', policy)
     program = (Path(replay_program).read_text(encoding='utf-8') if replay_program is not None
                else input_program(cfg, seed, cycles))
     (run / 'stimulus.txt').write_text(program, encoding='utf-8')
@@ -244,7 +269,8 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
     # VCS 2018 writes only testdata when runtime -cm_dir differs from compile
     # -cm_dir. Seed each isolated database with its matching static design.
     shutil.copytree(str(build_dir / 'simv.vdb'), str(run / 'simv.vdb'))
-    cmd = [str(build_dir / 'simv'), '+ntb_random_seed=' + str(seed), '+SEED=' + str(seed),
+    cmd = [str(build_dir / 'simv'), '+vcs+lic+wait', '+ntb_random_seed=' + str(seed), '+SEED=' + str(seed),
+           '+CHECK_MODE=' + check_mode, '+ASSERT_FATAL=' + str(int(assert_fatal)),
            '+PROGRAM=' + str(run / 'stimulus.txt'),
            '-cm', PROJECT['coverage'], '-cm_dir', str(run / 'simv.vdb'), '-cm_name', identifier]
     if waves:
@@ -258,7 +284,18 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
     if wave_case:
         cmd.append('+WAVEDROM')
         if program.startswith('PROTOCOL_V1 '): cmd.append('+PROTOCOL')
-    rc, elapsed = execute(cmd, run, run / 'sim.log', env, timeout)
+    build_receipt = read_json(build_dir / 'build.json')
+    start_hook = bool(build_receipt.get('execution_start_hook'))
+    if start_hook:
+        library = build_dir / 'execution_start.so'
+        if not library.is_file() or digest(library) != build_receipt.get('execution_start_sha256'):
+            raise RuntimeError('Saved VCS start callback is missing or changed')
+    else:
+        # Replaying a sealed binary must preserve its code. Old binaries have no
+        # start callback, so a wall deadline could kill a legitimate license wait.
+        print('LEGACY_LICENSE_WAIT: archived binary has no start callback; execution timeout disabled', flush=True)
+    rc, elapsed = execute(cmd, run, run / 'sim.log', env, timeout if start_hook else None,
+                          wait_for_start=start_hook, phase='simulation' if start_hook else 'legacy_simulation')
     conversion = None
     if waves and (run / 'waves.fsdb').is_file():
         # Verdi's converter preserves unpacked arrays, which VCS $dumpvars
@@ -269,12 +306,20 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
         conversion = dict(exit_code=conversion_rc, seconds=conversion_time, source='waves.fsdb', output='waves.vcd')
     log = (run / 'sim.log').read_text(encoding='utf-8', errors='replace')
     metrics = read_json(run / 'metrics.json') if (run / 'metrics.json').exists() else {}
+    monitor_supported = (build_dir / 'build.json').is_file() and (
+        'simulation/vcs/tb/cmdbuf_check_monitor.sv' in read_json(build_dir / 'build.json').get('sources', {}))
+    check_report = check_policy.report(run, policy, required=monitor_supported)
+    write_json(run / 'check_scope.json', check_report)
+    incomplete = bool(check_report['runtime'].get('incomplete'))
     failures = []
+    failures.extend(check_report['integrity_errors'])
+    if check_report['failures']:
+        failures.append('{} assertion failures; see assertions.jsonl'.format(len(check_report['failures'])))
     if rc:
         failures.append('simulation exit {}'.format(rc))
     if waves and (not conversion or conversion['exit_code'] or not (run / 'waves.vcd').is_file()):
         failures.append('FSDB to VCD conversion failed; see wave_conversion.log')
-    if not re.search(r'^TEST_PASS\s', log, re.M):
+    if not re.search(r'^TEST_PASS\s', log, re.M) and not (incomplete and re.search(r'^TEST_INCOMPLETE\s', log, re.M)):
         failures.append('missing TEST_PASS')
     if re.search(r'^(?:Error(?:-|:)|Fatal(?:-|:))|SVA_FAIL|ENV_[A-Z]+.*(?:cycle=|Error)|EDA_RUNNER_TIMEOUT', log, re.M):
         failures.append('simulator/assertion/environment error')
@@ -313,13 +358,15 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
         if program.startswith('PROTOCOL_V1 '):
             from protocol_views import write_comparison
             write_comparison(cfg, run, program)
-    status = 'PASS' if not failures else ('TIMEOUT' if rc == 124 else 'FAIL')
+    status = ('INCOMPLETE' if incomplete else 'PASS') if not failures else ('TIMEOUT' if rc == 124 else 'FAIL')
     result = {'id': identifier, 'case': case_name, 'seed': seed, 'status': status,
               'seconds': elapsed, 'exit_code': rc, 'failures': failures, 'metrics': metrics,
               'directory': str(run), 'build': str(build_dir), 'argv': cmd,
               'stimulus_sha256': digest(run / 'stimulus.txt'), 'case_sha256': digest(run / 'case.json'),
               'events_sha256': digest(run / 'events.csv') if (run / 'events.csv').exists() else None,
               'injection': injection, 'waves_enabled': waves,
+              'check_mode': check_mode, 'assert_fatal': assert_fatal, 'checks': check_report,
+              'execution': read_json(run / 'sim.process.json'),
               'wave_conversion': conversion,
               'wave_artifacts': [n for n in ('waves.fsdb', 'waves.vcd') if (run / n).is_file()]}
     result['format'] = cfg['format'] if sv_case else 'protocol' if program.startswith('PROTOCOL_V1 ') else ('wavedrom' if wave_case else 'constrained_random' if strict_random else 'sequence')
@@ -337,10 +384,10 @@ def merge_coverage(regression, results, env):
         return {'status': 'NO_PASSING_CASES', 'included': [], 'excluded': [r['id'] for r in results]}
     cov = regression / 'coverage'
     cov.mkdir()
-    cmd = ['urg', '-full64', '-dir'] + [str(Path(r['directory']) / 'simv.vdb') for r in accepted]
+    cmd = ['urg', '-full64', '+urg+lic+wait', '-dir'] + [str(Path(r['directory']) / 'simv.vdb') for r in accepted]
     cmd += ['-dbname', str(cov / 'merged.vdb'), '-report', str(cov / 'urgReport'),
             '-metric', PROJECT['coverage'], '-format', 'both']
-    rc, seconds = execute(cmd, regression, cov / 'urg.log', env, 300)
+    rc, seconds = execute(cmd, regression, cov / 'urg.log', env, None, phase='coverage')
     report = cov / 'urgReport' / 'dashboard.html'
     database = cov / 'merged.vdb'
     text_report = cov / 'urgReport' / 'dashboard.txt'
@@ -366,14 +413,15 @@ def write_report(regression, summary):
         e = html.escape
         shown_status='PASS (expected violation)' if r.get('expected_failure') and r.get('acceptance_pass') else r['status']
         extra=''
-        for name,label in [('case.sv','SV TC 源码'),('assigned.csv','TC 赋值'),('sv_solutions.csv','VCS 求解值'),('samples.csv','实际输入'),('actual_vs_plan.html','计划与实际'),('drive_audit.json','输入审计'),('constraint_failure.json','约束冲突')]:
+        for name,label in [('sim.process.json','等待与执行计时'),('check_scope.json','检查范围'),('assertions.jsonl','断言失败'),('check_frames.csv','完整采样'),('clock_reset.csv','时钟与复位'),('case.sv','SV TC 源码'),('assigned.csv','TC 赋值'),('sv_solutions.csv','VCS 求解值'),('samples.csv','实际输入'),('actual_vs_plan.html','计划与实际'),('drive_audit.json','输入审计'),('constraint_failure.json','约束冲突')]:
             if (regression/'cases'/r['id']/name).exists():
                 extra+=' <a href="cases/{}/{}">{}</a>'.format(e(r['id']),name,label)
+        scope = ' / '.join(g['title']+': '+g['status'] for g in r.get('checks', {}).get('groups', []))
         rows.append(('<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td><a href="cases/{}/sim.log">log</a> '
                     '<a href="cases/{}/events.csv">events</a>'+extra+'</td><td><code>make wave '
                     'REGRESSION={} RUN_ID={}</code></td></tr>').format(
                         e(r['id']), e(shown_status), r['metrics'].get('accepted', 0),
-                        e('; '.join(r['failures'])), e(r['id']), e(r['id']), e(summary['id']), e(r['id'])))
+                        e('; '.join(r['failures']) + (' | '+scope if scope else '')), e(r['id']), e(r['id']), e(summary['id']), e(r['id'])))
     body = '''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>CMDBUF RD VCS 回归</title>
 <style>body{font:16px system-ui;margin:36px;color:#182c40}table{border-collapse:collapse;width:100%%}
 td,th{border:1px solid #bbc7d0;padding:10px;text-align:left}code{font-size:13px}h1{font-size:26px}</style>
@@ -400,13 +448,19 @@ def select_regression(name):
 
 
 def regress(args, env):
+    plan = read_json(ROOT / args.plan) if getattr(args, 'plan', None) else None
+    policy = check_policy.plan_options(plan) if plan else check_policy.normalize(
+        'strict' if args.command == 'selftest' else 'transaction')
+    if getattr(args, 'check_mode', None) is not None:
+        policy['check_mode'] = args.check_mode
+    if getattr(args, 'assert_fatal', None) is not None:
+        policy['assert_fatal'] = args.assert_fatal == 1
     if args.command == 'run':
         jobs = [(args.case, args.seed, args.cycles, '')]
     elif args.command == 'selftest':
         jobs = [('smoke', 1, None, mode) for mode in ('rid', 'src', 'busy')]
     elif getattr(args, 'plan', None):
         from regression_plan import expand
-        plan = read_json(ROOT / args.plan)
         jobs = expand(plan)
     else:
         suite = read_json(HERE / 'regression.json')
@@ -430,11 +484,12 @@ def regress(args, env):
     if getattr(args, 'plan', None):
         write_json(regression / 'plan.json', plan)
     write_json(regression / 'dut.json', read_json(build_dir / 'build.json').get('dut', {}))
+    write_json(regression / 'check_policy.json', policy)
     print('BATCH {} TOTAL {}'.format(rid, len(jobs)), flush=True)
     write_json(regression / 'progress.json', {'id': rid, 'total': len(jobs), 'completed': 0, 'state': 'RUNNING'})
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs) as pool:
         futures = [pool.submit(run_case, build_dir, regression, name, seed, cycles, env,
-                               args.timeout, injection, waves=waves) for name, seed, cycles, injection in jobs]
+                               args.timeout, injection, waves=waves, **policy) for name, seed, cycles, injection in jobs]
         completed = 0
         for future in concurrent.futures.as_completed(futures):
             future.result()
@@ -444,7 +499,8 @@ def regress(args, env):
         results = [f.result() for f in futures]
     if args.command == 'selftest':
         # A compile/license/environment crash is not counted as fault detection.
-        markers = {'rid': 'SVA_FAIL A_COMPARE_RID', 'src': 'ENV_SRC', 'busy': 'ENV_SUCCESS_BUSY'}
+        markers = {'rid': 'SVA_FAIL A_COMPARE_RID' if policy['check_mode']=='strict' else 'SVA_FAIL T_R_ID_ORDER',
+                   'src': 'SVA_FAIL E03_SRC', 'busy': 'SVA_FAIL E06_SUCCESS_BUSY'}
         for r in results:
             log = (Path(r['directory']) / 'sim.log').read_text(errors='replace')
             r['detected_as_expected'] = (r['status'] == 'FAIL' and markers[r['injection']] in log)
@@ -453,7 +509,11 @@ def regress(args, env):
     else:
         cov = merge_coverage(regression, results, env)
         ok = all(r['status'] == 'PASS' for r in results) and cov['status'] == 'PASS'
-    summary = {'id': rid, 'status': 'PASS' if ok else 'FAIL', 'created_at': stamp(),
+    verdict = 'PASS' if ok else ('INCOMPLETE' if any(r['status']=='INCOMPLETE' for r in results)
+                                and all(r['status'] in ('PASS','INCOMPLETE') for r in results)
+                                and cov['status'] in ('PASS','NO_PASSING_CASES') else 'FAIL')
+    summary = {'id': rid, 'status': verdict, 'created_at': stamp(),
+               'check_policy': policy,
                'timezone': 'Asia/Shanghai', 'project': PROJECT['name'], 'build': str(build_dir),
                'passed': sum(r['status'] == 'PASS' for r in results), 'results': results, 'coverage': cov,
                'waves_enabled': waves, 'dut': read_json(build_dir / 'build.json').get('dut', {}),
@@ -489,7 +549,8 @@ def replay(args, env):
     regression.mkdir(parents=True)
     result = run_case(build_dir, regression, chosen['case'], chosen['seed'], None, env,
                       args.timeout, chosen['injection'], old / 'stimulus.txt', old / 'case.json',
-                      waves=chosen.get('waves_enabled', True))
+                      waves=chosen.get('waves_enabled', True), check_mode=chosen.get('check_mode', 'strict'),
+                      assert_fatal=chosen.get('assert_fatal', True))
     result['replayed_from'] = str(old)
     result['events_match_original'] = result['events_sha256'] == digest(old / 'events.csv')
     ok = result['status'] == 'PASS' and result['events_match_original']
@@ -497,12 +558,15 @@ def replay(args, env):
         assignment='assigned.csv' if chosen.get('format')=='sv_main_phase' else 'sv_solutions.csv'
         result['exact_replay']={name:digest(Path(result['directory'])/name)==digest(old/name)
             for name in ['case.sv',assignment,'samples.csv','tc_config.json']}
+        if (old/'clock_reset.csv').exists():
+            result['exact_replay']['clock_reset.csv']=digest(Path(result['directory'])/'clock_reset.csv')==digest(old/'clock_reset.csv')
         ok=ok and all(result['exact_replay'].values())
     cov = merge_coverage(regression, [result], env)
     ok = ok and cov['status'] == 'PASS'
     summary = {'id': rid, 'status': 'PASS' if ok else 'FAIL', 'created_at': stamp(),
                'project': PROJECT['name'], 'build': str(build_dir), 'results': [result],
-               'passed': int(result['status'] == 'PASS'), 'coverage': cov, 'timezone': 'Asia/Shanghai'}
+               'passed': int(result['status'] == 'PASS'), 'coverage': cov, 'timezone': 'Asia/Shanghai',
+               'check_policy': dict(check_mode=result['check_mode'], assert_fatal=result['assert_fatal'])}
     write_report(regression, summary)
     write_json(Path(result['directory']) / 'result.json', result)
     write_json(OUT / 'last_command.json', {'id': rid})
@@ -595,6 +659,8 @@ def parser():
         s.add_argument('--jobs', type=int, default=1)
         s.add_argument('--timeout', type=int, default=120)
         s.add_argument('--waves', type=int, choices=[0, 1], default=1)
+        s.add_argument('--check-mode', choices=check_policy.MODES)
+        s.add_argument('--assert-fatal', type=int, choices=[0, 1])
         if name == 'run':
             s.add_argument('--case', default='tc_directed'); s.add_argument('--seed', type=int, default=1)
             s.add_argument('--cycles', type=int)
@@ -652,8 +718,8 @@ def main(argv=None):
             cfg = load_case(path)
             print('{}: {}'.format(path.stem, cfg.get('description', '')))
         return 0
-    if getattr(args, 'jobs', 1) < 1 or getattr(args, 'timeout', 1) < 1:
-        raise ValueError('jobs and timeout must be positive')
+    if getattr(args, 'jobs', 1) < 1 or getattr(args, 'timeout', 1) < 0:
+        raise ValueError('jobs must be positive; execution timeout must be nonnegative (0 = unlimited)')
     if args.command in ('validate', 'explain', 'diagram'):
         cfg = load_input(case_path(args.case))
         if cfg.get('format') == 'sv_main_phase':
@@ -733,8 +799,12 @@ def main(argv=None):
 
 
 if __name__ == '__main__':
+    execution.install_signal_handlers()
     try:
         sys.exit(main())
+    except KeyboardInterrupt:
+        print('EDA interrupted; active child processes stopped', file=sys.stderr)
+        sys.exit(130)
     except (ValueError, RuntimeError, OSError, subprocess.SubprocessError) as exc:
         print('EDA ERROR: ' + str(exc), file=sys.stderr)
         sys.exit(2)

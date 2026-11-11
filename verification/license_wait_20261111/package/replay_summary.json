@@ -1,0 +1,288 @@
+{
+  "id": "20261111_222513_replay_850767",
+  "status": "PASS",
+  "created_at": "20261111_222514",
+  "project": "cmdbuf_rd",
+  "build": "/tmp/cmdbuf-studio-0/results-06719cdd302251b81d81/builds/a63791e85ca2b55b",
+  "results": [
+    {
+      "id": "tc_random_seed_42",
+      "case": "tc_random",
+      "seed": 42,
+      "status": "PASS",
+      "seconds": 0.453,
+      "exit_code": 0,
+      "failures": [],
+      "metrics": {
+        "tc_assignments": 84,
+        "tc_body_cycles": 64,
+        "tc_active_edges": 84,
+        "random_cycles": 0,
+        "random_solves": 0,
+        "submitted": 0,
+        "queued_cancelled": 0,
+        "queue_pending": 0,
+        "seed": 42,
+        "cycles": 85,
+        "accepted": 18,
+        "issued": 18,
+        "captured": 18,
+        "retired": 18,
+        "clock_edges": 85,
+        "active_edges": 84,
+        "reset_assertions": 1,
+        "aborted": 0,
+        "aborted_unissued": 0,
+        "aborted_mem": 0,
+        "aborted_response": 0,
+        "pending_at_end": 0,
+        "issue_failed": 34,
+        "ar_rejected": 0,
+        "ar_gated": 0,
+        "ar_only": 11,
+        "rw_only": 14,
+        "full": 18,
+        "full_reuse": 0,
+        "ready_zero": 10,
+        "head_blocked": 0,
+        "src0": 9,
+        "src1": 4,
+        "src2": 5,
+        "resp0": 6,
+        "resp1": 3,
+        "resp3": 9,
+        "bank_half_hits": [
+          3,
+          2,
+          0,
+          1,
+          0,
+          1,
+          1,
+          2,
+          1,
+          0,
+          2,
+          0,
+          3,
+          1,
+          0,
+          1
+        ]
+      },
+      "directory": "/tmp/cmdbuf-studio-0/results-06719cdd302251b81d81/regressions/20261111_222513_replay_850767/cases/tc_random_seed_42",
+      "build": "/tmp/cmdbuf-studio-0/results-06719cdd302251b81d81/builds/a63791e85ca2b55b",
+      "argv": [
+        "/tmp/cmdbuf-studio-0/results-06719cdd302251b81d81/builds/a63791e85ca2b55b/simv",
+        "+vcs+lic+wait",
+        "+ntb_random_seed=42",
+        "+SEED=42",
+        "+CHECK_MODE=transaction",
+        "+ASSERT_FATAL=0",
+        "+PROGRAM=/tmp/cmdbuf-studio-0/results-06719cdd302251b81d81/regressions/20261111_222513_replay_850767/cases/tc_random_seed_42/stimulus.txt",
+        "-cm",
+        "line+cond+branch+tgl+fsm",
+        "-cm_dir",
+        "/tmp/cmdbuf-studio-0/results-06719cdd302251b81d81/regressions/20261111_222513_replay_850767/cases/tc_random_seed_42/simv.vdb",
+        "-cm_name",
+        "tc_random_seed_42",
+        "+FSDB=/tmp/cmdbuf-studio-0/results-06719cdd302251b81d81/regressions/20261111_222513_replay_850767/cases/tc_random_seed_42/waves.fsdb",
+        "+SV_TC"
+      ],
+      "stimulus_sha256": "454cf60a37e15a035db1e7631ec32493479e19d26c594169ed975ea22a0ec0d3",
+      "case_sha256": "fa7dddae59ceaca532ad84181e52f6da5506ea91f1ba77fc7717a8b70b27de32",
+      "events_sha256": "8e56c9603d5f00456e5c1f0e37c3016fc1f26f36ca007ad9da010f41193bf912",
+      "injection": "",
+      "waves_enabled": true,
+      "check_mode": "transaction",
+      "assert_fatal": false,
+      "checks": {
+        "version": 1,
+        "check_mode": "transaction",
+        "assert_fatal": false,
+        "profile_version": 1,
+        "runtime": {
+          "version": 1,
+          "mode": "transaction",
+          "assert_fatal": 0,
+          "failures": 0,
+          "incomplete": 0,
+          "finished": 1,
+          "sampled_frames": 86,
+          "checked_frames": 86,
+          "outstanding": 0,
+          "accepted": 18,
+          "issued": 18,
+          "returned": 18,
+          "cancelled": 0,
+          "peak_hypotheses": 1,
+          "hypothesis_limit": 4096
+        },
+        "failures": [],
+        "integrity_errors": [],
+        "groups": [
+          {
+            "id": "interface",
+            "title": "接口与输入约束",
+            "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          },
+          {
+            "id": "transactions",
+            "title": "事务与数据",
+            "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          },
+          {
+            "id": "timing",
+            "title": "完整接口时序",
+            "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+            "failures": 0,
+            "status": "NOT_CHECKED",
+            "reason": "通用模式不规定 pending 更新时点、精确调度或最早 N+5；不作逐拍时序通过结论。"
+          }
+        ],
+        "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+        "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+        "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+        "limitations": [
+          "Finite simulation evidence, not a formal proof.",
+          "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+          "TC legality, driver scheduling and infrastructure errors always stop execution."
+        ]
+      },
+      "execution": {
+        "phase": "simulation",
+        "task": "tc_random_seed_42",
+        "state": "FINISHED",
+        "timeout_scope": "execution_only",
+        "execution_timeout_seconds": 120,
+        "license_wait_limit_seconds": null,
+        "startup_wait_seconds": 0.352,
+        "execution_seconds": 0.101,
+        "seconds": 0.453,
+        "returncode": 0
+      },
+      "wave_conversion": {
+        "exit_code": 0,
+        "seconds": 0.102,
+        "source": "waves.fsdb",
+        "output": "waves.vcd"
+      },
+      "wave_artifacts": [
+        "waves.fsdb",
+        "waves.vcd"
+      ],
+      "format": "sv_main_phase",
+      "drive_audit": {
+        "status": "PASS",
+        "failures": [],
+        "phases": {
+          "body": 64,
+          "drain": 12,
+          "quiet": 8
+        },
+        "coverage": {
+          "E03_SRC": 18,
+          "E04_ARRESP": 18,
+          "E05_ZERO_READY": 16,
+          "E06_SUCCESS_BUSY": [
+            3,
+            2,
+            0,
+            1,
+            0,
+            1,
+            1,
+            2,
+            1,
+            0,
+            2,
+            0,
+            3,
+            1,
+            0,
+            1
+          ],
+          "T_MEM4": 18,
+          "T_ASSOCIATION": 18,
+          "P_KNOWN": 84,
+          "assignment_equal_pins": 84,
+          "paused_intervals": 0,
+          "reset_assertions": 1,
+          "cancelled": 0
+        },
+        "startup_policy": "clock_high_reset_1ns",
+        "transaction_association": "check_scope.json hypothesis monitor",
+        "body_histograms": {
+          "arvalid": {
+            "0": 46,
+            "1": 18
+          },
+          "rready": {
+            "5": 11,
+            "1": 6,
+            "3": 11,
+            "7": 6,
+            "0": 10,
+            "2": 6,
+            "6": 8,
+            "4": 6
+          },
+          "src_valid": {
+            "-1": 46,
+            "2": 5,
+            "1": 4,
+            "0": 9
+          },
+          "arresp_valid": {
+            "-1": 46,
+            "3": 9,
+            "0": 9
+          }
+        },
+        "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+        "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+      },
+      "replayed_from": "/tmp/cmdbuf-studio-0/results-06719cdd302251b81d81/regressions/20261111_222510_regress_df0baf/cases/tc_random_seed_42",
+      "events_match_original": true,
+      "exact_replay": {
+        "case.sv": true,
+        "assigned.csv": true,
+        "samples.csv": true,
+        "tc_config.json": true,
+        "clock_reset.csv": true
+      }
+    }
+  ],
+  "passed": 1,
+  "coverage": {
+    "status": "PASS",
+    "exit_code": 0,
+    "seconds": 0.353,
+    "database": "/tmp/cmdbuf-studio-0/results-06719cdd302251b81d81/regressions/20261111_222513_replay_850767/coverage/merged.vdb",
+    "report": "/tmp/cmdbuf-studio-0/results-06719cdd302251b81d81/regressions/20261111_222513_replay_850767/coverage/urgReport/dashboard.html",
+    "metrics_percent": {
+      "SCORE": "80.15",
+      "LINE": "89.47",
+      "COND": "86.21",
+      "TOGGLE": "69.32",
+      "FSM": "--",
+      "BRANCH": "75.61"
+    },
+    "code_metrics_present": true,
+    "included": [
+      "tc_random_seed_42"
+    ],
+    "excluded": []
+  },
+  "timezone": "Asia/Shanghai",
+  "check_policy": {
+    "check_mode": "transaction",
+    "assert_fatal": false
+  }
+}

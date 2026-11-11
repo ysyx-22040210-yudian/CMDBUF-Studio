@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "fsdb2vcd",
+    "/root/cmdbuf_checks_20261111/build/vcs/check_tests/20261111_212007_671c8b/integration/transaction_1/cases/tc_directed_seed_17/waves.fsdb",
+    "-o",
+    "/root/cmdbuf_checks_20261111/build/vcs/check_tests/20261111_212007_671c8b/integration/transaction_1/cases/tc_directed_seed_17/waves.vcd",
+    "-sv",
+    "-keep_last_time"
+  ],
+  "cwd": "/root/cmdbuf_checks_20261111/build/vcs/check_tests/20261111_212007_671c8b/integration/transaction_1/cases/tc_directed_seed_17"
+}

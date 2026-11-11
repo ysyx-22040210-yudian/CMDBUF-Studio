@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "check_mode": "strict",
+  "assert_fatal": true,
+  "profile_version": 1,
+  "runtime": {
+    "version": 1,
+    "mode": "strict",
+    "assert_fatal": 1,
+    "failures": 0,
+    "incomplete": 0,
+    "finished": 0,
+    "sampled_frames": 3,
+    "checked_frames": 2,
+    "outstanding": 0,
+    "accepted": 0,
+    "issued": 0,
+    "returned": 0,
+    "cancelled": 0,
+    "peak_hypotheses": 1,
+    "hypothesis_limit": 4096
+  },
+  "failures": [],
+  "integrity_errors": [
+    "verification monitor did not finish"
+  ],
+  "groups": [
+    {
+      "id": "interface",
+      "title": "接口与输入约束",
+      "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+      "failures": 0,
+      "status": "INCOMPLETE",
+      "reason": ""
+    },
+    {
+      "id": "transactions",
+      "title": "事务与数据",
+      "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+      "failures": 0,
+      "status": "INCOMPLETE",
+      "reason": ""
+    },
+    {
+      "id": "timing",
+      "title": "完整接口时序",
+      "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+      "failures": 0,
+      "status": "INCOMPLETE",
+      "reason": ""
+    }
+  ],
+  "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+  "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+  "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+  "limitations": [
+    "Finite simulation evidence, not a formal proof.",
+    "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+    "TC legality, driver scheduling and infrastructure errors always stop execution."
+  ]
+}

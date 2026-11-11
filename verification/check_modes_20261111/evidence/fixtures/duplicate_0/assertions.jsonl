@@ -1,0 +1,2 @@
+{"label":"T_R_HAS_PENDING","edge":9,"time_ps":85000,"detail":"source=0"}
+{"label":"T_R_DATA_RESP_OR_EARLY","edge":9,"time_ps":85000,"detail":"source=0 data=00000000000000000000000012345678 resp=0 no consistent accepted/issued transaction"}

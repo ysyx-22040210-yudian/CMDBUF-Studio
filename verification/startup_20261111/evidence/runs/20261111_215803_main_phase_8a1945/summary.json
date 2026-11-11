@@ -1,0 +1,4685 @@
+{
+  "id": "20261111_215803_main_phase_8a1945",
+  "status": "PASS",
+  "created_at": "20261111_215811",
+  "timezone": "Asia/Shanghai",
+  "project": "cmdbuf_rd",
+  "build": "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d",
+  "passed": 11,
+  "results": [
+    {
+      "id": "tc_directed_seed_1",
+      "case": "tc_directed",
+      "seed": 1,
+      "status": "PASS",
+      "seconds": 0.618,
+      "exit_code": 0,
+      "failures": [],
+      "metrics": {
+        "tc_assignments": 72,
+        "tc_body_cycles": 64,
+        "tc_active_edges": 72,
+        "random_cycles": 0,
+        "random_solves": 0,
+        "submitted": 0,
+        "queued_cancelled": 0,
+        "queue_pending": 0,
+        "seed": 1,
+        "cycles": 73,
+        "accepted": 1,
+        "issued": 1,
+        "captured": 1,
+        "retired": 1,
+        "clock_edges": 73,
+        "active_edges": 72,
+        "reset_assertions": 1,
+        "aborted": 0,
+        "aborted_unissued": 0,
+        "aborted_mem": 0,
+        "aborted_response": 0,
+        "pending_at_end": 0,
+        "issue_failed": 0,
+        "ar_rejected": 0,
+        "ar_gated": 0,
+        "ar_only": 0,
+        "rw_only": 0,
+        "full": 0,
+        "full_reuse": 0,
+        "ready_zero": 0,
+        "head_blocked": 0,
+        "src0": 1,
+        "src1": 0,
+        "src2": 0,
+        "resp0": 1,
+        "resp1": 0,
+        "resp3": 0,
+        "bank_half_hits": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "directory": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_directed_seed_1",
+      "build": "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d",
+      "argv": [
+        "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d/simv",
+        "+ntb_random_seed=1",
+        "+SEED=1",
+        "+CHECK_MODE=strict",
+        "+ASSERT_FATAL=1",
+        "+PROGRAM=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_directed_seed_1/stimulus.txt",
+        "-cm",
+        "line+cond+branch+tgl+fsm",
+        "-cm_dir",
+        "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_directed_seed_1/simv.vdb",
+        "-cm_name",
+        "tc_directed_seed_1",
+        "+FSDB=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_directed_seed_1/waves.fsdb",
+        "+SV_TC"
+      ],
+      "stimulus_sha256": "3c1382d440c74f1797515071527979551950b9e66d11a7452e58841a836ef0c9",
+      "case_sha256": "399a1268dc5736aa4ff20d0a1c51ad7cafe516869c81ffe5275563d4fef33ad9",
+      "events_sha256": "e063e2438b6c3e083dd5c3e7e537d20ed79c3f8090f927cc530dbdef6805aa12",
+      "injection": "",
+      "waves_enabled": true,
+      "check_mode": "strict",
+      "assert_fatal": true,
+      "checks": {
+        "version": 1,
+        "check_mode": "strict",
+        "assert_fatal": true,
+        "profile_version": 1,
+        "runtime": {
+          "version": 1,
+          "mode": "strict",
+          "assert_fatal": 1,
+          "failures": 0,
+          "incomplete": 0,
+          "finished": 1,
+          "sampled_frames": 74,
+          "checked_frames": 74,
+          "outstanding": 0,
+          "accepted": 0,
+          "issued": 0,
+          "returned": 0,
+          "cancelled": 0,
+          "peak_hypotheses": 1,
+          "hypothesis_limit": 4096
+        },
+        "failures": [],
+        "integrity_errors": [],
+        "groups": [
+          {
+            "id": "interface",
+            "title": "接口与输入约束",
+            "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          },
+          {
+            "id": "transactions",
+            "title": "事务与数据",
+            "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          },
+          {
+            "id": "timing",
+            "title": "完整接口时序",
+            "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          }
+        ],
+        "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+        "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+        "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+        "limitations": [
+          "Finite simulation evidence, not a formal proof.",
+          "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+          "TC legality, driver scheduling and infrastructure errors always stop execution."
+        ]
+      },
+      "wave_conversion": {
+        "exit_code": 0,
+        "seconds": 0.116,
+        "source": "waves.fsdb",
+        "output": "waves.vcd"
+      },
+      "wave_artifacts": [
+        "waves.fsdb",
+        "waves.vcd"
+      ],
+      "format": "sv_main_phase",
+      "drive_audit": {
+        "status": "PASS",
+        "failures": [],
+        "phases": {
+          "body": 64,
+          "drain": 0,
+          "quiet": 8
+        },
+        "coverage": {
+          "E03_SRC": 1,
+          "E04_ARRESP": 1,
+          "E05_ZERO_READY": 0,
+          "E06_SUCCESS_BUSY": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "T_MEM4": 1,
+          "T_ASSOCIATION": 1,
+          "P_KNOWN": 72,
+          "assignment_equal_pins": 72,
+          "paused_intervals": 0,
+          "reset_assertions": 1,
+          "cancelled": 0
+        },
+        "startup_policy": "clock_high_reset_1ns",
+        "transaction_association": "baseline FIFO audit",
+        "body_histograms": {
+          "arvalid": {
+            "0": 63,
+            "1": 1
+          },
+          "rready": {
+            "7": 64
+          },
+          "src_valid": {
+            "-1": 63,
+            "0": 1
+          },
+          "arresp_valid": {
+            "-1": 63,
+            "0": 1
+          }
+        },
+        "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+        "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+      },
+      "expected_failure": null,
+      "acceptance_pass": true
+    },
+    {
+      "id": "tc_retry_seed_1",
+      "case": "tc_retry",
+      "seed": 1,
+      "status": "PASS",
+      "seconds": 0.618,
+      "exit_code": 0,
+      "failures": [],
+      "metrics": {
+        "tc_assignments": 72,
+        "tc_body_cycles": 64,
+        "tc_active_edges": 72,
+        "random_cycles": 0,
+        "random_solves": 0,
+        "submitted": 0,
+        "queued_cancelled": 0,
+        "queue_pending": 0,
+        "seed": 1,
+        "cycles": 73,
+        "accepted": 1,
+        "issued": 1,
+        "captured": 1,
+        "retired": 1,
+        "clock_edges": 73,
+        "active_edges": 72,
+        "reset_assertions": 1,
+        "aborted": 0,
+        "aborted_unissued": 0,
+        "aborted_mem": 0,
+        "aborted_response": 0,
+        "pending_at_end": 0,
+        "issue_failed": 7,
+        "ar_rejected": 0,
+        "ar_gated": 0,
+        "ar_only": 4,
+        "rw_only": 0,
+        "full": 0,
+        "full_reuse": 0,
+        "ready_zero": 0,
+        "head_blocked": 0,
+        "src0": 1,
+        "src1": 0,
+        "src2": 0,
+        "resp0": 1,
+        "resp1": 0,
+        "resp3": 0,
+        "bank_half_hits": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "directory": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_retry_seed_1",
+      "build": "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d",
+      "argv": [
+        "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d/simv",
+        "+ntb_random_seed=1",
+        "+SEED=1",
+        "+CHECK_MODE=strict",
+        "+ASSERT_FATAL=1",
+        "+PROGRAM=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_retry_seed_1/stimulus.txt",
+        "-cm",
+        "line+cond+branch+tgl+fsm",
+        "-cm_dir",
+        "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_retry_seed_1/simv.vdb",
+        "-cm_name",
+        "tc_retry_seed_1",
+        "+FSDB=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_retry_seed_1/waves.fsdb",
+        "+SV_TC"
+      ],
+      "stimulus_sha256": "8878d1632eb525c3663f61648136c3a27cee0d0a839ad072db9320825fb409d7",
+      "case_sha256": "06f7dd2ddb3b91a1168683632cb94f6cf795d5388bd7802a0612d5945f222a8a",
+      "events_sha256": "d4a3c6d798adc3bc495b5653f2ce121ce202c909f882879e3597fbabaef7800d",
+      "injection": "",
+      "waves_enabled": true,
+      "check_mode": "strict",
+      "assert_fatal": true,
+      "checks": {
+        "version": 1,
+        "check_mode": "strict",
+        "assert_fatal": true,
+        "profile_version": 1,
+        "runtime": {
+          "version": 1,
+          "mode": "strict",
+          "assert_fatal": 1,
+          "failures": 0,
+          "incomplete": 0,
+          "finished": 1,
+          "sampled_frames": 74,
+          "checked_frames": 74,
+          "outstanding": 0,
+          "accepted": 0,
+          "issued": 0,
+          "returned": 0,
+          "cancelled": 0,
+          "peak_hypotheses": 1,
+          "hypothesis_limit": 4096
+        },
+        "failures": [],
+        "integrity_errors": [],
+        "groups": [
+          {
+            "id": "interface",
+            "title": "接口与输入约束",
+            "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          },
+          {
+            "id": "transactions",
+            "title": "事务与数据",
+            "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          },
+          {
+            "id": "timing",
+            "title": "完整接口时序",
+            "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          }
+        ],
+        "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+        "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+        "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+        "limitations": [
+          "Finite simulation evidence, not a formal proof.",
+          "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+          "TC legality, driver scheduling and infrastructure errors always stop execution."
+        ]
+      },
+      "wave_conversion": {
+        "exit_code": 0,
+        "seconds": 0.117,
+        "source": "waves.fsdb",
+        "output": "waves.vcd"
+      },
+      "wave_artifacts": [
+        "waves.fsdb",
+        "waves.vcd"
+      ],
+      "format": "sv_main_phase",
+      "drive_audit": {
+        "status": "PASS",
+        "failures": [],
+        "phases": {
+          "body": 64,
+          "drain": 0,
+          "quiet": 8
+        },
+        "coverage": {
+          "E03_SRC": 1,
+          "E04_ARRESP": 1,
+          "E05_ZERO_READY": 0,
+          "E06_SUCCESS_BUSY": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "T_MEM4": 1,
+          "T_ASSOCIATION": 1,
+          "P_KNOWN": 72,
+          "assignment_equal_pins": 72,
+          "paused_intervals": 0,
+          "reset_assertions": 1,
+          "cancelled": 0
+        },
+        "startup_policy": "clock_high_reset_1ns",
+        "transaction_association": "baseline FIFO audit",
+        "body_histograms": {
+          "arvalid": {
+            "0": 63,
+            "1": 1
+          },
+          "rready": {
+            "7": 64
+          },
+          "src_valid": {
+            "-1": 63,
+            "0": 1
+          },
+          "arresp_valid": {
+            "-1": 63,
+            "0": 1
+          }
+        },
+        "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+        "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+      },
+      "expected_failure": null,
+      "acceptance_pass": true
+    },
+    {
+      "id": "tc_backpressure_seed_1",
+      "case": "tc_backpressure",
+      "seed": 1,
+      "status": "PASS",
+      "seconds": 0.468,
+      "exit_code": 0,
+      "failures": [],
+      "metrics": {
+        "tc_assignments": 108,
+        "tc_body_cycles": 100,
+        "tc_active_edges": 108,
+        "random_cycles": 0,
+        "random_solves": 0,
+        "submitted": 0,
+        "queued_cancelled": 0,
+        "queue_pending": 0,
+        "seed": 1,
+        "cycles": 109,
+        "accepted": 9,
+        "issued": 9,
+        "captured": 9,
+        "retired": 9,
+        "clock_edges": 109,
+        "active_edges": 108,
+        "reset_assertions": 1,
+        "aborted": 0,
+        "aborted_unissued": 0,
+        "aborted_mem": 0,
+        "aborted_response": 0,
+        "pending_at_end": 0,
+        "issue_failed": 0,
+        "ar_rejected": 0,
+        "ar_gated": 0,
+        "ar_only": 0,
+        "rw_only": 0,
+        "full": 21,
+        "full_reuse": 0,
+        "ready_zero": 28,
+        "head_blocked": 0,
+        "src0": 3,
+        "src1": 3,
+        "src2": 3,
+        "resp0": 9,
+        "resp1": 0,
+        "resp3": 0,
+        "bank_half_hits": [
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "directory": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_backpressure_seed_1",
+      "build": "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d",
+      "argv": [
+        "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d/simv",
+        "+ntb_random_seed=1",
+        "+SEED=1",
+        "+CHECK_MODE=strict",
+        "+ASSERT_FATAL=1",
+        "+PROGRAM=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_backpressure_seed_1/stimulus.txt",
+        "-cm",
+        "line+cond+branch+tgl+fsm",
+        "-cm_dir",
+        "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_backpressure_seed_1/simv.vdb",
+        "-cm_name",
+        "tc_backpressure_seed_1",
+        "+FSDB=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_backpressure_seed_1/waves.fsdb",
+        "+SV_TC"
+      ],
+      "stimulus_sha256": "baeeb2763abcd7bfdb5d255cbdfe2e5578d4e846343de83a40b80c9187f516d5",
+      "case_sha256": "e1b9b4b27ea9c46eb7851924769a51060e5255247eea44cb1174acb62735e493",
+      "events_sha256": "6eb5ed2f08682b957081b6fde40e8d6d9ff5b2cb77c98739700d172f956c7f4f",
+      "injection": "",
+      "waves_enabled": true,
+      "check_mode": "strict",
+      "assert_fatal": true,
+      "checks": {
+        "version": 1,
+        "check_mode": "strict",
+        "assert_fatal": true,
+        "profile_version": 1,
+        "runtime": {
+          "version": 1,
+          "mode": "strict",
+          "assert_fatal": 1,
+          "failures": 0,
+          "incomplete": 0,
+          "finished": 1,
+          "sampled_frames": 110,
+          "checked_frames": 110,
+          "outstanding": 0,
+          "accepted": 0,
+          "issued": 0,
+          "returned": 0,
+          "cancelled": 0,
+          "peak_hypotheses": 1,
+          "hypothesis_limit": 4096
+        },
+        "failures": [],
+        "integrity_errors": [],
+        "groups": [
+          {
+            "id": "interface",
+            "title": "接口与输入约束",
+            "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          },
+          {
+            "id": "transactions",
+            "title": "事务与数据",
+            "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          },
+          {
+            "id": "timing",
+            "title": "完整接口时序",
+            "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          }
+        ],
+        "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+        "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+        "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+        "limitations": [
+          "Finite simulation evidence, not a formal proof.",
+          "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+          "TC legality, driver scheduling and infrastructure errors always stop execution."
+        ]
+      },
+      "wave_conversion": {
+        "exit_code": 0,
+        "seconds": 0.115,
+        "source": "waves.fsdb",
+        "output": "waves.vcd"
+      },
+      "wave_artifacts": [
+        "waves.fsdb",
+        "waves.vcd"
+      ],
+      "format": "sv_main_phase",
+      "drive_audit": {
+        "status": "PASS",
+        "failures": [],
+        "phases": {
+          "body": 100,
+          "drain": 0,
+          "quiet": 8
+        },
+        "coverage": {
+          "E03_SRC": 9,
+          "E04_ARRESP": 9,
+          "E05_ZERO_READY": 20,
+          "E06_SUCCESS_BUSY": [
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          "T_MEM4": 9,
+          "T_ASSOCIATION": 9,
+          "P_KNOWN": 108,
+          "assignment_equal_pins": 108,
+          "paused_intervals": 0,
+          "reset_assertions": 1,
+          "cancelled": 0
+        },
+        "startup_policy": "clock_high_reset_1ns",
+        "transaction_association": "baseline FIFO audit",
+        "body_histograms": {
+          "arvalid": {
+            "0": 91,
+            "1": 9
+          },
+          "rready": {
+            "0": 32,
+            "7": 68
+          },
+          "src_valid": {
+            "-1": 91,
+            "0": 3,
+            "1": 3,
+            "2": 3
+          },
+          "arresp_valid": {
+            "-1": 91,
+            "0": 9
+          }
+        },
+        "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+        "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+      },
+      "expected_failure": null,
+      "acceptance_pass": true
+    },
+    {
+      "id": "tc_same_id_seed_1",
+      "case": "tc_same_id",
+      "seed": 1,
+      "status": "PASS",
+      "seconds": 0.468,
+      "exit_code": 0,
+      "failures": [],
+      "metrics": {
+        "tc_assignments": 108,
+        "tc_body_cycles": 100,
+        "tc_active_edges": 108,
+        "random_cycles": 0,
+        "random_solves": 0,
+        "submitted": 0,
+        "queued_cancelled": 0,
+        "queue_pending": 0,
+        "seed": 1,
+        "cycles": 109,
+        "accepted": 6,
+        "issued": 6,
+        "captured": 6,
+        "retired": 6,
+        "clock_edges": 109,
+        "active_edges": 108,
+        "reset_assertions": 1,
+        "aborted": 0,
+        "aborted_unissued": 0,
+        "aborted_mem": 0,
+        "aborted_response": 0,
+        "pending_at_end": 0,
+        "issue_failed": 0,
+        "ar_rejected": 0,
+        "ar_gated": 0,
+        "ar_only": 0,
+        "rw_only": 0,
+        "full": 0,
+        "full_reuse": 0,
+        "ready_zero": 0,
+        "head_blocked": 0,
+        "src0": 6,
+        "src1": 0,
+        "src2": 0,
+        "resp0": 6,
+        "resp1": 0,
+        "resp3": 0,
+        "bank_half_hits": [
+          6,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "directory": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_same_id_seed_1",
+      "build": "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d",
+      "argv": [
+        "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d/simv",
+        "+ntb_random_seed=1",
+        "+SEED=1",
+        "+CHECK_MODE=strict",
+        "+ASSERT_FATAL=1",
+        "+PROGRAM=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_same_id_seed_1/stimulus.txt",
+        "-cm",
+        "line+cond+branch+tgl+fsm",
+        "-cm_dir",
+        "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_same_id_seed_1/simv.vdb",
+        "-cm_name",
+        "tc_same_id_seed_1",
+        "+FSDB=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_same_id_seed_1/waves.fsdb",
+        "+SV_TC"
+      ],
+      "stimulus_sha256": "44040d60fc584b35134320be7602a5f1ff04e93e5eef449fc8d81433d8b49a76",
+      "case_sha256": "bad83b836664917afe7c2e8babf0913a8b0ac4eeb102575e12c494d6fcb849ce",
+      "events_sha256": "b2ef4b33e8f0a275485b85c19a76db0972fa33336d4f93e86ac1d861127b1cea",
+      "injection": "",
+      "waves_enabled": true,
+      "check_mode": "strict",
+      "assert_fatal": true,
+      "checks": {
+        "version": 1,
+        "check_mode": "strict",
+        "assert_fatal": true,
+        "profile_version": 1,
+        "runtime": {
+          "version": 1,
+          "mode": "strict",
+          "assert_fatal": 1,
+          "failures": 0,
+          "incomplete": 0,
+          "finished": 1,
+          "sampled_frames": 110,
+          "checked_frames": 110,
+          "outstanding": 0,
+          "accepted": 0,
+          "issued": 0,
+          "returned": 0,
+          "cancelled": 0,
+          "peak_hypotheses": 1,
+          "hypothesis_limit": 4096
+        },
+        "failures": [],
+        "integrity_errors": [],
+        "groups": [
+          {
+            "id": "interface",
+            "title": "接口与输入约束",
+            "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          },
+          {
+            "id": "transactions",
+            "title": "事务与数据",
+            "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          },
+          {
+            "id": "timing",
+            "title": "完整接口时序",
+            "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          }
+        ],
+        "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+        "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+        "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+        "limitations": [
+          "Finite simulation evidence, not a formal proof.",
+          "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+          "TC legality, driver scheduling and infrastructure errors always stop execution."
+        ]
+      },
+      "wave_conversion": {
+        "exit_code": 0,
+        "seconds": 0.116,
+        "source": "waves.fsdb",
+        "output": "waves.vcd"
+      },
+      "wave_artifacts": [
+        "waves.fsdb",
+        "waves.vcd"
+      ],
+      "format": "sv_main_phase",
+      "drive_audit": {
+        "status": "PASS",
+        "failures": [],
+        "phases": {
+          "body": 100,
+          "drain": 0,
+          "quiet": 8
+        },
+        "coverage": {
+          "E03_SRC": 6,
+          "E04_ARRESP": 6,
+          "E05_ZERO_READY": 0,
+          "E06_SUCCESS_BUSY": [
+            6,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "T_MEM4": 6,
+          "T_ASSOCIATION": 6,
+          "P_KNOWN": 108,
+          "assignment_equal_pins": 108,
+          "paused_intervals": 0,
+          "reset_assertions": 1,
+          "cancelled": 0
+        },
+        "startup_policy": "clock_high_reset_1ns",
+        "transaction_association": "baseline FIFO audit",
+        "body_histograms": {
+          "arvalid": {
+            "0": 94,
+            "1": 6
+          },
+          "rready": {
+            "7": 100
+          },
+          "src_valid": {
+            "-1": 94,
+            "0": 6
+          },
+          "arresp_valid": {
+            "-1": 94,
+            "0": 6
+          }
+        },
+        "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+        "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+      },
+      "expected_failure": null,
+      "acceptance_pass": true
+    },
+    {
+      "id": "tc_banks_seed_1",
+      "case": "tc_banks",
+      "seed": 1,
+      "status": "PASS",
+      "seconds": 0.467,
+      "exit_code": 0,
+      "failures": [],
+      "metrics": {
+        "tc_assignments": 218,
+        "tc_body_cycles": 210,
+        "tc_active_edges": 218,
+        "random_cycles": 0,
+        "random_solves": 0,
+        "submitted": 0,
+        "queued_cancelled": 0,
+        "queue_pending": 0,
+        "seed": 1,
+        "cycles": 219,
+        "accepted": 16,
+        "issued": 16,
+        "captured": 16,
+        "retired": 16,
+        "clock_edges": 219,
+        "active_edges": 218,
+        "reset_assertions": 1,
+        "aborted": 0,
+        "aborted_unissued": 0,
+        "aborted_mem": 0,
+        "aborted_response": 0,
+        "pending_at_end": 0,
+        "issue_failed": 0,
+        "ar_rejected": 0,
+        "ar_gated": 0,
+        "ar_only": 0,
+        "rw_only": 0,
+        "full": 0,
+        "full_reuse": 0,
+        "ready_zero": 0,
+        "head_blocked": 0,
+        "src0": 16,
+        "src1": 0,
+        "src2": 0,
+        "resp0": 16,
+        "resp1": 0,
+        "resp3": 0,
+        "bank_half_hits": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "directory": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_banks_seed_1",
+      "build": "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d",
+      "argv": [
+        "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d/simv",
+        "+ntb_random_seed=1",
+        "+SEED=1",
+        "+CHECK_MODE=strict",
+        "+ASSERT_FATAL=1",
+        "+PROGRAM=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_banks_seed_1/stimulus.txt",
+        "-cm",
+        "line+cond+branch+tgl+fsm",
+        "-cm_dir",
+        "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_banks_seed_1/simv.vdb",
+        "-cm_name",
+        "tc_banks_seed_1",
+        "+FSDB=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_banks_seed_1/waves.fsdb",
+        "+SV_TC"
+      ],
+      "stimulus_sha256": "27f27ec75feab8c531994dd6c5a0d1dd14eaacef5bc61201e79e625ebad859c5",
+      "case_sha256": "b38b0fc63fa0e9808c320d02914ea2eeaeaabb5cdc7770624dac3145d4082ebd",
+      "events_sha256": "4bb50cb63b6ffb8442bf64cf40145ee942576abfa3e15e98e9e5170bb6dddc7e",
+      "injection": "",
+      "waves_enabled": true,
+      "check_mode": "strict",
+      "assert_fatal": true,
+      "checks": {
+        "version": 1,
+        "check_mode": "strict",
+        "assert_fatal": true,
+        "profile_version": 1,
+        "runtime": {
+          "version": 1,
+          "mode": "strict",
+          "assert_fatal": 1,
+          "failures": 0,
+          "incomplete": 0,
+          "finished": 1,
+          "sampled_frames": 220,
+          "checked_frames": 220,
+          "outstanding": 0,
+          "accepted": 0,
+          "issued": 0,
+          "returned": 0,
+          "cancelled": 0,
+          "peak_hypotheses": 1,
+          "hypothesis_limit": 4096
+        },
+        "failures": [],
+        "integrity_errors": [],
+        "groups": [
+          {
+            "id": "interface",
+            "title": "接口与输入约束",
+            "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          },
+          {
+            "id": "transactions",
+            "title": "事务与数据",
+            "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          },
+          {
+            "id": "timing",
+            "title": "完整接口时序",
+            "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          }
+        ],
+        "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+        "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+        "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+        "limitations": [
+          "Finite simulation evidence, not a formal proof.",
+          "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+          "TC legality, driver scheduling and infrastructure errors always stop execution."
+        ]
+      },
+      "wave_conversion": {
+        "exit_code": 0,
+        "seconds": 0.116,
+        "source": "waves.fsdb",
+        "output": "waves.vcd"
+      },
+      "wave_artifacts": [
+        "waves.fsdb",
+        "waves.vcd"
+      ],
+      "format": "sv_main_phase",
+      "drive_audit": {
+        "status": "PASS",
+        "failures": [],
+        "phases": {
+          "body": 210,
+          "drain": 0,
+          "quiet": 8
+        },
+        "coverage": {
+          "E03_SRC": 16,
+          "E04_ARRESP": 16,
+          "E05_ZERO_READY": 0,
+          "E06_SUCCESS_BUSY": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "T_MEM4": 16,
+          "T_ASSOCIATION": 16,
+          "P_KNOWN": 218,
+          "assignment_equal_pins": 218,
+          "paused_intervals": 0,
+          "reset_assertions": 1,
+          "cancelled": 0
+        },
+        "startup_policy": "clock_high_reset_1ns",
+        "transaction_association": "baseline FIFO audit",
+        "body_histograms": {
+          "arvalid": {
+            "0": 194,
+            "1": 16
+          },
+          "rready": {
+            "7": 210
+          },
+          "src_valid": {
+            "-1": 194,
+            "0": 16
+          },
+          "arresp_valid": {
+            "-1": 194,
+            "0": 16
+          }
+        },
+        "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+        "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+      },
+      "expected_failure": null,
+      "acceptance_pass": true
+    },
+    {
+      "id": "tc_reset_seed_1",
+      "case": "tc_reset",
+      "seed": 1,
+      "status": "PASS",
+      "seconds": 0.467,
+      "exit_code": 0,
+      "failures": [],
+      "metrics": {
+        "tc_assignments": 72,
+        "tc_body_cycles": 64,
+        "tc_active_edges": 72,
+        "random_cycles": 0,
+        "random_solves": 0,
+        "submitted": 0,
+        "queued_cancelled": 0,
+        "queue_pending": 0,
+        "seed": 1,
+        "cycles": 73,
+        "accepted": 3,
+        "issued": 3,
+        "captured": 3,
+        "retired": 3,
+        "clock_edges": 73,
+        "active_edges": 72,
+        "reset_assertions": 1,
+        "aborted": 0,
+        "aborted_unissued": 0,
+        "aborted_mem": 0,
+        "aborted_response": 0,
+        "pending_at_end": 0,
+        "issue_failed": 0,
+        "ar_rejected": 0,
+        "ar_gated": 0,
+        "ar_only": 0,
+        "rw_only": 0,
+        "full": 0,
+        "full_reuse": 0,
+        "ready_zero": 16,
+        "head_blocked": 0,
+        "src0": 3,
+        "src1": 0,
+        "src2": 0,
+        "resp0": 3,
+        "resp1": 0,
+        "resp3": 0,
+        "bank_half_hits": [
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "directory": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_reset_seed_1",
+      "build": "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d",
+      "argv": [
+        "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d/simv",
+        "+ntb_random_seed=1",
+        "+SEED=1",
+        "+CHECK_MODE=strict",
+        "+ASSERT_FATAL=1",
+        "+PROGRAM=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_reset_seed_1/stimulus.txt",
+        "-cm",
+        "line+cond+branch+tgl+fsm",
+        "-cm_dir",
+        "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_reset_seed_1/simv.vdb",
+        "-cm_name",
+        "tc_reset_seed_1",
+        "+FSDB=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_reset_seed_1/waves.fsdb",
+        "+SV_TC"
+      ],
+      "stimulus_sha256": "342e5397859bc9bff62040c027cb613f658b3fe698d8b9f7f24afeffd0b5c856",
+      "case_sha256": "d7cd8bce83cefb5b9b1f105e7effec31d24d4b03399f3a596b7787d23230cd5b",
+      "events_sha256": "4cd7cfcad20660ff52844eb3ee41a53311a2bbb4be1324894071de560c4bb5a4",
+      "injection": "",
+      "waves_enabled": true,
+      "check_mode": "strict",
+      "assert_fatal": true,
+      "checks": {
+        "version": 1,
+        "check_mode": "strict",
+        "assert_fatal": true,
+        "profile_version": 1,
+        "runtime": {
+          "version": 1,
+          "mode": "strict",
+          "assert_fatal": 1,
+          "failures": 0,
+          "incomplete": 0,
+          "finished": 1,
+          "sampled_frames": 74,
+          "checked_frames": 74,
+          "outstanding": 0,
+          "accepted": 0,
+          "issued": 0,
+          "returned": 0,
+          "cancelled": 0,
+          "peak_hypotheses": 1,
+          "hypothesis_limit": 4096
+        },
+        "failures": [],
+        "integrity_errors": [],
+        "groups": [
+          {
+            "id": "interface",
+            "title": "接口与输入约束",
+            "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          },
+          {
+            "id": "transactions",
+            "title": "事务与数据",
+            "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          },
+          {
+            "id": "timing",
+            "title": "完整接口时序",
+            "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          }
+        ],
+        "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+        "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+        "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+        "limitations": [
+          "Finite simulation evidence, not a formal proof.",
+          "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+          "TC legality, driver scheduling and infrastructure errors always stop execution."
+        ]
+      },
+      "wave_conversion": {
+        "exit_code": 0,
+        "seconds": 0.065,
+        "source": "waves.fsdb",
+        "output": "waves.vcd"
+      },
+      "wave_artifacts": [
+        "waves.fsdb",
+        "waves.vcd"
+      ],
+      "format": "sv_main_phase",
+      "drive_audit": {
+        "status": "PASS",
+        "failures": [],
+        "phases": {
+          "body": 64,
+          "drain": 0,
+          "quiet": 8
+        },
+        "coverage": {
+          "E03_SRC": 3,
+          "E04_ARRESP": 3,
+          "E05_ZERO_READY": 0,
+          "E06_SUCCESS_BUSY": [
+            3,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "T_MEM4": 3,
+          "T_ASSOCIATION": 3,
+          "P_KNOWN": 72,
+          "assignment_equal_pins": 72,
+          "paused_intervals": 4,
+          "reset_assertions": 1,
+          "cancelled": 0
+        },
+        "startup_policy": "clock_high_reset_1ns",
+        "transaction_association": "baseline FIFO audit",
+        "body_histograms": {
+          "arvalid": {
+            "0": 61,
+            "1": 3
+          },
+          "rready": {
+            "0": 20,
+            "7": 44
+          },
+          "src_valid": {
+            "-1": 61,
+            "0": 3
+          },
+          "arresp_valid": {
+            "-1": 61,
+            "0": 3
+          }
+        },
+        "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+        "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+      },
+      "expected_failure": null,
+      "acceptance_pass": true
+    },
+    {
+      "id": "tc_user_example_seed_1",
+      "case": "tc_user_example",
+      "seed": 1,
+      "status": "PASS",
+      "seconds": 0.417,
+      "exit_code": 0,
+      "failures": [],
+      "metrics": {
+        "tc_assignments": 72,
+        "tc_body_cycles": 64,
+        "tc_active_edges": 72,
+        "random_cycles": 0,
+        "random_solves": 0,
+        "submitted": 0,
+        "queued_cancelled": 0,
+        "queue_pending": 0,
+        "seed": 1,
+        "cycles": 73,
+        "accepted": 3,
+        "issued": 3,
+        "captured": 3,
+        "retired": 3,
+        "clock_edges": 73,
+        "active_edges": 72,
+        "reset_assertions": 1,
+        "aborted": 0,
+        "aborted_unissued": 0,
+        "aborted_mem": 0,
+        "aborted_response": 0,
+        "pending_at_end": 0,
+        "issue_failed": 0,
+        "ar_rejected": 0,
+        "ar_gated": 0,
+        "ar_only": 0,
+        "rw_only": 0,
+        "full": 0,
+        "full_reuse": 0,
+        "ready_zero": 0,
+        "head_blocked": 0,
+        "src0": 1,
+        "src1": 1,
+        "src2": 1,
+        "resp0": 3,
+        "resp1": 0,
+        "resp3": 0,
+        "bank_half_hits": [
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "directory": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_user_example_seed_1",
+      "build": "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d",
+      "argv": [
+        "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d/simv",
+        "+ntb_random_seed=1",
+        "+SEED=1",
+        "+CHECK_MODE=strict",
+        "+ASSERT_FATAL=1",
+        "+PROGRAM=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_user_example_seed_1/stimulus.txt",
+        "-cm",
+        "line+cond+branch+tgl+fsm",
+        "-cm_dir",
+        "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_user_example_seed_1/simv.vdb",
+        "-cm_name",
+        "tc_user_example_seed_1",
+        "+FSDB=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_user_example_seed_1/waves.fsdb",
+        "+SV_TC"
+      ],
+      "stimulus_sha256": "a9b9e30c6c4502b8cb725cc289d395dd3cb83b6345116475ccf15635a8e68f45",
+      "case_sha256": "afed4423fd93575a667fe2a5803d98dee1694db8628e55b9fb59eeb07bf6a9d8",
+      "events_sha256": "730101f867c3cdc67614236dfc714df7f3fb43d25ad2f34bc5a9e41df5efa3a9",
+      "injection": "",
+      "waves_enabled": true,
+      "check_mode": "strict",
+      "assert_fatal": true,
+      "checks": {
+        "version": 1,
+        "check_mode": "strict",
+        "assert_fatal": true,
+        "profile_version": 1,
+        "runtime": {
+          "version": 1,
+          "mode": "strict",
+          "assert_fatal": 1,
+          "failures": 0,
+          "incomplete": 0,
+          "finished": 1,
+          "sampled_frames": 74,
+          "checked_frames": 74,
+          "outstanding": 0,
+          "accepted": 0,
+          "issued": 0,
+          "returned": 0,
+          "cancelled": 0,
+          "peak_hypotheses": 1,
+          "hypothesis_limit": 4096
+        },
+        "failures": [],
+        "integrity_errors": [],
+        "groups": [
+          {
+            "id": "interface",
+            "title": "接口与输入约束",
+            "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          },
+          {
+            "id": "transactions",
+            "title": "事务与数据",
+            "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          },
+          {
+            "id": "timing",
+            "title": "完整接口时序",
+            "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          }
+        ],
+        "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+        "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+        "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+        "limitations": [
+          "Finite simulation evidence, not a formal proof.",
+          "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+          "TC legality, driver scheduling and infrastructure errors always stop execution."
+        ]
+      },
+      "wave_conversion": {
+        "exit_code": 0,
+        "seconds": 0.065,
+        "source": "waves.fsdb",
+        "output": "waves.vcd"
+      },
+      "wave_artifacts": [
+        "waves.fsdb",
+        "waves.vcd"
+      ],
+      "format": "sv_main_phase",
+      "drive_audit": {
+        "status": "PASS",
+        "failures": [],
+        "phases": {
+          "body": 64,
+          "drain": 0,
+          "quiet": 8
+        },
+        "coverage": {
+          "E03_SRC": 3,
+          "E04_ARRESP": 3,
+          "E05_ZERO_READY": 0,
+          "E06_SUCCESS_BUSY": [
+            1,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "T_MEM4": 3,
+          "T_ASSOCIATION": 3,
+          "P_KNOWN": 72,
+          "assignment_equal_pins": 72,
+          "paused_intervals": 0,
+          "reset_assertions": 1,
+          "cancelled": 0
+        },
+        "startup_policy": "clock_high_reset_1ns",
+        "transaction_association": "baseline FIFO audit",
+        "body_histograms": {
+          "arvalid": {
+            "0": 61,
+            "1": 3
+          },
+          "rready": {
+            "7": 64
+          },
+          "src_valid": {
+            "-1": 61,
+            "0": 1,
+            "1": 1,
+            "2": 1
+          },
+          "arresp_valid": {
+            "-1": 61,
+            "0": 3
+          }
+        },
+        "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+        "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+      },
+      "expected_failure": null,
+      "acceptance_pass": true
+    },
+    {
+      "id": "tc_random_seed_1",
+      "case": "tc_random",
+      "seed": 1,
+      "status": "PASS",
+      "seconds": 0.868,
+      "exit_code": 0,
+      "failures": [],
+      "metrics": {
+        "tc_assignments": 2016,
+        "tc_body_cycles": 2000,
+        "tc_active_edges": 2016,
+        "random_cycles": 0,
+        "random_solves": 0,
+        "submitted": 0,
+        "queued_cancelled": 0,
+        "queue_pending": 0,
+        "seed": 1,
+        "cycles": 2017,
+        "accepted": 443,
+        "issued": 443,
+        "captured": 443,
+        "retired": 443,
+        "clock_edges": 2017,
+        "active_edges": 2016,
+        "reset_assertions": 1,
+        "aborted": 0,
+        "aborted_unissued": 0,
+        "aborted_mem": 0,
+        "aborted_response": 0,
+        "pending_at_end": 0,
+        "issue_failed": 1402,
+        "ar_rejected": 16,
+        "ar_gated": 0,
+        "ar_only": 457,
+        "rw_only": 475,
+        "full": 1350,
+        "full_reuse": 128,
+        "ready_zero": 260,
+        "head_blocked": 875,
+        "src0": 147,
+        "src1": 143,
+        "src2": 153,
+        "resp0": 112,
+        "resp1": 113,
+        "resp3": 218,
+        "bank_half_hits": [
+          25,
+          21,
+          27,
+          35,
+          27,
+          33,
+          29,
+          20,
+          21,
+          36,
+          21,
+          28,
+          23,
+          27,
+          29,
+          41
+        ]
+      },
+      "directory": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_random_seed_1",
+      "build": "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d",
+      "argv": [
+        "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d/simv",
+        "+ntb_random_seed=1",
+        "+SEED=1",
+        "+CHECK_MODE=strict",
+        "+ASSERT_FATAL=1",
+        "+PROGRAM=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_random_seed_1/stimulus.txt",
+        "-cm",
+        "line+cond+branch+tgl+fsm",
+        "-cm_dir",
+        "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_random_seed_1/simv.vdb",
+        "-cm_name",
+        "tc_random_seed_1",
+        "+FSDB=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_random_seed_1/waves.fsdb",
+        "+SV_TC"
+      ],
+      "stimulus_sha256": "875e32798a42ad6565d15ec7aafeafbb60a3248513606862634271936481c8ae",
+      "case_sha256": "fa7dddae59ceaca532ad84181e52f6da5506ea91f1ba77fc7717a8b70b27de32",
+      "events_sha256": "8043ec6bdef91dd4c6a20a86f7492df224d06a115c7fe766021d6c5b2d48b961",
+      "injection": "",
+      "waves_enabled": true,
+      "check_mode": "strict",
+      "assert_fatal": true,
+      "checks": {
+        "version": 1,
+        "check_mode": "strict",
+        "assert_fatal": true,
+        "profile_version": 1,
+        "runtime": {
+          "version": 1,
+          "mode": "strict",
+          "assert_fatal": 1,
+          "failures": 0,
+          "incomplete": 0,
+          "finished": 1,
+          "sampled_frames": 2018,
+          "checked_frames": 2018,
+          "outstanding": 0,
+          "accepted": 0,
+          "issued": 0,
+          "returned": 0,
+          "cancelled": 0,
+          "peak_hypotheses": 1,
+          "hypothesis_limit": 4096
+        },
+        "failures": [],
+        "integrity_errors": [],
+        "groups": [
+          {
+            "id": "interface",
+            "title": "接口与输入约束",
+            "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          },
+          {
+            "id": "transactions",
+            "title": "事务与数据",
+            "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          },
+          {
+            "id": "timing",
+            "title": "完整接口时序",
+            "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          }
+        ],
+        "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+        "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+        "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+        "limitations": [
+          "Finite simulation evidence, not a formal proof.",
+          "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+          "TC legality, driver scheduling and infrastructure errors always stop execution."
+        ]
+      },
+      "wave_conversion": {
+        "exit_code": 0,
+        "seconds": 0.266,
+        "source": "waves.fsdb",
+        "output": "waves.vcd"
+      },
+      "wave_artifacts": [
+        "waves.fsdb",
+        "waves.vcd"
+      ],
+      "format": "sv_main_phase",
+      "drive_audit": {
+        "status": "PASS",
+        "failures": [],
+        "phases": {
+          "body": 2000,
+          "drain": 8,
+          "quiet": 8
+        },
+        "coverage": {
+          "E03_SRC": 459,
+          "E04_ARRESP": 459,
+          "E05_ZERO_READY": 1061,
+          "E06_SUCCESS_BUSY": [
+            25,
+            21,
+            27,
+            35,
+            27,
+            33,
+            29,
+            20,
+            21,
+            36,
+            21,
+            28,
+            23,
+            27,
+            29,
+            41
+          ],
+          "T_MEM4": 443,
+          "T_ASSOCIATION": 443,
+          "P_KNOWN": 2016,
+          "assignment_equal_pins": 2016,
+          "paused_intervals": 0,
+          "reset_assertions": 1,
+          "cancelled": 0
+        },
+        "startup_policy": "clock_high_reset_1ns",
+        "transaction_association": "baseline FIFO audit",
+        "body_histograms": {
+          "arvalid": {
+            "1": 459,
+            "0": 1541
+          },
+          "rready": {
+            "4": 253,
+            "5": 252,
+            "1": 226,
+            "6": 229,
+            "0": 260,
+            "3": 268,
+            "7": 264,
+            "2": 248
+          },
+          "src_valid": {
+            "1": 148,
+            "-1": 1541,
+            "2": 158,
+            "0": 153
+          },
+          "arresp_valid": {
+            "3": 230,
+            "-1": 1541,
+            "0": 229
+          }
+        },
+        "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+        "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+      },
+      "expected_failure": null,
+      "acceptance_pass": true
+    },
+    {
+      "id": "tc_random_seed_42",
+      "case": "tc_random",
+      "seed": 42,
+      "status": "PASS",
+      "seconds": 0.838,
+      "exit_code": 0,
+      "failures": [],
+      "metrics": {
+        "tc_assignments": 2021,
+        "tc_body_cycles": 2000,
+        "tc_active_edges": 2021,
+        "random_cycles": 0,
+        "random_solves": 0,
+        "submitted": 0,
+        "queued_cancelled": 0,
+        "queue_pending": 0,
+        "seed": 42,
+        "cycles": 2022,
+        "accepted": 493,
+        "issued": 493,
+        "captured": 493,
+        "retired": 493,
+        "clock_edges": 2022,
+        "active_edges": 2021,
+        "reset_assertions": 1,
+        "aborted": 0,
+        "aborted_unissued": 0,
+        "aborted_mem": 0,
+        "aborted_response": 0,
+        "pending_at_end": 0,
+        "issue_failed": 1349,
+        "ar_rejected": 29,
+        "ar_gated": 0,
+        "ar_only": 443,
+        "rw_only": 470,
+        "full": 1234,
+        "full_reuse": 140,
+        "ready_zero": 246,
+        "head_blocked": 1282,
+        "src0": 175,
+        "src1": 155,
+        "src2": 163,
+        "resp0": 109,
+        "resp1": 113,
+        "resp3": 271,
+        "bank_half_hits": [
+          31,
+          33,
+          44,
+          35,
+          26,
+          28,
+          28,
+          20,
+          33,
+          30,
+          30,
+          20,
+          34,
+          40,
+          26,
+          35
+        ]
+      },
+      "directory": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_random_seed_42",
+      "build": "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d",
+      "argv": [
+        "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d/simv",
+        "+ntb_random_seed=42",
+        "+SEED=42",
+        "+CHECK_MODE=strict",
+        "+ASSERT_FATAL=1",
+        "+PROGRAM=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_random_seed_42/stimulus.txt",
+        "-cm",
+        "line+cond+branch+tgl+fsm",
+        "-cm_dir",
+        "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_random_seed_42/simv.vdb",
+        "-cm_name",
+        "tc_random_seed_42",
+        "+FSDB=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_random_seed_42/waves.fsdb",
+        "+SV_TC"
+      ],
+      "stimulus_sha256": "e22aa26929a2e4e8243012bff239234ccb130be364c062e2948efd1f4caad074",
+      "case_sha256": "fa7dddae59ceaca532ad84181e52f6da5506ea91f1ba77fc7717a8b70b27de32",
+      "events_sha256": "60fbbf0c98f3ecf3adba3c8e3282882d6e1c276036c302487e0ea348afaa8728",
+      "injection": "",
+      "waves_enabled": true,
+      "check_mode": "strict",
+      "assert_fatal": true,
+      "checks": {
+        "version": 1,
+        "check_mode": "strict",
+        "assert_fatal": true,
+        "profile_version": 1,
+        "runtime": {
+          "version": 1,
+          "mode": "strict",
+          "assert_fatal": 1,
+          "failures": 0,
+          "incomplete": 0,
+          "finished": 1,
+          "sampled_frames": 2023,
+          "checked_frames": 2023,
+          "outstanding": 0,
+          "accepted": 0,
+          "issued": 0,
+          "returned": 0,
+          "cancelled": 0,
+          "peak_hypotheses": 1,
+          "hypothesis_limit": 4096
+        },
+        "failures": [],
+        "integrity_errors": [],
+        "groups": [
+          {
+            "id": "interface",
+            "title": "接口与输入约束",
+            "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          },
+          {
+            "id": "transactions",
+            "title": "事务与数据",
+            "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          },
+          {
+            "id": "timing",
+            "title": "完整接口时序",
+            "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          }
+        ],
+        "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+        "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+        "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+        "limitations": [
+          "Finite simulation evidence, not a formal proof.",
+          "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+          "TC legality, driver scheduling and infrastructure errors always stop execution."
+        ]
+      },
+      "wave_conversion": {
+        "exit_code": 0,
+        "seconds": 0.267,
+        "source": "waves.fsdb",
+        "output": "waves.vcd"
+      },
+      "wave_artifacts": [
+        "waves.fsdb",
+        "waves.vcd"
+      ],
+      "format": "sv_main_phase",
+      "drive_audit": {
+        "status": "PASS",
+        "failures": [],
+        "phases": {
+          "body": 2000,
+          "drain": 13,
+          "quiet": 8
+        },
+        "coverage": {
+          "E03_SRC": 522,
+          "E04_ARRESP": 522,
+          "E05_ZERO_READY": 937,
+          "E06_SUCCESS_BUSY": [
+            31,
+            33,
+            44,
+            35,
+            26,
+            28,
+            28,
+            20,
+            33,
+            30,
+            30,
+            20,
+            34,
+            40,
+            26,
+            35
+          ],
+          "T_MEM4": 493,
+          "T_ASSOCIATION": 493,
+          "P_KNOWN": 2021,
+          "assignment_equal_pins": 2021,
+          "paused_intervals": 0,
+          "reset_assertions": 1,
+          "cancelled": 0
+        },
+        "startup_policy": "clock_high_reset_1ns",
+        "transaction_association": "baseline FIFO audit",
+        "body_histograms": {
+          "arvalid": {
+            "0": 1478,
+            "1": 522
+          },
+          "rready": {
+            "5": 265,
+            "1": 224,
+            "3": 240,
+            "7": 262,
+            "0": 246,
+            "2": 269,
+            "6": 238,
+            "4": 256
+          },
+          "src_valid": {
+            "-1": 1478,
+            "2": 174,
+            "1": 164,
+            "0": 184
+          },
+          "arresp_valid": {
+            "-1": 1478,
+            "3": 288,
+            "0": 234
+          }
+        },
+        "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+        "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+      },
+      "expected_failure": null,
+      "acceptance_pass": true
+    },
+    {
+      "id": "main_user_values_seed_17",
+      "case": "main_user_values",
+      "seed": 17,
+      "status": "PASS",
+      "seconds": 0.53,
+      "exit_code": 0,
+      "failures": [],
+      "metrics": {
+        "tc_assignments": 517,
+        "tc_body_cycles": 500,
+        "tc_active_edges": 517,
+        "random_cycles": 0,
+        "random_solves": 0,
+        "submitted": 0,
+        "queued_cancelled": 0,
+        "queue_pending": 0,
+        "seed": 17,
+        "cycles": 518,
+        "accepted": 110,
+        "issued": 110,
+        "captured": 110,
+        "retired": 110,
+        "clock_edges": 518,
+        "active_edges": 517,
+        "reset_assertions": 1,
+        "aborted": 0,
+        "aborted_unissued": 0,
+        "aborted_mem": 0,
+        "aborted_response": 0,
+        "pending_at_end": 0,
+        "issue_failed": 341,
+        "ar_rejected": 121,
+        "ar_gated": 0,
+        "ar_only": 117,
+        "rw_only": 110,
+        "full": 0,
+        "full_reuse": 0,
+        "ready_zero": 52,
+        "head_blocked": 326,
+        "src0": 54,
+        "src1": 0,
+        "src2": 56,
+        "resp0": 0,
+        "resp1": 0,
+        "resp3": 110,
+        "bank_half_hits": [
+          5,
+          8,
+          5,
+          4,
+          12,
+          5,
+          4,
+          6,
+          9,
+          10,
+          8,
+          14,
+          7,
+          3,
+          5,
+          5
+        ]
+      },
+      "directory": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_user_values_seed_17",
+      "build": "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d",
+      "argv": [
+        "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d/simv",
+        "+ntb_random_seed=17",
+        "+SEED=17",
+        "+CHECK_MODE=strict",
+        "+ASSERT_FATAL=1",
+        "+PROGRAM=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_user_values_seed_17/stimulus.txt",
+        "-cm",
+        "line+cond+branch+tgl+fsm",
+        "-cm_dir",
+        "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_user_values_seed_17/simv.vdb",
+        "-cm_name",
+        "main_user_values_seed_17",
+        "+FSDB=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_user_values_seed_17/waves.fsdb",
+        "+SV_TC"
+      ],
+      "stimulus_sha256": "39f0d2cb6fa998ceb855f33fa2367364235f356807f06f904bce817894199296",
+      "case_sha256": "d5f7caa81d671e221b72eba5f3ee383c401abecd0120a367c4cc9cd6bbc50522",
+      "events_sha256": "5e6b7d44c4f8f4c267d0703b3e0defac88e51db05df9493fc773f878422a9e7c",
+      "injection": "",
+      "waves_enabled": true,
+      "check_mode": "strict",
+      "assert_fatal": true,
+      "checks": {
+        "version": 1,
+        "check_mode": "strict",
+        "assert_fatal": true,
+        "profile_version": 1,
+        "runtime": {
+          "version": 1,
+          "mode": "strict",
+          "assert_fatal": 1,
+          "failures": 0,
+          "incomplete": 0,
+          "finished": 1,
+          "sampled_frames": 519,
+          "checked_frames": 519,
+          "outstanding": 0,
+          "accepted": 0,
+          "issued": 0,
+          "returned": 0,
+          "cancelled": 0,
+          "peak_hypotheses": 1,
+          "hypothesis_limit": 4096
+        },
+        "failures": [],
+        "integrity_errors": [],
+        "groups": [
+          {
+            "id": "interface",
+            "title": "接口与输入约束",
+            "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          },
+          {
+            "id": "transactions",
+            "title": "事务与数据",
+            "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          },
+          {
+            "id": "timing",
+            "title": "完整接口时序",
+            "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          }
+        ],
+        "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+        "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+        "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+        "limitations": [
+          "Finite simulation evidence, not a formal proof.",
+          "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+          "TC legality, driver scheduling and infrastructure errors always stop execution."
+        ]
+      },
+      "wave_conversion": {
+        "exit_code": 0,
+        "seconds": 0.115,
+        "source": "waves.fsdb",
+        "output": "waves.vcd"
+      },
+      "wave_artifacts": [
+        "waves.fsdb",
+        "waves.vcd"
+      ],
+      "format": "sv_main_phase",
+      "drive_audit": {
+        "status": "PASS",
+        "failures": [],
+        "phases": {
+          "body": 500,
+          "drain": 9,
+          "quiet": 8
+        },
+        "coverage": {
+          "E03_SRC": 231,
+          "E04_ARRESP": 231,
+          "E05_ZERO_READY": 0,
+          "E06_SUCCESS_BUSY": [
+            5,
+            8,
+            5,
+            4,
+            12,
+            5,
+            4,
+            6,
+            9,
+            10,
+            8,
+            14,
+            7,
+            3,
+            5,
+            5
+          ],
+          "T_MEM4": 110,
+          "T_ASSOCIATION": 110,
+          "P_KNOWN": 517,
+          "assignment_equal_pins": 517,
+          "paused_intervals": 0,
+          "reset_assertions": 1,
+          "cancelled": 0
+        },
+        "startup_policy": "clock_high_reset_1ns",
+        "transaction_association": "baseline FIFO audit",
+        "body_histograms": {
+          "arvalid": {
+            "1": 231,
+            "0": 269
+          },
+          "rready": {
+            "3": 72,
+            "4": 51,
+            "2": 72,
+            "6": 63,
+            "0": 52,
+            "5": 56,
+            "7": 65,
+            "1": 69
+          },
+          "src_valid": {
+            "2": 122,
+            "-1": 269,
+            "0": 109
+          },
+          "arresp_valid": {
+            "3": 231,
+            "-1": 269
+          }
+        },
+        "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+        "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+      },
+      "expected_failure": null,
+      "acceptance_pass": true
+    },
+    {
+      "id": "main_first_cycle_seed_17",
+      "case": "main_first_cycle",
+      "seed": 17,
+      "status": "PASS",
+      "seconds": 0.416,
+      "exit_code": 0,
+      "failures": [],
+      "metrics": {
+        "tc_assignments": 16,
+        "tc_body_cycles": 4,
+        "tc_active_edges": 16,
+        "random_cycles": 0,
+        "random_solves": 0,
+        "submitted": 0,
+        "queued_cancelled": 0,
+        "queue_pending": 0,
+        "seed": 17,
+        "cycles": 17,
+        "accepted": 1,
+        "issued": 1,
+        "captured": 1,
+        "retired": 1,
+        "clock_edges": 17,
+        "active_edges": 16,
+        "reset_assertions": 1,
+        "aborted": 0,
+        "aborted_unissued": 0,
+        "aborted_mem": 0,
+        "aborted_response": 0,
+        "pending_at_end": 0,
+        "issue_failed": 0,
+        "ar_rejected": 0,
+        "ar_gated": 0,
+        "ar_only": 0,
+        "rw_only": 0,
+        "full": 0,
+        "full_reuse": 0,
+        "ready_zero": 0,
+        "head_blocked": 0,
+        "src0": 1,
+        "src1": 0,
+        "src2": 0,
+        "resp0": 1,
+        "resp1": 0,
+        "resp3": 0,
+        "bank_half_hits": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "directory": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_first_cycle_seed_17",
+      "build": "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d",
+      "argv": [
+        "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d/simv",
+        "+ntb_random_seed=17",
+        "+SEED=17",
+        "+CHECK_MODE=strict",
+        "+ASSERT_FATAL=1",
+        "+PROGRAM=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_first_cycle_seed_17/stimulus.txt",
+        "-cm",
+        "line+cond+branch+tgl+fsm",
+        "-cm_dir",
+        "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_first_cycle_seed_17/simv.vdb",
+        "-cm_name",
+        "main_first_cycle_seed_17",
+        "+FSDB=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_first_cycle_seed_17/waves.fsdb",
+        "+SV_TC"
+      ],
+      "stimulus_sha256": "1bfa95617a9f7d58af7c8c9debb4af66e7c8c7fa6f982a695bcc02d62c1e54ea",
+      "case_sha256": "5e92f76e8f53aba7bcb5b9dfc75c0510c85e4369fde07386accbe22d3417fcc1",
+      "events_sha256": "1c26d4574dcf4d0a6a882093c41e23365c9f06ea391181f3a5d9b2eded78f9f9",
+      "injection": "",
+      "waves_enabled": true,
+      "check_mode": "strict",
+      "assert_fatal": true,
+      "checks": {
+        "version": 1,
+        "check_mode": "strict",
+        "assert_fatal": true,
+        "profile_version": 1,
+        "runtime": {
+          "version": 1,
+          "mode": "strict",
+          "assert_fatal": 1,
+          "failures": 0,
+          "incomplete": 0,
+          "finished": 1,
+          "sampled_frames": 18,
+          "checked_frames": 18,
+          "outstanding": 0,
+          "accepted": 0,
+          "issued": 0,
+          "returned": 0,
+          "cancelled": 0,
+          "peak_hypotheses": 1,
+          "hypothesis_limit": 4096
+        },
+        "failures": [],
+        "integrity_errors": [],
+        "groups": [
+          {
+            "id": "interface",
+            "title": "接口与输入约束",
+            "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          },
+          {
+            "id": "transactions",
+            "title": "事务与数据",
+            "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          },
+          {
+            "id": "timing",
+            "title": "完整接口时序",
+            "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+            "failures": 0,
+            "status": "PASS",
+            "reason": ""
+          }
+        ],
+        "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+        "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+        "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+        "limitations": [
+          "Finite simulation evidence, not a formal proof.",
+          "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+          "TC legality, driver scheduling and infrastructure errors always stop execution."
+        ]
+      },
+      "wave_conversion": {
+        "exit_code": 0,
+        "seconds": 0.065,
+        "source": "waves.fsdb",
+        "output": "waves.vcd"
+      },
+      "wave_artifacts": [
+        "waves.fsdb",
+        "waves.vcd"
+      ],
+      "format": "sv_main_phase",
+      "drive_audit": {
+        "status": "PASS",
+        "failures": [],
+        "phases": {
+          "body": 4,
+          "drain": 4,
+          "quiet": 8
+        },
+        "coverage": {
+          "E03_SRC": 1,
+          "E04_ARRESP": 1,
+          "E05_ZERO_READY": 0,
+          "E06_SUCCESS_BUSY": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "T_MEM4": 1,
+          "T_ASSOCIATION": 1,
+          "P_KNOWN": 16,
+          "assignment_equal_pins": 16,
+          "paused_intervals": 0,
+          "reset_assertions": 1,
+          "cancelled": 0
+        },
+        "startup_policy": "clock_high_reset_1ns",
+        "transaction_association": "baseline FIFO audit",
+        "body_histograms": {
+          "arvalid": {
+            "1": 1,
+            "0": 3
+          },
+          "rready": {
+            "7": 4
+          },
+          "src_valid": {
+            "0": 1,
+            "-1": 3
+          },
+          "arresp_valid": {
+            "0": 1,
+            "-1": 3
+          }
+        },
+        "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+        "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+      },
+      "expected_failure": null,
+      "acceptance_pass": true
+    },
+    {
+      "id": "main_bad_busy_seed_1",
+      "case": "main_bad_busy",
+      "seed": 1,
+      "status": "FAIL",
+      "seconds": 0.416,
+      "exit_code": 0,
+      "failures": [
+        "verification monitor did not finish",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle 4 edge 6: MAIN_BODY_COUNT"
+      ],
+      "metrics": {},
+      "directory": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_busy_seed_1",
+      "build": "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d",
+      "argv": [
+        "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d/simv",
+        "+ntb_random_seed=1",
+        "+SEED=1",
+        "+CHECK_MODE=strict",
+        "+ASSERT_FATAL=1",
+        "+PROGRAM=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_busy_seed_1/stimulus.txt",
+        "-cm",
+        "line+cond+branch+tgl+fsm",
+        "-cm_dir",
+        "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_busy_seed_1/simv.vdb",
+        "-cm_name",
+        "main_bad_busy_seed_1",
+        "+FSDB=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_busy_seed_1/waves.fsdb",
+        "+SV_TC"
+      ],
+      "stimulus_sha256": "62e0053ad992bf2f556b9c6cbeede26ccf0513c8a9a410a8bfbf1b7b0dd420ce",
+      "case_sha256": "596263bf8652cfce0813989f2b1565f23aa42cf794ef1e3a74fb385585205b41",
+      "events_sha256": "81185f1e898bb26cbae458e675f32ee6f4ba4cb2ed0924116a237a338d01ed35",
+      "injection": "",
+      "waves_enabled": true,
+      "check_mode": "strict",
+      "assert_fatal": true,
+      "checks": {
+        "version": 1,
+        "check_mode": "strict",
+        "assert_fatal": true,
+        "profile_version": 1,
+        "runtime": {
+          "version": 1,
+          "mode": "strict",
+          "assert_fatal": 1,
+          "failures": 0,
+          "incomplete": 0,
+          "finished": 0,
+          "sampled_frames": 7,
+          "checked_frames": 6,
+          "outstanding": 0,
+          "accepted": 0,
+          "issued": 0,
+          "returned": 0,
+          "cancelled": 0,
+          "peak_hypotheses": 1,
+          "hypothesis_limit": 4096
+        },
+        "failures": [],
+        "integrity_errors": [
+          "verification monitor did not finish"
+        ],
+        "groups": [
+          {
+            "id": "interface",
+            "title": "接口与输入约束",
+            "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "transactions",
+            "title": "事务与数据",
+            "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "timing",
+            "title": "完整接口时序",
+            "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          }
+        ],
+        "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+        "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+        "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+        "limitations": [
+          "Finite simulation evidence, not a formal proof.",
+          "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+          "TC legality, driver scheduling and infrastructure errors always stop execution."
+        ]
+      },
+      "wave_conversion": {
+        "exit_code": 0,
+        "seconds": 0.065,
+        "source": "waves.fsdb",
+        "output": "waves.vcd"
+      },
+      "wave_artifacts": [
+        "waves.fsdb",
+        "waves.vcd"
+      ],
+      "format": "sv_main_phase",
+      "drive_audit": {
+        "status": "FAIL",
+        "failures": [
+          "main_phase audit cycle 4 edge 6: MAIN_BODY_COUNT"
+        ],
+        "phases": {
+          "body": 5,
+          "drain": 0,
+          "quiet": 0
+        },
+        "coverage": {
+          "E03_SRC": 1,
+          "E04_ARRESP": 1,
+          "E05_ZERO_READY": 0,
+          "E06_SUCCESS_BUSY": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "T_MEM4": 0,
+          "T_ASSOCIATION": 0,
+          "P_KNOWN": 5,
+          "assignment_equal_pins": 5,
+          "paused_intervals": 0,
+          "reset_assertions": 1,
+          "cancelled": 0
+        },
+        "startup_policy": "clock_high_reset_1ns",
+        "transaction_association": "baseline FIFO audit",
+        "body_histograms": {
+          "arvalid": {
+            "0": 4,
+            "1": 1
+          },
+          "rready": {
+            "7": 5
+          },
+          "src_valid": {
+            "-1": 4,
+            "0": 1
+          },
+          "arresp_valid": {
+            "-1": 4,
+            "0": 1
+          }
+        },
+        "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+        "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+      },
+      "expected_failure": "MAIN_E06_SUCCESS_BUSY",
+      "acceptance_pass": true
+    },
+    {
+      "id": "main_bad_control_seed_1",
+      "case": "main_bad_control",
+      "seed": 1,
+      "status": "FAIL",
+      "seconds": 0.415,
+      "exit_code": 0,
+      "failures": [
+        "verification monitor did not finish",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle ? edge ?: MAIN_ARCHIVE_COUNT"
+      ],
+      "metrics": {},
+      "directory": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_control_seed_1",
+      "build": "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d",
+      "argv": [
+        "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d/simv",
+        "+ntb_random_seed=1",
+        "+SEED=1",
+        "+CHECK_MODE=strict",
+        "+ASSERT_FATAL=1",
+        "+PROGRAM=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_control_seed_1/stimulus.txt",
+        "-cm",
+        "line+cond+branch+tgl+fsm",
+        "-cm_dir",
+        "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_control_seed_1/simv.vdb",
+        "-cm_name",
+        "main_bad_control_seed_1",
+        "+FSDB=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_control_seed_1/waves.fsdb",
+        "+SV_TC"
+      ],
+      "stimulus_sha256": "31c401b0baefa7bbde2520e8635535edf2bfc372836b60db9c400cb546f3b19f",
+      "case_sha256": "177fb609ba923a1882cf7bbdd5a6ea0017adc2de8c82ee199de6ee2d030c9a59",
+      "events_sha256": "e9b08cf298b89d81ca011bb7840b314ecdb0f2054b9eb6e0f5ad50083b72e6dc",
+      "injection": "",
+      "waves_enabled": true,
+      "check_mode": "strict",
+      "assert_fatal": true,
+      "checks": {
+        "version": 1,
+        "check_mode": "strict",
+        "assert_fatal": true,
+        "profile_version": 1,
+        "runtime": {
+          "version": 1,
+          "mode": "strict",
+          "assert_fatal": 1,
+          "failures": 0,
+          "incomplete": 0,
+          "finished": 0,
+          "sampled_frames": 2,
+          "checked_frames": 1,
+          "outstanding": 0,
+          "accepted": 0,
+          "issued": 0,
+          "returned": 0,
+          "cancelled": 0,
+          "peak_hypotheses": 1,
+          "hypothesis_limit": 4096
+        },
+        "failures": [],
+        "integrity_errors": [
+          "verification monitor did not finish"
+        ],
+        "groups": [
+          {
+            "id": "interface",
+            "title": "接口与输入约束",
+            "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "transactions",
+            "title": "事务与数据",
+            "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "timing",
+            "title": "完整接口时序",
+            "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          }
+        ],
+        "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+        "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+        "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+        "limitations": [
+          "Finite simulation evidence, not a formal proof.",
+          "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+          "TC legality, driver scheduling and infrastructure errors always stop execution."
+        ]
+      },
+      "wave_conversion": {
+        "exit_code": 0,
+        "seconds": 0.065,
+        "source": "waves.fsdb",
+        "output": "waves.vcd"
+      },
+      "wave_artifacts": [
+        "waves.fsdb",
+        "waves.vcd"
+      ],
+      "format": "sv_main_phase",
+      "drive_audit": {
+        "status": "FAIL",
+        "failures": [
+          "main_phase audit cycle ? edge ?: MAIN_ARCHIVE_COUNT"
+        ],
+        "phases": {
+          "body": 0,
+          "drain": 0,
+          "quiet": 0
+        },
+        "coverage": {
+          "E03_SRC": 0,
+          "E04_ARRESP": 0,
+          "E05_ZERO_READY": 0,
+          "E06_SUCCESS_BUSY": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "T_MEM4": 0,
+          "T_ASSOCIATION": 0,
+          "P_KNOWN": 0,
+          "assignment_equal_pins": 0,
+          "paused_intervals": 0,
+          "reset_assertions": 1,
+          "cancelled": 0
+        },
+        "startup_policy": "legacy_archived_tc",
+        "transaction_association": "baseline FIFO audit",
+        "body_histograms": {},
+        "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+        "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+      },
+      "expected_failure": "MAIN_CONTROL_INVALID",
+      "acceptance_pass": true
+    },
+    {
+      "id": "main_bad_duplicate_seed_1",
+      "case": "main_bad_duplicate",
+      "seed": 1,
+      "status": "FAIL",
+      "seconds": 0.416,
+      "exit_code": 0,
+      "failures": [
+        "verification monitor did not finish",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle ? edge ?: MAIN_ARCHIVE_COUNT"
+      ],
+      "metrics": {},
+      "directory": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_duplicate_seed_1",
+      "build": "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d",
+      "argv": [
+        "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d/simv",
+        "+ntb_random_seed=1",
+        "+SEED=1",
+        "+CHECK_MODE=strict",
+        "+ASSERT_FATAL=1",
+        "+PROGRAM=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_duplicate_seed_1/stimulus.txt",
+        "-cm",
+        "line+cond+branch+tgl+fsm",
+        "-cm_dir",
+        "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_duplicate_seed_1/simv.vdb",
+        "-cm_name",
+        "main_bad_duplicate_seed_1",
+        "+FSDB=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_duplicate_seed_1/waves.fsdb",
+        "+SV_TC"
+      ],
+      "stimulus_sha256": "8c18f1dfc47f184c9d1143dba799fb793052b8037ad07e5914f99d9d18e19a88",
+      "case_sha256": "d41cb9ce3527cab4b4d19fb3296f397a6bfcea8a6ce65c0175cc3e2a74e331ad",
+      "events_sha256": "e9b08cf298b89d81ca011bb7840b314ecdb0f2054b9eb6e0f5ad50083b72e6dc",
+      "injection": "",
+      "waves_enabled": true,
+      "check_mode": "strict",
+      "assert_fatal": true,
+      "checks": {
+        "version": 1,
+        "check_mode": "strict",
+        "assert_fatal": true,
+        "profile_version": 1,
+        "runtime": {
+          "version": 1,
+          "mode": "strict",
+          "assert_fatal": 1,
+          "failures": 0,
+          "incomplete": 0,
+          "finished": 0,
+          "sampled_frames": 2,
+          "checked_frames": 1,
+          "outstanding": 0,
+          "accepted": 0,
+          "issued": 0,
+          "returned": 0,
+          "cancelled": 0,
+          "peak_hypotheses": 1,
+          "hypothesis_limit": 4096
+        },
+        "failures": [],
+        "integrity_errors": [
+          "verification monitor did not finish"
+        ],
+        "groups": [
+          {
+            "id": "interface",
+            "title": "接口与输入约束",
+            "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "transactions",
+            "title": "事务与数据",
+            "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "timing",
+            "title": "完整接口时序",
+            "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          }
+        ],
+        "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+        "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+        "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+        "limitations": [
+          "Finite simulation evidence, not a formal proof.",
+          "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+          "TC legality, driver scheduling and infrastructure errors always stop execution."
+        ]
+      },
+      "wave_conversion": {
+        "exit_code": 0,
+        "seconds": 0.115,
+        "source": "waves.fsdb",
+        "output": "waves.vcd"
+      },
+      "wave_artifacts": [
+        "waves.fsdb",
+        "waves.vcd"
+      ],
+      "format": "sv_main_phase",
+      "drive_audit": {
+        "status": "FAIL",
+        "failures": [
+          "main_phase audit cycle ? edge ?: MAIN_ARCHIVE_COUNT"
+        ],
+        "phases": {
+          "body": 0,
+          "drain": 0,
+          "quiet": 0
+        },
+        "coverage": {
+          "E03_SRC": 0,
+          "E04_ARRESP": 0,
+          "E05_ZERO_READY": 0,
+          "E06_SUCCESS_BUSY": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "T_MEM4": 0,
+          "T_ASSOCIATION": 0,
+          "P_KNOWN": 0,
+          "assignment_equal_pins": 0,
+          "paused_intervals": 0,
+          "reset_assertions": 1,
+          "cancelled": 0
+        },
+        "startup_policy": "legacy_archived_tc",
+        "transaction_association": "baseline FIFO audit",
+        "body_histograms": {},
+        "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+        "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+      },
+      "expected_failure": "MAIN_DRIVE_ORDER",
+      "acceptance_pass": true
+    },
+    {
+      "id": "main_bad_mem_seed_1",
+      "case": "main_bad_mem",
+      "seed": 1,
+      "status": "FAIL",
+      "seconds": 0.415,
+      "exit_code": 0,
+      "failures": [
+        "verification monitor did not finish",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle 8 edge 10: MAIN_BODY_COUNT"
+      ],
+      "metrics": {},
+      "directory": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_mem_seed_1",
+      "build": "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d",
+      "argv": [
+        "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d/simv",
+        "+ntb_random_seed=1",
+        "+SEED=1",
+        "+CHECK_MODE=strict",
+        "+ASSERT_FATAL=1",
+        "+PROGRAM=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_mem_seed_1/stimulus.txt",
+        "-cm",
+        "line+cond+branch+tgl+fsm",
+        "-cm_dir",
+        "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_mem_seed_1/simv.vdb",
+        "-cm_name",
+        "main_bad_mem_seed_1",
+        "+FSDB=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_mem_seed_1/waves.fsdb",
+        "+SV_TC"
+      ],
+      "stimulus_sha256": "367afcecd5a4fe7344852df39a40437b0e1736fb7737776c62bf8e11ca894416",
+      "case_sha256": "67aa7346ca6fb5e5a3d3d6a2288278dfe3119c5cce5f6c309af3b3206c4b4f93",
+      "events_sha256": "164d19fc935c75deb20722d8cd370642bb0b1d67eb32a9c0b0b04b9602a71a17",
+      "injection": "",
+      "waves_enabled": true,
+      "check_mode": "strict",
+      "assert_fatal": true,
+      "checks": {
+        "version": 1,
+        "check_mode": "strict",
+        "assert_fatal": true,
+        "profile_version": 1,
+        "runtime": {
+          "version": 1,
+          "mode": "strict",
+          "assert_fatal": 1,
+          "failures": 0,
+          "incomplete": 0,
+          "finished": 0,
+          "sampled_frames": 11,
+          "checked_frames": 10,
+          "outstanding": 0,
+          "accepted": 0,
+          "issued": 0,
+          "returned": 0,
+          "cancelled": 0,
+          "peak_hypotheses": 1,
+          "hypothesis_limit": 4096
+        },
+        "failures": [],
+        "integrity_errors": [
+          "verification monitor did not finish"
+        ],
+        "groups": [
+          {
+            "id": "interface",
+            "title": "接口与输入约束",
+            "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "transactions",
+            "title": "事务与数据",
+            "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "timing",
+            "title": "完整接口时序",
+            "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          }
+        ],
+        "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+        "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+        "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+        "limitations": [
+          "Finite simulation evidence, not a formal proof.",
+          "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+          "TC legality, driver scheduling and infrastructure errors always stop execution."
+        ]
+      },
+      "wave_conversion": {
+        "exit_code": 0,
+        "seconds": 0.115,
+        "source": "waves.fsdb",
+        "output": "waves.vcd"
+      },
+      "wave_artifacts": [
+        "waves.fsdb",
+        "waves.vcd"
+      ],
+      "format": "sv_main_phase",
+      "drive_audit": {
+        "status": "FAIL",
+        "failures": [
+          "main_phase audit cycle 8 edge 10: MAIN_BODY_COUNT"
+        ],
+        "phases": {
+          "body": 9,
+          "drain": 0,
+          "quiet": 0
+        },
+        "coverage": {
+          "E03_SRC": 1,
+          "E04_ARRESP": 1,
+          "E05_ZERO_READY": 0,
+          "E06_SUCCESS_BUSY": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "T_MEM4": 0,
+          "T_ASSOCIATION": 0,
+          "P_KNOWN": 9,
+          "assignment_equal_pins": 9,
+          "paused_intervals": 0,
+          "reset_assertions": 1,
+          "cancelled": 0
+        },
+        "startup_policy": "clock_high_reset_1ns",
+        "transaction_association": "baseline FIFO audit",
+        "body_histograms": {
+          "arvalid": {
+            "0": 8,
+            "1": 1
+          },
+          "rready": {
+            "7": 9
+          },
+          "src_valid": {
+            "-1": 8,
+            "0": 1
+          },
+          "arresp_valid": {
+            "-1": 8,
+            "0": 1
+          }
+        },
+        "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+        "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+      },
+      "expected_failure": "MAIN_T_MEM4",
+      "acceptance_pass": true
+    },
+    {
+      "id": "main_bad_missing_seed_1",
+      "case": "main_bad_missing",
+      "seed": 1,
+      "status": "FAIL",
+      "seconds": 0.416,
+      "exit_code": 0,
+      "failures": [
+        "verification monitor did not finish",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle ? edge ?: MAIN_CLOCK_FALLING_TRACE"
+      ],
+      "metrics": {},
+      "directory": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_missing_seed_1",
+      "build": "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d",
+      "argv": [
+        "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d/simv",
+        "+ntb_random_seed=1",
+        "+SEED=1",
+        "+CHECK_MODE=strict",
+        "+ASSERT_FATAL=1",
+        "+PROGRAM=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_missing_seed_1/stimulus.txt",
+        "-cm",
+        "line+cond+branch+tgl+fsm",
+        "-cm_dir",
+        "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_missing_seed_1/simv.vdb",
+        "-cm_name",
+        "main_bad_missing_seed_1",
+        "+FSDB=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_missing_seed_1/waves.fsdb",
+        "+SV_TC"
+      ],
+      "stimulus_sha256": "6c57515c6a66218910243bdec314063d06fde0c1e424cd42d4e681d7436bdc54",
+      "case_sha256": "1e5ad20bb152e9329835ef851b707a19f06b4588957f02a8d3d892cfe3b281fc",
+      "events_sha256": "e9b08cf298b89d81ca011bb7840b314ecdb0f2054b9eb6e0f5ad50083b72e6dc",
+      "injection": "",
+      "waves_enabled": true,
+      "check_mode": "strict",
+      "assert_fatal": true,
+      "checks": {
+        "version": 1,
+        "check_mode": "strict",
+        "assert_fatal": true,
+        "profile_version": 1,
+        "runtime": {
+          "version": 1,
+          "mode": "strict",
+          "assert_fatal": 1,
+          "failures": 0,
+          "incomplete": 0,
+          "finished": 0,
+          "sampled_frames": 3,
+          "checked_frames": 2,
+          "outstanding": 0,
+          "accepted": 0,
+          "issued": 0,
+          "returned": 0,
+          "cancelled": 0,
+          "peak_hypotheses": 1,
+          "hypothesis_limit": 4096
+        },
+        "failures": [],
+        "integrity_errors": [
+          "verification monitor did not finish"
+        ],
+        "groups": [
+          {
+            "id": "interface",
+            "title": "接口与输入约束",
+            "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "transactions",
+            "title": "事务与数据",
+            "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "timing",
+            "title": "完整接口时序",
+            "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          }
+        ],
+        "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+        "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+        "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+        "limitations": [
+          "Finite simulation evidence, not a formal proof.",
+          "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+          "TC legality, driver scheduling and infrastructure errors always stop execution."
+        ]
+      },
+      "wave_conversion": {
+        "exit_code": 0,
+        "seconds": 0.065,
+        "source": "waves.fsdb",
+        "output": "waves.vcd"
+      },
+      "wave_artifacts": [
+        "waves.fsdb",
+        "waves.vcd"
+      ],
+      "format": "sv_main_phase",
+      "drive_audit": {
+        "status": "FAIL",
+        "failures": [
+          "main_phase audit cycle ? edge ?: MAIN_CLOCK_FALLING_TRACE"
+        ],
+        "phases": {
+          "body": 0,
+          "drain": 0,
+          "quiet": 0
+        },
+        "coverage": {
+          "E03_SRC": 0,
+          "E04_ARRESP": 0,
+          "E05_ZERO_READY": 0,
+          "E06_SUCCESS_BUSY": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "T_MEM4": 0,
+          "T_ASSOCIATION": 0,
+          "P_KNOWN": 0,
+          "assignment_equal_pins": 0,
+          "paused_intervals": 0,
+          "reset_assertions": 1,
+          "cancelled": 0
+        },
+        "startup_policy": "clock_high_reset_1ns",
+        "transaction_association": "baseline FIFO audit",
+        "body_histograms": {},
+        "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+        "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+      },
+      "expected_failure": "MAIN_MISSING_ASSIGNMENT",
+      "acceptance_pass": true
+    },
+    {
+      "id": "main_bad_race_seed_1",
+      "case": "main_bad_race",
+      "seed": 1,
+      "status": "FAIL",
+      "seconds": 0.416,
+      "exit_code": 0,
+      "failures": [
+        "verification monitor did not finish",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle ? edge ?: MAIN_ARCHIVE_COUNT"
+      ],
+      "metrics": {},
+      "directory": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_race_seed_1",
+      "build": "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d",
+      "argv": [
+        "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d/simv",
+        "+ntb_random_seed=1",
+        "+SEED=1",
+        "+CHECK_MODE=strict",
+        "+ASSERT_FATAL=1",
+        "+PROGRAM=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_race_seed_1/stimulus.txt",
+        "-cm",
+        "line+cond+branch+tgl+fsm",
+        "-cm_dir",
+        "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_race_seed_1/simv.vdb",
+        "-cm_name",
+        "main_bad_race_seed_1",
+        "+FSDB=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_race_seed_1/waves.fsdb",
+        "+SV_TC"
+      ],
+      "stimulus_sha256": "773b5a04f374b043898ddb60e9310071c60d85cf6ab4666c5f6a690eb80ad0d7",
+      "case_sha256": "5d4234678d4e0186da55674f0998bbb639499c988617319bbde076c352625632",
+      "events_sha256": "e9b08cf298b89d81ca011bb7840b314ecdb0f2054b9eb6e0f5ad50083b72e6dc",
+      "injection": "",
+      "waves_enabled": true,
+      "check_mode": "strict",
+      "assert_fatal": true,
+      "checks": {
+        "version": 1,
+        "check_mode": "strict",
+        "assert_fatal": true,
+        "profile_version": 1,
+        "runtime": {
+          "version": 1,
+          "mode": "strict",
+          "assert_fatal": 1,
+          "failures": 0,
+          "incomplete": 0,
+          "finished": 0,
+          "sampled_frames": 1,
+          "checked_frames": 0,
+          "outstanding": 0,
+          "accepted": 0,
+          "issued": 0,
+          "returned": 0,
+          "cancelled": 0,
+          "peak_hypotheses": 1,
+          "hypothesis_limit": 4096
+        },
+        "failures": [],
+        "integrity_errors": [
+          "verification monitor did not finish"
+        ],
+        "groups": [
+          {
+            "id": "interface",
+            "title": "接口与输入约束",
+            "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "transactions",
+            "title": "事务与数据",
+            "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "timing",
+            "title": "完整接口时序",
+            "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          }
+        ],
+        "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+        "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+        "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+        "limitations": [
+          "Finite simulation evidence, not a formal proof.",
+          "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+          "TC legality, driver scheduling and infrastructure errors always stop execution."
+        ]
+      },
+      "wave_conversion": {
+        "exit_code": 0,
+        "seconds": 0.065,
+        "source": "waves.fsdb",
+        "output": "waves.vcd"
+      },
+      "wave_artifacts": [
+        "waves.fsdb",
+        "waves.vcd"
+      ],
+      "format": "sv_main_phase",
+      "drive_audit": {
+        "status": "FAIL",
+        "failures": [
+          "main_phase audit cycle ? edge ?: MAIN_ARCHIVE_COUNT"
+        ],
+        "phases": {
+          "body": 0,
+          "drain": 0,
+          "quiet": 0
+        },
+        "coverage": {
+          "E03_SRC": 0,
+          "E04_ARRESP": 0,
+          "E05_ZERO_READY": 0,
+          "E06_SUCCESS_BUSY": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "T_MEM4": 0,
+          "T_ASSOCIATION": 0,
+          "P_KNOWN": 0,
+          "assignment_equal_pins": 0,
+          "paused_intervals": 0,
+          "reset_assertions": 1,
+          "cancelled": 0
+        },
+        "startup_policy": "legacy_archived_tc",
+        "transaction_association": "baseline FIFO audit",
+        "body_histograms": {},
+        "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+        "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+      },
+      "expected_failure": "MAIN_ONCE_AFTER_POSEDGE",
+      "acceptance_pass": true
+    },
+    {
+      "id": "main_bad_reset_seed_1",
+      "case": "main_bad_reset",
+      "seed": 1,
+      "status": "FAIL",
+      "seconds": 0.416,
+      "exit_code": 0,
+      "failures": [
+        "verification monitor did not finish",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle ? edge ?: MAIN_ARCHIVE_COUNT"
+      ],
+      "metrics": {},
+      "directory": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_reset_seed_1",
+      "build": "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d",
+      "argv": [
+        "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d/simv",
+        "+ntb_random_seed=1",
+        "+SEED=1",
+        "+CHECK_MODE=strict",
+        "+ASSERT_FATAL=1",
+        "+PROGRAM=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_reset_seed_1/stimulus.txt",
+        "-cm",
+        "line+cond+branch+tgl+fsm",
+        "-cm_dir",
+        "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_reset_seed_1/simv.vdb",
+        "-cm_name",
+        "main_bad_reset_seed_1",
+        "+FSDB=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_reset_seed_1/waves.fsdb",
+        "+SV_TC"
+      ],
+      "stimulus_sha256": "fc7a24a722ce3ca2bc69e3510bee2a7706b37808eafc64a367aef17cb684a5ae",
+      "case_sha256": "e342099ad73401cf594eba50d21928dee916f193f7ef62456ddd7bfb43a48b11",
+      "events_sha256": "e9b08cf298b89d81ca011bb7840b314ecdb0f2054b9eb6e0f5ad50083b72e6dc",
+      "injection": "",
+      "waves_enabled": true,
+      "check_mode": "strict",
+      "assert_fatal": true,
+      "checks": {
+        "version": 1,
+        "check_mode": "strict",
+        "assert_fatal": true,
+        "profile_version": 1,
+        "runtime": {
+          "version": 1,
+          "mode": "strict",
+          "assert_fatal": 1,
+          "failures": 0,
+          "incomplete": 0,
+          "finished": 0,
+          "sampled_frames": 2,
+          "checked_frames": 1,
+          "outstanding": 0,
+          "accepted": 0,
+          "issued": 0,
+          "returned": 0,
+          "cancelled": 0,
+          "peak_hypotheses": 1,
+          "hypothesis_limit": 4096
+        },
+        "failures": [],
+        "integrity_errors": [
+          "verification monitor did not finish"
+        ],
+        "groups": [
+          {
+            "id": "interface",
+            "title": "接口与输入约束",
+            "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "transactions",
+            "title": "事务与数据",
+            "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "timing",
+            "title": "完整接口时序",
+            "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          }
+        ],
+        "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+        "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+        "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+        "limitations": [
+          "Finite simulation evidence, not a formal proof.",
+          "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+          "TC legality, driver scheduling and infrastructure errors always stop execution."
+        ]
+      },
+      "wave_conversion": {
+        "exit_code": 0,
+        "seconds": 0.065,
+        "source": "waves.fsdb",
+        "output": "waves.vcd"
+      },
+      "wave_artifacts": [
+        "waves.fsdb",
+        "waves.vcd"
+      ],
+      "format": "sv_main_phase",
+      "drive_audit": {
+        "status": "FAIL",
+        "failures": [
+          "main_phase audit cycle ? edge ?: MAIN_ARCHIVE_COUNT"
+        ],
+        "phases": {
+          "body": 0,
+          "drain": 0,
+          "quiet": 0
+        },
+        "coverage": {
+          "E03_SRC": 0,
+          "E04_ARRESP": 0,
+          "E05_ZERO_READY": 0,
+          "E06_SUCCESS_BUSY": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "T_MEM4": 0,
+          "T_ASSOCIATION": 0,
+          "P_KNOWN": 0,
+          "assignment_equal_pins": 0,
+          "paused_intervals": 0,
+          "reset_assertions": 1,
+          "cancelled": 0
+        },
+        "startup_policy": "legacy_archived_tc",
+        "transaction_association": "baseline FIFO audit",
+        "body_histograms": {},
+        "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+        "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+      },
+      "expected_failure": "MAIN_RESET_FIXED_HIGH_AFTER_1NS",
+      "acceptance_pass": true
+    },
+    {
+      "id": "main_bad_resp_seed_1",
+      "case": "main_bad_resp",
+      "seed": 1,
+      "status": "FAIL",
+      "seconds": 0.416,
+      "exit_code": 0,
+      "failures": [
+        "verification monitor did not finish",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle 2 edge 4: MAIN_BODY_COUNT"
+      ],
+      "metrics": {},
+      "directory": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_resp_seed_1",
+      "build": "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d",
+      "argv": [
+        "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d/simv",
+        "+ntb_random_seed=1",
+        "+SEED=1",
+        "+CHECK_MODE=strict",
+        "+ASSERT_FATAL=1",
+        "+PROGRAM=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_resp_seed_1/stimulus.txt",
+        "-cm",
+        "line+cond+branch+tgl+fsm",
+        "-cm_dir",
+        "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_resp_seed_1/simv.vdb",
+        "-cm_name",
+        "main_bad_resp_seed_1",
+        "+FSDB=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_resp_seed_1/waves.fsdb",
+        "+SV_TC"
+      ],
+      "stimulus_sha256": "09a7f1fff5119629d0e5c42abee244056411e3e403101852e39f7b7b87f6114f",
+      "case_sha256": "c79d6f9afeabe2d17b724e2659b93ac0dff74fd45135a395e2c63e93d09ef3e5",
+      "events_sha256": "e9b08cf298b89d81ca011bb7840b314ecdb0f2054b9eb6e0f5ad50083b72e6dc",
+      "injection": "",
+      "waves_enabled": true,
+      "check_mode": "strict",
+      "assert_fatal": true,
+      "checks": {
+        "version": 1,
+        "check_mode": "strict",
+        "assert_fatal": true,
+        "profile_version": 1,
+        "runtime": {
+          "version": 1,
+          "mode": "strict",
+          "assert_fatal": 1,
+          "failures": 0,
+          "incomplete": 0,
+          "finished": 0,
+          "sampled_frames": 5,
+          "checked_frames": 4,
+          "outstanding": 0,
+          "accepted": 0,
+          "issued": 0,
+          "returned": 0,
+          "cancelled": 0,
+          "peak_hypotheses": 1,
+          "hypothesis_limit": 4096
+        },
+        "failures": [],
+        "integrity_errors": [
+          "verification monitor did not finish"
+        ],
+        "groups": [
+          {
+            "id": "interface",
+            "title": "接口与输入约束",
+            "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "transactions",
+            "title": "事务与数据",
+            "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "timing",
+            "title": "完整接口时序",
+            "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          }
+        ],
+        "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+        "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+        "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+        "limitations": [
+          "Finite simulation evidence, not a formal proof.",
+          "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+          "TC legality, driver scheduling and infrastructure errors always stop execution."
+        ]
+      },
+      "wave_conversion": {
+        "exit_code": 0,
+        "seconds": 0.065,
+        "source": "waves.fsdb",
+        "output": "waves.vcd"
+      },
+      "wave_artifacts": [
+        "waves.fsdb",
+        "waves.vcd"
+      ],
+      "format": "sv_main_phase",
+      "drive_audit": {
+        "status": "FAIL",
+        "failures": [
+          "main_phase audit cycle 2 edge 4: MAIN_BODY_COUNT"
+        ],
+        "phases": {
+          "body": 3,
+          "drain": 0,
+          "quiet": 0
+        },
+        "coverage": {
+          "E03_SRC": 0,
+          "E04_ARRESP": 0,
+          "E05_ZERO_READY": 0,
+          "E06_SUCCESS_BUSY": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "T_MEM4": 0,
+          "T_ASSOCIATION": 0,
+          "P_KNOWN": 3,
+          "assignment_equal_pins": 3,
+          "paused_intervals": 0,
+          "reset_assertions": 1,
+          "cancelled": 0
+        },
+        "startup_policy": "clock_high_reset_1ns",
+        "transaction_association": "baseline FIFO audit",
+        "body_histograms": {
+          "arvalid": {
+            "0": 3
+          },
+          "rready": {
+            "7": 3
+          },
+          "src_valid": {
+            "-1": 3
+          },
+          "arresp_valid": {
+            "-1": 3
+          }
+        },
+        "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+        "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+      },
+      "expected_failure": "MAIN_E04_ARRESP",
+      "acceptance_pass": true
+    },
+    {
+      "id": "main_bad_src_seed_1",
+      "case": "main_bad_src",
+      "seed": 1,
+      "status": "FAIL",
+      "seconds": 0.416,
+      "exit_code": 0,
+      "failures": [
+        "verification monitor did not finish",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle 2 edge 4: MAIN_BODY_COUNT"
+      ],
+      "metrics": {},
+      "directory": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_src_seed_1",
+      "build": "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d",
+      "argv": [
+        "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d/simv",
+        "+ntb_random_seed=1",
+        "+SEED=1",
+        "+CHECK_MODE=strict",
+        "+ASSERT_FATAL=1",
+        "+PROGRAM=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_src_seed_1/stimulus.txt",
+        "-cm",
+        "line+cond+branch+tgl+fsm",
+        "-cm_dir",
+        "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_src_seed_1/simv.vdb",
+        "-cm_name",
+        "main_bad_src_seed_1",
+        "+FSDB=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_src_seed_1/waves.fsdb",
+        "+SV_TC"
+      ],
+      "stimulus_sha256": "efd40dd34d106239dbfd42364e95a05d7ac7e3f8177fd07f9dd33696c3d3943b",
+      "case_sha256": "6f41e0dff0b37c14dd068c7344572a8e306adf74321a2a2322a65b142414ac6b",
+      "events_sha256": "e9b08cf298b89d81ca011bb7840b314ecdb0f2054b9eb6e0f5ad50083b72e6dc",
+      "injection": "",
+      "waves_enabled": true,
+      "check_mode": "strict",
+      "assert_fatal": true,
+      "checks": {
+        "version": 1,
+        "check_mode": "strict",
+        "assert_fatal": true,
+        "profile_version": 1,
+        "runtime": {
+          "version": 1,
+          "mode": "strict",
+          "assert_fatal": 1,
+          "failures": 0,
+          "incomplete": 0,
+          "finished": 0,
+          "sampled_frames": 5,
+          "checked_frames": 4,
+          "outstanding": 0,
+          "accepted": 0,
+          "issued": 0,
+          "returned": 0,
+          "cancelled": 0,
+          "peak_hypotheses": 1,
+          "hypothesis_limit": 4096
+        },
+        "failures": [],
+        "integrity_errors": [
+          "verification monitor did not finish"
+        ],
+        "groups": [
+          {
+            "id": "interface",
+            "title": "接口与输入约束",
+            "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "transactions",
+            "title": "事务与数据",
+            "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "timing",
+            "title": "完整接口时序",
+            "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          }
+        ],
+        "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+        "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+        "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+        "limitations": [
+          "Finite simulation evidence, not a formal proof.",
+          "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+          "TC legality, driver scheduling and infrastructure errors always stop execution."
+        ]
+      },
+      "wave_conversion": {
+        "exit_code": 0,
+        "seconds": 0.115,
+        "source": "waves.fsdb",
+        "output": "waves.vcd"
+      },
+      "wave_artifacts": [
+        "waves.fsdb",
+        "waves.vcd"
+      ],
+      "format": "sv_main_phase",
+      "drive_audit": {
+        "status": "FAIL",
+        "failures": [
+          "main_phase audit cycle 2 edge 4: MAIN_BODY_COUNT"
+        ],
+        "phases": {
+          "body": 3,
+          "drain": 0,
+          "quiet": 0
+        },
+        "coverage": {
+          "E03_SRC": 0,
+          "E04_ARRESP": 0,
+          "E05_ZERO_READY": 0,
+          "E06_SUCCESS_BUSY": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "T_MEM4": 0,
+          "T_ASSOCIATION": 0,
+          "P_KNOWN": 3,
+          "assignment_equal_pins": 3,
+          "paused_intervals": 0,
+          "reset_assertions": 1,
+          "cancelled": 0
+        },
+        "startup_policy": "clock_high_reset_1ns",
+        "transaction_association": "baseline FIFO audit",
+        "body_histograms": {
+          "arvalid": {
+            "0": 3
+          },
+          "rready": {
+            "7": 3
+          },
+          "src_valid": {
+            "-1": 3
+          },
+          "arresp_valid": {
+            "-1": 3
+          }
+        },
+        "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+        "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+      },
+      "expected_failure": "MAIN_E03_SRC",
+      "acceptance_pass": true
+    },
+    {
+      "id": "main_bad_stale_context_seed_1",
+      "case": "main_bad_stale_context",
+      "seed": 1,
+      "status": "FAIL",
+      "seconds": 0.416,
+      "exit_code": 0,
+      "failures": [
+        "verification monitor did not finish",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle ? edge ?: MAIN_ARCHIVE_COUNT"
+      ],
+      "metrics": {},
+      "directory": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_stale_context_seed_1",
+      "build": "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d",
+      "argv": [
+        "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d/simv",
+        "+ntb_random_seed=1",
+        "+SEED=1",
+        "+CHECK_MODE=strict",
+        "+ASSERT_FATAL=1",
+        "+PROGRAM=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_stale_context_seed_1/stimulus.txt",
+        "-cm",
+        "line+cond+branch+tgl+fsm",
+        "-cm_dir",
+        "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_stale_context_seed_1/simv.vdb",
+        "-cm_name",
+        "main_bad_stale_context_seed_1",
+        "+FSDB=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_stale_context_seed_1/waves.fsdb",
+        "+SV_TC"
+      ],
+      "stimulus_sha256": "17be0cc4b10a13bc4735d34d782588ee1c778d0512331dc20c88fb4716e033d9",
+      "case_sha256": "83180c1bcefb5d0054c520ff315069124852d0acbcf356f84a91e2308b0aaa71",
+      "events_sha256": "e9b08cf298b89d81ca011bb7840b314ecdb0f2054b9eb6e0f5ad50083b72e6dc",
+      "injection": "",
+      "waves_enabled": true,
+      "check_mode": "strict",
+      "assert_fatal": true,
+      "checks": {
+        "version": 1,
+        "check_mode": "strict",
+        "assert_fatal": true,
+        "profile_version": 1,
+        "runtime": {
+          "version": 1,
+          "mode": "strict",
+          "assert_fatal": 1,
+          "failures": 0,
+          "incomplete": 0,
+          "finished": 0,
+          "sampled_frames": 2,
+          "checked_frames": 1,
+          "outstanding": 0,
+          "accepted": 0,
+          "issued": 0,
+          "returned": 0,
+          "cancelled": 0,
+          "peak_hypotheses": 1,
+          "hypothesis_limit": 4096
+        },
+        "failures": [],
+        "integrity_errors": [
+          "verification monitor did not finish"
+        ],
+        "groups": [
+          {
+            "id": "interface",
+            "title": "接口与输入约束",
+            "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "transactions",
+            "title": "事务与数据",
+            "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "timing",
+            "title": "完整接口时序",
+            "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          }
+        ],
+        "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+        "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+        "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+        "limitations": [
+          "Finite simulation evidence, not a formal proof.",
+          "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+          "TC legality, driver scheduling and infrastructure errors always stop execution."
+        ]
+      },
+      "wave_conversion": {
+        "exit_code": 0,
+        "seconds": 0.065,
+        "source": "waves.fsdb",
+        "output": "waves.vcd"
+      },
+      "wave_artifacts": [
+        "waves.fsdb",
+        "waves.vcd"
+      ],
+      "format": "sv_main_phase",
+      "drive_audit": {
+        "status": "FAIL",
+        "failures": [
+          "main_phase audit cycle ? edge ?: MAIN_ARCHIVE_COUNT"
+        ],
+        "phases": {
+          "body": 0,
+          "drain": 0,
+          "quiet": 0
+        },
+        "coverage": {
+          "E03_SRC": 0,
+          "E04_ARRESP": 0,
+          "E05_ZERO_READY": 0,
+          "E06_SUCCESS_BUSY": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "T_MEM4": 0,
+          "T_ASSOCIATION": 0,
+          "P_KNOWN": 0,
+          "assignment_equal_pins": 0,
+          "paused_intervals": 0,
+          "reset_assertions": 1,
+          "cancelled": 0
+        },
+        "startup_policy": "legacy_archived_tc",
+        "transaction_association": "baseline FIFO audit",
+        "body_histograms": {},
+        "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+        "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+      },
+      "expected_failure": "MAIN_CONTEXT_TIMING",
+      "acceptance_pass": true
+    },
+    {
+      "id": "main_bad_unknown_seed_1",
+      "case": "main_bad_unknown",
+      "seed": 1,
+      "status": "FAIL",
+      "seconds": 0.466,
+      "exit_code": 0,
+      "failures": [
+        "verification monitor did not finish",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle ? edge ?: MAIN_ARCHIVE_COUNT"
+      ],
+      "metrics": {},
+      "directory": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_unknown_seed_1",
+      "build": "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d",
+      "argv": [
+        "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d/simv",
+        "+ntb_random_seed=1",
+        "+SEED=1",
+        "+CHECK_MODE=strict",
+        "+ASSERT_FATAL=1",
+        "+PROGRAM=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_unknown_seed_1/stimulus.txt",
+        "-cm",
+        "line+cond+branch+tgl+fsm",
+        "-cm_dir",
+        "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_unknown_seed_1/simv.vdb",
+        "-cm_name",
+        "main_bad_unknown_seed_1",
+        "+FSDB=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_unknown_seed_1/waves.fsdb",
+        "+SV_TC"
+      ],
+      "stimulus_sha256": "000053bb6649196de22dae0e4e06f542d2e427be4cff90f4a88bab5297df48ad",
+      "case_sha256": "1e12bdcb9f1059861e308f138a0616239c49fde0b0e5482b2c08c187acc195be",
+      "events_sha256": "e9b08cf298b89d81ca011bb7840b314ecdb0f2054b9eb6e0f5ad50083b72e6dc",
+      "injection": "",
+      "waves_enabled": true,
+      "check_mode": "strict",
+      "assert_fatal": true,
+      "checks": {
+        "version": 1,
+        "check_mode": "strict",
+        "assert_fatal": true,
+        "profile_version": 1,
+        "runtime": {
+          "version": 1,
+          "mode": "strict",
+          "assert_fatal": 1,
+          "failures": 0,
+          "incomplete": 0,
+          "finished": 0,
+          "sampled_frames": 2,
+          "checked_frames": 1,
+          "outstanding": 0,
+          "accepted": 0,
+          "issued": 0,
+          "returned": 0,
+          "cancelled": 0,
+          "peak_hypotheses": 1,
+          "hypothesis_limit": 4096
+        },
+        "failures": [],
+        "integrity_errors": [
+          "verification monitor did not finish"
+        ],
+        "groups": [
+          {
+            "id": "interface",
+            "title": "接口与输入约束",
+            "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "transactions",
+            "title": "事务与数据",
+            "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "timing",
+            "title": "完整接口时序",
+            "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          }
+        ],
+        "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+        "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+        "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+        "limitations": [
+          "Finite simulation evidence, not a formal proof.",
+          "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+          "TC legality, driver scheduling and infrastructure errors always stop execution."
+        ]
+      },
+      "wave_conversion": {
+        "exit_code": 0,
+        "seconds": 0.065,
+        "source": "waves.fsdb",
+        "output": "waves.vcd"
+      },
+      "wave_artifacts": [
+        "waves.fsdb",
+        "waves.vcd"
+      ],
+      "format": "sv_main_phase",
+      "drive_audit": {
+        "status": "FAIL",
+        "failures": [
+          "main_phase audit cycle ? edge ?: MAIN_ARCHIVE_COUNT"
+        ],
+        "phases": {
+          "body": 0,
+          "drain": 0,
+          "quiet": 0
+        },
+        "coverage": {
+          "E03_SRC": 0,
+          "E04_ARRESP": 0,
+          "E05_ZERO_READY": 0,
+          "E06_SUCCESS_BUSY": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "T_MEM4": 0,
+          "T_ASSOCIATION": 0,
+          "P_KNOWN": 0,
+          "assignment_equal_pins": 0,
+          "paused_intervals": 0,
+          "reset_assertions": 1,
+          "cancelled": 0
+        },
+        "startup_policy": "legacy_archived_tc",
+        "transaction_association": "baseline FIFO audit",
+        "body_histograms": {},
+        "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+        "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+      },
+      "expected_failure": "MAIN_P_KNOWN",
+      "acceptance_pass": true
+    },
+    {
+      "id": "main_bad_zero_ready_seed_1",
+      "case": "main_bad_zero_ready",
+      "seed": 1,
+      "status": "FAIL",
+      "seconds": 0.466,
+      "exit_code": 0,
+      "failures": [
+        "verification monitor did not finish",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle 11 edge 13: MAIN_BODY_COUNT"
+      ],
+      "metrics": {},
+      "directory": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_zero_ready_seed_1",
+      "build": "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d",
+      "argv": [
+        "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d/simv",
+        "+ntb_random_seed=1",
+        "+SEED=1",
+        "+CHECK_MODE=strict",
+        "+ASSERT_FATAL=1",
+        "+PROGRAM=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_zero_ready_seed_1/stimulus.txt",
+        "-cm",
+        "line+cond+branch+tgl+fsm",
+        "-cm_dir",
+        "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_zero_ready_seed_1/simv.vdb",
+        "-cm_name",
+        "main_bad_zero_ready_seed_1",
+        "+FSDB=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_bad_zero_ready_seed_1/waves.fsdb",
+        "+SV_TC"
+      ],
+      "stimulus_sha256": "6d5a47e5184133923cbdf143dd74d6222a43d926f7e1f49d308faac1669170dd",
+      "case_sha256": "dd9fd264498bab574966c431c070edf7429ff3ef8fb473a0f0d4b7e5e19191d6",
+      "events_sha256": "df4dddfa57b62d983bc598deca046a52be2ec86bcc3ff869f1cddf69f0386302",
+      "injection": "",
+      "waves_enabled": true,
+      "check_mode": "strict",
+      "assert_fatal": true,
+      "checks": {
+        "version": 1,
+        "check_mode": "strict",
+        "assert_fatal": true,
+        "profile_version": 1,
+        "runtime": {
+          "version": 1,
+          "mode": "strict",
+          "assert_fatal": 1,
+          "failures": 0,
+          "incomplete": 0,
+          "finished": 0,
+          "sampled_frames": 14,
+          "checked_frames": 13,
+          "outstanding": 0,
+          "accepted": 0,
+          "issued": 0,
+          "returned": 0,
+          "cancelled": 0,
+          "peak_hypotheses": 1,
+          "hypothesis_limit": 4096
+        },
+        "failures": [],
+        "integrity_errors": [
+          "verification monitor did not finish"
+        ],
+        "groups": [
+          {
+            "id": "interface",
+            "title": "接口与输入约束",
+            "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "transactions",
+            "title": "事务与数据",
+            "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "timing",
+            "title": "完整接口时序",
+            "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          }
+        ],
+        "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+        "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+        "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+        "limitations": [
+          "Finite simulation evidence, not a formal proof.",
+          "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+          "TC legality, driver scheduling and infrastructure errors always stop execution."
+        ]
+      },
+      "wave_conversion": {
+        "exit_code": 0,
+        "seconds": 0.116,
+        "source": "waves.fsdb",
+        "output": "waves.vcd"
+      },
+      "wave_artifacts": [
+        "waves.fsdb",
+        "waves.vcd"
+      ],
+      "format": "sv_main_phase",
+      "drive_audit": {
+        "status": "FAIL",
+        "failures": [
+          "main_phase audit cycle 11 edge 13: MAIN_BODY_COUNT"
+        ],
+        "phases": {
+          "body": 12,
+          "drain": 0,
+          "quiet": 0
+        },
+        "coverage": {
+          "E03_SRC": 9,
+          "E04_ARRESP": 9,
+          "E05_ZERO_READY": 0,
+          "E06_SUCCESS_BUSY": [
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "T_MEM4": 3,
+          "T_ASSOCIATION": 0,
+          "P_KNOWN": 12,
+          "assignment_equal_pins": 12,
+          "paused_intervals": 0,
+          "reset_assertions": 1,
+          "cancelled": 0
+        },
+        "startup_policy": "clock_high_reset_1ns",
+        "transaction_association": "baseline FIFO audit",
+        "body_histograms": {
+          "arvalid": {
+            "0": 3,
+            "1": 9
+          },
+          "rready": {
+            "0": 12
+          },
+          "src_valid": {
+            "-1": 3,
+            "0": 3,
+            "1": 3,
+            "2": 3
+          },
+          "arresp_valid": {
+            "-1": 3,
+            "0": 9
+          }
+        },
+        "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+        "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+      },
+      "expected_failure": "MAIN_E05_ZERO_READY",
+      "acceptance_pass": true
+    },
+    {
+      "id": "tc_random_seed_1_main_post",
+      "case": "tc_random",
+      "seed": 1,
+      "status": "FAIL",
+      "seconds": 0.467,
+      "exit_code": 0,
+      "failures": [
+        "verification monitor did not finish",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle ? edge ?: MAIN_ARCHIVE_COUNT"
+      ],
+      "metrics": {},
+      "directory": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_random_seed_1_main_post",
+      "build": "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d",
+      "argv": [
+        "/root/cmdbuf_checks_20261111/build/vcs/builds/f387375a0453671d/simv",
+        "+ntb_random_seed=1",
+        "+SEED=1",
+        "+CHECK_MODE=strict",
+        "+ASSERT_FATAL=1",
+        "+PROGRAM=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_random_seed_1_main_post/stimulus.txt",
+        "-cm",
+        "line+cond+branch+tgl+fsm",
+        "-cm_dir",
+        "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_random_seed_1_main_post/simv.vdb",
+        "-cm_name",
+        "tc_random_seed_1_main_post",
+        "+FSDB=/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/tc_random_seed_1_main_post/waves.fsdb",
+        "+INJECT=main_post",
+        "+SV_TC"
+      ],
+      "stimulus_sha256": "cc50a86c64280219567ca2b8f1016f0d25fe4e38b853aee6c2a85a7186c90568",
+      "case_sha256": "fa7dddae59ceaca532ad84181e52f6da5506ea91f1ba77fc7717a8b70b27de32",
+      "events_sha256": "e9b08cf298b89d81ca011bb7840b314ecdb0f2054b9eb6e0f5ad50083b72e6dc",
+      "injection": "main_post",
+      "waves_enabled": true,
+      "check_mode": "strict",
+      "assert_fatal": true,
+      "checks": {
+        "version": 1,
+        "check_mode": "strict",
+        "assert_fatal": true,
+        "profile_version": 1,
+        "runtime": {
+          "version": 1,
+          "mode": "strict",
+          "assert_fatal": 1,
+          "failures": 0,
+          "incomplete": 0,
+          "finished": 0,
+          "sampled_frames": 2,
+          "checked_frames": 1,
+          "outstanding": 0,
+          "accepted": 0,
+          "issued": 0,
+          "returned": 0,
+          "cancelled": 0,
+          "peak_hypotheses": 1,
+          "hypothesis_limit": 4096
+        },
+        "failures": [],
+        "integrity_errors": [
+          "verification monitor did not finish"
+        ],
+        "groups": [
+          {
+            "id": "interface",
+            "title": "接口与输入约束",
+            "rules": "同拍 E03–E06、req/rvalid 独热、R ready、pending 范围、四态未知值",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "transactions",
+            "title": "事务与数据",
+            "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          },
+          {
+            "id": "timing",
+            "title": "完整接口时序",
+            "rules": "pending 组合递推、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+            "failures": 0,
+            "status": "INCOMPLETE",
+            "reason": ""
+          }
+        ],
+        "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+        "contract": "CMDBUF protocol 20261021 common interface; MEM capture remains issue N+4",
+        "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+        "limitations": [
+          "Finite simulation evidence, not a formal proof.",
+          "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+          "TC legality, driver scheduling and infrastructure errors always stop execution."
+        ]
+      },
+      "wave_conversion": {
+        "exit_code": 0,
+        "seconds": 0.115,
+        "source": "waves.fsdb",
+        "output": "waves.vcd"
+      },
+      "wave_artifacts": [
+        "waves.fsdb",
+        "waves.vcd"
+      ],
+      "format": "sv_main_phase",
+      "drive_audit": {
+        "status": "FAIL",
+        "failures": [
+          "main_phase audit cycle ? edge ?: MAIN_ARCHIVE_COUNT"
+        ],
+        "phases": {
+          "body": 0,
+          "drain": 0,
+          "quiet": 0
+        },
+        "coverage": {
+          "E03_SRC": 0,
+          "E04_ARRESP": 0,
+          "E05_ZERO_READY": 0,
+          "E06_SUCCESS_BUSY": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "T_MEM4": 0,
+          "T_ASSOCIATION": 0,
+          "P_KNOWN": 0,
+          "assignment_equal_pins": 0,
+          "paused_intervals": 0,
+          "reset_assertions": 1,
+          "cancelled": 0
+        },
+        "startup_policy": "legacy_archived_tc",
+        "transaction_association": "baseline FIFO audit",
+        "body_histograms": {},
+        "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+        "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+      },
+      "expected_failure": "MAIN_PIN_MODIFICATION",
+      "acceptance_pass": true
+    }
+  ],
+  "coverage": {
+    "status": "PASS",
+    "exit_code": 0,
+    "seconds": 0.417,
+    "database": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/coverage/merged.vdb",
+    "report": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/coverage/urgReport/dashboard.html",
+    "metrics_percent": {
+      "SCORE": "84.14",
+      "LINE": "89.47",
+      "COND": "86.21",
+      "TOGGLE": "85.28",
+      "FSM": "--",
+      "BRANCH": "75.61"
+    },
+    "code_metrics_present": true,
+    "included": [
+      "tc_directed_seed_1",
+      "tc_retry_seed_1",
+      "tc_backpressure_seed_1",
+      "tc_same_id_seed_1",
+      "tc_banks_seed_1",
+      "tc_reset_seed_1",
+      "tc_user_example_seed_1",
+      "tc_random_seed_1",
+      "tc_random_seed_42",
+      "main_user_values_seed_17",
+      "main_first_cycle_seed_17"
+    ],
+    "excluded": []
+  }
+}

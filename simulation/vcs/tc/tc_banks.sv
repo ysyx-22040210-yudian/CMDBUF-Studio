@@ -10,12 +10,12 @@ class tc_banks extends cmdbuf_main_tc;
             #1; // DUT 本拍的 NBA 更新完成后再驱动，避免采样竞争。
             begin_cycle(cycle);
 
-            // 编辑区 A：时钟、复位、响应接收。单位 ns；pause 延长下一段低电平。
-            rst_n = (cycle >= 3);
+            // 编辑区 A：复位保持 1；时钟单位 ns，pause 延长下一段低电平。
+            rst_n = 1; // Environment: low at t=0, released at #1 (1 ns).
             rready = 3'b111;
             clk_low_ns = 5; clk_high_ns = 5; clk_pause_ns = 0;
             drive_control();
-            #1; // rst_n/rready 影响组合反馈，先等待稳定，再读取。
+            #1; // rready 影响组合反馈，先等待稳定，再读取。
             sample_context();
 
             // 编辑区 B：AR 输入。E05 必须显式处理 ready 全零的分支。

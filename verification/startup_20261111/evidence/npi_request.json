@@ -1,0 +1,13 @@
+{
+  "id": "startup_20261111_215831",
+  "max_edges": 10000,
+  "sources": [
+    {
+      "kind": "file",
+      "path": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215803_main_phase_8a1945/cases/main_first_cycle_seed_17/waves.fsdb",
+      "pattern": 7,
+      "name": "first_cycle_after_1ns_reset",
+      "scope": "tb_cmdbuf_rd.dut"
+    }
+  ]
+}

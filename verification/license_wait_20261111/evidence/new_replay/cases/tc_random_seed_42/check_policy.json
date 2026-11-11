@@ -1,0 +1,4 @@
+{
+  "check_mode": "transaction",
+  "assert_fatal": false
+}

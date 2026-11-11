@@ -1,0 +1,4 @@
+python3 "/root/cmdbuf_checks_20261111/simulation/vcs/fsdb_formal/engine.py" --action export --request "/root/cmdbuf_startup_acceptance_20261111_final/npi_request.json"
+NPI_FORMAL startup_20261111_215831 TOTAL 1
+NPI_PROGRESS 1/1 pattern=7
+NPI_PACKAGE /root/cmdbuf_checks_20261111/build/vcs/fsdb_formal/startup_20261111_215831/package.zip

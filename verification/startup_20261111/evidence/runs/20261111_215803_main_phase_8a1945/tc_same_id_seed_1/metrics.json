@@ -1,0 +1,11 @@
+{
+"tc_assignments":108,"tc_body_cycles":100,"tc_active_edges":108,
+"random_cycles":0,"random_solves":0,
+"submitted":0,"queued_cancelled":0,"queue_pending":0,
+"seed":1,"cycles":109,"accepted":6,"issued":6,"captured":6,"retired":6,
+"clock_edges":109,"active_edges":108,"reset_assertions":1,"aborted":0,
+"aborted_unissued":0,"aborted_mem":0,"aborted_response":0,"pending_at_end":0,
+"issue_failed":0,"ar_rejected":0,"ar_gated":0,"ar_only":0,"rw_only":0,
+"full":0,"full_reuse":0,"ready_zero":0,"head_blocked":0,
+"src0":6,"src1":0,"src2":0,"resp0":6,"resp1":0,"resp3":0,
+"bank_half_hits":[6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}

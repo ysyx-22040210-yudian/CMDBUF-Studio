@@ -1,0 +1,76 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "name": "unicode and space project path",
+      "passed": true,
+      "detail": "/root/CMDBUF release 检查 20261111/cmdbuf-studio"
+    },
+    {
+      "name": "new monitor profile and manuals included",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no device configuration or cached results",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "make doctor",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "make smoke",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fresh package three cases pass",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "generic scope never claims full timing",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "make strict",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fresh package strict passes",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "make replay",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "replay preserves archived scope and fatal",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "replay exact events",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "replay exact complete snapshots",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "make gui creates native window",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "manifest_sha256": "a659fc0eff0259edb904b44f103830e19649aa88a817c4be9ebf6a71aa43a902"
+}

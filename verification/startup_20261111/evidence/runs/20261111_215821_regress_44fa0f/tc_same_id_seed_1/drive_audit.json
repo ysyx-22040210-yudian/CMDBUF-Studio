@@ -1,0 +1,60 @@
+{
+  "status": "PASS",
+  "failures": [],
+  "phases": {
+    "body": 100,
+    "drain": 0,
+    "quiet": 8
+  },
+  "coverage": {
+    "E03_SRC": 6,
+    "E04_ARRESP": 6,
+    "E05_ZERO_READY": 0,
+    "E06_SUCCESS_BUSY": [
+      6,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "T_MEM4": 6,
+    "T_ASSOCIATION": 6,
+    "P_KNOWN": 108,
+    "assignment_equal_pins": 108,
+    "paused_intervals": 0,
+    "reset_assertions": 1,
+    "cancelled": 0
+  },
+  "startup_policy": "clock_high_reset_1ns",
+  "transaction_association": "check_scope.json hypothesis monitor",
+  "body_histograms": {
+    "arvalid": {
+      "0": 94,
+      "1": 6
+    },
+    "rready": {
+      "7": 100
+    },
+    "src_valid": {
+      "-1": 94,
+      "0": 6
+    },
+    "arresp_valid": {
+      "-1": 94,
+      "0": 6
+    }
+  },
+  "method": "Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO",
+  "distribution": "Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim"
+}

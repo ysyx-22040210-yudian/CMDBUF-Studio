@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "urg",
+    "-full64",
+    "+urg+lic+wait",
+    "-dir",
+    "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222126_regress_7ce889/cases/tc_directed_seed_1/simv.vdb",
+    "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222126_regress_7ce889/cases/tc_retry_seed_1/simv.vdb",
+    "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222126_regress_7ce889/cases/tc_random_seed_17/simv.vdb",
+    "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222126_regress_7ce889/cases/tc_random_seed_42/simv.vdb",
+    "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222126_regress_7ce889/cases/tc_random_seed_123/simv.vdb",
+    "-dbname",
+    "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222126_regress_7ce889/coverage/merged.vdb",
+    "-report",
+    "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222126_regress_7ce889/coverage/urgReport",
+    "-metric",
+    "line+cond+branch+tgl+fsm",
+    "-format",
+    "both"
+  ],
+  "cwd": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222126_regress_7ce889",
+  "timeout_seconds": null,
+  "timeout_scope": "unlimited",
+  "license_wait_limit_seconds": null
+}

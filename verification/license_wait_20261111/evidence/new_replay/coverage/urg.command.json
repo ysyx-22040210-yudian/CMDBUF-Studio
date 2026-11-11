@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "urg",
+    "-full64",
+    "+urg+lic+wait",
+    "-dir",
+    "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222131_replay_9fd24f/cases/tc_random_seed_42/simv.vdb",
+    "-dbname",
+    "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222131_replay_9fd24f/coverage/merged.vdb",
+    "-report",
+    "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222131_replay_9fd24f/coverage/urgReport",
+    "-metric",
+    "line+cond+branch+tgl+fsm",
+    "-format",
+    "both"
+  ],
+  "cwd": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222131_replay_9fd24f",
+  "timeout_seconds": null,
+  "timeout_scope": "unlimited",
+  "license_wait_limit_seconds": null
+}

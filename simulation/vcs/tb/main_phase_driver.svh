@@ -1,10 +1,10 @@
 // main_phase drives once AFTER each posedge. A separate posedge sampler checks
-// what the DUT actually consumed. The initial edge is an explicit reset bootstrap.
+// what the DUT actually consumed. Clock starts high at t=0; reset releases at 1 ns.
 `include "main_phase_base.svh"
 `include "sv_tc_factory.svh"
 reg sv_tc_mode=0, main_clock_start=0, main_clock_stop=0, main_have_inputs=0;
 integer sv_frames=0, sv_body_slots=0, sv_active=0;
-integer main_samples, main_assignments, main_stage=0;
+integer main_samples, main_assignments, main_clock_trace=0, main_stage=0;
 integer main_low_ns=5, main_high_ns=5, main_pause_ns=0, main_current_high_ns=5;
 longint main_edge_ps=0;
 string main_name;
@@ -14,15 +14,18 @@ initial begin : main_clock
     integer lo,hi,pause_ns;
     wait(main_clock_start);
     while (!main_clock_stop) begin
-        lo=main_low_ns; hi=main_high_ns; pause_ns=main_pause_ns;
+        hi=main_high_ns; main_current_high_ns=hi;
+        #(hi); clk=0;
+        // Read the next low phase after this edge's control assignment.
+        lo=main_low_ns; pause_ns=main_pause_ns;
         #(lo+pause_ns);
-        if (!main_clock_stop) begin
-            main_current_high_ns=hi;
-            clk=1;
-            #(hi); clk=0;
-        end
+        if (!main_clock_stop) clk=1;
     end
 end
+
+// Record actual pin transitions even when FSDB generation is disabled.
+always @(clk or rst_n) if (main_clock_trace && $realtime>0)
+    $fdisplay(main_clock_trace,"%0.0f,%b,%b",$realtime*1000.0,clk,rst_n);
 
 task automatic main_fail(input string reason);
     begin
@@ -45,24 +48,14 @@ task automatic main_begin(input cmdbuf_main_tc t);
 endtask
 
 task automatic main_control(input cmdbuf_main_tc t);
-    logic previous_reset;
     begin
         if (main_stage!=1) main_fail("MAIN_CONTROL_ORDER");
         if ($isunknown({t.rst_n,t.rready,t.clk_low_ns,t.clk_high_ns,t.clk_pause_ns}) ||
             t.clk_low_ns<3 || t.clk_high_ns<3 || t.clk_low_ns>1000000 ||
             t.clk_high_ns>1000000 || t.clk_pause_ns>1000000) main_fail("MAIN_CONTROL_INVALID");
-        previous_reset=rst_n;
-        rst_n=t.rst_n; rready=t.rready;
+        if (t.rst_n !== 1'b1) main_fail("MAIN_RESET_FIXED_HIGH_AFTER_1NS");
+        rready=t.rready;
         main_low_ns=t.clk_low_ns; main_high_ns=t.clk_high_ns; main_pause_ns=t.clk_pause_ns;
-        if (!rst_n && previous_reset !== 1'b0) begin
-            wave_resets++;
-            wave_aborted=accepted-retired;
-            wave_aborted_unissued=accepted-issued;
-            wave_aborted_mem=issued-captured;
-            wave_aborted_response=captured-retired;
-            due_data.delete(); due_parity.delete();
-            $fdisplay(events,"%0d,RESET,-1,0,0,0,0,%0d",cycle,wave_aborted);
-        end
         main_stage=2;
     end
 endtask
@@ -152,8 +145,9 @@ always @(posedge clk) if (sv_tc_mode && main_clock_start) begin
             sv_active++;
             observe_active(main_tc.issue_error,main_tc.issue_data);
         end else begin #1; cycle++; end
-    end else if (cycle==0 && rst_n===1'b0) begin
-        $display("MAIN_BOOTSTRAP time_ps=%0d rst_n=0",main_edge_ps);
+    end else if (cycle==0 && main_edge_ps==10000 && rst_n===1'b1) begin
+        // First normal edge is idle and launches the first main_phase assignment.
+        $display("MAIN_BOOTSTRAP time_ps=%0d rst_n=1",main_edge_ps);
         #0.001; cycle++;
     end else main_fail("MAIN_MISSING_ASSIGNMENT");
 end
@@ -193,35 +187,40 @@ task automatic run_sv_tc;
         if (main_tc.num_cycles<1 || main_tc.num_cycles>1000000) main_fail("MAIN_CYCLES_INVALID");
         rng=process::self(); rng.srandom(seed);
         config_fd=$fopen("tc_config.json","w");
-        $fdisplay(config_fd,"{\"name\":\"%s\",\"seed\":%0d,\"num_cycles\":%0d,\"bootstrap_edges\":1}",main_name,seed,main_tc.num_cycles);
+        $fdisplay(config_fd,"{\"name\":\"%s\",\"seed\":%0d,\"num_cycles\":%0d,\"bootstrap_edges\":1,\"startup\":{\"clock_initial\":1,\"reset_release_ps\":1000,\"first_posedge_ps\":10000}}",main_name,seed,main_tc.num_cycles);
         $fclose(config_fd);
         main_samples=$fopen("samples.csv","w"); main_assignments=$fopen("assigned.csv","w");
         if (!main_samples || !main_assignments) $fatal(1,"MAIN_ARCHIVE_OPEN");
         $fdisplay(main_assignments,"cycle,edge,phase,time_ps,launch_ps,expected_sample_ps,clk,clk_low_ns,clk_high_ns,clk_pause_ns,rst_n,arvalid,src,araddr,arid,ar_port_id,arresp,rready,ar_rd_gnt,rw_rd_gnt,rd_mem_status[0],rd_mem_status[1],rd_mem_status[2],rd_mem_status[3],rd_mem_status[4],rd_mem_status[5],rd_mem_status[6],rd_mem_status[7],mem_rdata,pc_err,arready,req,arb_addr,issue_data,issue_error");
         $fdisplay(main_samples,"cycle,edge,phase,time_ps,clk,rst_n,arvalid,src,araddr,arid,ar_port_id,arresp,rready,ar_rd_gnt,rw_rd_gnt,rd_mem_status[0],rd_mem_status[1],rd_mem_status[2],rd_mem_status[3],rd_mem_status[4],rd_mem_status[5],rd_mem_status[6],rd_mem_status[7],mem_rdata,pc_err,arready,req,arb_addr,pending_cnt,rvalid,rdata,rid,r_port_id,raddr,rresp");
-        // Establish a known reset before the first edge awaited by main_phase.
-        rst_n=0; rready=0; arvalid=0; src=0; arresp=0; araddr=0; arid=0; ar_port_id=0;
+        // Startup reset is driven only by the common t=0 / t=1 ns process.
+        rready=0; arvalid=0; src=0; arresp=0; araddr=0; arid=0; ar_port_id=0;
         ar_rd_gnt=0; rw_rd_gnt=0; mem_rdata=0; pc_err=0;
         for (integer b=0;b<8;b++) rd_mem_status[b]=0;
+        main_clock_trace=$fopen("clock_reset.csv","w");
+        if (!main_clock_trace) $fatal(1,"MAIN_CLOCK_ARCHIVE_OPEN");
+        $fdisplay(main_clock_trace,"time_ps,clk,rst_n");
+        #0; // Allow the time-zero reset assignment to settle before recording pins.
+        $fdisplay(main_clock_trace,"%0.0f,%b,%b",$realtime*1000.0,clk,rst_n);
         wave_resets=1; main_clock_start=1;
         main_tc.main_phase();
         if (sv_body_slots!=main_tc.num_cycles) main_fail("MAIN_BODY_COUNT");
         // Consume the final body assignment before examining the drain condition.
         @(posedge clk); #1;
         for (integer k=0;k<drain_limit &&
-             (accepted!=retired+wave_aborted || due_data.num()!=0 || req!=0 || pending_cnt!=0);k++) begin
+             (accepted!=retired+wave_aborted || due_data.num()!=0 || req!=0 || (monitor.strict_mode && pending_cnt!=0));k++) begin
             main_tail(1);
             @(posedge clk); #1;
         end
         if (accepted!=retired+wave_aborted || accepted!=issued+wave_aborted_unissued ||
             issued!=captured+wave_aborted_mem || captured!=retired+wave_aborted_response ||
-            due_data.num()!=0 || req!=0 || pending_cnt!=0) main_fail("MAIN_DRAIN_FAILED");
+            due_data.num()!=0 || req!=0 || (monitor.strict_mode && pending_cnt!=0)) drain_failure("MAIN_DRAIN_FAILED");
         repeat (8) begin
             main_tail(2);
             @(posedge clk); #1;
         end
         #0.001; main_clock_stop=1;
-        $fclose(main_samples); $fclose(main_assignments);
+        $fclose(main_samples); $fclose(main_assignments); $fclose(main_clock_trace); main_clock_trace=0;
         $display("MAIN_PHASE_DONE case=%s assignments=%0d edges=%0d active_edges=%0d resets=%0d cancelled=%0d",
             main_name,sv_frames,cycle,sv_active,wave_resets,wave_aborted);
     end

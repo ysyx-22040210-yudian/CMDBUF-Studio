@@ -1,4 +1,5 @@
 import copy
+import re
 import sys
 import tempfile
 import unittest
@@ -52,8 +53,9 @@ class AdapterTests(unittest.TestCase):
             for record in records:
                 original = (eda.ROOT / record['source']).read_text(encoding='utf-8')
                 revised = (target / Path(record['source']).name).read_text(encoding='utf-8')
+                revised = re.sub(r' else tb_cmdbuf_rd\.monitor\.native_failure\([^\n]+\);', ';', revised)
+                revised = revised.replace('disable iff (!rst_n || !tb_cmdbuf_rd.monitor.strict_mode)', 'disable iff (!rst_n)')
                 for prop in record['properties']:
-                    revised = revised.replace(' else $fatal(1, "SVA_FAIL ' + prop['label'] + '");', ';')
                     if prop['original_kind'] == 'assume':
                         revised = revised.replace(prop['label'] + ': assert', prop['label'] + ': assume')
                 self.assertEqual(original, revised)

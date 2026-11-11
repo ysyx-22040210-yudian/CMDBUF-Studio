@@ -1,0 +1,131 @@
+{
+  "status": "PASS",
+  "id": "20261111_211401_main_phase_72050a",
+  "checks": {
+    "all_cases_match_expectation": true,
+    "new_case_template_edits_sent_three_requests": true,
+    "all_bank_half_contracts_exercised": true,
+    "stopped_clock_reset_cancels_two_requests": true,
+    "user_assignments_and_ranges_preserved": true,
+    "independent_audit_detects_mutations": true,
+    "coverage_contains_positive_only": true
+  },
+  "positive": 10,
+  "negative": 12,
+  "bank_half_hits": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "user_constrained_valid_samples": 249,
+  "reset": {
+    "E03_SRC": 3,
+    "E04_ARRESP": 3,
+    "E05_ZERO_READY": 0,
+    "E06_SUCCESS_BUSY": [
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "T_MEM4": 1,
+    "T_ASSOCIATION": 1,
+    "P_KNOWN": 72,
+    "assignment_equal_pins": 72,
+    "paused_intervals": 4,
+    "reset_assertions": 3,
+    "cancelled": 2
+  },
+  "mutations": [
+    {
+      "name": "pin_drift",
+      "expected": "MAIN_PIN_MISMATCH",
+      "detected": true,
+      "failures": [
+        "main_phase audit cycle 3 edge 4: MAIN_PIN_MISMATCH arid"
+      ]
+    },
+    {
+      "name": "illegal_src",
+      "expected": "E03_SRC",
+      "detected": true,
+      "failures": [
+        "main_phase audit cycle 3 edge 4: E03_SRC"
+      ]
+    },
+    {
+      "name": "illegal_resp",
+      "expected": "E04_ARRESP",
+      "detected": true,
+      "failures": [
+        "main_phase audit cycle 3 edge 4: E04_ARRESP"
+      ]
+    },
+    {
+      "name": "busy_clear",
+      "expected": "E06_SUCCESS_BUSY",
+      "detected": true,
+      "failures": [
+        "main_phase audit cycle 5 edge 6: E06_SUCCESS_BUSY"
+      ]
+    },
+    {
+      "name": "mem_corrupt",
+      "expected": "T_MEM4",
+      "detected": true,
+      "failures": [
+        "main_phase audit cycle 9 edge 10: T_MEM4"
+      ]
+    },
+    {
+      "name": "fifo_id",
+      "expected": "T_ASSOCIATION_FIFO_DATA",
+      "detected": true,
+      "failures": [
+        "main_phase audit cycle 10 edge 11: T_ASSOCIATION_FIFO_DATA"
+      ]
+    },
+    {
+      "name": "clock_time",
+      "expected": "MAIN_CLOCK_TIME",
+      "detected": true,
+      "failures": [
+        "main_phase audit cycle 3 edge 4: MAIN_CLOCK_TIME"
+      ]
+    },
+    {
+      "name": "context",
+      "expected": "MAIN_CONTEXT_CHANGED",
+      "detected": true,
+      "failures": [
+        "main_phase audit cycle 5 edge 6: MAIN_CONTEXT_CHANGED"
+      ]
+    }
+  ],
+  "formal_proof": "Not performed; execution evidence for the current versioned project contracts."
+}

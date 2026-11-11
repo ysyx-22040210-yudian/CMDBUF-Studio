@@ -16,8 +16,8 @@ ROOT=eda.ROOT
 def selected_files():
     paths=set(eda.sources())
     paths.update(ROOT/p for p in ('CMDBUF Studio.cmd','CMDBUF Studio.sh','eda.example.json','AGENTS.md'))
-    paths.update((ROOT/'documents').glob('3[23456]_*.pdf'))
-    paths.update((ROOT/'documents').glob('3[23456]_*.docx'))
+    paths.update((ROOT/'documents').glob('3[23456789]_*.pdf'))
+    paths.update((ROOT/'documents').glob('3[23456789]_*.docx'))
     for p in list(paths):
         rel=p.relative_to(ROOT)
         if 'plans' in rel.parts or p.name.endswith('.local.json') or '__pycache__' in rel.parts:
@@ -49,9 +49,19 @@ Settings are saved to ignored eda.local.json; DISPLAY inherits the current deskt
 Compile / simulate / open waves and coverage all use Make:
     make compile
     make regress SEEDS=1,2,42 JOBS=2 WAVES=1
+    make regress CHECK_MODE=transaction ASSERT_FATAL=0 SEEDS=1,2,42
+    make run CHECK_MODE=strict ASSERT_FATAL=1 CASE=tc_directed
+    make check-test JOBS=2
     make wave REGRESSION=latest CASE=tc_random SEED=42
     make coverage REGRESSION=latest
     make wave-file FSDB=/absolute/path/to/input.fsdb
+
+VCS compilation includes -lca -licqueue +vcs+lic+wait. Simulation uses
++vcs+lic+wait; coverage merging uses +urg+lic+wait. License waiting has no
+deadline. TIMEOUT=120 counts execution only after VCS starts simulation;
+TIMEOUT=0 disables that execution deadline too. The GUI shows startup/wait
+and running states. Older archived binaries without the startup hook replay
+without a process deadline, preserving their original code. See documents/39_*.
 
 The GUI includes DUT import and instantiation, a main_phase-only SV editor,
 per-case seed sweeps, a native waveform canvas, local Verdi coverage, and direct
@@ -62,7 +72,13 @@ Generated Formal packages require the site's formal engine; generation is not a 
 Windows: make.cmd gui opens the same native editor and existing VCD viewer.
 EDA commands intentionally require Linux; there is no remote-execution fallback.
 
-Current Chinese Word/PDF manual: documents/36_*. TC guide: documents/32_*.
+Checking scopes and fatal policy: documents/37_*. Current desktop manual: documents/36_*.
+New runs use transaction mode; exact scheduling/pending timing is NOT_CHECKED.
+Old saved plans keep strict mode. ASSERT_FATAL=0 continues but errors still FAIL.
+Startup timing: documents/38_*. SV clock starts high at t=0; rst_n is low until
+1 ns and remains high afterwards. Each TC keeps rst_n=1. Default first rising
+edge is 10 ns; cycle=0 drives at 12 ns for sampling at 20 ns.
+TC guide: documents/32_* (its older multi-cycle reset examples are superseded).
 FSDB semantics: documents/34_*. Guides 33/35 describe the previous web/SSH UI.
 Verify the archive: python3 simulation/vcs/portable.py --verify
 No EDA binaries, licenses, credentials, machine settings, or prior results are shipped.

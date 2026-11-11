@@ -1,0 +1,12 @@
+{
+  "phase": "tool",
+  "task": "tc_retry_seed_1",
+  "state": "FINISHED",
+  "timeout_scope": "process",
+  "execution_timeout_seconds": 120,
+  "license_wait_limit_seconds": null,
+  "startup_wait_seconds": null,
+  "execution_seconds": 0.102,
+  "seconds": 0.102,
+  "returncode": 0
+}

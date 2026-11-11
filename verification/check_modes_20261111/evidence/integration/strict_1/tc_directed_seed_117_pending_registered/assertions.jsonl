@@ -1,0 +1,1 @@
+{"label":"A_PENDING_RECURRENCE","edge":5,"time_ps":45000,"detail":"path=tb_cmdbuf_rd.checks.A_PENDING_RECURRENCE sampled_pending=0 last_pending=0 ar_fire=1 issue_fire=0 ready=7 req=00 rvalid=0 rid=00 expected_ready=7 expected_req=00 expected_rvalid=0"}

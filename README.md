@@ -38,8 +38,8 @@ Windows 的 `CMDBUF Studio.cmd` 或 `.\make.cmd gui` 可打开同一原生窗口
 |---|---|
 | DUT 集成 | 导入 RTL 文件或目录，维护编译顺序、include、宏定义与 `dut` 例化代码 |
 | 用例编辑 | 从模板新建用例；窗口仅显示 `main_phase`，保存时保留构造函数和外层 class |
-| 回归计划 | 每用例的启用、运行次数、起始 seed、周期；全局并行数、超时、波形开关 |
-| 结果与波形 | 逐例结果、驱动审计、日志和覆盖率；原生波形画布、Verdi 波形与覆盖率 |
+| 回归计划 | 每用例的启用、运行次数、起始 seed、周期；检查模式、断言 fatal 开关、并行数、超时、波形开关 |
+| 结果与波形 | 分别显示接口、事务、完整时序结论；失败原拍号、完整快照、日志、波形与覆盖率 |
 | FSDB 转 Formal | 原生文件对话框导入 FSDB，或加入回归 FSDB；层级检查、端口映射、pattern 编号和验证包导出 |
 | 本机工具 | 自动检测本机环境并显示结果，默认无路径输入；特殊站点覆盖收纳在高级选项 |
 
@@ -56,6 +56,9 @@ make env-info
 make compile
 make run CASE=tc_directed SEED=17 WAVES=1
 make regress SEEDS=1,2,42 CYCLES=2000 JOBS=2 WAVES=1
+make regress CHECK_MODE=transaction ASSERT_FATAL=0 SEEDS=1,2,42
+make run CASE=tc_directed CHECK_MODE=strict ASSERT_FATAL=1
+make check-test JOBS=2
 make wave REGRESSION=latest CASE=tc_random SEED=42
 make coverage REGRESSION=latest
 make wave-file FSDB=/absolute/path/to/input.fsdb
@@ -65,8 +68,19 @@ make dist
 
 `WAVES=0` 保留日志和代码覆盖率，该轮不生成 FSDB / VCD。GUI 运行中可查看实时 Make 日志，任务结束后保留日志与结果。
 
+所有 VCS 编译自动加入 `-lca -licqueue +vcs+lic+wait`；仿真自动加入 `+vcs+lic+wait`，URG 合并自动加入 `+urg+lic+wait`。等待 License 不设超时上限，编译和合并进程也不再使用外层固定超时。`TIMEOUT=120` 只从 VCS 的仿真启动回调之后计算执行时间；`TIMEOUT=0` 表示执行也不限时。GUI 显示等待/启动及执行状态，结果中的 `sim.process.json` 分别记录启动等待和执行耗时。旧归档二进制没有启动回调时，重放保留原二进制并关闭整个进程的超时，以免中断许可证等待。
+
+当前 SV 用例从 t=0 启动时钟，`clk` 初始为 1。`rst_n` 在 t=0 为 0，在 `#1`（1 ns）释放后一直为 1。默认 5 ns 下降、10 ns 上升；`main_phase` 的 `cycle=0` 在 12 ns 驱动，供 20 ns 采样。TC 保持 `rst_n=1`，再次请求拉低会报错。`clock_reset.csv` 记录实际时钟和复位跳变；旧归档重放沿用其原二进制和原时序。说明 38 覆盖旧说明中的多周期复位及用例中再次复位示例。
+
+新计划和无计划的命令行运行默认采用通用事务模式。它保存完整沿前四态快照，按实际握手检查事务、数据和单源顺序；同地址发射保留所有相容的事务对应关系。MEM 输入仍遵守 N+4 契约。pending 更新时点、精确 ready/req/R 调度和最早 N+5 返回显示 `NOT_CHECKED`，不把通用模式通过当作完整时序通过。事务未结束或对应关系候选超过上限时，结果为 `INCOMPLETE`。
+
+`CHECK_MODE=strict` 执行 20261021 全部原生 SVA，保留组合 pending 和精确调度要求。旧保存计划没有新字段时继续使用 strict；Make 显式参数优先于计划。`ASSERT_FATAL=0` 使用 `$error` 继续记录断言失败，最终仍判 `FAIL`，失败用例不合并进通过覆盖率。TC 非法赋值、驱动时点、文件和工具错误仍立即终止。`make replay` 保留原运行的模式与 fatal 选择。运行记录增加 `check_frames.csv`、`assertions.jsonl`、`check_runtime.json` 和 `check_scope.json`。
+
 ## 下载与说明
 
+- [License 等待与执行超时 PDF](documents/39_cmdbuf_license_wait_20261111.pdf) / [Word](documents/39_cmdbuf_license_wait_20261111.docx)
+- [时钟与复位启动时序 PDF](documents/38_cmdbuf_startup_20261111.pdf) / [Word](documents/38_cmdbuf_startup_20261111.docx)
+- [检查模式与 fatal 操作说明 PDF](documents/37_cmdbuf_check_modes_20261111.pdf) / [Word](documents/37_cmdbuf_check_modes_20261111.docx)
 - [便携 ZIP](packages/cmdbuf-studio-portable.zip) / [Linux tar.gz](packages/cmdbuf-studio-portable.tar.gz) / [SHA256](packages/SHA256SUMS.json)
 - **当前 Tk 本机版操作手册**：[PDF](documents/36_cmdbuf_native_tk_20261111.pdf) / [Word](documents/36_cmdbuf_native_tk_20261111.docx)
 - main_phase 详细写法：[PDF](documents/32_cmdbuf_rd_main_phase_tc_20261111.pdf) / [Word](documents/32_cmdbuf_rd_main_phase_tc_20261111.docx)
@@ -75,6 +89,8 @@ make dist
 说明 33 和 35 保留为历史版本，其浏览器界面、SSH 操作流程已由 36 替代。便携包可运行 `python3 simulation/vcs/portable.py --verify` 核对文件，修改工程后通过 `make dist` 重新打包。机器配置、许可证、EDA 二进制、编译缓存和既有结果均不分发。
 
 ## 验证记录
+
+[License 等待验收](verification/license_wait_20261111/release.json)包含真实 VCS / URG 命令参数、启动后计时、零执行超时、新旧归档重放、并行等待取消，以及中文带空格目录中的便携包和 Tk 回归操作。延迟启动测试验证等待超过执行期限仍能通过；没有人为耗尽或修改许可证服务器。
 
 [原生 Tk 本机版验收](verification/tk_studio_20261111/acceptance.json)记录了 Linux 上未配置环境脚本路径、未设置 VCS_HOME/VERDI_HOME 时的自动检测，以及真实窗口和本机 Make 流程：导入 DUT、只修改 main_phase、6 次带波形回归、逐例 seed 计数、内置波形、Verdi 波形和覆盖率、导入 FSDB、NPI 层级检查、双 pattern 导出，以及关闭波形后的单次回归。
 

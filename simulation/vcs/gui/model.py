@@ -10,6 +10,7 @@ sys.path.insert(0, str(HERE.parent))
 import eda
 import dut_config
 import regression_plan
+import check_policy
 
 ROOT = eda.ROOT
 STATE = ROOT / 'build/vcs/studio'
@@ -90,14 +91,16 @@ def save_case(payload):
 
 def default_plan():
     return dict(version=1, name='CMDBUF 功能回归', jobs=2, timeout=120, waves=True,
+                check_mode='transaction', assert_fatal=True,
                 cases=[dict(case=c['name'], enabled=c['name'] != 'tc_user_example', runs=10 if c['name']=='tc_random' else 1,
                             seed=1, cycles=2000 if c['name']=='tc_random' else c['cycles']) for c in cases()])
 
 
 def check_plan(plan):
     regression_plan.expand(plan)
+    plan.update(check_policy.plan_options(plan))
     plan['jobs'] = regression_plan.number(plan.get('jobs'), '并行数', 1, 32)
-    plan['timeout'] = regression_plan.number(plan.get('timeout'), '超时秒数', 1, 36000)
+    plan['timeout'] = regression_plan.number(plan.get('timeout'), '仿真执行超时秒数（0 不限时）', 0, 36000)
     if not isinstance(plan.get('waves'), bool):
         raise ValueError('波形开关必须为布尔值')
     for row in plan['cases']:

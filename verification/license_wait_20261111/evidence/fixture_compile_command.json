@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "vcs",
+    "-full64",
+    "-lca",
+    "-licqueue",
+    "+vcs+lic+wait",
+    "-load",
+    "/root/cmdbuf_checks_20261111/build/vcs/check_tests/20261111_222100_5b58c9/fixture/execution_start.so:cmdbuf_studio_register",
+    "-sverilog",
+    "-top",
+    "monitor_fixture",
+    "/root/cmdbuf_checks_20261111/simulation/vcs/tb/cmdbuf_check_monitor.sv",
+    "/root/cmdbuf_checks_20261111/simulation/vcs/tests/checks/monitor_fixture.sv",
+    "-o",
+    "/root/cmdbuf_checks_20261111/build/vcs/check_tests/20261111_222100_5b58c9/fixture/simv"
+  ],
+  "cwd": "/root/cmdbuf_checks_20261111/build/vcs/check_tests/20261111_222100_5b58c9/fixture",
+  "timeout_seconds": null,
+  "timeout_scope": "unlimited",
+  "license_wait_limit_seconds": null
+}

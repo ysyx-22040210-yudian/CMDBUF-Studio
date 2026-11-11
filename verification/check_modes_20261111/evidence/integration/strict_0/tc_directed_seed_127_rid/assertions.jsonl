@@ -1,0 +1,2 @@
+{"label":"A_COMPARE_RID","edge":12,"time_ps":115000,"detail":"path=tb_cmdbuf_rd.checks.A_COMPARE_RID sampled_pending=0 last_pending=0 ar_fire=0 issue_fire=0 ready=7 req=00 rvalid=1 rid=2b expected_ready=7 expected_req=00 expected_rvalid=1"}
+{"label":"A_XAU_R_ID_ORDER","edge":12,"time_ps":115000,"detail":"path=tb_cmdbuf_rd.checks.sources[0].A_XAU_R_ID_ORDER sampled_pending=0 last_pending=0 ar_fire=0 issue_fire=0 ready=7 req=00 rvalid=1 rid=2b expected_ready=7 expected_req=00 expected_rvalid=1"}

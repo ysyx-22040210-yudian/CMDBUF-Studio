@@ -1,0 +1,12 @@
+{
+  "phase": "compile",
+  "task": "6cc07942f23a73d1",
+  "state": "FINISHED",
+  "timeout_scope": "unlimited",
+  "execution_timeout_seconds": null,
+  "license_wait_limit_seconds": null,
+  "startup_wait_seconds": null,
+  "execution_seconds": 2.559,
+  "seconds": 2.559,
+  "returncode": 0
+}

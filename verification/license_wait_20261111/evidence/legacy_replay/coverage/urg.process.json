@@ -1,0 +1,12 @@
+{
+  "phase": "coverage",
+  "task": "20261111_222133_replay_d0cbaf",
+  "state": "FINISHED",
+  "timeout_scope": "unlimited",
+  "execution_timeout_seconds": null,
+  "license_wait_limit_seconds": null,
+  "startup_wait_seconds": null,
+  "execution_seconds": 0.402,
+  "seconds": 0.402,
+  "returncode": 0
+}

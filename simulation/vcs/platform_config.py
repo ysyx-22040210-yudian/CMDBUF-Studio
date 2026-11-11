@@ -236,6 +236,11 @@ def doctor(env, output):
             return path
         check(name,find)
     check('FSDB PLI',lambda: pli_directory(env))
+    def vpi_header():
+        header=Path(env.get('VCS_HOME',''))/'include'/'vpi_user.h'
+        if not header.is_file():raise RuntimeError('缺少 VCS include/vpi_user.h，无法编译仿真启动回调')
+        return header
+    check('VCS VPI header',vpi_header)
     check('NPI',lambda: ' / '.join(str(x) for x in npi_directories(env)))
     def writable():
         output.mkdir(parents=True,exist_ok=True)

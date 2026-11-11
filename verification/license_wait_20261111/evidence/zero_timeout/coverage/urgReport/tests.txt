@@ -1,0 +1,12 @@
+Tests
+
+Total Coverage Summary 
+SCORE  LINE   COND   TOGGLE FSM    BRANCH 
+ 63.32  87.97  79.31  15.26 --      70.73 
+
+
+Total tests in report: 1
+-------------------------------------------------------------------------------
+Data from the following tests was used to generate this report
+/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222130_run_9a6cb8/cases/tc_directed_seed_17/simv/tc_directed_seed_17 
+

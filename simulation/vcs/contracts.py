@@ -46,6 +46,8 @@ def audit(root=None, catalog=None):
             failures.append('incomplete adapter entry: ' + r['id'])
     if failures:
         raise ValueError('CONTRACT_UNSUPPORTED: ' + '; '.join(failures))
+    from check_policy import catalog as check_profiles
     return {'status': 'PASS', 'version': 1, 'assumption_families': 4,
+            'simulation_profiles': check_profiles(),
             'assumption_instances': 11, 'rules': rules, 'sources': catalog['sources'],
             'scope': 'Current frozen input contracts and listed environment policies; no universal SVA-to-driver synthesis or exhaustive RTL proof.'}

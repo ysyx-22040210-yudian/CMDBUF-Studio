@@ -1,0 +1,17 @@
+Chronologic VCS simulator copyright 1991-2018
+Contains Synopsys proprietary information.
+Compiler version O-2018.09-1_Full64; Runtime version O-2018.09-1_Full64;  Nov 11 21:20 2026
+CHECK_POLICY mode=transaction assert_fatal=0 sampling=pre_edge snapshot_pipeline=1
+"/root/cmdbuf_checks_20261111/simulation/vcs/tb/cmdbuf_check_monitor.sv", 124: monitor_fixture.monitor.require_check.unnamed$$_0: started at 80000ps failed at 80000ps
+	Offending '(good === 1'b1)'
+SVA_FAIL T_R_ID_ORDER edge=8 time_ps=75000 actual=99 expected=11 token=0
+Error: "/root/cmdbuf_checks_20261111/simulation/vcs/tb/cmdbuf_check_monitor.sv", 112: monitor_fixture.monitor: at time 80000 ps
+CHECK_CONTINUE T_R_ID_ORDER edge=8
+CHECK_COMPLETE mode=transaction failures=1 incomplete=0 frames=8 checked=8
+FIXTURE_DONE scenario=last_bad failures=1
+$finish called from file "/root/cmdbuf_checks_20261111/simulation/vcs/tests/checks/monitor_fixture.sv", line 68.
+$finish at simulation time                80000
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 80000 ps
+CPU Time:      0.160 seconds;       Data structure size:   0.0Mb
+Wed Nov 11 21:20:11 2026

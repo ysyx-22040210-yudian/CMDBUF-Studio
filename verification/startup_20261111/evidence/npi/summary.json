@@ -1,0 +1,47 @@
+{
+  "status": "GENERATED",
+  "id": "startup_20261111_215831",
+  "counts": {
+    "patterns": 1,
+    "segments": 1,
+    "cycles": 17,
+    "input_assumptions": 17,
+    "output_assertions": 17,
+    "terminal_covers": 1,
+    "transactions": 3
+  },
+  "formal_status": "NOT_RUN",
+  "dut_name": "项目基准 CMDBUF",
+  "sampling": "posedge 前一个 FSDB 时间刻度",
+  "patterns": [
+    {
+      "pattern": 7,
+      "name": "first_cycle_after_1ns_reset",
+      "fsdb_sha256": "e94aa35665665393878be413cbb68c985d3d3603dcb83126a7b44401794466b5",
+      "cycles": 17,
+      "segments": [
+        {
+          "reset_asserted_at": 0,
+          "reset_released_at": 1000,
+          "segment": 0,
+          "cycles": 17
+        }
+      ]
+    }
+  ],
+  "files": [
+    "trace_properties.sv",
+    "formal_top.sv",
+    "files.f",
+    "samples.csv",
+    "transactions.json",
+    "trace.json",
+    "integration.json",
+    "Makefile",
+    "run_bmc.sby",
+    "run_cover.sby",
+    "slang.f",
+    "sby_properties.sv",
+    "sby_adaptation.json"
+  ]
+}

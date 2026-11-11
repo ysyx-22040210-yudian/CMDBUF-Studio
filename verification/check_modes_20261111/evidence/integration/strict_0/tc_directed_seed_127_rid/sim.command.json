@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/root/cmdbuf_checks_20261111/build/vcs/builds/413c25bcc2593afb/simv",
+    "+ntb_random_seed=127",
+    "+SEED=127",
+    "+CHECK_MODE=strict",
+    "+ASSERT_FATAL=0",
+    "+PROGRAM=/root/cmdbuf_checks_20261111/build/vcs/check_tests/20261111_212007_671c8b/integration/strict_0/cases/tc_directed_seed_127_rid/stimulus.txt",
+    "-cm",
+    "line+cond+branch+tgl+fsm",
+    "-cm_dir",
+    "/root/cmdbuf_checks_20261111/build/vcs/check_tests/20261111_212007_671c8b/integration/strict_0/cases/tc_directed_seed_127_rid/simv.vdb",
+    "-cm_name",
+    "tc_directed_seed_127_rid",
+    "+INJECT=rid",
+    "+SV_TC"
+  ],
+  "cwd": "/root/cmdbuf_checks_20261111/build/vcs/check_tests/20261111_212007_671c8b/integration/strict_0/cases/tc_directed_seed_127_rid"
+}

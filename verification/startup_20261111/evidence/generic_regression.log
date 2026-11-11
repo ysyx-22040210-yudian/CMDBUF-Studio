@@ -1,0 +1,24 @@
+python3 "/root/cmdbuf_checks_20261111/simulation/vcs/eda.py" --local regress --seeds "1,42,101" --cycles "500" \
+   \
+    \
+  --jobs "2" --timeout "120" --waves "1"  --check-mode "transaction" --assert-fatal "0"
+BATCH 20261111_215821_regress_44fa0f TOTAL 9
+PASS tc_retry_seed_1 (0.52s)
+PASS tc_directed_seed_1 (0.52s)
+PROGRESS 20261111_215821_regress_44fa0f 1/9
+PROGRESS 20261111_215821_regress_44fa0f 2/9
+PASS tc_backpressure_seed_1 (0.47s)
+PROGRESS 20261111_215821_regress_44fa0f 3/9
+PASS tc_same_id_seed_1 (0.47s)
+PROGRESS 20261111_215821_regress_44fa0f 4/9
+PASS tc_banks_seed_1 (0.47s)
+PASS tc_reset_seed_1 (0.47s)
+PROGRESS 20261111_215821_regress_44fa0f 5/9
+PROGRESS 20261111_215821_regress_44fa0f 6/9
+PASS tc_random_seed_1 (0.57s)
+PROGRESS 20261111_215821_regress_44fa0f 7/9
+PASS tc_random_seed_42 (0.62s)
+PROGRESS 20261111_215821_regress_44fa0f 8/9
+PASS tc_random_seed_101 (0.58s)
+PROGRESS 20261111_215821_regress_44fa0f 9/9
+REPORT /root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_215821_regress_44fa0f/index.html

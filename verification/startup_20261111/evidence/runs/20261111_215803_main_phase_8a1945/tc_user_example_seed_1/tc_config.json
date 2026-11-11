@@ -1,0 +1,1 @@
+{"name":"tc_user_example","seed":1,"num_cycles":64,"bootstrap_edges":1,"startup":{"clock_initial":1,"reset_release_ps":1000,"first_posedge_ps":10000}}

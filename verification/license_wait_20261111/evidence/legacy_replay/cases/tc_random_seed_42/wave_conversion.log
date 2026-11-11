@@ -1,0 +1,10 @@
+fsdb2vcd - fsdb to vcd converter, Release Verdi_O-2018.09-SP2 (RH Linux x86_64/64bit) -- Thu Feb 21 04:10:21 PDT 2019
+
+Copyright (c) 1996 - 2019 Synopsys, Inc.
+This software and the associated documentation are proprietary to Synopsys, Inc. 
+This software may only be used in accordance with the terms and conditions of a written license agreement with Synopsys, Inc. 
+All other use, reproduction, or distribution of this software is strictly prohibited.
+
+
+fsdb2vcd: /root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222133_replay_d0cbaf/cases/tc_random_seed_42/waves.fsdb is converted to /root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222133_replay_d0cbaf/cases/tc_random_seed_42/waves.vcd successfully.
+logDir = /root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222133_replay_d0cbaf/cases/tc_random_seed_42/fsdb2vcdLog

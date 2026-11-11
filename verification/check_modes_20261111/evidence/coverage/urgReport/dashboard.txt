@@ -1,0 +1,28 @@
+Dashboard
+
+Date: Wed Nov 11 21:20:20 2026
+
+User: root
+
+Version: O-2018.09-1
+Command line: urg -full64 -dir /root/cmdbuf_checks_20261111/build/vcs/check_tests/20261111_212007_671c8b/integration/transaction_1/cases/tc_directed_seed_17/simv.vdb /root/cmdbuf_checks_20261111/build/vcs/check_tests/20261111_212007_671c8b/integration/transaction_0/cases/tc_directed_seed_27/simv.vdb /root/cmdbuf_checks_20261111/build/vcs/check_tests/20261111_212007_671c8b/integration/strict_1/cases/tc_directed_seed_117/simv.vdb /root/cmdbuf_checks_20261111/build/vcs/check_tests/20261111_212007_671c8b/integration/strict_0/cases/tc_directed_seed_127/simv.vdb -dbname /root/cmdbuf_checks_20261111/build/vcs/check_tests/20261111_212007_671c8b/integration/coverage/merged.vdb -report /root/cmdbuf_checks_20261111/build/vcs/check_tests/20261111_212007_671c8b/integration/coverage/urgReport -metric line+cond+branch+tgl+fsm -format both 
+
+Number of tests: 4
+
+-------------------------------------------------------------------------------
+Total Coverage Summary 
+SCORE  LINE   COND   TOGGLE FSM    BRANCH 
+ 63.32  87.97  79.31  15.26 --      70.73 
+
+
+-------------------------------------------------------------------------------
+Hierarchical coverage data for top-level instances 
+SCORE  LINE   COND   TOGGLE FSM    BRANCH NAME         
+ 63.32  87.97  79.31  15.26 --      70.73 tb_cmdbuf_rd 
+
+
+-------------------------------------------------------------------------------
+Total Module Definition Coverage Summary 
+SCORE  LINE   COND   TOGGLE FSM    BRANCH 
+ 63.32  87.97  79.31  15.26 --      70.73 
+

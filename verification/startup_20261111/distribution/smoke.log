@@ -1,0 +1,10 @@
+python3 "/root/CMDBUF startup 发布 20261111/cmdbuf-studio/simulation/vcs/eda.py" --local regress --cases tc_directed --seeds 17,42 --cycles 64 --jobs "2" --timeout "120" --waves "1" --check-mode "transaction" --assert-fatal "0"
+BUILD /tmp/cmdbuf-studio-0/results-244003360a65ec44b766/builds/d6a84059bee75b84
+BATCH 20261111_215842_regress_6fb0fd TOTAL 3
+PASS tc_directed_seed_1 (0.57s)
+PROGRESS 20261111_215842_regress_6fb0fd 1/3
+PASS tc_random_seed_17 (0.62s)
+PROGRESS 20261111_215842_regress_6fb0fd 2/3
+PASS tc_random_seed_42 (0.47s)
+PROGRESS 20261111_215842_regress_6fb0fd 3/3
+REPORT /tmp/cmdbuf-studio-0/results-244003360a65ec44b766/regressions/20261111_215842_regress_6fb0fd/index.html

@@ -4,7 +4,8 @@
 class cmdbuf_main_tc;
     int unsigned num_cycles=64, cycle=0, edge_count=0, phase=0;
     int unsigned clk_low_ns=5, clk_high_ns=5, clk_pause_ns=0;
-    logic rst_n=0;
+    // Environment releases reset at 1 ns; procedural cycles must keep it high.
+    logic rst_n=1;
     logic [2:0] rready=0;
     logic arvalid=0;
     logic [1:0] src=0, arresp=0;

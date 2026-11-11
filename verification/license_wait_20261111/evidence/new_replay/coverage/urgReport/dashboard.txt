@@ -1,0 +1,28 @@
+Dashboard
+
+Date: Wed Nov 11 22:21:32 2026
+
+User: root
+
+Version: O-2018.09-1
+Command line: urg -full64 +urg+lic+wait -dir /root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222131_replay_9fd24f/cases/tc_random_seed_42/simv.vdb -dbname /root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222131_replay_9fd24f/coverage/merged.vdb -report /root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_222131_replay_9fd24f/coverage/urgReport -metric line+cond+branch+tgl+fsm -format both 
+
+Number of tests: 1
+
+-------------------------------------------------------------------------------
+Total Coverage Summary 
+SCORE  LINE   COND   TOGGLE FSM    BRANCH 
+ 84.13  89.47  86.21  85.25 --      75.61 
+
+
+-------------------------------------------------------------------------------
+Hierarchical coverage data for top-level instances 
+SCORE  LINE   COND   TOGGLE FSM    BRANCH NAME         
+ 84.13  89.47  86.21  85.25 --      75.61 tb_cmdbuf_rd 
+
+
+-------------------------------------------------------------------------------
+Total Module Definition Coverage Summary 
+SCORE  LINE   COND   TOGGLE FSM    BRANCH 
+ 84.13  89.47  86.21  85.25 --      75.61 
+

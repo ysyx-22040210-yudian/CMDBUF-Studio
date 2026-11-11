@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "/root/cmdbuf_checks_20261111/build/vcs/check_tests/20261111_212007_671c8b/fixture/simv",
+    "+SCENARIO=reset_masks_error",
+    "+CHECK_MODE=transaction",
+    "+ASSERT_FATAL=0"
+  ],
+  "cwd": "/root/cmdbuf_checks_20261111/build/vcs/check_tests/20261111_212007_671c8b/fixture/reset_masks_error_0"
+}

@@ -1,0 +1,16 @@
+Design Hierarchy
+
+
+----------------
+SCORE  LINE   COND   TOGGLE FSM    BRANCH              
+ 63.32  87.97  79.31  15.26 --      70.73 tb_cmdbuf_rd 
+  
+  ----------------
+  SCORE  LINE   COND   TOGGLE FSM    BRANCH     
+   63.32  87.97  79.31  15.26 --      70.73 dut 
+    
+    ----------------
+    SCORE  LINE   COND   TOGGLE FSM    BRANCH       
+     60.45  88.37  77.27   6.16 --      70.00 u_cmd 
+     62.52  86.27  80.00  13.79 --      70.00 u_otb 
+

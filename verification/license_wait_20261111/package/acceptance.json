@@ -1,0 +1,124 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "name": "unicode and space project path",
+      "passed": true,
+      "detail": "/root/CMDBUF license 发布 20261111/cmdbuf-studio"
+    },
+    {
+      "name": "new monitor profile and manuals included",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no device configuration or cached results",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "make doctor",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "make smoke",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fresh package three cases pass",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "generic scope never claims full timing",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fresh package startup policy",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "portable build uses lca and license queue",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "portable callback starts execution timing",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "make strict",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fresh package strict passes",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "make replay",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "replay preserves archived scope and fatal",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "replay exact clock/reset trace",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "replay exact events",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "replay exact complete snapshots",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "make gui creates native window",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GUI accepts execution timeout zero",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GUI regression completes through Make",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GUI actually observes startup wait state",
+      "passed": true,
+      "detail": [
+        "RUNNING",
+        "WAITING_FOR_START"
+      ]
+    },
+    {
+      "name": "GUI sends TIMEOUT=0 to Make",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GUI regression execution deadline disabled",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "manifest_sha256": "48f43fc406a7ddcdf0fbe7d93e5f26275a4e5ad07d20f3c24433e21ac4bb67d1"
+}

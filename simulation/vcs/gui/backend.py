@@ -1,5 +1,6 @@
 """Local, asynchronous Make jobs shared by the native Tk views. No network service."""
 import copy
+import json
 import os
 from pathlib import Path
 import re
@@ -131,6 +132,9 @@ class Jobs:
                                    stderr=subprocess.STDOUT, universal_newlines=True, encoding='utf-8', errors='replace')
         for line in process.stdout:
             self.log(job, line)
+            if line.startswith('EDA_PROCESS '):
+                try:self.process_status(job,json.loads(line[len('EDA_PROCESS '):]))
+                except (ValueError,KeyError,TypeError):pass
             batch = re.search(r'BATCH (\S+) TOTAL (\d+)', line)
             progress = re.search(r'PROGRESS .*? (\d+)/(\d+)', line)
             npi = re.search(r'NPI_PROGRESS (\d+)/(\d+)', line)
@@ -145,6 +149,24 @@ class Jobs:
         if rc and check:
             raise RuntimeError('make '+arguments[0]+' 失败（退出码 '+str(rc)+'），详见任务日志')
         return rc
+
+    def process_status(self,job,event):
+        with self.lock:
+            active=job.setdefault('processes',{})
+            key=event['key']
+            if event['state'] in ('FINISHED','TIMEOUT','INTERRUPTED','LAUNCH_ERROR'):
+                active.pop(key,None)
+            else:active[key]=event
+            rows=list(active.values())
+            if any(r['phase']=='compile' for r in rows):stage='VCS 编译 / 等待 License（不限时）'
+            elif any(r['phase']=='coverage' for r in rows):stage='合并覆盖率 / 等待 License（不限时）'
+            elif any(r['phase']=='legacy_simulation' for r in rows):stage='旧归档重放 / 等待 License（全程不限时）'
+            else:
+                waiting=sum(r['state']=='WAITING_FOR_START' for r in rows)
+                running=sum(r['phase']=='simulation' and r['state']=='RUNNING' for r in rows)
+                stage=('仿真运行 %d · 等待 License / 启动 %d（等待不限时）'%(running,waiting)
+                       if waiting or running else '整理结果 / 后续处理')
+            job['stage']=stage
 
     def start(self, kind, payload=None):
         payload = copy.deepcopy(payload or {})
@@ -194,11 +216,13 @@ class Jobs:
                 path = STATE/'plans'/(job['id']+'.json'); eda.write_json(path, plan)
                 progress('运行回归 / 合并覆盖率')
                 rc = self.invoke(job, ['regress', 'PLAN='+str(path), 'JOBS='+str(plan['jobs']),
-                                      'TIMEOUT='+str(plan['timeout']), 'WAVES='+str(int(plan['waves']))], check=False)
+                                      'TIMEOUT='+str(plan['timeout']), 'WAVES='+str(int(plan['waves'])),
+                                      'CHECK_MODE='+plan['check_mode'],
+                                      'ASSERT_FATAL='+str(int(plan['assert_fatal']))], check=False)
                 if job.get('batch'):
                     self.update(job, verdict=eda.read_json(batch_path(job['batch'])/'summary.json')['status'])
                 if rc:
-                    raise RuntimeError('回归包含失败用例或工具错误，请检查结果和任务日志')
+                    raise RuntimeError('回归包含失败、未完成验证的用例或工具错误，请查看检查范围和日志')
             elif kind in ('wave', 'coverage'):
                 progress('打开本机 Verdi')
                 arguments = [kind, 'REGRESSION='+payload['batch']]

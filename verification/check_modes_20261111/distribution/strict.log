@@ -1,0 +1,5 @@
+python3 "/root/CMDBUF release 检查 20261111/cmdbuf-studio/simulation/vcs/eda.py" --local run --case "tc_directed" --seed "1"  --timeout "120" --waves "0" --check-mode "strict" --assert-fatal "1"
+BATCH 20261111_212443_run_3435f9 TOTAL 1
+PASS tc_directed_seed_1 (0.36s)
+PROGRESS 20261111_212443_run_3435f9 1/1
+REPORT /tmp/cmdbuf-studio-0/results-712b9ff960e38663ebb9/regressions/20261111_212443_run_3435f9/index.html

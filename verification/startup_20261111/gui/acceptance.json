@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "run": "main_first_cycle_seed_17",
+  "batch": "20261111_214919_main_phase_f033b8",
+  "waveform": "/root/cmdbuf_checks_20261111/build/vcs/regressions/20261111_214919_main_phase_f033b8/cases/main_first_cycle_seed_17/waves.fsdb",
+  "displayed_signals": [
+    "clk",
+    "rst_n",
+    "arvalid",
+    "arready",
+    "req",
+    "rvalid"
+  ],
+  "time_range_ps": [
+    0,
+    40000
+  ],
+  "cursor_a_ps": 1000,
+  "cursor_b_ps": 20000
+}
