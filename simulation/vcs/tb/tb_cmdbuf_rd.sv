@@ -16,7 +16,7 @@ module tb_cmdbuf_rd;
     reg arvalid = 0;
     wire [2:0] arready;
     reg [17:0] araddr = 0;
-    reg [1:0] src = 0;
+    reg [1:0] src = 2'd3;
     reg [7:0] arid = 0;
     reg [4:0] ar_port_id = 0;
     reg [1:0] arresp = 0;
@@ -38,17 +38,21 @@ module tb_cmdbuf_rd;
 
     string inject = "";
     wire [7:0] checked_rid = (inject == "rid" && |rvalid) ? (rid ^ 8'h01) : rid;
-    reg [3:0] registered_pending;
+    // Fault injection for early (lookahead) and late (extra register) counts.
+    reg [3:0] delayed_pending;
     always @(posedge clk or negedge rst_n)
-        if (!rst_n) registered_pending <= 0;
-        else registered_pending <= pending_cnt;
-    // Self-test interface mutation: a registered status port with unchanged
-    // transactions must pass generic scope and fail the combinational baseline.
-    wire [3:0] checked_pending = inject == "pending_registered" ? registered_pending : pending_cnt;
-    cmdbuf_check_monitor monitor (.rid(checked_rid), .pending_cnt(checked_pending), .*);
+        if (!rst_n) delayed_pending <= 0;
+        else delayed_pending <= pending_cnt;
+    wire pending_ar_fire = arvalid && ((src < 3) ? arready[src] : 1'b0);
+    wire pending_issue_fire = |(req & ar_rd_gnt & rw_rd_gnt);
+    wire [3:0] lookahead_pending = pending_cnt + {3'b0, pending_ar_fire} - {3'b0, pending_issue_fire};
+    wire [3:0] checked_pending = inject == "pending_lookahead" ? lookahead_pending :
+                                 inject == "pending_delayed" ? delayed_pending : pending_cnt;
+    wire [2:0] checked_rvalid = (inject == "rvalid_unready" && !rready[0]) ? (rvalid | 3'b001) : rvalid;
+    cmdbuf_check_monitor monitor (.rid(checked_rid), .rvalid(checked_rvalid), .pending_cnt(checked_pending), .*);
     // The canonical Formal properties remain unchanged. The simulation copy
     // selects common/full scope and sends sampled failures to the monitor.
-    cmdbuf_rd_port_sva checks (.rid(checked_rid), .pending_cnt(checked_pending), .*);
+    cmdbuf_rd_port_sva checks (.rid(checked_rid), .rvalid(checked_rvalid), .pending_cnt(checked_pending), .*);
 
     integer cycle = 0, seed = 1, accepted = 0, issued = 0, retired = 0;
     integer captured = 0, issue_failed = 0, ar_rejected = 0, ar_gated = 0;
@@ -62,6 +66,7 @@ module tb_cmdbuf_rd;
     integer drain_limit = 200, global_limit = 10000000;
     reg did_accept;
     string program_path, wave_path;
+    `include "environment_policy.svh"
     `include "wavedrom_driver.svh"
     `include "constrained_random_driver.svh"
     `include "main_phase_driver.svh"
@@ -80,7 +85,7 @@ module tb_cmdbuf_rd;
     endfunction
 
     // Native E03--E06 check sampled input contracts; monitor keeps four-state
-    // snapshots. TC pre-drive validation still rejects unsafe stimulus immediately.
+    // snapshots. ENV_FATAL selects abort or diagnostic continuation for TC errors.
 
     task automatic drain_failure(input string reason);
         if (monitor.strict_mode) monitor.fail_check("A_DRAIN_COMPLETION", monitor.edge_count, $realtime/1ps, reason);
@@ -95,8 +100,8 @@ module tb_cmdbuf_rd;
             @(negedge clk);
             if (strict_random_mode) begin random_started=1; random_phase=0; end
             arvalid = 0;
-            src = sx; araddr = addr; arid = idnum; ar_port_id = pn; arresp = resp;
-            rready = ready; ar_rd_gnt = argrant; rw_rd_gnt = rwgrant;
+            src = 2'd3; araddr = addr; arid = idnum; ar_port_id = pn; arresp = resp;
+            rready = ready; rw_rd_gnt = rwgrant;
             // JSON status bit [b] = even, [8+b] = odd, matching the existing adapter.
             for (b = 0; b < 8; b = b + 1)
                 rd_mem_status[b] = {status[8+b], status[b]};
@@ -109,14 +114,15 @@ module tb_cmdbuf_rd;
                 pc_err = cycle[0];
             end
             #1;
+            ar_rd_gnt = argrant[7:0] & req;
             for (b = 0; b < 8; b = b + 1)
                 if (req[b] && ar_rd_gnt[b] && rw_rd_gnt[b])
                     rd_mem_status[b][arb_addr[0]] = (inject == "busy") ? 0 : 1;
             #1;
-            // Do not force src to a ready lane: selected-source rejection is legal
-            // and must remain testable. Only all-zero ready suppresses valid.
-            arvalid = v && (|arready);
-            if (v && !(|arready)) ar_gated = ar_gated + 1;
+            // A sequence command keeps its source and waits for that lane.
+            arvalid = v && arready[sx];
+            if (arvalid) src = sx;
+            if (v && !arvalid) ar_gated = ar_gated + 1;
             if (inject == "src" && arvalid) src = 3;
             if (strict_random_mode) random_record_directed(memory_pattern(issued,arb_addr),pe);
             observe_sequence(pe,memory_pattern(issued,arb_addr));
@@ -137,7 +143,7 @@ module tb_cmdbuf_rd;
             did_accept = arvalid && src < 3 && arready[src];
             success = |(req & ar_rd_gnt & rw_rd_gnt);
             returning = |(rvalid & rready);
-            if (cycle >= global_limit) $fatal(1, "GLOBAL_WATCHDOG");
+            if (cycle >= global_limit) env_fail("GLOBAL_WATCHDOG","simulation cycle safety bound exceeded",1);
             if (accepted - retired - wave_aborted == 9) begin
                 full = full + 1;
                 if (did_accept && returning) full_reuse = full_reuse + 1;
@@ -161,7 +167,7 @@ module tb_cmdbuf_rd;
                 due_data.delete(cycle); due_parity.delete(cycle);
             end
             if (success) begin
-                if (due_data.exists(cycle+4)) $fatal(1, "ENV_CALENDAR_COLLISION");
+                if (due_data.exists(cycle+4)) env_fail("ENV_CALENDAR_COLLISION","cannot schedule two MEM values at one edge",1);
                 due_data[cycle+4] = issued_payload;
                 due_parity[cycle+4] = pe;
                 for (b = 0; b < 8; b = b + 1)
@@ -190,6 +196,7 @@ module tb_cmdbuf_rd;
     endtask
 
     initial begin
+        env_open();
         wave_mode = $test$plusargs("WAVEDROM");
         protocol_mode = $test$plusargs("PROTOCOL");
         strict_random_mode = $test$plusargs("STRICT_RANDOM");
@@ -198,7 +205,7 @@ module tb_cmdbuf_rd;
         for (n = 0; n < 3; n = n + 1) src_hits[n] = 0;
         for (n = 0; n < 4; n = n + 1) resp_hits[n] = 0;
         for (n = 0; n < 16; n = n + 1) bank_hits[n] = 0;
-        if (!$value$plusargs("PROGRAM=%s", program_path)) $fatal(1, "Missing PROGRAM");
+        if (!$value$plusargs("PROGRAM=%s", program_path)) env_fail("ENV_MISSING_PROGRAM","missing PROGRAM plusarg",1);
         if (!$value$plusargs("SEED=%d", seed)) seed = 1;
         if (strict_random_mode) random_open();
         if ($value$plusargs("INJECT=%s", inject)) $display("SELFTEST injection=%s", inject);
@@ -208,10 +215,10 @@ module tb_cmdbuf_rd;
             $fsdbDumpMDA();
         end
         events = $fopen("events.csv", "w");
-        if (!events) $fatal(1, "Cannot create events.csv");
+        if (!events) env_fail("ENV_ARCHIVE_OPEN","events.csv",1);
         $fdisplay(events, "cycle,event,src,addr_hex,id_hex,port_hex,data_hex,status");
         fd = $fopen(program_path, "r");
-        if (!fd) $fatal(1, "Cannot open PROGRAM");
+        if (!fd) env_fail("ENV_PROGRAM_OPEN",program_path,1);
         if (sv_tc_mode) begin
             run_sv_tc();
         end else if (protocol_mode) begin
@@ -227,16 +234,16 @@ module tb_cmdbuf_rd;
                         ready_mask, status_mask, ag, rg, parity);
             if (n == -1) break;
             if (n != 13 || count < 1 || !(mode == 0 || mode == 1 || mode == 2))
-                $fatal(1, "Malformed stimulus instruction fields=%0d", n);
+                env_fail("ENV_BAD_INSTRUCTION",$sformatf("fields=%0d",n),1);
             for (integer j = 0; j < count; j = j + 1) begin
                 if (mode == 2) begin
-                    if (!strict_random_mode || source != seed) $fatal(1,"RND_PROGRAM_SEED_MISMATCH");
+                    if (!strict_random_mode || source != seed) env_fail("RND_PROGRAM_SEED_MISMATCH","random program mode or seed differs",1);
                     constrained_random_step(2);
                 end else step(offer, source, address, ident, portnum, response,
                      ready_mask, status_mask, ag, rg, parity);
                 if (mode == 1 && did_accept) break;
             end
-            if (mode == 1 && !did_accept) $fatal(1, "SEND_TIMEOUT cycle=%0d", cycle);
+            if (mode == 1 && !did_accept) env_fail("SEND_TIMEOUT",$sformatf("cycle=%0d",cycle));
         end
         $fclose(fd);
         for (n = 0; n < drain_limit &&
@@ -255,7 +262,7 @@ module tb_cmdbuf_rd;
         end
         monitor.finish_checks();
         metrics = $fopen("metrics.json", "w");
-        if (!metrics) $fatal(1, "Cannot create metrics.json");
+        if (!metrics) env_fail("ENV_ARCHIVE_OPEN","metrics.json",1);
         $fdisplay(metrics, "{");
         $fdisplay(metrics, "\"tc_assignments\":%0d,\"tc_body_cycles\":%0d,\"tc_active_edges\":%0d,",sv_frames,sv_body_slots,sv_active);
         $fdisplay(metrics, "\"random_cycles\":%0d,\"random_solves\":%0d,", random_cycles,random_solves);
@@ -270,7 +277,10 @@ module tb_cmdbuf_rd;
         for (n = 0; n < 16; n = n + 1) $fwrite(metrics, "%s%0d", n ? "," : "", bank_hits[n]);
         $fdisplay(metrics, "]}");
         $fclose(metrics); $fclose(events);
-        if (monitor.failures) $display("TEST_FAIL seed=%0d assertions=%0d", seed, monitor.failures);
+        env_finished=1; env_write_summary();
+        $display("ENV_RUN_COMPLETE failures=%0d",env_failures);
+        if (env_failures) $display("TEST_FAIL seed=%0d environment_errors=%0d assertions=%0d",seed,env_failures,monitor.failures);
+        else if (monitor.failures) $display("TEST_FAIL seed=%0d assertions=%0d", seed, monitor.failures);
         else if (monitor.incomplete) $display("TEST_INCOMPLETE seed=%0d reasons=%0d", seed, monitor.incomplete);
         else $display("TEST_PASS seed=%0d accepted=%0d retired=%0d cycles=%0d", seed, accepted, retired, cycle);
         $finish;

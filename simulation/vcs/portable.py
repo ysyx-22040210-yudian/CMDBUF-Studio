@@ -16,7 +16,7 @@ ROOT=eda.ROOT
 def selected_files():
     paths=set(eda.sources())
     paths.update(ROOT/p for p in ('CMDBUF Studio.cmd','CMDBUF Studio.sh','eda.example.json','AGENTS.md'))
-    for number in range(32, 41):
+    for number in range(32, 44):
         for extension in ('pdf', 'docx'):
             paths.update((ROOT/'documents').glob(str(number)+'_*.'+extension))
     for p in list(paths):
@@ -50,7 +50,8 @@ Settings are saved to ignored eda.local.json; DISPLAY inherits the current deskt
 Compile / simulate / open waves and coverage all use Make:
     make compile
     make regress SEEDS=1,2,42 JOBS=2 WAVES=1
-    make regress CHECK_MODE=transaction ASSERT_FATAL=0 SEEDS=1,2,42
+    make regress ENV_FATAL=0 SEEDS=1,2,42 WAVES=1 TIMEOUT=0
+    make regress CHECK_MODE=transaction ENV_FATAL=1 ASSERT_FATAL=0 SEEDS=1,2,42
     make run CHECK_MODE=strict ASSERT_FATAL=1 CASE=tc_directed
     make check-test JOBS=2
     make wave REGRESSION=latest CASE=tc_random SEED=42
@@ -79,8 +80,26 @@ Windows: make.cmd gui opens the same native editor and existing VCD viewer.
 EDA commands intentionally require Linux; there is no remote-execution fallback.
 
 Checking scopes and fatal policy: documents/37_*. Current desktop manual: documents/36_*.
-New runs use transaction mode; exact scheduling/pending timing is NOT_CHECKED.
-Old saved plans keep strict mode. ASSERT_FATAL=0 continues but errors still FAIL.
+New runs use transaction mode. It checks registered pending recurrence.
+Strict mode additionally compares the reference waiting count and scheduling.
+Old saved plans keep strict mode. ENV_FATAL defaults to 1 for new and old plans.
+ENV_FATAL=0 continues after recoverable driver AND assertion failures; errors still
+FAIL. The native regression page has an Environment fatal checkbox. ASSERT_FATAL=0
+only disables assertion aborts when ENV_FATAL=1. Execution completion and validation
+verdict are separate. No stimulus repair or assertion sampling changes. Invalid
+clocks, files, unsatisfiable solvers, corrupted driver state and watchdogs still stop;
+user/DUT $fatal/$stop/$finish are not intercepted. Replay retains both fatal options.
+See documents/41_*; make env-fatal-test JOBS=2 runs the acceptance scenarios.
+Interface contract 20261112 applies to every non-reset sampled rising edge.
+A real src (0..2) requires arready[src]=1 even with arvalid=0. Idle src=3
+requires arvalid=0. Generate ar_rd_gnt only for requested banks. The DUT
+must keep rvalid low on each lane where rready is low. See documents/42_*.
+Use make constraints for the active inventory. Replay uses the saved contract.
+pending_cnt is updated by a register on each rising edge. At the next sampled
+edge the SVA compares against the previous sample plus AR accept minus issue.
+In DUT integration choose Edit Port SVA, or edit cmdbuf_rd_port_sva.sv in
+formal/protocol_20261021/. Compile and regression use the saved file. Results
+archive its source and hash, and replay uses the original simulator. See documents/43_*.
 Startup timing: documents/38_*. SV clock starts high at t=0; rst_n is low until
 1 ns and remains high afterwards. Each TC keeps rst_n=1. Default first rising
 edge is 10 ns; cycle=0 drives at 12 ns for sampling at 20 ns.

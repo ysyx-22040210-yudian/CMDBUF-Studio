@@ -1,0 +1,86 @@
+test_directed_environment_and_wait_handshake (test_adapter.AdapterTests) ... ok
+test_instrumentation_preserves_every_property_expression (test_adapter.AdapterTests) ... ok
+test_reject_invalid_ports_and_typographical_errors (test_adapter.AdapterTests) ... ok
+test_seed_reproduction_and_legal_ranges (test_adapter.AdapterTests) ... ok
+test_assertion_abort_is_incomplete_execution_with_intact_archives (test_check_policy.CheckPolicyTests) ... ok
+test_common_constraints_stay_active_in_generic_mode (test_check_policy.CheckPolicyTests) ... ok
+test_environment_archive_and_effective_policy_must_match (test_check_policy.CheckPolicyTests) ... ok
+test_environment_master_preserves_requested_assertion_setting (test_check_policy.CheckPolicyTests) ... ok
+test_final_frame_and_failure_archive_integrity (test_check_policy.CheckPolicyTests) ... ok
+test_interrupted_archive_is_a_reported_failure (test_check_policy.CheckPolicyTests) ... ok
+test_nonfatal_failure_is_failed_and_scope_is_explicit (test_check_policy.CheckPolicyTests) ... ok
+test_old_binary_report_does_not_require_new_environment_archive (test_check_policy.CheckPolicyTests) ... ok
+test_old_plan_is_not_silently_relaxed (test_check_policy.CheckPolicyTests) ... ok
+test_unfinished_transactions_are_not_interface_failure (test_check_policy.CheckPolicyTests) ... ok
+test_batch_child_does_not_wait_on_open_terminal_input (test_execution.ExecutionTests) ... ok
+test_execution_hang_times_out_after_start (test_execution.ExecutionTests) ... EDA_PROCESS {"key": "/tmp/tmppe1mnuzg/sim.log", "phase": "simulation", "task": "tmppe1mnuzg", "state": "WAITING_FOR_START", "timeout_scope": "execution_only", "execution_timeout_seconds": 0.2, "license_wait_limit_seconds": null, "startup_wait_seconds": null, "execution_seconds": null}
+EDA_PROCESS {"key": "/tmp/tmppe1mnuzg/sim.log", "phase": "simulation", "task": "tmppe1mnuzg", "state": "RUNNING", "timeout_scope": "execution_only", "execution_timeout_seconds": 0.2, "license_wait_limit_seconds": null, "startup_wait_seconds": 0.557, "execution_seconds": null}
+EDA_PROCESS {"key": "/tmp/tmppe1mnuzg/sim.log", "phase": "simulation", "task": "tmppe1mnuzg", "state": "TIMEOUT", "timeout_scope": "execution_only", "execution_timeout_seconds": 0.2, "license_wait_limit_seconds": null, "startup_wait_seconds": 0.557, "execution_seconds": 0.202, "seconds": 0.76, "returncode": 124}
+ok
+test_failure_before_start_exits_without_hanging (test_execution.ExecutionTests) ... EDA_PROCESS {"key": "/tmp/tmpah5u81zu/sim.log", "phase": "simulation", "task": "tmpah5u81zu", "state": "WAITING_FOR_START", "timeout_scope": "execution_only", "execution_timeout_seconds": 0.2, "license_wait_limit_seconds": null, "startup_wait_seconds": null, "execution_seconds": null}
+EDA_PROCESS {"key": "/tmp/tmpah5u81zu/sim.log", "phase": "simulation", "task": "tmpah5u81zu", "state": "FINISHED", "timeout_scope": "execution_only", "execution_timeout_seconds": 0.2, "license_wait_limit_seconds": null, "startup_wait_seconds": 0.053, "execution_seconds": null, "seconds": 0.053, "returncode": 7}
+ok
+test_gui_execution_timeout_zero_and_parallel_wait_status (test_execution.ExecutionTests) ... ok
+test_interrupt_stops_parallel_license_waiters (test_execution.ExecutionTests) ... ok
+test_parallel_waiters_have_independent_markers (test_execution.ExecutionTests) ... EDA_PROCESS {"key": "/tmp/tmpwn11rdzh/sim1.log", "phase": "simulation", "task": "tmpwn11rdzh", "state": "WAITING_FOR_START", "timeout_scope": "execution_only", "execution_timeout_seconds": 0.2, "license_wait_limit_seconds": null, "startup_wait_seconds": null, "execution_seconds": null}
+EDA_PROCESS {"key": "/tmp/tmpwn11rdzh/sim0.log", "phase": "simulation", "task": "tmpwn11rdzh", "state": "WAITING_FOR_START", "timeout_scope": "execution_only", "execution_timeout_seconds": 0.2, "license_wait_limit_seconds": null, "startup_wait_seconds": null, "execution_seconds": null}
+EDA_PROCESS {"key": "/tmp/tmpwn11rdzh/sim0.log", "phase": "simulation", "task": "tmpwn11rdzh", "state": "RUNNING", "timeout_scope": "execution_only", "execution_timeout_seconds": 0.2, "license_wait_limit_seconds": null, "startup_wait_seconds": 0.455, "execution_seconds": null}
+EDA_PROCESS {"key": "/tmp/tmpwn11rdzh/sim1.log", "phase": "simulation", "task": "tmpwn11rdzh", "state": "RUNNING", "timeout_scope": "execution_only", "execution_timeout_seconds": 0.2, "license_wait_limit_seconds": null, "startup_wait_seconds": 0.455, "execution_seconds": null}
+EDA_PROCESS {"key": "/tmp/tmpwn11rdzh/sim0.log", "phase": "simulation", "task": "tmpwn11rdzh", "state": "FINISHED", "timeout_scope": "execution_only", "execution_timeout_seconds": 0.2, "license_wait_limit_seconds": null, "startup_wait_seconds": 0.455, "execution_seconds": 0.001, "seconds": 0.456, "returncode": 0}
+EDA_PROCESS {"key": "/tmp/tmpwn11rdzh/sim1.log", "phase": "simulation", "task": "tmpwn11rdzh", "state": "FINISHED", "timeout_scope": "execution_only", "execution_timeout_seconds": 0.2, "license_wait_limit_seconds": null, "startup_wait_seconds": 0.455, "execution_seconds": 0.002, "seconds": 0.457, "returncode": 0}
+ok
+test_wait_longer_than_execution_limit_then_pass (test_execution.ExecutionTests) ... EDA_PROCESS {"key": "/tmp/tmphlmsfywy/sim.log", "phase": "simulation", "task": "tmphlmsfywy", "state": "WAITING_FOR_START", "timeout_scope": "execution_only", "execution_timeout_seconds": 0.2, "license_wait_limit_seconds": null, "startup_wait_seconds": null, "execution_seconds": null}
+EDA_PROCESS {"key": "/tmp/tmphlmsfywy/sim.log", "phase": "simulation", "task": "tmphlmsfywy", "state": "RUNNING", "timeout_scope": "execution_only", "execution_timeout_seconds": 0.2, "license_wait_limit_seconds": null, "startup_wait_seconds": 0.654, "execution_seconds": null}
+EDA_PROCESS {"key": "/tmp/tmphlmsfywy/sim.log", "phase": "simulation", "task": "tmphlmsfywy", "state": "FINISHED", "timeout_scope": "execution_only", "execution_timeout_seconds": 0.2, "license_wait_limit_seconds": null, "startup_wait_seconds": 0.654, "execution_seconds": 0.052, "seconds": 0.706, "returncode": 0}
+ok
+test_zero_execution_timeout_and_legacy_unlimited (test_execution.ExecutionTests) ... EDA_PROCESS {"key": "/tmp/tmplmif2_c1/sim.log", "phase": "simulation", "task": "tmplmif2_c1", "state": "WAITING_FOR_START", "timeout_scope": "execution_only", "execution_timeout_seconds": null, "license_wait_limit_seconds": null, "startup_wait_seconds": null, "execution_seconds": null}
+EDA_PROCESS {"key": "/tmp/tmplmif2_c1/sim.log", "phase": "simulation", "task": "tmplmif2_c1", "state": "RUNNING", "timeout_scope": "execution_only", "execution_timeout_seconds": null, "license_wait_limit_seconds": null, "startup_wait_seconds": 0.051, "execution_seconds": null}
+EDA_PROCESS {"key": "/tmp/tmplmif2_c1/sim.log", "phase": "simulation", "task": "tmplmif2_c1", "state": "FINISHED", "timeout_scope": "execution_only", "execution_timeout_seconds": null, "license_wait_limit_seconds": null, "startup_wait_seconds": 0.051, "execution_seconds": 0.302, "seconds": 0.353, "returncode": 0}
+EDA_PROCESS {"key": "/tmp/tmplmif2_c1/sim.log", "phase": "simulation", "task": "tmplmif2_c1", "state": "RUNNING", "timeout_scope": "unlimited", "execution_timeout_seconds": null, "license_wait_limit_seconds": null, "startup_wait_seconds": null, "execution_seconds": null}
+EDA_PROCESS {"key": "/tmp/tmplmif2_c1/sim.log", "phase": "simulation", "task": "tmplmif2_c1", "state": "FINISHED", "timeout_scope": "unlimited", "execution_timeout_seconds": null, "license_wait_limit_seconds": null, "startup_wait_seconds": null, "execution_seconds": 0.353, "seconds": 0.353, "returncode": 0}
+ok
+test_actual_widths_banks_and_pattern_literals (test_fsdb_formal.FsdbFormalTests) ... ok
+test_all_reset_intervals_keep_cycle_positions (test_fsdb_formal.FsdbFormalTests) ... ok
+test_dump_off_and_missing_reset_fail_closed (test_fsdb_formal.FsdbFormalTests) ... ok
+test_invalid_payload_retained_but_not_asserted (test_fsdb_formal.FsdbFormalTests) ... ok
+test_native_and_sby_copies_are_separate (test_fsdb_formal.FsdbFormalTests) ... ok
+test_unknown_input_and_valid_output_are_errors (test_fsdb_formal.FsdbFormalTests) ... ok
+test_job_exclusion_failure_and_recovery (test_native.NativeTests) ... ok
+test_make_arguments_are_local_and_reject_recipe_expansion (test_native.NativeTests) ... ok
+test_native_fsdb_import_keeps_exact_bytes_and_hash (test_native.NativeTests) ... ok
+test_no_gui_web_or_ssh_runtime (test_native.NativeTests) ... ok
+test_clean_defaults_and_separate_machine_settings (test_portability.PortabilityTests) ... ok
+test_component_discovery_rejects_partial_installs (test_portability.PortabilityTests) ... ok
+test_distribution_contains_offline_runtime_and_no_machine_data (test_portability.PortabilityTests) ... ok
+test_local_config_validates_paths_and_rejects_remote_mode (test_portability.PortabilityTests) ... ok
+test_old_ssh_settings_and_environment_cannot_change_execution_host (test_portability.PortabilityTests) ... ok
+test_overrides_are_opt_in_and_bound_to_this_device (test_portability.PortabilityTests) ... ok
+test_path_discovery_needs_no_config_or_home_variables (test_portability.PortabilityTests) ... ok
+test_site_script_banner_and_path_discovery (test_portability.PortabilityTests) ... ok
+test_archive_captures_controls_and_prepare_before_every_edge (test_protocol.ProtocolTests) ... ok
+test_conflicting_owners_and_unknown_policies_rejected (test_protocol.ProtocolTests) ... ok
+test_current_catalog_is_complete (test_protocol.ProtocolTests) ... ok
+test_new_or_changed_contract_cannot_silently_run (test_protocol.ProtocolTests) ... ok
+test_offers_are_one_shot_and_timeline_is_not_paused (test_protocol.ProtocolTests) ... ok
+test_requests_have_legal_domains (test_protocol.ProtocolTests) ... ok
+test_dut_files_and_four_state_interface_unchanged (test_studio.StudioTests) ... ok
+test_extract_phase_ignores_keywords_in_comments_and_strings (test_studio.StudioTests) ... ok
+test_plan_exact_per_case_counts_and_seed_ranges (test_studio.StudioTests) ... ok
+test_plan_invalid_counts_seeds_and_fractional_values (test_studio.StudioTests) ... ok
+test_save_preserves_constructor_and_rejects_external_conflict (test_studio.StudioTests) ... ok
+test_vcd_actual_edges_four_state_aliases_and_window_initial_value (test_studio.StudioTests) ... ok
+test_archived_source_hash_and_override (test_sv_cases.SvAuthoringTests) ... ok
+test_copy_renames_class_and_refuses_overwrite (test_sv_cases.SvAuthoringTests) ... ok
+test_filename_and_class_must_agree (test_sv_cases.SvAuthoringTests) ... ok
+test_audit_detects_driver_changes_and_uses_archived_program (test_wavedrom.WaveDromTests) ... ok
+test_explicit_reset_during_clock_pause_is_preserved (test_wavedrom.WaveDromTests) ... ok
+test_gate_clock_counts_real_edges_and_manual_mem (test_wavedrom.WaveDromTests) ... ok
+test_numeric_and_four_state_values_keep_port_width (test_wavedrom.WaveDromTests) ... ok
+test_period_and_literal_clock_have_same_positive_edges (test_wavedrom.WaveDromTests) ... ok
+test_reject_ambiguous_or_missing_input_descriptions (test_wavedrom.WaveDromTests) ... ok
+test_symbols_are_resolved_without_changing_diagram_labels (test_wavedrom.WaveDromTests) ... ok
+
+----------------------------------------------------------------------
+Ran 62 tests in 3.199s
+
+OK

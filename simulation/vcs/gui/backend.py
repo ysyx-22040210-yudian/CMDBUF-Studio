@@ -218,7 +218,8 @@ class Jobs:
                 rc = self.invoke(job, ['regress', 'PLAN='+str(path), 'JOBS='+str(plan['jobs']),
                                       'TIMEOUT='+str(plan['timeout']), 'WAVES='+str(int(plan['waves'])),
                                       'CHECK_MODE='+plan['check_mode'],
-                                      'ASSERT_FATAL='+str(int(plan['assert_fatal']))], check=False)
+                                      'ASSERT_FATAL='+str(int(plan['assert_fatal'])),
+                                      'ENV_FATAL='+str(int(plan['env_fatal']))], check=False)
                 if job.get('batch'):
                     self.update(job, verdict=eda.read_json(batch_path(job['batch'])/'summary.json')['status'])
                 if rc:

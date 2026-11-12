@@ -61,7 +61,7 @@ always @(posedge clk) if (wave_mode && wave_started) begin : wave_observe
             due_data.delete(cycle);
         end
         if (success) begin
-            if (!protocol_mode && due_data.exists(cycle+4)) $fatal(1, "ENV_CALENDAR_COLLISION");
+            if (!protocol_mode && due_data.exists(cycle+4)) env_fail("ENV_CALENDAR_COLLISION","cannot schedule two MEM values at one edge",1);
             // Calendar tracks timing only. MEM data and pc_err stay user-owned.
             if (!protocol_mode) due_data[cycle+4] = 0;
             for (b = 0; b < 8; b = b + 1)
@@ -101,10 +101,10 @@ task automatic run_wavedrom;
         fields_read = $fscanf(fd, "%s %d %d %d %d %d\n", magic, rows, wave_tick_ps,
                              wave_duration_ps, wave_skew_ps, require_empty);
         if (fields_read != 6 || magic != "WAVEDROM_V1" || rows < 1)
-            $fatal(1, "Malformed WaveDrom program header");
+            env_fail("WAVE_BAD_HEADER","invalid WaveDrom header",1);
         wave_samples = $fopen("samples.csv", "w");
         wave_driven = $fopen("driven.csv", "w");
-        if (!wave_samples || !wave_driven) $fatal(1, "Cannot open WaveDrom audit files");
+        if (!wave_samples || !wave_driven) env_fail("WAVE_ARCHIVE_OPEN","WaveDrom audit files",1);
         $fdisplay(wave_samples, "cycle,column,time_ps,clk,rst_n,arvalid,src,araddr,arid,ar_port_id,arresp,rready,ar_rd_gnt,rw_rd_gnt,rd_mem_status[0],rd_mem_status[1],rd_mem_status[2],rd_mem_status[3],rd_mem_status[4],rd_mem_status[5],rd_mem_status[6],rd_mem_status[7],mem_rdata,pc_err,arready,req,arb_addr,pending_cnt,rvalid,rdata,rid,r_port_id,raddr,rresp");
         $fdisplay(wave_driven, "time_ps,clk,rst_n,arvalid,src,araddr,arid,ar_port_id,arresp,rready,ar_rd_gnt,rw_rd_gnt,rd_mem_status[0],rd_mem_status[1],rd_mem_status[2],rd_mem_status[3],rd_mem_status[4],rd_mem_status[5],rd_mem_status[6],rd_mem_status[7],mem_rdata,pc_err");
         previous_ps = 0;
@@ -114,7 +114,7 @@ task automatic run_wavedrom;
                 frame_ps, w_clk, w_rst_n, w_arvalid, w_src, w_araddr, w_arid, w_port, w_arresp,
                 w_ready, w_argrant, w_rwgrant, w_status[0], w_status[1], w_status[2], w_status[3],
                 w_status[4], w_status[5], w_status[6], w_status[7], w_mem, w_pc_err);
-            if (fields_read != 22 || frame_ps < previous_ps) $fatal(1, "Malformed WaveDrom frame %0d", row);
+            if (fields_read != 22 || frame_ps < previous_ps) env_fail("WAVE_BAD_FRAME",$sformatf("row=%0d",row),1);
             #((frame_ps - previous_ps) / 1000.0);
             rst_n = w_rst_n; arvalid = w_arvalid; src = w_src; araddr = w_araddr;
             arid = w_arid; ar_port_id = w_port; arresp = w_arresp; rready = w_ready;

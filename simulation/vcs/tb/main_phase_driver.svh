@@ -27,7 +27,7 @@ end
 always @(clk or rst_n) if (main_clock_trace && $realtime>0)
     $fdisplay(main_clock_trace,"%0.0f,%b,%b",$realtime*1000.0,clk,rst_n);
 
-task automatic main_fail(input string reason);
+task automatic main_fail(input string reason, input bit unrecoverable=0);
     begin
         $display("MAIN_PHASE_CONTEXT case=%s cycle=%0d edge=%0d stage=%0d phase=%0d rst_n=%b rready=%b arready=%b req=%h arb_addr=%h mem_due=%b due_data=%h due_error=%b",
             main_name,main_tc.cycle,cycle,main_stage,main_tc.phase,main_tc.rst_n,main_tc.rready,
@@ -35,7 +35,7 @@ task automatic main_fail(input string reason);
         $display("MAIN_PROPOSED_INPUT arvalid=%b src=%b arresp=%b araddr=%h arid=%h port=%h argrant=%h rwgrant=%h status=%p mem_rdata=%h pc_err=%b",
             main_tc.arvalid,main_tc.src,main_tc.arresp,main_tc.araddr,main_tc.arid,main_tc.ar_port_id,
             main_tc.ar_rd_gnt,main_tc.rw_rd_gnt,main_tc.rd_mem_status,main_tc.mem_rdata,main_tc.pc_err);
-        $fatal(1,"%s case=%s cycle=%0d edge=%0d",reason,main_name,main_tc.cycle,cycle);
+        env_fail(reason,$sformatf("case=%s cycle=%0d edge=%0d stage=%0d",main_name,main_tc.cycle,cycle,main_stage),unrecoverable);
     end
 endtask
 
@@ -50,9 +50,11 @@ endtask
 task automatic main_control(input cmdbuf_main_tc t);
     begin
         if (main_stage!=1) main_fail("MAIN_CONTROL_ORDER");
-        if ($isunknown({t.rst_n,t.rready,t.clk_low_ns,t.clk_high_ns,t.clk_pause_ns}) ||
+        if ($isunknown({t.rst_n,t.rready})) main_fail("MAIN_CONTROL_INVALID");
+        // A broken clock cannot execute the remaining procedural cycles safely.
+        if ($isunknown({t.clk_low_ns,t.clk_high_ns,t.clk_pause_ns}) ||
             t.clk_low_ns<3 || t.clk_high_ns<3 || t.clk_low_ns>1000000 ||
-            t.clk_high_ns>1000000 || t.clk_pause_ns>1000000) main_fail("MAIN_CONTROL_INVALID");
+            t.clk_high_ns>1000000 || t.clk_pause_ns>1000000) main_fail("MAIN_CONTROL_INVALID",1);
         if (t.rst_n !== 1'b1) main_fail("MAIN_RESET_FIXED_HIGH_AFTER_1NS");
         rready=t.rready;
         main_low_ns=t.clk_low_ns; main_high_ns=t.clk_high_ns; main_pause_ns=t.clk_pause_ns;
@@ -101,6 +103,8 @@ task automatic main_drive(input cmdbuf_main_tc t);
             if (t.arvalid && t.src>2) main_fail("MAIN_E03_SRC");
             if (t.arvalid && t.arresp!=0 && t.arresp!=3) main_fail("MAIN_E04_ARRESP");
             if (t.arready==0 && t.arvalid) main_fail("MAIN_E05_ZERO_READY");
+            if (t.src<3 && t.arready[t.src] !== 1'b1) main_fail("MAIN_E07_SRC_READY");
+            if ((t.ar_rd_gnt & ~t.req) !== 8'b0) main_fail("MAIN_E08_AR_GRANT_REQ");
             for (integer b=0;b<8;b++)
                 if (t.req[b] && t.ar_rd_gnt[b] && t.rw_rd_gnt[b] &&
                     t.rd_mem_status[b][t.arb_addr[0]]!==1'b1) main_fail("MAIN_E06_SUCCESS_BUSY");
@@ -149,7 +153,12 @@ always @(posedge clk) if (sv_tc_mode && main_clock_start) begin
         // First normal edge is idle and launches the first main_phase assignment.
         $display("MAIN_BOOTSTRAP time_ps=%0d rst_n=1",main_edge_ps);
         #0.001; cycle++;
-    end else main_fail("MAIN_MISSING_ASSIGNMENT");
+    end else begin
+        main_fail("MAIN_MISSING_ASSIGNMENT");
+        // Continue observing actual held pins; do not invent a missing assignment.
+        if (rst_n) observe_active(main_tc.issue_error,main_tc.issue_data);
+        else begin #1; cycle++; end
+    end
 end
 
 task automatic main_tail(input integer tail_phase);
@@ -159,9 +168,9 @@ task automatic main_tail(input integer tail_phase);
         main_tc.clk_low_ns=5; main_tc.clk_high_ns=5; main_tc.clk_pause_ns=0;
         main_tc.drive_control();
         #1; main_tc.sample_context();
-        main_tc.arvalid=0; main_tc.src=0; main_tc.arresp=0;
+        main_tc.arvalid=0; main_tc.src=3; main_tc.arresp=0;
         main_tc.araddr=0; main_tc.arid=0; main_tc.ar_port_id=0;
-        main_tc.ar_rd_gnt=255; main_tc.rw_rd_gnt=255;
+        main_tc.ar_rd_gnt=main_tc.req; main_tc.rw_rd_gnt=255;
         for (integer b=0;b<8;b++) begin
             if (main_tc.req[b]) main_tc.rd_mem_status[b]=(2'b01 << main_tc.arb_addr[0]);
             else main_tc.rd_mem_status[b]=0;
@@ -179,26 +188,27 @@ task automatic run_sv_tc;
     process rng;
     begin
         if ($fscanf(fd,"%s %s %d %d\n",magic,main_name,header_seed,override_cycles)!=4 ||
-            magic!="MAIN_PHASE_V1" || header_seed!=seed) $fatal(1,"MAIN_BAD_PROGRAM");
+            magic!="MAIN_PHASE_V1" || header_seed!=seed) env_fail("MAIN_BAD_PROGRAM","invalid TC header or seed",1);
         $fclose(fd);
         main_tc=create_sv_tc(main_name);
-        if (main_tc==null) $fatal(1,"MAIN_UNKNOWN_NAME %s",main_name);
+        if (main_tc==null) env_fail("MAIN_UNKNOWN_NAME",main_name,1);
         if (override_cycles!=0) main_tc.num_cycles=override_cycles;
-        if (main_tc.num_cycles<1 || main_tc.num_cycles>1000000) main_fail("MAIN_CYCLES_INVALID");
+        if (main_tc.num_cycles<1 || main_tc.num_cycles>1000000) main_fail("MAIN_CYCLES_INVALID",1);
         rng=process::self(); rng.srandom(seed);
         config_fd=$fopen("tc_config.json","w");
+        if (!config_fd) env_fail("MAIN_ARCHIVE_OPEN","tc_config.json",1);
         $fdisplay(config_fd,"{\"name\":\"%s\",\"seed\":%0d,\"num_cycles\":%0d,\"bootstrap_edges\":1,\"startup\":{\"clock_initial\":1,\"reset_release_ps\":1000,\"first_posedge_ps\":10000}}",main_name,seed,main_tc.num_cycles);
         $fclose(config_fd);
         main_samples=$fopen("samples.csv","w"); main_assignments=$fopen("assigned.csv","w");
-        if (!main_samples || !main_assignments) $fatal(1,"MAIN_ARCHIVE_OPEN");
+        if (!main_samples || !main_assignments) env_fail("MAIN_ARCHIVE_OPEN","samples.csv or assigned.csv",1);
         $fdisplay(main_assignments,"cycle,edge,phase,time_ps,launch_ps,expected_sample_ps,clk,clk_low_ns,clk_high_ns,clk_pause_ns,rst_n,arvalid,src,araddr,arid,ar_port_id,arresp,rready,ar_rd_gnt,rw_rd_gnt,rd_mem_status[0],rd_mem_status[1],rd_mem_status[2],rd_mem_status[3],rd_mem_status[4],rd_mem_status[5],rd_mem_status[6],rd_mem_status[7],mem_rdata,pc_err,arready,req,arb_addr,issue_data,issue_error");
         $fdisplay(main_samples,"cycle,edge,phase,time_ps,clk,rst_n,arvalid,src,araddr,arid,ar_port_id,arresp,rready,ar_rd_gnt,rw_rd_gnt,rd_mem_status[0],rd_mem_status[1],rd_mem_status[2],rd_mem_status[3],rd_mem_status[4],rd_mem_status[5],rd_mem_status[6],rd_mem_status[7],mem_rdata,pc_err,arready,req,arb_addr,pending_cnt,rvalid,rdata,rid,r_port_id,raddr,rresp");
         // Startup reset is driven only by the common t=0 / t=1 ns process.
-        rready=0; arvalid=0; src=0; arresp=0; araddr=0; arid=0; ar_port_id=0;
+        rready=0; arvalid=0; src=3; arresp=0; araddr=0; arid=0; ar_port_id=0;
         ar_rd_gnt=0; rw_rd_gnt=0; mem_rdata=0; pc_err=0;
         for (integer b=0;b<8;b++) rd_mem_status[b]=0;
         main_clock_trace=$fopen("clock_reset.csv","w");
-        if (!main_clock_trace) $fatal(1,"MAIN_CLOCK_ARCHIVE_OPEN");
+        if (!main_clock_trace) env_fail("MAIN_CLOCK_ARCHIVE_OPEN","clock_reset.csv",1);
         $fdisplay(main_clock_trace,"time_ps,clk,rst_n");
         #0; // Allow the time-zero reset assignment to settle before recording pins.
         $fdisplay(main_clock_trace,"%0.0f,%b,%b",$realtime*1000.0,clk,rst_n);

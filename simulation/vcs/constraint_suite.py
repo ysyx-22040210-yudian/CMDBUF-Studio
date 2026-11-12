@@ -44,7 +44,7 @@ def random_audit_negative_checks(source):
     with (source/'events.csv').open() as f:
         mem_cycle=next(int(r['cycle']) for r in csv.DictReader(f) if r['event']=='MEM')
     checks=[]
-    for kind in ('pin_drift','src','arresp','zero_ready','busy','mem','response','context'):
+    for kind in ('pin_drift','src','arresp','zero_ready','src_ready','grant_req','busy','mem','response','context'):
         with tempfile.TemporaryDirectory(prefix='random_audit_') as temp:
             root=Path(temp);tables={}
             for name in ('samples.csv','random_solutions.csv'):
@@ -55,6 +55,13 @@ def random_audit_negative_checks(source):
             if kind=='src':samples[i]['src']=solved[i]['src']='11'
             if kind=='arresp':samples[i]['arresp']=solved[i]['arresp']='01'
             if kind=='zero_ready':samples[i]['arready']=solved[i]['arready']='0'
+            if kind=='src_ready':
+                i=next(i for i,r in enumerate(samples) if r['phase']=='2' and r['arvalid']=='0')
+                samples[i]['src']=solved[i]['src']='00'
+                samples[i]['arready']=solved[i]['arready']='6'
+            if kind=='grant_req':
+                i=next(i for i,r in enumerate(samples) if r['phase']=='2' and int(r['req'],16)==0)
+                samples[i]['ar_rd_gnt']=solved[i]['ar_rd_gnt']='10000000'
             if kind=='busy':
                 i=next(i for i,r in enumerate(samples) if int(r['req'],16)&int(r['ar_rd_gnt'],2)&int(r['rw_rd_gnt'],2))
                 r=samples[i];b=int(r['req'],16).bit_length()-1;half=int(r['arb_addr'],16)&1
@@ -90,7 +97,7 @@ def run_suite(args,env):
             add('bank{}_half{}'.format(bank,half),c)
             add('bad_bank{}_half{}'.format(bank,half),c,'rule=E06_SUCCESS_BUSY','busy')
     for name,cfg in interactions().items(): add(name,cfg)
-    for name in ('smoke','retry','backpressure','ooo_same_xau','wavedrom_read','wavedrom_reset'):
+    for name in ('smoke','retry','backpressure','ooo_same_xau','wavedrom_read','wavedrom_reset','wavedrom_levels','wavedrom_nclock'):
         add('legacy_'+name,eda.read_json(eda.HERE/'cases'/(name+'.json')))
     random_cfg={'sequence':[{'random':2000}],'require':{'accepted':10,'retired':10,'random_cycles':2000}}
     add('strict_random',random_cfg)
@@ -121,7 +128,7 @@ def run_suite(args,env):
     add('deadline_timeout',c,'rule=P_QUEUE_TIMEOUT')
     c=traffic(); c['sim']['queue_limit']=1
     add('queue_overflow',c,'rule=P_QUEUE_LIMIT')
-    c=basic(length=6); add('pending_tail',c,'rule=P_QUEUE_PENDING')
+    c=basic(length=6); add('pending_tail',c,'SVA_FAIL A_DRAIN_COMPLETION')
     c=basic(length=6); c['sim']['finish']='allow_pending'; c['require']={'accepted':1,'issued':1}
     add('allowed_prefix',c)
     c=basic(); replace(c,'rready',lane('rready',['x']*2+[7]*22,True)); add('reset_fourstate',c)
@@ -134,6 +141,13 @@ def run_suite(args,env):
         lane('araddr',[0x12001]*n,True),lane('arid',[42]*n,True),lane('ar_port_id',[6]*n,True),
         lane('arresp',[0]*n,True),lane('mem_error',[0]*n)]
     add('fixed_zero_ready',c,'rule=E05_ZERO_READY')
+    c=copy.deepcopy(c)
+    replace(c,'arvalid',lane('arvalid',[0]*2+[1]*7+[0]*(n-9)))
+    replace(c,'src',lane('src',[3]*2+[0]*8+[3]*(n-10),True))
+    add('fixed_blocked_idle_src',c,'rule=E07_SRC_READY')
+    c=basic(); c['sim']['drivers']['ar_grant']='fixed'
+    replace(c,'ar_grant_enable',lane('ar_rd_gnt',[128]*24,True))
+    add('fixed_grant_without_req',c,'rule=E08_AR_GRANT_REQ')
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs) as pool:
         futures=[pool.submit(eda.run_case,build,root,str(path),1,None,env,args.timeout,inj) for path,_,inj in tests]
         results=[f.result() for f in futures]
@@ -156,7 +170,7 @@ def run_suite(args,env):
             else: rule_hits[key]=rule_hits.get(key,0)+value
     checks={'all_cases_match_expectations':all(v['passed'] for v in verdicts),'unit_tests':rc==0,
             'all_bank_half_antecedents_observed':all(hits),
-            'all_other_assumption_antecedents_observed':all(rule_hits.get(k,0)>0 for k in ['E03_SRC','E04_ARRESP','E05_ZERO_READY']),
+            'all_other_assumption_antecedents_observed':all(rule_hits.get(k,0)>0 for k in ['E03_SRC','E04_ARRESP','E05_ZERO_READY','E07_SRC_READY','E08_AR_GRANT_REQ']),
             'coverage_merged_from_positive_only':cov['status']=='PASS'}
     source=next(r['directory'] for r in positive if r['case']=='protocol_read')
     monitor_checks=audit_negative_checks(source)
@@ -169,6 +183,8 @@ def run_suite(args,env):
         'E03_SRC':['bank0_half0','bank1_half0','bank2_half0','bad_src'],
         'E04_ARRESP':['protocol_read','protocol_error_priority','bad_arresp'],
         'E05_ZERO_READY':['protocol_demo','protocol_selected_reject','fixed_zero_ready'],
+        'E07_SRC_READY':['protocol_selected_reject','fixed_blocked_idle_src','strict_random','strict_random_mixed'],
+        'E08_AR_GRANT_REQ':['protocol_read','protocol_retry','fixed_grant_without_req','strict_random','strict_random_mixed'],
         'E06_SUCCESS_BUSY':['bank{}_half{}'.format(b,h) for b in range(8) for h in range(2)]+
                            ['bad_bank{}_half{}'.format(b,h) for b in range(8) for h in range(2)]+['fixed_bank_conflict'],
         'T_MEM4':['protocol_read','protocol_demo','protocol_nclock','protocol_fixed_mem','fixed_mem_conflict','bad_mem_early','bad_mem_late','bad_mem_corrupt'],

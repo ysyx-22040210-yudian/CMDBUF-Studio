@@ -31,6 +31,7 @@ class Studio:
         root.geometry('%dx%d'%(min(1460, max(1180, root.winfo_screenwidth()-70)), min(950, max(700, root.winfo_screenheight()-85))))
         root.minsize(1180, 700)
         root.configure(background=BG); root.protocol('WM_DELETE_WINDOW', self.close)
+        self.sva_window = None
         self.jobs = backend.Jobs(); self.last_finished = None; self.job_window = None; self.job_log = None
         self.current_tc = None; self.current_batch = None; self.summary = None; self.formal_export = None
         self.dirty = False; self.dut_baseline = None; self.plan_rows = []; self.formal_items = []
@@ -145,6 +146,7 @@ class Studio:
         self.button(bar, '导入 RTL 文件', lambda: self.import_rtl(False))
         self.button(bar, '导入 RTL 目录', lambda: self.import_rtl(True))
         self.button(bar, '保存 DUT', self.save_dut, True)
+        self.button(bar, '编辑端口 SVA', self.edit_sva)
         self.button(bar, '编译', lambda: self.compile_dut())
         self.button(bar, '重新加载', self.reload_dut)
         self.dut_name = tk.StringVar()
@@ -188,6 +190,59 @@ class Studio:
     def save_dut(self):
         self.idle(); cfg = self.dut_value(); self.dut_version = backend.save_dut(cfg, self.dut_version)
         self.dut_baseline = copy.deepcopy(cfg); self.status.set('DUT 配置已保存；下一次编译将使用新配置')
+
+    def edit_sva(self):
+        self.idle()
+        if self.sva_window and self.sva_window.winfo_exists():
+            self.sva_window.lift()
+            return
+        self.sva_snapshot = model.load_sva()
+        window = tk.Toplevel(self.root)
+        self.sva_window = window
+        window.title('端口检查器 · cmdbuf_rd_port_sva.sv')
+        window.geometry('1160x760')
+        window.minsize(790, 490)
+        window.configure(background=BG)
+        window.transient(self.root)
+        window.protocol('WM_DELETE_WINDOW', lambda: self.guard(self.close_sva))
+        toolbar = ttk.Frame(window, padding=(16, 12))
+        toolbar.pack(fill='x')
+        self.button(toolbar, '保存 SVA', self.save_sva, True)
+        self.button(toolbar, '关闭', self.close_sva)
+        self.sva_note = tk.StringVar(value='Ctrl + S 保存')
+        ttk.Label(toolbar, textvariable=self.sva_note, style='Muted.TLabel').pack(side='right')
+        ttk.Label(window, text=self.sva_snapshot['file'], style='Muted.TLabel').pack(anchor='w', padx=16)
+        self.sva_editor = CodeEditor(window, self.mono)
+        self.sva_editor.pack(fill='both', expand=True, padx=16, pady=(10, 16))
+        self.sva_editor.set(self.sva_snapshot['source'])
+        def save_shortcut(event):
+            self.guard(self.save_sva)
+            return 'break'
+        window.bind('<Control-s>', save_shortcut)
+        self.sva_editor.text.focus_set()
+
+    def sva_dirty(self):
+        return bool(self.sva_window and self.sva_window.winfo_exists() and
+                    self.sva_editor.get() != self.sva_snapshot['source'])
+
+    def save_sva(self):
+        self.idle()
+        self.sva_snapshot = model.save_sva(self.sva_editor.get(), self.sva_snapshot['version'])
+        self.sva_note.set('已保存 · '+self.sva_snapshot['version'][:12])
+        self.status.set('端口 SVA 已保存，下次编译使用此版本')
+
+    def close_sva(self):
+        if not self.sva_window or not self.sva_window.winfo_exists():
+            return True
+        if self.sva_dirty():
+            choice = messagebox.askyesnocancel('保存 SVA', '关闭前保存端口 SVA 的修改？', parent=self.sva_window)
+            if choice is None:
+                return False
+            if choice:
+                self.save_sva()
+        self.sva_window.destroy()
+        self.sva_window = None
+        return True
 
     def compile_dut(self):
         self.save_dut(); self.launch('compile')
@@ -289,8 +344,17 @@ class Studio:
 2. begin_cycle(cycle) 记录周期；rst_n 保持 1，设置 rready、clk_low_ns / clk_high_ns / clk_pause_ns。
 3. drive_control(); #1; sample_context(); 更新控制后读取已稳定的 DUT 反馈。
 4. 用普通 if / else 约束 AR 和 Bank 输入，再给数据赋值。
-   if (!rst_n || arready == 3'b000) arvalid = 0;
-   else arvalid = $urandom_range(0, 1);  // 随机仅出现在合法分支
+   if (cycle == 8 && arready[0] === 1'b1) begin
+       src = 0; arvalid = 1;
+   end else begin
+       src = 3; arvalid = 0;
+   end
+   for (int b=0; b<8; b++) begin
+       if (req[b]) ar_rd_gnt[b] = 1;
+       else ar_rd_gnt[b] = 0;
+   end
+   src=0/1/2 时对应 arready 必须为 1，空闲拍也要满足。随机时从已 ready 的源中选。
+   ar_rd_gnt 只发给同拍有 req 的 Bank。成功发射的 Bank 半区按模板设置 busy。
 5. 按模板处理 mem_due / due_data / due_error，保持固定延迟返回。
 6. drive_inputs() 检查并驱动；它不会替你修正非法激励。
 
@@ -301,7 +365,7 @@ class Studio:
 复位：环境在 t=0 拉低 rst_n，#1（1 ns）释放，之后一直为 1。TC 再次拉低会明确报错。
 
 所有注册约束的正反例与检查器继续使用原环境；不能自动推断任意新 RTL 的全部约束。
-详细说明：documents/38_*（最新启动时序）、documents/32_* 与 documents/36_*。''')
+详细说明：documents/42_*（当前接口约束）、documents/38_*（启动时序）、documents/32_* 与 documents/36_*。''')
 
     def build_regression(self, page):
         bar = self.bar(page)
@@ -315,13 +379,16 @@ class Studio:
         ttk.Checkbutton(config, text='生成 FSDB + VCD 波形', variable=self.waves_var).pack(side='left')
         ttk.Label(page, text='等待 License 不限时；仿真启动后才计算执行超时，填 0 表示执行也不限时。', style='Muted.TLabel').pack(anchor='w', pady=(0, 10))
         checks = ttk.Frame(page); checks.pack(fill='x', pady=(0, 8))
-        self.check_modes = {'通用事务检查': 'transaction', '完整时序检查 20261021': 'strict'}
+        self.check_modes = {'通用事务检查': 'transaction', '完整时序检查': 'strict'}
         self.check_mode_var = tk.StringVar(value='通用事务检查'); self.assert_fatal_var = tk.BooleanVar(value=True)
+        self.env_fatal_var = tk.BooleanVar(value=True)
         ttk.Label(checks, text='验证范围').pack(side='left', padx=(0, 10))
         combo = ttk.Combobox(checks, textvariable=self.check_mode_var, values=list(self.check_modes), state='readonly', width=25)
         combo.pack(side='left', padx=(0, 20))
         combo.bind('<<ComboboxSelected>>', lambda e: self.update_check_note())
-        ttk.Checkbutton(checks, text='断言失败立即停止（$fatal）', variable=self.assert_fatal_var).pack(side='left')
+        ttk.Checkbutton(checks, text='环境错误立即停止（$fatal）', variable=self.env_fatal_var, command=self.update_check_note).pack(side='left', padx=(0, 14))
+        self.assert_fatal_check = ttk.Checkbutton(checks, text='断言失败立即停止', variable=self.assert_fatal_var, command=self.update_check_note)
+        self.assert_fatal_check.pack(side='left', padx=(0, 14))
         self.button(checks, '检查范围说明', self.check_help)
         self.check_note = tk.StringVar()
         ttk.Label(page, textvariable=self.check_note, style='Muted.TLabel', wraplength=1060).pack(anchor='w', pady=(0, 12))
@@ -342,7 +409,7 @@ class Studio:
         self.timeout_var.set(str(plan.get('timeout', 120))); self.waves_var.set(plan.get('waves', True))
         mode = plan.get('check_mode', 'strict')
         self.check_mode_var.set(next(title for title,value in self.check_modes.items() if value==mode))
-        self.assert_fatal_var.set(plan.get('assert_fatal', True)); self.update_check_note()
+        self.assert_fatal_var.set(plan.get('assert_fatal', True)); self.env_fatal_var.set(plan.get('env_fatal', True)); self.update_check_note()
         self.plan_rows = copy.deepcopy(plan['cases']); self.reconcile_plan()
 
     def reconcile_plan(self):
@@ -379,30 +446,42 @@ class Studio:
 
     def plan_value(self):
         return dict(version=1, name=self.plan_name.get(), jobs=int(self.jobs_var.get()), timeout=int(self.timeout_var.get()), waves=self.waves_var.get(),
-                    check_mode=self.check_modes[self.check_mode_var.get()], assert_fatal=self.assert_fatal_var.get(), cases=copy.deepcopy(self.plan_rows))
+                    check_mode=self.check_modes[self.check_mode_var.get()], assert_fatal=self.assert_fatal_var.get(), env_fatal=self.env_fatal_var.get(), cases=copy.deepcopy(self.plan_rows))
 
     def update_check_note(self):
-        self.check_note.set('通用模式按实际握手核对事务，pending 更新时点和精确调度标为未检查。关闭 $fatal 仍记录断言失败并判 FAIL。'
-                            if self.check_modes[self.check_mode_var.get()]=='transaction' else
-                            '完整模式执行 20261021 全部时序要求，包括 pending 组合输出；旧计划保留此模式。关闭 $fatal 仍判 FAIL。')
+        self.assert_fatal_check.configure(state='normal' if self.env_fatal_var.get() else 'disabled')
+        scope = ('通用模式按实际握手核对事务和 pending 寄存递推。精确调度由完整模式检查。'
+                 if self.check_modes[self.check_mode_var.get()]=='transaction' else
+                 '完整模式核对 pending 参考计数、容量预留、五项窗口和响应调度。')
+        policy = ('环境错误立即停止；断言按右侧选项处理。' if self.env_fatal_var.get() else
+                  '继续运行：环境检查与断言错误记录后继续，仍判 FAIL；断言停止选项暂不生效。')
+        self.check_note.set(scope+' '+policy+' 无效时钟、文件/工具错误等无法继续执行的问题仍终止。')
 
     def check_help(self):
         self.preview('验证范围与断言处理', '''通用事务检查
 以时钟沿前的完整四态快照检查真实握手。检查 ID、port、低地址、数据、错误优先级和单源顺序；MEM 输入仍按发射后 N+4 提供。
-不规定 pending 的组合或寄存时点，不规定精确 ready/req/R 调度及最早 N+5 返回；这些项目显示 NOT_CHECKED。
+检查 pending 寄存递推。精确 ready/req/R 调度、参考待发数和最早 N+5 返回显示 NOT_CHECKED。
 同地址发射保留所有可能事务对应关系。候选超过上限或结束时仍有未完成事务，显示 INCOMPLETE，不当作 PASS。
 
-完整时序检查 20261021
-执行原协议的全部原生 SVA，包括 pending 组合计数、容量预留、五项窗口、RR 和精确响应时序。内部实现可以不同，公开接口时序必须一致。
+完整时序检查
+核对 pending 寄存值与参考待发数，并检查容量预留、五项窗口、RR 和精确响应时序。
 
-断言失败立即停止
-勾选：记录第一笔失败后执行 $fatal。
-取消：使用 $error 继续执行，保存多笔失败；用例和回归仍判 FAIL，失败用例不合并到通过覆盖率。
-本开关控制运行期协议和事务断言。TC 非法赋值、驱动时点错误、文件或工具错误、watchdog 仍终止。
+环境错误立即停止（总开关）
+默认勾选：main_fail 等环境检查失败立即停止；断言按右侧选项处理。
+取消：TC 输入约束、驱动时序/赋值检查、协议/事务断言错误均记录后继续执行剩余周期。断言停止选项暂不生效，重新勾选总开关后恢复原选择。
+继续模式不修补输入、不删除检查；结果仍 FAIL，失败用例不合并到通过覆盖率。错误后的输出仅作诊断，不能据此认定 RTL 正确或错误。
+
+断言失败立即停止（仅总开关打开时生效）
+勾选：记录断言失败后 $fatal。取消：只关闭断言中止，环境检查仍立即停止。
+
+无法继续执行的情况
+无效时钟、未实现 main_phase、文件/程序格式错误、随机求解无解、驱动状态损坏、watchdog 和执行超时仍终止。
+用户 TC 或 DUT 自己写的 $fatal/$stop/$finish 不由本开关拦截；无限等待也不能靠本开关保证结束。
 
 报告与复现
 结果页分别展示接口、事务、完整时序结论。check_frames.csv 保存原采样拍，assertions.jsonl 保存失败标签及原始拍号，check_scope.json 列出范围。
-make replay 使用原用例保存的检查模式和 fatal 开关。通用模式通过不代表完整时序或 Formal 证明通过。''')
+environment_errors.jsonl 保存环境错误，environment_runtime.json 记录是否执行到结尾。结果页区分“执行完成”和“验证通过”。
+make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 开关。通用模式通过不代表完整时序或 Formal 证明通过。''')
 
     def save_plan(self):
         self.idle()
@@ -434,7 +513,7 @@ make replay 使用原用例保存的检查模式和 fatal 开关。通用模式�
         row = self.bar(page); self.artifact_var = tk.StringVar(value='sim.log')
         ttk.Label(row, text='运行记录').pack(side='left', padx=(0, 10))
         combo = ttk.Combobox(row, textvariable=self.artifact_var, state='readonly', width=26,
-                             values=['sim.log', 'sim.process.json', 'check_scope.json', 'assertions.jsonl', 'check_frames.csv', 'check_runtime.json',
+                             values=['sim.log', 'sim.process.json', 'environment_errors.jsonl', 'environment_runtime.json', 'cmdbuf_rd_port_sva.sv', 'check_scope.json', 'assertions.jsonl', 'check_frames.csv', 'check_runtime.json',
                                      'clock_reset.csv', 'case.sv', 'assigned.csv', 'samples.csv', 'events.csv', 'drive_audit.json', 'constraint_failure.json'])
         combo.pack(side='left'); combo.bind('<<ComboboxSelected>>', lambda e: self.guard(self.read_artifact))
         self.result_code = CodeEditor(page, self.mono, readonly=True, height=8); self.result_code.pack(fill='both', expand=True)
@@ -475,8 +554,14 @@ make replay 使用原用例保存的检查模式和 fatal 开关。通用模式�
         checks = result.get('checks', {})
         if checks:
             labels = {'PASS':'通过', 'FAIL':'失败', 'INCOMPLETE':'未完成', 'NOT_CHECKED':'未检查'}
+            checker = checks.get('checker', {})
+            sva_note = ('  |  自定义 SVA '+checker['sha256'][:12]) if checker.get('customized') else ''
             self.scope_note.set('  ·  '.join(g['title']+'：'+labels.get(g['status'],g['status']) for g in checks['groups']) +
-                                '  |  断言失败 %d 笔  |  $fatal %s'%(len(checks['failures']), '开' if checks['assert_fatal'] else '关'))
+                                '  |  环境错误 %d 笔 · 断言失败 %d 笔  |  环境 fatal %s · 断言 fatal %s  |  执行%s'%(
+                                    len(checks.get('environment', {}).get('failures', [])), len(checks['failures']),
+                                    '开' if checks.get('env_fatal', True) else '关',
+                                    '开' if checks.get('effective_assert_fatal', checks['assert_fatal']) else '关',
+                                    ('完成' if result['completed'] else '中断') if 'completed' in result else '状态未记录') + sva_note)
         else: self.scope_note.set('历史结果未记录分项验证范围，保持原报告结论')
         if path.exists():
             with path.open(encoding='utf-8', errors='replace') as f: text = f.read(120000)
@@ -726,6 +811,8 @@ make replay 使用原用例保存的检查模式和 fatal 开关。通用模式�
         self.launch('doctor')
 
     def launch(self, kind, payload=None):
+        if kind in ('compile', 'regress') and self.sva_dirty():
+            raise ValueError('请先保存端口 SVA 编辑器中的修改')
         job = self.jobs.start(kind, payload); self.status.set('任务启动：'+kind); self.progress.start(12)
         return job
 
@@ -790,7 +877,7 @@ make replay 使用原用例保存的检查模式和 fatal 开关。通用模式�
     def close(self):
         try:
             self.idle()
-            if not self.allow_case_change(): return
+            if not self.allow_case_change() or not self.close_sva(): return
             if self.dut_value() != self.dut_baseline and not messagebox.askyesno('未保存的 DUT', 'DUT 修改尚未保存。仍然关闭窗口？', parent=self.root): return
             # Preserve a draft even if no cases are enabled. Validation occurs on run.
             try: eda.write_json(STATE/'settings.json', dict(plan=self.plan_value()))

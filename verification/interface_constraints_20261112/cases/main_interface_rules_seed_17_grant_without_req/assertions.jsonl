@@ -1,0 +1,1 @@
+{"label":"E08_AR_GRANT_REQ","edge":3,"time_ps":20000,"detail":"path=tb_cmdbuf_rd.checks.E08_AR_GRANT_REQ sampled_pending=1 last_pending=0 ar_fire=1 issue_fire=0 src=00 arvalid=1 ready=7 req=00 argrant=80 rready=0 rvalid=0 rid=00 expected_ready=7 expected_req=00 expected_rvalid=0"}

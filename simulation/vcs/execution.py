@@ -54,7 +54,7 @@ def run(cmd,cwd,log,env,timeout,wait_for_start=False,phase='tool'):
     if wait_for_start:child_env['CMDBUF_STUDIO_START_FILE']=str(marker.resolve())
     scope='execution_only' if wait_for_start else 'unlimited' if limit is None else 'process'
     save(log.with_suffix('.command.json'),dict(argv=cmd,cwd=str(cwd),timeout_seconds=limit,
-         timeout_scope=scope,license_wait_limit_seconds=None if scope!='process' else 'not_a_license_wait_command'))
+         timeout_scope=scope,stdin='closed',license_wait_limit_seconds=None if scope!='process' else 'not_a_license_wait_command'))
     start=time.monotonic();active=None if wait_for_start else start
     state=dict(phase=phase,task=Path(cwd).name,state='WAITING_FOR_START' if wait_for_start else 'RUNNING',
                timeout_scope=scope,execution_timeout_seconds=limit,license_wait_limit_seconds=None,
@@ -70,7 +70,10 @@ def run(cmd,cwd,log,env,timeout,wait_for_start=False,phase='tool'):
     with log.open('w',encoding='utf-8') as output:
         process=None;rc=None
         try:
-            process=subprocess.Popen(cmd,cwd=str(cwd),env=child_env,stdout=output,
+            # Batch jobs must not inherit the GUI/terminal's live stdin. A DUT
+            # $stop may enter UCLI; EOF ends that interrupted run instead of
+            # waiting indefinitely for someone to type a debugger command.
+            process=subprocess.Popen(cmd,cwd=str(cwd),env=child_env,stdin=subprocess.DEVNULL,stdout=output,
                                      stderr=subprocess.STDOUT,start_new_session=True)
             while True:
                 if _cancelled.is_set():raise InterruptedError('EDA job cancelled')

@@ -23,10 +23,12 @@ class cmdbuf_random_inputs;
     constraint input_contracts {
         solve valid before source, response;
         solve argrant, rwgrant before bank_status;
-        // E03/E04 apply when valid. Inactive fields retain their full bit range.
+        // E03/E04 apply when valid. E07 also applies to idle source selection.
         if (valid) { source inside {0,1,2}; response inside {0,3}; }
         // E05: this is an input to the solve, never a mask applied afterwards.
         if (ready_context == 0) valid == 0;
+        if (source < 3) ready_context[source] == 1;
+        (argrant & ~req_context) == 0;
         // E06: jointly solve grants and all 16 bank/half status bits.
         foreach (bank_status[b])
             if (req_context[b] && argrant[b] && rwgrant[b])
@@ -36,7 +38,7 @@ class cmdbuf_random_inputs;
         if (mem_due) { mem_data == due_payload; mem_error == due_error; }
         // Explicit completion phase, excluded from random-phase statistics.
         if (drain) {
-            valid == 0; argrant == 8'hff; rwgrant == 8'hff;
+            valid == 0; source == 3; argrant == req_context; rwgrant == 8'hff;
             foreach (bank_status[b])
                 if (req_context[b]) bank_status[b] == (2'b01 << half_context);
                 else bank_status[b] == 0;
@@ -59,7 +61,7 @@ task automatic random_open;
         random_inputs.srandom(seed);
         random_samples = $fopen("samples.csv", "w");
         random_solutions = $fopen("random_solutions.csv", "w");
-        if (!random_samples || !random_solutions) $fatal(1,"RND_ARCHIVE_OPEN");
+        if (!random_samples || !random_solutions) env_fail("RND_ARCHIVE_OPEN","random input audit files",1);
         $fdisplay(random_samples,"cycle,phase,time_ps,clk,rst_n,arvalid,src,araddr,arid,ar_port_id,arresp,rready,ar_rd_gnt,rw_rd_gnt,rd_mem_status[0],rd_mem_status[1],rd_mem_status[2],rd_mem_status[3],rd_mem_status[4],rd_mem_status[5],rd_mem_status[6],rd_mem_status[7],mem_rdata,pc_err,arready,req,arb_addr,pending_cnt,rvalid,rdata,rid,r_port_id,raddr,rresp");
         $fdisplay(random_solutions,"cycle,phase,clk,rst_n,arvalid,src,araddr,arid,ar_port_id,arresp,rready,ar_rd_gnt,rw_rd_gnt,rd_mem_status[0],rd_mem_status[1],rd_mem_status[2],rd_mem_status[3],rd_mem_status[4],rd_mem_status[5],rd_mem_status[6],rd_mem_status[7],mem_rdata,pc_err,arready,req,arb_addr,next_data,next_error");
     end
@@ -105,11 +107,11 @@ task automatic constrained_random_step(input integer phase);
         @(negedge clk);
         random_phase=phase; random_started=1;
         random_ready.drain=(phase!=2);
-        if (!random_ready.randomize()) $fatal(1,"RND_READY_SOLVE_FAILED cycle=%0d",cycle);
+        if (!random_ready.randomize()) env_fail("RND_READY_SOLVE_FAILED",$sformatf("cycle=%0d no satisfying input",cycle),1);
         rready=random_ready.value;
         #1; // rready -> R retirement -> same-cycle capacity/AR ready must settle.
         if ($isunknown({arready,req}) || ((|req) && $isunknown(arb_addr)))
-            $fatal(1,"RND_UNKNOWN_CONTEXT cycle=%0d",cycle);
+            env_fail("RND_UNKNOWN_CONTEXT",$sformatf("cycle=%0d cannot constrain unknown feedback",cycle),1);
         random_inputs.ready_context=arready; random_inputs.req_context=req;
         random_inputs.half_context=(|req) ? arb_addr[0] : 0;
         random_inputs.mem_due=due_data.exists(cycle);
@@ -117,7 +119,7 @@ task automatic constrained_random_step(input integer phase);
         random_inputs.due_error=due_parity.exists(cycle) ? due_parity[cycle] : 0;
         random_inputs.drain=(phase!=2);
         random_inputs.contradiction=(inject=="random_unsat");
-        if (!random_inputs.randomize()) $fatal(1,"RND_SOLVE_FAILED cycle=%0d",cycle);
+        if (!random_inputs.randomize()) env_fail("RND_SOLVE_FAILED",$sformatf("cycle=%0d no satisfying input",cycle),1);
         random_solves=random_solves+1;
         if (phase==2) random_cycles=random_cycles+1;
         random_record_solution();
@@ -134,12 +136,12 @@ task automatic constrained_random_step(input integer phase);
             {random_inputs.valid,random_inputs.source,random_inputs.address,random_inputs.ident,
              random_inputs.portnum,random_inputs.response,random_ready.value,
              random_inputs.argrant,random_inputs.rwgrant,random_inputs.mem_data,random_inputs.mem_error})
-            $fatal(1,"RND_POST_SOLVE_MODIFICATION cycle=%0d",cycle);
+            env_fail("RND_POST_SOLVE_MODIFICATION",$sformatf("cycle=%0d",cycle));
         for (integer b=0;b<8;b=b+1)
             if (rd_mem_status[b] !== random_inputs.bank_status[b])
-                $fatal(1,"RND_POST_SOLVE_MODIFICATION cycle=%0d bank=%0d",cycle,b);
+                env_fail("RND_POST_SOLVE_MODIFICATION",$sformatf("cycle=%0d bank=%0d",cycle,b));
         if (arready !== random_inputs.ready_context || req !== random_inputs.req_context)
-            $fatal(1,"RND_CONTEXT_CHANGED cycle=%0d",cycle);
+            env_fail("RND_CONTEXT_CHANGED",$sformatf("cycle=%0d",cycle));
         observe_sequence(random_inputs.next_error,random_inputs.next_data);
     end
 endtask

@@ -1,0 +1,9 @@
+python3 "/root/cmdbuf-sva-editor-20261112/simulation/vcs/eda.py" --local run --case "tc_directed" --seed "18" --cycles "16" --timeout "120" --waves "0" --check-mode "strict"  --env-fatal "0"
+BATCH 20261112_224442_run_a6cd10 TOTAL 1
+EDA_PROCESS {"key": "/root/cmdbuf-sva-editor-20261112/build/vcs/regressions/20261112_224442_run_a6cd10/cases/tc_directed_seed_18/sim.log", "phase": "simulation", "task": "tc_directed_seed_18", "state": "WAITING_FOR_START", "timeout_scope": "execution_only", "execution_timeout_seconds": 120, "license_wait_limit_seconds": null, "startup_wait_seconds": null, "execution_seconds": null}
+EDA_PROCESS {"key": "/root/cmdbuf-sva-editor-20261112/build/vcs/regressions/20261112_224442_run_a6cd10/cases/tc_directed_seed_18/sim.log", "phase": "simulation", "task": "tc_directed_seed_18", "state": "RUNNING", "timeout_scope": "execution_only", "execution_timeout_seconds": 120, "license_wait_limit_seconds": null, "startup_wait_seconds": 0.352, "execution_seconds": null}
+EDA_PROCESS {"key": "/root/cmdbuf-sva-editor-20261112/build/vcs/regressions/20261112_224442_run_a6cd10/cases/tc_directed_seed_18/sim.log", "phase": "simulation", "task": "tc_directed_seed_18", "state": "FINISHED", "timeout_scope": "execution_only", "execution_timeout_seconds": 120, "license_wait_limit_seconds": null, "startup_wait_seconds": 0.352, "execution_seconds": 0.0, "seconds": 0.353, "returncode": 0}
+FAIL tc_directed_seed_18 (0.35s)
+PROGRESS 20261112_224442_run_a6cd10 1/1
+REPORT /root/cmdbuf-sva-editor-20261112/build/vcs/regressions/20261112_224442_run_a6cd10/index.html
+make: *** [/root/cmdbuf-sva-editor-20261112/simulation/vcs/Makefile:136: run] Error 1

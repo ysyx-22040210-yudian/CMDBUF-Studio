@@ -1,0 +1,36 @@
+{
+  "status": "PASS",
+  "checker_sha256": "1f715df2c4f58e71e549f140212cbdd62936d45f792f3dffd04b062757609a44",
+  "gui_batch": "20261112_224441_regress_509842",
+  "source_restored_in_fixture": true,
+  "completed": true,
+  "body_cycles": 16,
+  "labels": [
+    "USER_PENDING_ACTION",
+    "USER_PENDING_ZERO"
+  ],
+  "authored_action_calls": 2,
+  "user_action_preserved": true,
+  "strict_edit_batch": "20261112_224442_run_a6cd10",
+  "replay_batch": "20261112_224442_replay_d74ff8",
+  "original_source_archived": true,
+  "events_match": true,
+  "make_commands": [
+    {
+      "argv": [
+        "make",
+        "--no-print-directory",
+        "PYTHON=/usr/bin/python3",
+        "regress",
+        "PLAN=/root/cmdbuf-sva-editor-20261112/build/vcs/studio/plans/20261112_224438_f309436c.json",
+        "JOBS=2",
+        "TIMEOUT=120",
+        "WAVES=1",
+        "CHECK_MODE=transaction",
+        "ASSERT_FATAL=1",
+        "ENV_FATAL=0"
+      ],
+      "returncode": 2
+    }
+  ]
+}

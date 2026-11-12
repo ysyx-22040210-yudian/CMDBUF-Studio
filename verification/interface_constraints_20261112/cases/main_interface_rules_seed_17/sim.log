@@ -1,0 +1,82 @@
+Chronologic VCS simulator copyright 1991-2018
+Contains Synopsys proprietary information.
+Compiler version O-2018.09-1_Full64; Runtime version O-2018.09-1_Full64;  Nov 12 21:40 2026
+
+ VCS Coverage Metrics Release O-2018.09-1_Full64 Copyright (c) 1991-2018 by Synopsys Inc.
+EDA_SIMULATION_STARTED
+CHECK_POLICY mode=strict assert_fatal=1 env_fatal=1 sampling=pre_edge snapshot_pipeline=1
+ENV_POLICY env_fatal=1 recoverable_errors=record_and_fail
+*Verdi* Loading libsscore_vcs201809.so
+FSDB Dumper for VCS, Release Verdi_O-2018.09-SP2, Linux x86_64/64bit, 02/21/2019
+(C) 1996 - 2019 by Synopsys, Inc.
+*Verdi* : Create FSDB file '/root/cmdbuf-interface-20261112/build/vcs/regressions/20261112_214001_main_phase_e41cbb/cases/main_interface_rules_seed_17/waves.fsdb'
+*Verdi* : Begin traversing the scope (tb_cmdbuf_rd), layer (0).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the MDAs, layer (0).
+*Verdi* : Enable +mda and +packedmda dumping.
+*Verdi* : End of traversing the MDAs.
+MAIN_BOOTSTRAP time_ps=10000 rst_n=1
+MAIN_PHASE_DONE case=main_interface_rules assignments=56 edges=57 active_edges=56 resets=1 cancelled=0
+CHECK_COMPLETE mode=strict failures=0 incomplete=0 frames=58 checked=58
+ENV_RUN_COMPLETE failures=0
+TEST_PASS seed=17 accepted=9 retired=9 cycles=57
+$finish called from file "/root/cmdbuf-interface-20261112/simulation/vcs/tb/tb_cmdbuf_rd.sv", line 283.
+$finish at simulation time               571001
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 707: tb_cmdbuf_rd.checks.C_RETRY_NEXT_CYCLE, 58 attempts, 1 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 717: tb_cmdbuf_rd.checks.C_FAILURE_SELECT_OTHER, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 727: tb_cmdbuf_rd.checks.C_REFILL_NEXT_CYCLE, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 737: tb_cmdbuf_rd.checks.C_NONHEAD_REFILL, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 747: tb_cmdbuf_rd.checks.C_BLOCKED_SIX, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 756: tb_cmdbuf_rd.checks.C_PENDING5_DEC, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 765: tb_cmdbuf_rd.checks.C_PENDING5_BOTH, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 774: tb_cmdbuf_rd.checks.C_PENDING5_ADD, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 784: tb_cmdbuf_rd.checks.C_FULL_REUSE, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 794: tb_cmdbuf_rd.checks.C_ALL_FOUR_EVENTS, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 804: tb_cmdbuf_rd.checks.C_CAPACITY700, 58 attempts, 4 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 814: tb_cmdbuf_rd.checks.C_CAPACITY440, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 823: tb_cmdbuf_rd.checks.C_RETURN_ERROR_PRIORITY, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 832: tb_cmdbuf_rd.checks.C_READY_MASK_RR, 58 attempts, 1 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 842: tb_cmdbuf_rd.checks.C_FOUR_SUCCESS, 58 attempts, 4 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 497: tb_cmdbuf_rd.checks.sources[0].C_XAU_EARLY_THIRD_BLOCKED, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 507: tb_cmdbuf_rd.checks.sources[0].C_XAU_R_123_AFTER_ISSUE3_FIRST, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 517: tb_cmdbuf_rd.checks.sources[0].C_XAU_OTHER_SOURCE_PROGRESS, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 527: tb_cmdbuf_rd.checks.sources[0].C_XAU_SAME_CYCLE_POP_PUSH, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 537: tb_cmdbuf_rd.checks.sources[0].C_XAU_REPEAT_ID_HEAD_R, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 497: tb_cmdbuf_rd.checks.sources[1].C_XAU_EARLY_THIRD_BLOCKED, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 507: tb_cmdbuf_rd.checks.sources[1].C_XAU_R_123_AFTER_ISSUE3_FIRST, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 517: tb_cmdbuf_rd.checks.sources[1].C_XAU_OTHER_SOURCE_PROGRESS, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 527: tb_cmdbuf_rd.checks.sources[1].C_XAU_SAME_CYCLE_POP_PUSH, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 537: tb_cmdbuf_rd.checks.sources[1].C_XAU_REPEAT_ID_HEAD_R, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 497: tb_cmdbuf_rd.checks.sources[2].C_XAU_EARLY_THIRD_BLOCKED, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 507: tb_cmdbuf_rd.checks.sources[2].C_XAU_R_123_AFTER_ISSUE3_FIRST, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 517: tb_cmdbuf_rd.checks.sources[2].C_XAU_OTHER_SOURCE_PROGRESS, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 527: tb_cmdbuf_rd.checks.sources[2].C_XAU_SAME_CYCLE_POP_PUSH, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 537: tb_cmdbuf_rd.checks.sources[2].C_XAU_REPEAT_ID_HEAD_R, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 861: tb_cmdbuf_rd.checks.bank_covers[0].half_covers[0].C_SUCCESS_BUSY_TARGET, 58 attempts, 1 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 861: tb_cmdbuf_rd.checks.bank_covers[0].half_covers[1].C_SUCCESS_BUSY_TARGET, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 861: tb_cmdbuf_rd.checks.bank_covers[1].half_covers[0].C_SUCCESS_BUSY_TARGET, 58 attempts, 2 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 861: tb_cmdbuf_rd.checks.bank_covers[1].half_covers[1].C_SUCCESS_BUSY_TARGET, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 861: tb_cmdbuf_rd.checks.bank_covers[2].half_covers[0].C_SUCCESS_BUSY_TARGET, 58 attempts, 2 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 861: tb_cmdbuf_rd.checks.bank_covers[2].half_covers[1].C_SUCCESS_BUSY_TARGET, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 861: tb_cmdbuf_rd.checks.bank_covers[3].half_covers[0].C_SUCCESS_BUSY_TARGET, 58 attempts, 1 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 861: tb_cmdbuf_rd.checks.bank_covers[3].half_covers[1].C_SUCCESS_BUSY_TARGET, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 861: tb_cmdbuf_rd.checks.bank_covers[4].half_covers[0].C_SUCCESS_BUSY_TARGET, 58 attempts, 1 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 861: tb_cmdbuf_rd.checks.bank_covers[4].half_covers[1].C_SUCCESS_BUSY_TARGET, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 861: tb_cmdbuf_rd.checks.bank_covers[5].half_covers[0].C_SUCCESS_BUSY_TARGET, 58 attempts, 1 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 861: tb_cmdbuf_rd.checks.bank_covers[5].half_covers[1].C_SUCCESS_BUSY_TARGET, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 861: tb_cmdbuf_rd.checks.bank_covers[6].half_covers[0].C_SUCCESS_BUSY_TARGET, 58 attempts, 1 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 861: tb_cmdbuf_rd.checks.bank_covers[6].half_covers[1].C_SUCCESS_BUSY_TARGET, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 861: tb_cmdbuf_rd.checks.bank_covers[7].half_covers[0].C_SUCCESS_BUSY_TARGET, 58 attempts, 0 match
+"/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c/checker/cmdbuf_rd_port_sva.sv", 861: tb_cmdbuf_rd.checks.bank_covers[7].half_covers[1].C_SUCCESS_BUSY_TARGET, 58 attempts, 0 match
+
+---------------------------------------------------------------------------
+VCS Coverage Metrics: during simulation line, cond, FSM, branch, tgl was monitored
+---------------------------------------------------------------------------
+
+ Coverage status: End of All Coverages ...
+
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 571001 ps
+CPU Time:      0.260 seconds;       Data structure size:   0.3Mb
+Thu Nov 12 21:40:04 2026

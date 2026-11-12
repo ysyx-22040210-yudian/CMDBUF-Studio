@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help gui doctor compile build run regress check-test wave coverage report open-report list \
+.PHONY: help gui doctor compile build run regress check-test env-fatal-test wave coverage report open-report list \
         new-case validate explain diagram trace replay selftest export constraints constraint-test tc-test fsdb-inspect fsdb-formal smoke dist configure
 PYTHON ?= python3
 # Keep Chinese diagnostics readable on Linux installations with a C locale.
@@ -27,13 +27,14 @@ ALL ?= 0
 WAVES ?= 1
 CHECK_MODE ?=
 ASSERT_FATAL ?=
+ENV_FATAL ?=
 PLAN ?=
 REQUEST ?=
 DUT_SCOPE ?=
 EDA_RUN_CASE = $(if $(strip $(CASE)),$(CASE),tc_directed)
 EDA_SELECT = $(if $(strip $(RUN_ID)),--case "$(RUN_ID)",$(if $(strip $(CASE)),--case "$(CASE)_seed_$(SEED)"))
 EDA_CYCLES = $(if $(strip $(CYCLES)),--cycles "$(CYCLES)")
-EDA_CHECKS = $(if $(strip $(CHECK_MODE)),--check-mode "$(CHECK_MODE)") $(if $(strip $(ASSERT_FATAL)),--assert-fatal "$(ASSERT_FATAL)")
+EDA_CHECKS = $(if $(strip $(CHECK_MODE)),--check-mode "$(CHECK_MODE)") $(if $(strip $(ASSERT_FATAL)),--assert-fatal "$(ASSERT_FATAL)") $(if $(strip $(ENV_FATAL)),--env-fatal "$(ENV_FATAL)")
 EDA_REGRESSION = --regression "$(REGRESSION)"
 EDA_GUI = --display "$(DISPLAY)" $(if $(strip $(XAUTHORITY)),--xauthority "$(XAUTHORITY)")
 EDA_WAVE_SCOPE = $(if $(strip $(DUT_SCOPE)),--dut-scope "$(DUT_SCOPE)")
@@ -50,9 +51,11 @@ help:
 	@echo '  make run CASE=tc_directed SEED=17           Compile if needed, simulate, merge coverage'
 	@echo '  make regress SEEDS=1,2,42 JOBS=2      Directed suite + random seeds'
 	@echo '       PLAN=simulation/vcs/plans/name.json WAVES=0|1 (FSDB + VCD)'
-	@echo '       CHECK_MODE=transaction|strict ASSERT_FATAL=0|1'
+	@echo '       CHECK_MODE=transaction|strict ENV_FATAL=0|1 ASSERT_FATAL=0|1'
 	@echo '       New runs default to transaction + fatal; old plans retain strict scope.'
-	@echo '       ASSERT_FATAL=0 continues after assertion errors; the run still FAILS.'
+	@echo '       ENV_FATAL=0 continues after recoverable driver AND assertion errors; the run still FAILS.'
+	@echo '       ASSERT_FATAL=0 only disables assertion aborts when ENV_FATAL=1 (the default).'
+	@echo '       Invalid clocks, files, solver failures and watchdogs remain fatal.'
 	@echo '       CYCLES=2000 CASES=tc_directed,tc_retry RANDOM_ONLY=1 TIMEOUT=120'
 	@echo '       License wait is unlimited. TIMEOUT counts simulation execution only; 0 disables it.'
 	@echo '       VCS automatically uses -lca -licqueue +vcs+lic+wait; simv/URG queue licenses too.'
@@ -72,6 +75,7 @@ help:
 	@echo '  make constraints                      Audit complete versioned contract inventory'
 	@echo '  make constraint-test JOBS=2            Per-rule positive/negative/interaction checks'
 	@echo '  make tc-test JOBS=2                    main_phase timing/if/clock/negative acceptance'
+	@echo '  make env-fatal-test JOBS=2            Environment fatal / continue / coverage acceptance'
 	@echo '  make check-test JOBS=2                 Snapshot / transaction / fatal positive and negative VCS tests'
 	@echo '       TEMPLATE=tc_random                 Start from constrained random inputs'
 	@echo '  make explain CASE=my_retry            Explain main_phase assignments and timing'
@@ -118,6 +122,9 @@ constraint-test:
 
 tc-test:
 	$(EDA) tc-test --jobs "$(JOBS)" --timeout "$(TIMEOUT)"
+
+env-fatal-test:
+	$(PYTHON) "$(EDA_HERE)environment_suite.py" --jobs "$(JOBS)"
 
 check-test:
 	$(PYTHON) "$(EDA_HERE)check_suite.py" --jobs "$(JOBS)"

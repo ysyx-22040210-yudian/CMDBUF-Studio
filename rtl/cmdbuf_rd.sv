@@ -20,7 +20,7 @@ module cmdbuf_rd (
     output wire [1:0] rresp,
     output wire [7:0] req,
     output wire [11:0] arb_addr,
-    output wire [3:0] pending_cnt,
+    output wire [3:0] pending_cnt, // Driven directly by the command module register.
     input wire [7:0] ar_rd_gnt,
     // 每个 Bank 两个四态状态位：0 空闲，1 忙；保留输入的 X/Z。
     input wire [1:0] rd_mem_status [7:0],

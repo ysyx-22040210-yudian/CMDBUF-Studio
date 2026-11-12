@@ -55,6 +55,28 @@ class ExecutionTests(unittest.TestCase):
             (rc,_),state=self.child(folder,'raise SystemExit(7)')
             self.assertEqual(rc,7);self.assertIsNone(state['execution_seconds'])
 
+    def test_batch_child_does_not_wait_on_open_terminal_input(self):
+        with tempfile.TemporaryDirectory() as folder:
+            source="""import os,sys
+from pathlib import Path
+sys.path.insert(0,{module!r})
+import execution
+root=Path({folder!r})
+rc,_=execution.run([sys.executable,'-c',"import sys;assert sys.stdin.read()==''"],
+                   root,root/'stdin.log',os.environ,1)
+raise SystemExit(rc)
+""".format(module=str(Path(execution.__file__).parent),folder=folder)
+            # Keep the parent's input pipe open for the entire child run.
+            parent=subprocess.Popen([sys.executable,'-c',source],stdin=subprocess.PIPE,
+                                    stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+            try:
+                parent.wait(timeout=5)
+                output=parent.stdout.read()
+                self.assertEqual(parent.returncode,0,output.decode(errors='replace'))
+            finally:
+                parent.stdin.close();parent.stdout.close()
+                if parent.poll() is None:parent.kill();parent.wait()
+
     def test_parallel_waiters_have_independent_markers(self):
         with tempfile.TemporaryDirectory() as folder:
             def run(index):

@@ -1,0 +1,130 @@
+{
+  "status": "PASS",
+  "contract_revision": "20261112.2",
+  "toolchain": {
+    "simulator": "VCS O-2018.09-1",
+    "wave_and_coverage": "Verdi O-2018.09-SP2"
+  },
+  "registered_pending": {
+    "signal": "tb_cmdbuf_rd.dut.pending_cnt[3:0]",
+    "changes_ns": [
+      [
+        0,
+        0
+      ],
+      [
+        50,
+        1
+      ],
+      [
+        70,
+        0
+      ]
+    ],
+    "wave_check": "registered_pending/wave_check.json",
+    "sampled_values": "registered_pending/samples.csv",
+    "mutations_detected_in_both_modes": [
+      "combinational lookahead",
+      "one extra register stage"
+    ],
+    "check_suite": {
+      "passed": 96,
+      "record": "check_acceptance.json"
+    }
+  },
+  "custom_sva": {
+    "editor": "Tk",
+    "source_sha256": "1f715df2c4f58e71e549f140212cbdd62936d45f792f3dffd04b062757609a44",
+    "baseline_sha256": "9d42cf8dd8d20ee38d5c72ca6e81b6c227a6c45c2149cb3cf09dd2941331bd95",
+    "custom_assertions": [
+      "USER_PENDING_ACTION",
+      "USER_PENDING_ZERO"
+    ],
+    "intentional_failure": true,
+    "completed_body_cycles": 16,
+    "authored_action_calls": 2,
+    "changed_strict_property": "A_COMPARE_PENDING_CNT",
+    "archived_source_and_exact_replay": true,
+    "record": "gui_edit/acceptance.json",
+    "screenshot": "gui_edit/sva_editor.png"
+  },
+  "regression": {
+    "passed": 16,
+    "total": 16,
+    "random_seeds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      11,
+      17,
+      23,
+      42,
+      101
+    ],
+    "random_body_cycles": 20000,
+    "coverage": "PASS",
+    "record": "regression_summary.json"
+  },
+  "constraints": {
+    "positive": 42,
+    "expected_negative": 34,
+    "record": "constraints_acceptance.json"
+  },
+  "main_phase": {
+    "positive": 12,
+    "expected_negative": 15,
+    "record": "main_phase_acceptance.json"
+  },
+  "environment_fatal_checks": {
+    "passed": 118,
+    "record": "environment_acceptance.json"
+  },
+  "legacy_replay": {
+    "revisions": [
+      "20261021",
+      "20261112"
+    ],
+    "record": "legacy_replay_acceptance.json"
+  },
+  "portable": {
+    "receipt": {
+      "status": "PASS",
+      "root": "/root/CMDBUF 寄存计数便携包 20261112/cmdbuf-studio",
+      "archive_sha256": "721328be51090e9ce8dd08d92fa88f8b9db5dd18ca14e0f8f97238e8c723465b",
+      "portable_files": 184,
+      "contract_revision": "20261112.2",
+      "checker_sha256": "9d42cf8dd8d20ee38d5c72ca6e81b6c227a6c45c2149cb3cf09dd2941331bd95",
+      "checks": {
+        "package_verify": true,
+        "constraints": true,
+        "smoke": true
+      },
+      "smoke": {
+        "id": "20261112_230500_regress_4f896a",
+        "passed": 3,
+        "coverage": "PASS",
+        "fsdb_and_vcd": [
+          "tc_directed_seed_1",
+          "tc_random_seed_17",
+          "tc_random_seed_42"
+        ],
+        "report": "/tmp/cmdbuf-studio-0/results-1cc15606a42d5742064a/regressions/20261112_230500_regress_4f896a/index.html"
+      }
+    },
+    "archives": {
+      "cmdbuf-studio-portable.zip": {
+        "bytes": 7559635,
+        "sha256": "c0bd27a3152eac869e6508c48bf605fe907d80631810de2614f49c8cdb7e37b2"
+      },
+      "cmdbuf-studio-portable.tar.gz": {
+        "bytes": 7449086,
+        "sha256": "721328be51090e9ce8dd08d92fa88f8b9db5dd18ca14e0f8f97238e8c723465b"
+      }
+    },
+    "zip_tar_manifest_match": true,
+    "record": "portable/acceptance.json"
+  },
+  "validation_scope": "Finite VCS/Verdi execution of the baseline RTL, targeted mutations, and a Tk-edited SVA fixture."
+}

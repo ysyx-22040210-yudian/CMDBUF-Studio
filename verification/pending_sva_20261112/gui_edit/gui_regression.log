@@ -1,0 +1,23 @@
+$ make regress PLAN=/root/cmdbuf-sva-editor-20261112/build/vcs/studio/plans/20261112_224438_f309436c.json JOBS=2 TIMEOUT=120 WAVES=1 CHECK_MODE=transaction ASSERT_FATAL=1 ENV_FATAL=0
+/usr/bin/python3 "/root/cmdbuf-sva-editor-20261112/simulation/vcs/eda.py" --local regress   \
+   \
+    \
+  --jobs "2" --timeout "120" --waves "1" --plan "/root/cmdbuf-sva-editor-20261112/build/vcs/studio/plans/20261112_224438_f309436c.json" --check-mode "transaction" --assert-fatal "1" --env-fatal "0"
+EDA_PROCESS {"key": "/root/cmdbuf-sva-editor-20261112/build/vcs/builds/5475b42621063da2/execution_start_compile.log", "phase": "start_hook", "task": "5475b42621063da2", "state": "RUNNING", "timeout_scope": "process", "execution_timeout_seconds": 120, "license_wait_limit_seconds": null, "startup_wait_seconds": null, "execution_seconds": null}
+EDA_PROCESS {"key": "/root/cmdbuf-sva-editor-20261112/build/vcs/builds/5475b42621063da2/execution_start_compile.log", "phase": "start_hook", "task": "5475b42621063da2", "state": "FINISHED", "timeout_scope": "process", "execution_timeout_seconds": 120, "license_wait_limit_seconds": null, "startup_wait_seconds": null, "execution_seconds": 0.051, "seconds": 0.051, "returncode": 0}
+EDA_PROCESS {"key": "/root/cmdbuf-sva-editor-20261112/build/vcs/builds/5475b42621063da2/compile.log", "phase": "compile", "task": "5475b42621063da2", "state": "RUNNING", "timeout_scope": "unlimited", "execution_timeout_seconds": null, "license_wait_limit_seconds": null, "startup_wait_seconds": null, "execution_seconds": null}
+EDA_PROCESS {"key": "/root/cmdbuf-sva-editor-20261112/build/vcs/builds/5475b42621063da2/compile.log", "phase": "compile", "task": "5475b42621063da2", "state": "FINISHED", "timeout_scope": "unlimited", "execution_timeout_seconds": null, "license_wait_limit_seconds": null, "startup_wait_seconds": null, "execution_seconds": 2.406, "seconds": 2.406, "returncode": 0}
+SVA customized 1f715df2c4f58e71e549f140212cbdd62936d45f792f3dffd04b062757609a44
+BUILD /root/cmdbuf-sva-editor-20261112/build/vcs/builds/5475b42621063da2
+BATCH 20261112_224441_regress_509842 TOTAL 1
+EDA_PROCESS {"key": "/root/cmdbuf-sva-editor-20261112/build/vcs/regressions/20261112_224441_regress_509842/cases/tc_directed_seed_17/sim.log", "phase": "simulation", "task": "tc_directed_seed_17", "state": "WAITING_FOR_START", "timeout_scope": "execution_only", "execution_timeout_seconds": 120, "license_wait_limit_seconds": null, "startup_wait_seconds": null, "execution_seconds": null}
+EDA_PROCESS {"key": "/root/cmdbuf-sva-editor-20261112/build/vcs/regressions/20261112_224441_regress_509842/cases/tc_directed_seed_17/sim.log", "phase": "simulation", "task": "tc_directed_seed_17", "state": "RUNNING", "timeout_scope": "execution_only", "execution_timeout_seconds": 120, "license_wait_limit_seconds": null, "startup_wait_seconds": 0.352, "execution_seconds": null}
+EDA_PROCESS {"key": "/root/cmdbuf-sva-editor-20261112/build/vcs/regressions/20261112_224441_regress_509842/cases/tc_directed_seed_17/sim.log", "phase": "simulation", "task": "tc_directed_seed_17", "state": "FINISHED", "timeout_scope": "execution_only", "execution_timeout_seconds": 120, "license_wait_limit_seconds": null, "startup_wait_seconds": 0.352, "execution_seconds": 0.051, "seconds": 0.403, "returncode": 0}
+EDA_PROCESS {"key": "/root/cmdbuf-sva-editor-20261112/build/vcs/regressions/20261112_224441_regress_509842/cases/tc_directed_seed_17/wave_conversion.log", "phase": "tool", "task": "tc_directed_seed_17", "state": "RUNNING", "timeout_scope": "process", "execution_timeout_seconds": 120, "license_wait_limit_seconds": null, "startup_wait_seconds": null, "execution_seconds": null}
+EDA_PROCESS {"key": "/root/cmdbuf-sva-editor-20261112/build/vcs/regressions/20261112_224441_regress_509842/cases/tc_directed_seed_17/wave_conversion.log", "phase": "tool", "task": "tc_directed_seed_17", "state": "FINISHED", "timeout_scope": "process", "execution_timeout_seconds": 120, "license_wait_limit_seconds": null, "startup_wait_seconds": null, "execution_seconds": 0.101, "seconds": 0.101, "returncode": 0}
+FAIL tc_directed_seed_17 (0.40s)
+PROGRESS 20261112_224441_regress_509842 1/1
+REPORT /root/cmdbuf-sva-editor-20261112/build/vcs/regressions/20261112_224441_regress_509842/index.html
+make: *** [/root/cmdbuf-sva-editor-20261112/simulation/vcs/Makefile:139: regress] Error 1
+
+回归包含失败、未完成验证的用例或工具错误，请查看检查范围和日志

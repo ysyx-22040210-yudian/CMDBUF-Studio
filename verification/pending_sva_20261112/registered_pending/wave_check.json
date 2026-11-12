@@ -1,0 +1,34 @@
+{
+  "passed": true,
+  "timescale": "1ps",
+  "actual": [
+    [
+      0,
+      0
+    ],
+    [
+      50000,
+      1
+    ],
+    [
+      70000,
+      0
+    ]
+  ],
+  "expected": [
+    [
+      0,
+      0
+    ],
+    [
+      50000,
+      1
+    ],
+    [
+      70000,
+      0
+    ]
+  ],
+  "pre_edge_matches": true,
+  "scope": "tb_cmdbuf_rd.dut.pending_cnt[3:0]"
+}

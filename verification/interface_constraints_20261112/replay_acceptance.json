@@ -1,0 +1,72 @@
+[
+  {
+    "name": "legacy_protocol",
+    "case": "protocol_selected_reject_seed_1",
+    "expected": "PASS",
+    "observed": "PASS",
+    "revision": "20261021",
+    "events_match": true,
+    "exact_replay": {},
+    "source_build": "/root/cmdbuf-interface-baseline-20261112/protocol_results/builds/303519c559cc326f",
+    "completed": true,
+    "summary": "/root/cmdbuf-interface-20261112/build/vcs/regressions/20261112_214147_replay_8c938a/summary.json",
+    "passed": true
+  },
+  {
+    "name": "legacy_sv",
+    "case": "tc_directed_seed_867",
+    "expected": "PASS",
+    "observed": "PASS",
+    "revision": "20261021",
+    "events_match": true,
+    "exact_replay": {
+      "case.sv": true,
+      "assigned.csv": true,
+      "samples.csv": true,
+      "tc_config.json": true,
+      "clock_reset.csv": true
+    },
+    "source_build": "/tmp/cmdbuf-studio-0/results-06719cdd302251b81d81/builds/a63791e85ca2b55b",
+    "completed": true,
+    "summary": "/root/cmdbuf-interface-20261112/build/vcs/regressions/20261112_214148_replay_5c80bc/summary.json",
+    "passed": true
+  },
+  {
+    "name": "current_random",
+    "case": "tc_random_seed_42",
+    "expected": "PASS",
+    "observed": "PASS",
+    "revision": "20261112",
+    "events_match": true,
+    "exact_replay": {
+      "case.sv": true,
+      "assigned.csv": true,
+      "samples.csv": true,
+      "tc_config.json": true,
+      "clock_reset.csv": true
+    },
+    "source_build": "/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c",
+    "completed": true,
+    "summary": "/root/cmdbuf-interface-20261112/build/vcs/regressions/20261112_214149_replay_d9886d/summary.json",
+    "passed": true
+  },
+  {
+    "name": "current_violation",
+    "case": "main_interface_rules_seed_17_src_ready_idle",
+    "expected": "FAIL",
+    "observed": "FAIL",
+    "revision": "20261112",
+    "events_match": true,
+    "exact_replay": {
+      "case.sv": true,
+      "assigned.csv": true,
+      "samples.csv": true,
+      "tc_config.json": true,
+      "clock_reset.csv": true
+    },
+    "source_build": "/root/cmdbuf-interface-20261112/build/vcs/builds/8f02e9c1e0d2d85c",
+    "completed": true,
+    "summary": "/root/cmdbuf-interface-20261112/build/vcs/regressions/20261112_214150_replay_eaf12d/summary.json",
+    "passed": true
+  }
+]

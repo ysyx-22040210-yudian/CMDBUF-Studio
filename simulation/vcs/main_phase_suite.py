@@ -19,6 +19,7 @@ def mutation_checks(directory):
     active=find(lambda s:s['rst_n']=='1' and s['arvalid']=='1')
     busy=find(lambda s:int(s['req'],16)&int(s['ar_rd_gnt'],2)&int(s['rw_rd_gnt'],2)!=0)
     response=find(lambda s:int(s['rvalid'],16)&int(s['rready'],2)!=0)
+    idle=find(lambda s:s['arvalid']=='0' and int(s['req'],16)==0)
     issue_edge=int(samples[busy]['edge'])
     mem=find(lambda s:int(s['edge'])==issue_edge+4)
     bank=(int(samples[busy]['req'],16).bit_length()-1)
@@ -27,6 +28,9 @@ def mutation_checks(directory):
     mutations=[('pin_drift',active,'arid','00000001',False,'MAIN_PIN_MISMATCH'),
       ('illegal_src',active,'src','11',True,'E03_SRC'),
       ('illegal_resp',active,'arresp','01',True,'E04_ARRESP'),
+      ('blocked_idle_src',idle,'src','00',True,'E07_SRC_READY'),
+      ('spurious_grant',idle,'ar_rd_gnt','10000000',True,'E08_AR_GRANT_REQ'),
+      ('unready_r',response,'rready','000',True,'A_R_READY'),
       ('busy_clear',busy,'rd_mem_status[{}]'.format(bank),format(int(samples[busy]['rd_mem_status[{}]'.format(bank)],2)&~(1<<half),'02b'),True,'E06_SUCCESS_BUSY'),
       ('mem_corrupt',mem,'mem_rdata',format(int(samples[mem]['mem_rdata'],2)^1,'0128b'),True,'T_MEM4'),
       ('fifo_id',response,'rid',format(int(samples[response]['rid'],16)^1,'02x'),False,'T_ASSOCIATION_FIFO_DATA'),
@@ -36,6 +40,8 @@ def mutation_checks(directory):
         s=copy.deepcopy(samples);q=copy.deepcopy(solutions)
         s[index][column]=value
         if both:q[index][column]=value
+        if name=='blocked_idle_src':
+            s[index]['arready']=q[index]['arready']='6'
         with tempfile.TemporaryDirectory(prefix='sv_audit_') as tmp:
             dest=Path(tmp)
             for filename,rows in [('samples.csv',s),('assigned.csv',q)]:
@@ -57,6 +63,10 @@ def run_suite(args,env):
     tests += [('tc_random',seed,2000,'',None) for seed in (1,42)]
     tests += [(str(fixtures/'main_user_values.sv'),17,500,'',None)]
     tests += [(str(fixtures/'main_first_cycle.sv'),17,None,'',None)]
+    interface = str(fixtures/'main_interface_rules.sv')
+    tests.append((interface, 17, None, '', None))
+    interface_failures = {'src_ready_idle': 'E07_SRC_READY', 'grant_without_req': 'E08_AR_GRANT_REQ'}
+    tests.extend((interface, 17, None, injection, 'MAIN_'+label) for injection,label in interface_failures.items())
     negatives={'src':'MAIN_E03_SRC','resp':'MAIN_E04_ARRESP','busy':'MAIN_E06_SUCCESS_BUSY',
       'mem':'MAIN_T_MEM4','zero_ready':'MAIN_E05_ZERO_READY','control':'MAIN_CONTROL_INVALID',
       'unknown':'MAIN_P_KNOWN','missing':'MAIN_MISSING_ASSIGNMENT','duplicate':'MAIN_DRIVE_ORDER',
@@ -66,17 +76,31 @@ def run_suite(args,env):
         tests.append((str(fixtures/('main_bad_'+name+'.sv')),1,None,'',marker))
     tests += [('tc_random',1,20,'main_post','MAIN_PIN_MODIFICATION')]
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs) as pool:
-        futures=[pool.submit(eda.run_case,build,root,name,seed,cycles,env,args.timeout,inj) for name,seed,cycles,inj,_ in tests]
+        futures=[pool.submit(eda.run_case,build,root,name,seed,cycles,env,args.timeout,inj,
+                             env_fatal=inj not in interface_failures) for name,seed,cycles,inj,_ in tests]
         results=[f.result() for f in futures]
     for test,result in zip(tests,results):
         marker=test[-1]
         log=(Path(result['directory'])/'sim.log').read_text(errors='replace')
         result['expected_failure']=marker
         result['acceptance_pass']=(result['status']=='FAIL' and marker in log) if marker else result['status']=='PASS'
+        if result['injection'] in interface_failures:
+            label = interface_failures[result['injection']]
+            result['acceptance_pass'] &= result['completed'] and any(
+                failure['label']==label for failure in result['checks']['failures'])
         eda.write_json(Path(result['directory'])/'result.json',result)
     positive=[r for r in results if not r['expected_failure']]
     bycase={r['case']:r for r in positive}
     mutations=mutation_checks(bycase['tc_directed']['directory'])
+    interface_result = bycase['main_interface_rules']
+    with (Path(interface_result['directory'])/'samples.csv').open() as stream:
+        interface_rows = {int(row['cycle']): row for row in csv.DictReader(stream) if row['phase']=='0'}
+    full_idle = any(row['arready']=='0' and row['arvalid']=='0' and row['src']=='11' for row in interface_rows.values())
+    partial_idle = interface_rows.get(7, {})
+    lane_select = interface_rows.get(24, {})
+    return_before_drop = interface_rows.get(27, {}).get('rvalid')
+    return_after_drop = interface_rows.get(28, {}).get('rvalid')
+    return_after_resume = interface_rows.get(29, {}).get('rvalid')
     hits=bycase['tc_banks']['drive_audit']['coverage']['E06_SUCCESS_BUSY']
     reset=bycase['tc_reset']['drive_audit']['coverage']
     with (Path(bycase['main_user_values']['directory'])/'samples.csv').open() as f:
@@ -91,6 +115,10 @@ def run_suite(args,env):
             'first_procedural_cycle_can_send':bycase['main_first_cycle']['metrics']['accepted']==1 and bycase['main_first_cycle']['metrics']['retired']==1,
             'user_assignments_and_ranges_preserved':user_ok,
             'independent_audit_detects_mutations':all(m['detected'] for m in mutations),
+            'nine_entries_and_full_idle_encoding':full_idle and interface_result['metrics'].get('accepted')==9 and interface_result['metrics'].get('retired')==9,
+            'idle_may_name_a_ready_lane':partial_idle.get('arvalid')=='0' and partial_idle.get('src')=='01' and partial_idle.get('arready')=='6',
+            'rready_masks_only_blocked_lanes':lane_select.get('rready')=='010' and lane_select.get('rvalid')=='2',
+            'rvalid_tracks_rready_drop_and_resume':return_before_drop not in (None,'0') and return_after_drop=='0' and return_after_resume not in (None,'0'),
             'coverage_contains_positive_only':cov['status']=='PASS' and len(cov['included'])==len(positive)}
     acceptance=dict(status='PASS' if all(checks.values()) else 'FAIL',id=rid,checks=checks,
         positive=len(positive),negative=len(tests)-len(positive),bank_half_hits=hits,

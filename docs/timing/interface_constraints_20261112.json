@@ -1,0 +1,26 @@
+{
+  "revision": "20261112",
+  "baseline": "docs/timing/protocol_corrections_20261021.json",
+  "sampling": "Same sampled posedge of clk, after reset release",
+  "rules": [
+    {
+      "id": "E07_SRC_READY",
+      "owner": "upstream AR producer",
+      "rule": "For i in 0..2, src == i implies arready[i] == 1, including arvalid == 0 cycles.",
+      "idle": "src == 3 is allowed only with arvalid == 0. When arready == 0, use src == 3 and arvalid == 0.",
+      "supersedes": "Selected-source rejection with a different ready lane was legal under the previous input contract."
+    },
+    {
+      "id": "A_R_READY",
+      "owner": "CMDBUF RTL",
+      "rule": "For i in 0..2, rready[i] == 0 implies rvalid[i] == 0.",
+      "implementation": "The existing R arbitration selects only completed source heads with rready[i] == 1."
+    },
+    {
+      "id": "E08_AR_GRANT_REQ",
+      "owner": "downstream MEM arbiter",
+      "rule": "For i in 0..7, req[i] == 0 implies ar_rd_gnt[i] == 0.",
+      "issue_success": "req[i], ar_rd_gnt[i], and rw_rd_gnt[i] must all be 1. A requested bank may be denied a grant."
+    }
+  ]
+}

@@ -31,6 +31,9 @@ from case_adapter import load_case, make_program
 import sv_cases
 import platform_config
 import check_policy
+import contracts
+import sva_source
+from wavedrom_adapter import PROTOCOL_PROGRAM_PREFIXES
 import execution
 import verdi_wave
 
@@ -76,7 +79,7 @@ def sources():
     files.extend(ROOT / p for p in [PROJECT['checker']] + PROJECT['checker_includes'])
     files.extend(dut_config.source_files())
     files.extend(ROOT / p for p in ('Makefile', 'make.cmd'))
-    files.append(ROOT / 'docs/timing/protocol_corrections_20261021.json')
+    files.extend(ROOT / p for p in ('docs/timing/protocol_corrections_20261021.json', contracts.SUPPLEMENT, contracts.PENDING_SPEC))
     files.extend(p for p in HERE.rglob('*') if p.is_file() and
                  '__pycache__' not in p.parts and p.suffix not in ('.pyc', '.log'))
     return sorted(set(files))
@@ -116,58 +119,42 @@ def vcs_options(target,env):
             '-load',platform_config.tool_path(str(library))+':cmdbuf_studio_register']
 
 
-def instrument_checker(destination):
-    """Preserve native sampled expressions; select scope and failure policy at runtime.
-
-    Canonical files are never rewritten. Record every converted property and
-    require exact conversion counts so unsupported syntax cannot slip through.
-    """
-    destination.mkdir(parents=True, exist_ok=True)
+def instrument_checker(destination, source_hashes=None):
+    """Archive authored sources and compile an instrumented copy for simulation."""
+    original = destination / 'original'
+    original.mkdir(parents=True, exist_ok=True)
+    strict = set(check_policy.catalog()['strict_native'])
     changes = []
-    pattern = re.compile(r'(\b(\w+)\s*:\s*)(assert|assume)(\s+property\s*\(.*?\))\s*;', re.S)
     for rel in [PROJECT['checker']] + PROJECT['checker_includes']:
         path = ROOT / rel
-        code = path.read_text(encoding='utf-8')
-        expected = len(re.findall(r'\b(?:assert|assume)\s+property\s*\(', re.sub(r'//[^\n]*', '', code)))
-        labels = []
-        def replace(match):
-            label = match.group(2)
-            common = label in check_policy.COMMON
-            labels.append({'label': label, 'original_kind': match.group(3),
-                           'scope': 'common' if common else 'strict'})
-            expression = match.group(4)
-            if not common:
-                if 'disable iff (!rst_n)' not in expression:
-                    raise RuntimeError('Property has unsupported reset/sampling contract: ' + label)
-                expression = expression.replace('disable iff (!rst_n)',
-                    'disable iff (!rst_n || !tb_cmdbuf_rd.monitor.strict_mode)')
-            detail = ('$sformatf("path=%m sampled_pending=%h last_pending=%h ar_fire=%b issue_fire=%b '
-                      'ready=%h req=%h rvalid=%h rid=%h expected_ready=%h expected_req=%h expected_rvalid=%h", '
-                      '$sampled(pending_cnt), $sampled(last_pending), $sampled(ar_fire), $sampled(issue_fire), '
-                      '$sampled(arready), $sampled(req), $sampled(rvalid), $sampled(rid), '
-                      '$sampled(expected_ready), $sampled(expected_req), $sampled(expected_rvalid))')
-            return (match.group(1) + 'assert' + expression +
-                    ' else tb_cmdbuf_rd.monitor.native_failure("' + label + '", $realtime/1ps, ' + detail + ');')
-        rewritten = pattern.sub(replace, code)
-        if len(labels) != expected:
-            raise RuntimeError('Unsupported property syntax in ' + rel)
-        # Strict-model covers are not meaningful when that model's scheduling is
-        # intentionally outside the generic transaction contract.
-        rewritten = re.sub(r'(cover\s+property\s*\(\s*@\(posedge clk\)\s*)disable iff \(!rst_n\)',
-                           r'\1disable iff (!rst_n || !tb_cmdbuf_rd.monitor.strict_mode)', rewritten)
-        (destination / path.name).write_text(rewritten, encoding='utf-8')
-        changes.append({'source': rel, 'sha256': digest(path), 'properties': labels})
+        raw = path.read_bytes()
+        sha = hashlib.sha256(raw).hexdigest()
+        if source_hashes is not None and source_hashes.get(rel) != sha:
+            raise RuntimeError('SVA source changed during compilation: ' + rel)
+        (original / path.name).write_bytes(raw)
+        rewritten, properties = sva_source.instrument(raw.decode('utf-8'), strict)
+        # Built-in covers exercise the full reference model.
+        cover_reset = re.compile(r'(cover\s+property\s*\(\s*@\(posedge clk\)\s*disable iff \()!rst_n\)')
+        for match in reversed(list(cover_reset.finditer(sva_source.mask_sv(rewritten)))):
+            start = match.end(1)
+            rewritten = rewritten[:start] + '!rst_n || !tb_cmdbuf_rd.monitor.strict_mode)' + rewritten[match.end():]
+        compiled = destination / path.name
+        compiled.write_bytes(rewritten.encode('utf-8'))
+        changes.append(dict(source=rel, sha256=sha, compiled_sha256=digest(compiled), properties=properties))
     write_json(destination / 'instrumentation.json', changes)
+    return changes
 
 
 def build(env):
-    from contracts import audit
-    audit()
+    inventory = contracts.audit()
     source_hashes = build_manifest()
+    if any(source_hashes.get(name) != sha for name, sha in inventory['sources'].items()):
+        raise RuntimeError('Contract source changed while preparing the build. Re-run compile.')
     import dut_config
     identity = {'sources': source_hashes, 'root': str(ROOT), 'dut': dut_config.load(),
                 'vcs_home': env.get('VCS_HOME'), 'verdi_home': env.get('VERDI_HOME'),
-                'coverage': PROJECT['coverage']}
+                'coverage': PROJECT['coverage'], 'contract_revision': contracts.REVISION,
+                'checker': inventory['checker']}
     key = hashlib.sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()[:16]
     target = OUT / 'builds' / key
     target.mkdir(parents=True, exist_ok=True)
@@ -175,10 +162,10 @@ def build(env):
     import fcntl
     with (target / '.build.lock').open('w') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
-        return build_at(target, identity, env)
+        return build_at(target, identity, inventory, env)
 
 
-def build_at(target, identity, env):
+def build_at(target, identity, inventory, env):
     key = target.name
     receipt = target / 'build.json'
     if receipt.exists() and (target / 'simv').exists():
@@ -190,7 +177,12 @@ def build_at(target, identity, env):
         return target
     target.mkdir(parents=True, exist_ok=True)
     generated = target / 'checker'
-    instrument_checker(generated)
+    instrumentation = instrument_checker(generated, identity['sources'])
+    built_in = check_policy.COMMON.union(check_policy.catalog()['strict_native'])
+    properties = [p for file in instrumentation for p in file['properties']]
+    checker = dict(inventory['checker'],
+                   user_properties=sorted({p['label'] for p in properties if p['label'] not in built_in}),
+                   authored_actions=sorted({p['label'] for p in properties if p['action'] != 'studio'}))
     sv_cases.generate_factory(generated)
     import dut_config
     dut = identity['dut']
@@ -211,11 +203,15 @@ def build_at(target, identity, env):
     rc, elapsed = execute(cmd, target, target / 'compile.log', env, None, phase='compile')
     if rc or not (target / 'simv').is_file():
         raise RuntimeError('VCS compile failed ({}): {}'.format(rc, target / 'compile.log'))
+    contract_path = target / 'contracts.json'
+    write_json(contract_path, dict(inventory, checker=checker))
     write_json(receipt, dict(identity, build_id=key, argv=cmd, seconds=elapsed,
+                             checker=checker, contracts_sha256=digest(contract_path),
                              execution_start_hook='vpi_cbStartOfSimulation',
                              execution_start_sha256=digest(target/'execution_start.so'),
                              simv_sha256=digest(target / 'simv'),
                              simulator=str(target / 'simv'), built_at=stamp()))
+    print('SVA {} {}'.format('customized' if checker['customized'] else 'baseline', checker['sha256']), flush=True)
     print('BUILD ' + str(target), flush=True)
     return target
 
@@ -234,15 +230,21 @@ def case_path(name):
 
 
 def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection='', replay_program=None,
-             saved_config=None, waves=True, check_mode='strict', assert_fatal=True):
+             saved_config=None, waves=True, check_mode='strict', assert_fatal=True, env_fatal=True):
     path = Path(saved_config) if saved_config else case_path(name)
     cfg = read_json(path) if saved_config else load_input(path)
     case_name = name if saved_config else path.stem
     identifier = '{}_seed_{}{}'.format(case_name, seed, '_' + injection if injection else '')
     run = regression / 'cases' / identifier
     run.mkdir(parents=True)  # Never overwrite an earlier seed's evidence.
-    policy = check_policy.normalize(check_mode, assert_fatal)
-    write_json(run / 'check_policy.json', policy)
+    policy = check_policy.normalize(check_mode, assert_fatal, env_fatal)
+    build_receipt = read_json(build_dir / 'build.json')
+    contract_revision = build_receipt.get('contract_revision', contracts.BASELINE_REVISION)
+    if contract_revision not in contracts.REVISIONS:
+        raise ValueError('Unsupported archived interface contract: ' + contract_revision)
+    current_contract = contract_revision != contracts.BASELINE_REVISION
+    checker = build_receipt.get('checker', {})
+    write_json(run / 'check_policy.json', dict(policy, contract_revision=contract_revision))
     program = (Path(replay_program).read_text(encoding='utf-8') if replay_program is not None
                else input_program(cfg, seed, cycles))
     (run / 'stimulus.txt').write_text(program, encoding='utf-8')
@@ -256,22 +258,29 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
     wave_case = 'signal' in cfg
     from random_audit import has_random
     strict_random = not wave_case and has_random(program)
-    if strict_random or sv_case:
-        from contracts import audit
-        write_json(run / 'contracts.json', audit())
+    protocol_case = program.startswith(PROTOCOL_PROGRAM_PREFIXES)
+    if build_receipt.get('contracts_sha256'):
+        saved_contract = build_dir / 'contracts.json'
+        source = build_dir / 'checker' / 'original' / Path(PROJECT['checker']).name
+        if (not saved_contract.is_file() or digest(saved_contract) != build_receipt['contracts_sha256'] or
+                not source.is_file() or digest(source) != checker['sha256']):
+            raise RuntimeError('Saved checker source or contract archive is missing or changed')
+        shutil.copyfile(str(saved_contract), str(run / 'contracts.json'))
+        shutil.copyfile(str(source), str(run / source.name))
+    elif replay_program is not None:
+        archived_contract = Path(replay_program).with_name('contracts.json')
+        if archived_contract.is_file():
+            shutil.copyfile(str(archived_contract), str(run / 'contracts.json'))
     if wave_case:
         from wavedrom_adapter import compile_wave, sample_csv, write_preview
         plan = compile_wave(cfg)
         (run / ('planned_samples.csv' if plan.get('mode') == 'protocol' else 'expected_samples.csv')).write_text(sample_csv(plan), encoding='utf-8')
         write_preview(cfg, run / 'input_wavedrom.html')
-        if plan.get('mode') == 'protocol':
-            from contracts import audit
-            write_json(run / 'contracts.json', audit())
     # VCS 2018 writes only testdata when runtime -cm_dir differs from compile
     # -cm_dir. Seed each isolated database with its matching static design.
     shutil.copytree(str(build_dir / 'simv.vdb'), str(run / 'simv.vdb'))
     cmd = [str(build_dir / 'simv'), '+vcs+lic+wait', '+ntb_random_seed=' + str(seed), '+SEED=' + str(seed),
-           '+CHECK_MODE=' + check_mode, '+ASSERT_FATAL=' + str(int(assert_fatal)),
+           '+CHECK_MODE=' + check_mode, '+ASSERT_FATAL=' + str(int(assert_fatal)), '+ENV_FATAL=' + str(int(env_fatal)),
            '+PROGRAM=' + str(run / 'stimulus.txt'),
            '-cm', PROJECT['coverage'], '-cm_dir', str(run / 'simv.vdb'), '-cm_name', identifier]
     if waves:
@@ -284,8 +293,7 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
         cmd.append('+SV_TC')
     if wave_case:
         cmd.append('+WAVEDROM')
-        if program.startswith('PROTOCOL_V1 '): cmd.append('+PROTOCOL')
-    build_receipt = read_json(build_dir / 'build.json')
+        if protocol_case: cmd.append('+PROTOCOL')
     start_hook = bool(build_receipt.get('execution_start_hook'))
     if start_hook:
         library = build_dir / 'execution_start.so'
@@ -307,17 +315,23 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
         conversion = dict(exit_code=conversion_rc, seconds=conversion_time, source='waves.fsdb', output='waves.vcd')
     log = (run / 'sim.log').read_text(encoding='utf-8', errors='replace')
     metrics = read_json(run / 'metrics.json') if (run / 'metrics.json').exists() else {}
-    monitor_supported = (build_dir / 'build.json').is_file() and (
-        'simulation/vcs/tb/cmdbuf_check_monitor.sv' in read_json(build_dir / 'build.json').get('sources', {}))
-    check_report = check_policy.report(run, policy, required=monitor_supported)
+    monitor_supported = 'simulation/vcs/tb/cmdbuf_check_monitor.sv' in build_receipt.get('sources', {})
+    environment_supported = 'simulation/vcs/tb/environment_policy.svh' in build_receipt.get('sources', {})
+    check_report = check_policy.report(run, policy, required=monitor_supported,
+                                       environment_required=environment_supported, contract_revision=contract_revision,
+                                       checker=checker)
     write_json(run / 'check_scope.json', check_report)
     incomplete = bool(check_report['runtime'].get('incomplete'))
     failures = []
     failures.extend(check_report['integrity_errors'])
+    if check_report['environment']['failures']:
+        failures.append('{} environment errors; see environment_errors.jsonl'.format(len(check_report['environment']['failures'])))
     if check_report['failures']:
         failures.append('{} assertion failures; see assertions.jsonl'.format(len(check_report['failures'])))
     if rc:
         failures.append('simulation exit {}'.format(rc))
+    if re.search(r'\$stop at time', log):
+        failures.append('TC/DUT $stop interrupted simulation; outside ENV_FATAL control')
     if waves and (not conversion or conversion['exit_code'] or not (run / 'waves.vcd').is_file()):
         failures.append('FSDB to VCD conversion failed; see wave_conversion.log')
     if not re.search(r'^TEST_PASS\s', log, re.M) and not (incomplete and re.search(r'^TEST_INCOMPLETE\s', log, re.M)):
@@ -336,9 +350,10 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
     if sv_case:
         if cfg.get('format') == 'sv_main_phase':
             from main_phase_audit import verify_execution as verify_sv
+            drive_audit = verify_sv(run, program, current_contract=current_contract)
         else:
             from sv_audit import verify_execution as verify_sv
-        drive_audit = verify_sv(run, program)
+            drive_audit = verify_sv(run, program)
         write_json(run / 'drive_audit.json', drive_audit)
         failures.extend(drive_audit['failures'])
         diagnostic=re.search(r'^(?:SV_TC_CONTEXT|MAIN_PHASE_CONTEXT) (.+)$',log,re.M)
@@ -348,7 +363,7 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
                 policy='TC if branches choose inputs; driver validates and copies without repair'))
     if strict_random:
         from random_audit import verify_execution as verify_random
-        drive_audit = verify_random(run, program)
+        drive_audit = verify_random(run, program, current_contract=current_contract)
         write_json(run / 'drive_audit.json', drive_audit)
         failures.extend(drive_audit['failures'])
     if wave_case:
@@ -356,7 +371,7 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
         drive_audit = verify_execution(cfg, run, program)
         write_json(run / 'drive_audit.json', drive_audit)
         failures.extend(drive_audit['failures'])
-        if program.startswith('PROTOCOL_V1 '):
+        if protocol_case:
             from protocol_views import write_comparison
             write_comparison(cfg, run, program)
     status = ('INCOMPLETE' if incomplete else 'PASS') if not failures else ('TIMEOUT' if rc == 124 else 'FAIL')
@@ -365,12 +380,13 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
               'directory': str(run), 'build': str(build_dir), 'argv': cmd,
               'stimulus_sha256': digest(run / 'stimulus.txt'), 'case_sha256': digest(run / 'case.json'),
               'events_sha256': digest(run / 'events.csv') if (run / 'events.csv').exists() else None,
-              'injection': injection, 'waves_enabled': waves,
-              'check_mode': check_mode, 'assert_fatal': assert_fatal, 'checks': check_report,
+              'injection': injection, 'waves_enabled': waves, 'contract_revision': contract_revision,
+              'check_mode': check_mode, 'assert_fatal': assert_fatal, 'env_fatal': env_fatal, 'checks': check_report,
+              'completed': (check_report['environment']['completed'] if environment_supported else bool(metrics and check_report['runtime'].get('finished'))),
               'execution': read_json(run / 'sim.process.json'),
               'wave_conversion': conversion,
               'wave_artifacts': [n for n in ('waves.fsdb', 'waves.vcd') if (run / n).is_file()]}
-    result['format'] = cfg['format'] if sv_case else 'protocol' if program.startswith('PROTOCOL_V1 ') else ('wavedrom' if wave_case else 'constrained_random' if strict_random else 'sequence')
+    result['format'] = cfg['format'] if sv_case else 'protocol' if protocol_case else ('wavedrom' if wave_case else 'constrained_random' if strict_random else 'sequence')
     result['drive_audit'] = drive_audit
     write_json(run / 'result.json', result)
     print('{} {} ({:.2f}s)'.format(status, identifier, elapsed), flush=True)
@@ -414,7 +430,7 @@ def write_report(regression, summary):
         e = html.escape
         shown_status='PASS (expected violation)' if r.get('expected_failure') and r.get('acceptance_pass') else r['status']
         extra=''
-        for name,label in [('sim.process.json','等待与执行计时'),('check_scope.json','检查范围'),('assertions.jsonl','断言失败'),('check_frames.csv','完整采样'),('clock_reset.csv','时钟与复位'),('case.sv','SV TC 源码'),('assigned.csv','TC 赋值'),('sv_solutions.csv','VCS 求解值'),('samples.csv','实际输入'),('actual_vs_plan.html','计划与实际'),('drive_audit.json','输入审计'),('constraint_failure.json','约束冲突')]:
+        for name,label in [('sim.process.json','等待与执行计时'),('check_scope.json','检查范围'),('cmdbuf_rd_port_sva.sv','编译 SVA 源码'),('assertions.jsonl','断言失败'),('environment_errors.jsonl','环境错误'),('environment_runtime.json','用例完成状态'),('check_frames.csv','完整采样'),('clock_reset.csv','时钟与复位'),('case.sv','SV TC 源码'),('assigned.csv','TC 赋值'),('sv_solutions.csv','VCS 求解值'),('samples.csv','实际输入'),('actual_vs_plan.html','计划与实际'),('drive_audit.json','输入审计'),('constraint_failure.json','约束冲突')]:
             if (regression/'cases'/r['id']/name).exists():
                 extra+=' <a href="cases/{}/{}">{}</a>'.format(e(r['id']),name,label)
         scope = ' / '.join(g['title']+': '+g['status'] for g in r.get('checks', {}).get('groups', []))
@@ -456,6 +472,8 @@ def regress(args, env):
         policy['check_mode'] = args.check_mode
     if getattr(args, 'assert_fatal', None) is not None:
         policy['assert_fatal'] = args.assert_fatal == 1
+    if getattr(args, 'env_fatal', None) is not None:
+        policy['env_fatal'] = args.env_fatal == 1
     if args.command == 'run':
         jobs = [(args.case, args.seed, args.cycles, '')]
     elif args.command == 'selftest':
@@ -518,7 +536,7 @@ def regress(args, env):
                'timezone': 'Asia/Shanghai', 'project': PROJECT['name'], 'build': str(build_dir),
                'passed': sum(r['status'] == 'PASS' for r in results), 'results': results, 'coverage': cov,
                'waves_enabled': waves, 'dut': read_json(build_dir / 'build.json').get('dut', {}),
-               'execution_sources': manifest()}
+               'contract_revision': contracts.REVISION, 'execution_sources': manifest()}
     write_report(regression, summary)
     write_json(regression / 'progress.json', {'id': rid, 'total': len(jobs), 'completed': len(jobs), 'state': summary['status']})
     # Negative tests must not replace the user's latest valid regression.
@@ -551,7 +569,7 @@ def replay(args, env):
     result = run_case(build_dir, regression, chosen['case'], chosen['seed'], None, env,
                       args.timeout, chosen['injection'], old / 'stimulus.txt', old / 'case.json',
                       waves=chosen.get('waves_enabled', True), check_mode=chosen.get('check_mode', 'strict'),
-                      assert_fatal=chosen.get('assert_fatal', True))
+                      assert_fatal=chosen.get('assert_fatal', True), env_fatal=chosen.get('env_fatal', True))
     result['replayed_from'] = str(old)
     result['events_match_original'] = result['events_sha256'] == digest(old / 'events.csv')
     ok = result['status'] == 'PASS' and result['events_match_original']
@@ -567,7 +585,8 @@ def replay(args, env):
     summary = {'id': rid, 'status': 'PASS' if ok else 'FAIL', 'created_at': stamp(),
                'project': PROJECT['name'], 'build': str(build_dir), 'results': [result],
                'passed': int(result['status'] == 'PASS'), 'coverage': cov, 'timezone': 'Asia/Shanghai',
-               'check_policy': dict(check_mode=result['check_mode'], assert_fatal=result['assert_fatal'])}
+               'contract_revision': result['contract_revision'],
+               'check_policy': dict(check_mode=result['check_mode'], assert_fatal=result['assert_fatal'], env_fatal=result['env_fatal'])}
     write_report(regression, summary)
     write_json(Path(result['directory']) / 'result.json', result)
     write_json(OUT / 'last_command.json', {'id': rid})
@@ -665,6 +684,7 @@ def parser():
         s.add_argument('--waves', type=int, choices=[0, 1], default=1)
         s.add_argument('--check-mode', choices=check_policy.MODES)
         s.add_argument('--assert-fatal', type=int, choices=[0, 1])
+        s.add_argument('--env-fatal', type=int, choices=[0, 1], help='0: collect recoverable environment/assertion errors and finish the testcase')
         if name == 'run':
             s.add_argument('--case', default='tc_directed'); s.add_argument('--seed', type=int, default=1)
             s.add_argument('--cycles', type=int)
@@ -753,12 +773,15 @@ def main(argv=None):
     if args.command == 'export':
         export_results(args); return 0
     if args.command == 'constraints':
-        from contracts import audit
-        receipt=audit(); output=OUT / 'contracts' / 'inventory.json'
+        receipt=contracts.audit(); output=OUT / 'contracts' / 'inventory.json'
         write_json(output,receipt)
         for rule in receipt['rules']:
             print('{} [{} x{}] {}'.format(rule['id'],rule['kind'],rule['instances'],rule['trigger']))
-        print('CONTRACTS PASS: 4 families / 11 assumption instances; '+str(output)); return 0
+        checker = receipt['checker']
+        print('SVA {} {}'.format('customized' if checker['customized'] else 'baseline', checker['sha256']))
+        print('CONTRACTS PASS: {} families / {} assumption instances (revision {}); {}'.format(
+            receipt['assumption_families'], receipt['assumption_instances'], receipt['revision'], output))
+        return 0
     if args.command == 'trace':
         if args.limit < 1:
             raise ValueError('trace limit must be positive')

@@ -68,5 +68,7 @@ def explain(cfg):
       'TC 中 rst_n 保持 1；再次拉低会报 MAIN_RESET_FIXED_HIGH_AFTER_1NS，不会被静默改写。\n'
       'clk_low_ns/high_ns 控制时钟，clk_pause_ns 延长下一段低电平，保持每上升沿执行一次。\n'
       '缺失约束或赋了非法值会报错；driver 只检查并复制 TC 值，不隐藏修补输入。\n'
+      '每个非复位采样拍，src=0/1/2 必须对应 arready[src]=1，空闲用 src=3、arvalid=0。\n'
+      'ar_rd_gnt[b] 仅在 req[b]=1 时可为 1（b 为 Bank 编号）。rready[i]=0 时，DUT 必须令 rvalid[i]=0（i 为 XAU 编号）。\n'
       'issue_data/error 在 ISSUE 成功时预约；mem_due 时用 if 驱动 due_data/error。\n'
       'main_phase 是普通 SV task，不依赖 UVM；make validate 编译，make run 执行检查。\n').format(**cfg)

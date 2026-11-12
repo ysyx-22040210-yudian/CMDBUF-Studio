@@ -1,0 +1,16 @@
+python3 "/root/CMDBUF 寄存计数便携包 20261112/cmdbuf-studio/simulation/vcs/eda.py" --local constraints
+E03_SRC [environment_assumption x1] arvalid -> src in 0..2
+E04_ARRESP [environment_assumption x1] arvalid -> arresp in 0,3
+E05_ZERO_READY [environment_assumption x1] arready==0 -> arvalid==0
+E06_SUCCESS_BUSY [environment_assumption x8] req[b] && argrant[b] && rwgrant[b] -> status[b][arb_addr[0]]
+E07_SRC_READY [environment_assumption x1] src < 3 -> arready[src] == 1 in every non-reset sample, including arvalid=0
+E08_AR_GRANT_REQ [environment_assumption x1] (ar_rd_gnt & ~req) == 0 per non-reset sample
+T_MEM4 [temporal_environment x1] MEM payload on issue edge N + 4 actual positive edges
+T_ASSOCIATION [temporal_environment x1] accepted request -> issue -> MEM -> source-ordered R
+T_CLOCK_RESET [environment_policy x1] literal clocks; reset cancels outstanding environment work
+P_KNOWN [environment_policy x1] normal sampled inputs known; clk/rst known always
+P_OWNERSHIP [environment_policy x1] each port has exactly one owner; fixed inputs immutable
+P_QUEUE [environment_policy x1] requests complete/cancel or explicitly remain pending; bounded wait
+DUT_CHECKS [dut_obligation x145] output correctness remains a DUT responsibility
+SVA baseline 9d42cf8dd8d20ee38d5c72ca6e81b6c227a6c45c2149cb3cf09dd2941331bd95
+CONTRACTS PASS: 6 families / 13 assumption instances (revision 20261112.2); /tmp/cmdbuf-studio-0/results-1cc15606a42d5742064a/contracts/inventory.json

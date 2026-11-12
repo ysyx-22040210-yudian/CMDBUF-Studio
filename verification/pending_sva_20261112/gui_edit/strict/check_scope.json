@@ -1,0 +1,278 @@
+{
+  "version": 1,
+  "check_mode": "strict",
+  "assert_fatal": true,
+  "env_fatal": false,
+  "profile_version": 1,
+  "runtime": {
+    "version": 1,
+    "mode": "strict",
+    "assert_fatal": 1,
+    "env_fatal": 0,
+    "effective_assert_fatal": 0,
+    "failures": 29,
+    "incomplete": 0,
+    "finished": 1,
+    "sampled_frames": 26,
+    "checked_frames": 26,
+    "outstanding": 0,
+    "accepted": 0,
+    "issued": 0,
+    "returned": 0,
+    "cancelled": 0,
+    "peak_hypotheses": 1,
+    "hypothesis_limit": 4096
+  },
+  "failures": [
+    {
+      "label": "A_COMPARE_PENDING_CNT",
+      "edge": 2,
+      "time_ps": 10000,
+      "detail": "path=tb_cmdbuf_rd.checks.A_COMPARE_PENDING_CNT sampled_pending=0 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=00 rready=0 rvalid=0 rid=00"
+    },
+    {
+      "label": "A_COMPARE_PENDING_CNT",
+      "edge": 3,
+      "time_ps": 20000,
+      "detail": "path=tb_cmdbuf_rd.checks.A_COMPARE_PENDING_CNT sampled_pending=0 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "A_COMPARE_PENDING_CNT",
+      "edge": 4,
+      "time_ps": 30000,
+      "detail": "path=tb_cmdbuf_rd.checks.A_COMPARE_PENDING_CNT sampled_pending=0 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "A_COMPARE_PENDING_CNT",
+      "edge": 5,
+      "time_ps": 40000,
+      "detail": "path=tb_cmdbuf_rd.checks.A_COMPARE_PENDING_CNT sampled_pending=0 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "A_COMPARE_PENDING_CNT",
+      "edge": 6,
+      "time_ps": 50000,
+      "detail": "path=tb_cmdbuf_rd.checks.A_COMPARE_PENDING_CNT sampled_pending=0 src=00 arvalid=1 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "A_COMPARE_PENDING_CNT",
+      "edge": 7,
+      "time_ps": 60000,
+      "detail": "path=tb_cmdbuf_rd.checks.A_COMPARE_PENDING_CNT sampled_pending=1 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "USER_PENDING_ZERO",
+      "edge": 7,
+      "time_ps": 60000,
+      "detail": "path=tb_cmdbuf_rd.checks.USER_PENDING_ZERO sampled_pending=1 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "USER_PENDING_ACTION",
+      "edge": 7,
+      "time_ps": 60000,
+      "detail": "path=tb_cmdbuf_rd.checks.USER_PENDING_ACTION sampled_pending=1 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "A_COMPARE_PENDING_CNT",
+      "edge": 8,
+      "time_ps": 70000,
+      "detail": "path=tb_cmdbuf_rd.checks.A_COMPARE_PENDING_CNT sampled_pending=1 src=11 arvalid=0 ready=7 req=01 argrant=01 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "USER_PENDING_ZERO",
+      "edge": 8,
+      "time_ps": 70000,
+      "detail": "path=tb_cmdbuf_rd.checks.USER_PENDING_ZERO sampled_pending=1 src=11 arvalid=0 ready=7 req=01 argrant=01 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "USER_PENDING_ACTION",
+      "edge": 8,
+      "time_ps": 70000,
+      "detail": "path=tb_cmdbuf_rd.checks.USER_PENDING_ACTION sampled_pending=1 src=11 arvalid=0 ready=7 req=01 argrant=01 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "A_COMPARE_PENDING_CNT",
+      "edge": 9,
+      "time_ps": 80000,
+      "detail": "path=tb_cmdbuf_rd.checks.A_COMPARE_PENDING_CNT sampled_pending=0 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "A_COMPARE_PENDING_CNT",
+      "edge": 10,
+      "time_ps": 90000,
+      "detail": "path=tb_cmdbuf_rd.checks.A_COMPARE_PENDING_CNT sampled_pending=0 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "A_COMPARE_PENDING_CNT",
+      "edge": 11,
+      "time_ps": 100000,
+      "detail": "path=tb_cmdbuf_rd.checks.A_COMPARE_PENDING_CNT sampled_pending=0 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "A_COMPARE_PENDING_CNT",
+      "edge": 12,
+      "time_ps": 110000,
+      "detail": "path=tb_cmdbuf_rd.checks.A_COMPARE_PENDING_CNT sampled_pending=0 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "A_COMPARE_PENDING_CNT",
+      "edge": 13,
+      "time_ps": 120000,
+      "detail": "path=tb_cmdbuf_rd.checks.A_COMPARE_PENDING_CNT sampled_pending=0 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=1 rid=2a"
+    },
+    {
+      "label": "A_COMPARE_PENDING_CNT",
+      "edge": 14,
+      "time_ps": 130000,
+      "detail": "path=tb_cmdbuf_rd.checks.A_COMPARE_PENDING_CNT sampled_pending=0 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "A_COMPARE_PENDING_CNT",
+      "edge": 15,
+      "time_ps": 140000,
+      "detail": "path=tb_cmdbuf_rd.checks.A_COMPARE_PENDING_CNT sampled_pending=0 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "A_COMPARE_PENDING_CNT",
+      "edge": 16,
+      "time_ps": 150000,
+      "detail": "path=tb_cmdbuf_rd.checks.A_COMPARE_PENDING_CNT sampled_pending=0 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "A_COMPARE_PENDING_CNT",
+      "edge": 17,
+      "time_ps": 160000,
+      "detail": "path=tb_cmdbuf_rd.checks.A_COMPARE_PENDING_CNT sampled_pending=0 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "A_COMPARE_PENDING_CNT",
+      "edge": 18,
+      "time_ps": 170000,
+      "detail": "path=tb_cmdbuf_rd.checks.A_COMPARE_PENDING_CNT sampled_pending=0 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "A_COMPARE_PENDING_CNT",
+      "edge": 19,
+      "time_ps": 180000,
+      "detail": "path=tb_cmdbuf_rd.checks.A_COMPARE_PENDING_CNT sampled_pending=0 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "A_COMPARE_PENDING_CNT",
+      "edge": 20,
+      "time_ps": 190000,
+      "detail": "path=tb_cmdbuf_rd.checks.A_COMPARE_PENDING_CNT sampled_pending=0 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "A_COMPARE_PENDING_CNT",
+      "edge": 21,
+      "time_ps": 200000,
+      "detail": "path=tb_cmdbuf_rd.checks.A_COMPARE_PENDING_CNT sampled_pending=0 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "A_COMPARE_PENDING_CNT",
+      "edge": 22,
+      "time_ps": 210000,
+      "detail": "path=tb_cmdbuf_rd.checks.A_COMPARE_PENDING_CNT sampled_pending=0 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "A_COMPARE_PENDING_CNT",
+      "edge": 23,
+      "time_ps": 220000,
+      "detail": "path=tb_cmdbuf_rd.checks.A_COMPARE_PENDING_CNT sampled_pending=0 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "A_COMPARE_PENDING_CNT",
+      "edge": 24,
+      "time_ps": 230000,
+      "detail": "path=tb_cmdbuf_rd.checks.A_COMPARE_PENDING_CNT sampled_pending=0 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "A_COMPARE_PENDING_CNT",
+      "edge": 25,
+      "time_ps": 240000,
+      "detail": "path=tb_cmdbuf_rd.checks.A_COMPARE_PENDING_CNT sampled_pending=0 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"
+    },
+    {
+      "label": "A_COMPARE_PENDING_CNT",
+      "edge": 26,
+      "time_ps": 250000,
+      "detail": "path=tb_cmdbuf_rd.checks.A_COMPARE_PENDING_CNT sampled_pending=0 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"
+    }
+  ],
+  "integrity_errors": [],
+  "environment": {
+    "runtime": {
+      "version": 1,
+      "env_fatal": 0,
+      "failures": 0,
+      "unrecoverable": 0,
+      "finished": 1
+    },
+    "failures": [],
+    "integrity_errors": [],
+    "completed": true,
+    "status": "PASS"
+  },
+  "effective_assert_fatal": false,
+  "groups": [
+    {
+      "id": "interface",
+      "title": "接口与输入约束",
+      "rules": "同拍 E03–E08、req/rvalid 独热、R ready、pending 范围与寄存递推、四态未知值",
+      "failures": 0,
+      "status": "PASS",
+      "reason": ""
+    },
+    {
+      "id": "transactions",
+      "title": "事务与数据",
+      "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+      "failures": 0,
+      "status": "PASS",
+      "reason": ""
+    },
+    {
+      "id": "timing",
+      "title": "完整接口时序",
+      "rules": "pending 参考计数、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+      "failures": 25,
+      "status": "FAIL",
+      "reason": ""
+    },
+    {
+      "id": "user_sva",
+      "title": "用户 SVA",
+      "rules": "自定义属性及其失败记录",
+      "failures": 4,
+      "status": "FAIL",
+      "reason": ""
+    }
+  ],
+  "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+  "contract_revision": "20261112.2",
+  "checker": {
+    "source": "formal/protocol_20261021/cmdbuf_rd_port_sva.sv",
+    "baseline_sha256": "9d42cf8dd8d20ee38d5c72ca6e81b6c227a6c45c2149cb3cf09dd2941331bd95",
+    "sha256": "1f715df2c4f58e71e549f140212cbdd62936d45f792f3dffd04b062757609a44",
+    "customized": true,
+    "added_assumptions": [],
+    "missing_assumptions": [],
+    "user_properties": [
+      "CMDBUF_SVA_L864_47",
+      "USER_PENDING_ACTION",
+      "USER_PENDING_ZERO"
+    ],
+    "authored_actions": [
+      "USER_PENDING_ACTION"
+    ]
+  },
+  "contract": "CMDBUF interface 20261112.2; MEM capture remains issue N+4",
+  "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+  "limitations": [
+    "Finite simulation evidence, not a formal proof.",
+    "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+    "ENV_FATAL=0 continues after recoverable driver and assertion errors; failures still invalidate the run.",
+    "Invalid clocks, missing inputs/files, unsatisfiable solvers, corrupted driver state and watchdogs remain fatal.",
+    "User/DUT $fatal, $stop, $finish, simulator crashes and infinite loops are outside this switch."
+  ]
+}

@@ -11,15 +11,10 @@ import eda
 import dut_config
 import regression_plan
 import check_policy
+from sva_source import mask_sv
 
 ROOT = eda.ROOT
 STATE = ROOT / 'build/vcs/studio'
-
-
-def mask_sv(code):
-    # Keep source offsets while ignoring keywords inside comments and strings.
-    return re.sub(r'//[^\n]*|/\*.*?\*/|"(?:\\.|[^"\\])*"',
-                  lambda m: ''.join('\n' if c == '\n' else ' ' for c in m.group()), code, flags=re.S)
 
 
 def phase_span(code):
@@ -89,9 +84,36 @@ def save_case(payload):
     return case(name)
 
 
+def load_sva():
+    path = ROOT / eda.PROJECT['checker']
+    raw = path.read_bytes()
+    source = raw.decode('utf-8').replace('\r\n', '\n')
+    return dict(source=source, version=hashlib.sha256(raw).hexdigest(), file=eda.PROJECT['checker'])
+
+
+def save_sva(source, version):
+    path = ROOT / eda.PROJECT['checker']
+    original = path.read_bytes()
+    if hashlib.sha256(original).hexdigest() != version:
+        raise ValueError('SVA 文件已在外部修改，请重新打开编辑器后保存')
+    text = source.replace('\r\n', '\n')
+    if b'\r\n' in original:
+        text = text.replace('\n', '\r\n')
+    payload = text.encode('utf-8')
+    if payload != original:
+        suffix = eda.stamp()+'_'+eda.uuid.uuid4().hex[:8]
+        backup = STATE / 'backups' / (path.stem+'_'+suffix+'.sv')
+        backup.parent.mkdir(parents=True, exist_ok=True)
+        backup.write_bytes(original)
+        temporary = path.with_name(path.name+'.'+suffix+'.tmp')
+        temporary.write_bytes(payload)
+        temporary.replace(path)
+    return load_sva()
+
+
 def default_plan():
     return dict(version=1, name='CMDBUF 功能回归', jobs=2, timeout=120, waves=True,
-                check_mode='transaction', assert_fatal=True,
+                check_mode='transaction', assert_fatal=True, env_fatal=True,
                 cases=[dict(case=c['name'], enabled=c['name'] != 'tc_user_example', runs=10 if c['name']=='tc_random' else 1,
                             seed=1, cycles=2000 if c['name']=='tc_random' else c['cycles']) for c in cases()])
 

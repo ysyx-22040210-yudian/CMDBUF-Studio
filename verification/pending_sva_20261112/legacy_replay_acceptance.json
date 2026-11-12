@@ -1,0 +1,28 @@
+[
+  {
+    "status": "PASS",
+    "revision": "20261021",
+    "summary": "/root/cmdbuf-pending-20261112/build/vcs/regressions/20261112_224749_replay_00823c/summary.json",
+    "events_match": true,
+    "exact_replay": {
+      "case.sv": true,
+      "assigned.csv": true,
+      "samples.csv": true,
+      "tc_config.json": true,
+      "clock_reset.csv": true
+    }
+  },
+  {
+    "status": "PASS",
+    "revision": "20261112",
+    "summary": "/root/cmdbuf-pending-20261112/build/vcs/regressions/20261112_224750_replay_74edb1/summary.json",
+    "events_match": true,
+    "exact_replay": {
+      "case.sv": true,
+      "assigned.csv": true,
+      "samples.csv": true,
+      "tc_config.json": true,
+      "clock_reset.csv": true
+    }
+  }
+]

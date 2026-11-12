@@ -18,8 +18,8 @@ class tc_banks extends cmdbuf_main_tc;
             #1; // rready 影响组合反馈，先等待稳定，再读取。
             sample_context();
 
-            // 编辑区 B：AR 输入。E05 必须显式处理 ready 全零的分支。
-            if (!rst_n || arready == 3'b000)
+            // 编辑区 B：选中的 src 必须 ready，空闲拍使用 src=3。
+            if (!rst_n || arready[0] !== 1'b1)
                 arvalid = 0;
             else if (cycle >= 3 && cycle <= 183 && (cycle-3)%12 == 0)
                 arvalid = 1;
@@ -29,16 +29,18 @@ class tc_banks extends cmdbuf_main_tc;
                 src = 0;       // E03：有效请求只填写 0/1/2。
                 arresp = 0;    // E04：有效请求只填写 0 或 3。
             end else begin
-                src = 0; arresp = 0;
+                src = 3; arresp = 0;
             end
             if (cycle >= 3)
                 araddr = 18'h12000 + (((cycle-3)/12)%8)*8 + ((((cycle-3)/12)/8)%2)*64;
             else araddr = 0;
             arid = 8'h2a; ar_port_id = 5'd6;
-            ar_rd_gnt = 8'hff; rw_rd_gnt = 8'hff;
+            rw_rd_gnt = 8'hff;
 
             // E06：8 个 Bank 的所选半区，成功发射时必须 busy。
             for (int b=0; b<8; b++) begin
+                if (req[b]) ar_rd_gnt[b] = 1;
+                else ar_rd_gnt[b] = 0;
                 if (req[b] && ar_rd_gnt[b] && rw_rd_gnt[b])
                     rd_mem_status[b] = (2'b01 << arb_addr[0]);
                 else

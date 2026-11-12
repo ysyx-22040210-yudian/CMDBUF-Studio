@@ -4,9 +4,10 @@ import json
 from pathlib import Path
 from wavedrom_adapter import PORTS
 from check_policy import audit_flags
+from contracts import check_interface
 
 
-def verify_execution(directory, program):
+def verify_execution(directory, program, current_contract=True):
     root=Path(directory); failures=[]
     generic, incomplete = audit_flags(root)
     cov={'E03_SRC':0,'E04_ARRESP':0,'E05_ZERO_READY':0,'E06_SUCCESS_BUSY':[0]*16,
@@ -66,8 +67,13 @@ def verify_execution(directory, program):
             if any(o[n]!=int(q[n],16) for n in ['arready','req','arb_addr']): raise ValueError('MAIN_CONTEXT_CHANGED')
             cov['P_KNOWN']+=1;cov['assignment_equal_pins']+=1
             if v['clk']!=1: raise ValueError('MAIN_EXPECT_POSEDGE')
-            if phase and (not v['rst_n'] or not v['clk'] or v['arvalid'] or v['rready']!=7 or v['ar_rd_gnt']!=255 or v['rw_rd_gnt']!=255):
-                raise ValueError('MAIN_COMPLETION_POLICY')
+            if phase:
+                expected_grant = o['req'] if current_contract else 255
+                if (not v['rst_n'] or not v['clk'] or v['arvalid'] or v['rready']!=7 or
+                        v['ar_rd_gnt']!=expected_grant or v['rw_rd_gnt']!=255):
+                    raise ValueError('MAIN_COMPLETION_POLICY')
+                if current_contract and v['src']!=3:
+                    raise ValueError('MAIN_COMPLETION_IDLE_SOURCE')
             if not v['rst_n'] and old_reset!=0:
                 cov['reset_assertions']+=1;cov['cancelled']+=len(live)
                 live=[];heads=[[],[],[]];due={}
@@ -80,6 +86,10 @@ def verify_execution(directory, program):
                 if o['arready']==0:
                     cov['E05_ZERO_READY']+=1
                     if v['arvalid']: raise ValueError('E05_ZERO_READY')
+                if current_contract:
+                    check_interface(v, o)
+                    cov['E07_SRC_READY'] = cov.get('E07_SRC_READY', 0) + int(v['src'] < 3)
+                    cov['E08_AR_GRANT_REQ'] = cov.get('E08_AR_GRANT_REQ', 0) + int(v['ar_rd_gnt'] != 0)
                 success=o['req'] & v['ar_rd_gnt'] & v['rw_rd_gnt']
                 if o['req'] & (o['req']-1): raise ValueError('DUT_REQ_ONEHOT0')
                 half=o['arb_addr']&1

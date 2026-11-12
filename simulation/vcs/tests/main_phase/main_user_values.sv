@@ -18,25 +18,29 @@ class main_user_values extends cmdbuf_main_tc;
             #1; // rready 影响组合反馈，先等待稳定，再读取。
             sample_context();
 
-            // 编辑区 B：AR 输入。E05 必须显式处理 ready 全零的分支。
-            if (!rst_n || arready == 3'b000)
+            // 编辑区 B：选中的 src 必须 ready，空闲拍使用 src=3。
+            if (!rst_n || (arready[0] !== 1'b1 && arready[2] !== 1'b1))
                 arvalid = 0;
             else
                 arvalid = $urandom_range(1,0);
             if (arvalid) begin
-                if ($urandom_range(1,0)) src = 2; else src = 0; // 只在合法的 0/1/2 中生成。
+                if (arready[0] !== 1'b1) src = 2;
+                else if (arready[2] !== 1'b1) src = 0;
+                else if ($urandom_range(1,0)) src = 2;
+                else src = 0;
                 arresp = 3;
             end else begin
-                src = $urandom_range(3,0);
+                src = 3;
                 arresp = $urandom_range(3,0);
             end
             araddr = $urandom_range(18'h121ff,18'h12000);
             arid = 8'h5a; ar_port_id = 17;
-            ar_rd_gnt = $urandom_range(255,0);
             rw_rd_gnt = $urandom_range(255,0);
 
             // E06：8 个 Bank 的所选半区，成功发射时必须 busy。
             for (int b=0; b<8; b++) begin
+                if (req[b]) ar_rd_gnt[b] = $urandom_range(1,0);
+                else ar_rd_gnt[b] = 0;
                 for (int h=0; h<2; h++) begin
                     if (req[b] && ar_rd_gnt[b] && rw_rd_gnt[b] && h==arb_addr[0])
                         rd_mem_status[b][h] = 1;

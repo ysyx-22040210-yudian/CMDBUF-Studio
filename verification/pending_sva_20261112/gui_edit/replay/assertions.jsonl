@@ -1,0 +1,4 @@
+{"label":"USER_PENDING_ZERO","edge":7,"time_ps":60000,"detail":"path=tb_cmdbuf_rd.checks.USER_PENDING_ZERO sampled_pending=1 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"}
+{"label":"USER_PENDING_ACTION","edge":7,"time_ps":60000,"detail":"path=tb_cmdbuf_rd.checks.USER_PENDING_ACTION sampled_pending=1 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=0 rid=00"}
+{"label":"USER_PENDING_ZERO","edge":8,"time_ps":70000,"detail":"path=tb_cmdbuf_rd.checks.USER_PENDING_ZERO sampled_pending=1 src=11 arvalid=0 ready=7 req=01 argrant=01 rwgrant=ff rready=7 rvalid=0 rid=00"}
+{"label":"USER_PENDING_ACTION","edge":8,"time_ps":70000,"detail":"path=tb_cmdbuf_rd.checks.USER_PENDING_ACTION sampled_pending=1 src=11 arvalid=0 ready=7 req=01 argrant=01 rwgrant=ff rready=7 rvalid=0 rid=00"}

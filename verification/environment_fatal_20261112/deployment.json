@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "root": "/root/CMDBUF license 发布 20261111/cmdbuf-studio",
+  "package_files": 178,
+  "changed": [
+    "simulation/vcs/execution.py",
+    "simulation/vcs/tests/test_execution.py"
+  ],
+  "archive_sha256": "c49ec8ef7090f092a20d99073d3bb302339b92d46f5c5f34929f2bd08584b08b",
+  "backup": "/root/cmdbuf-environment-fatal-release-20261112-final/backup",
+  "user_data_preserved": true
+}

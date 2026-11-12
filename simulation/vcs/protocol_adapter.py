@@ -27,17 +27,26 @@ def compile_protocol(cfg):
     if set(sim) - permitted:
         raise ValueError('P_OWNERSHIP: unknown protocol option')
     drivers = sim.get('drivers', {})
-    if set(drivers) != {'ar', 'bank', 'mem'} or any(drivers[k] not in modes for k, modes in
+    required = {'ar', 'bank', 'mem'}
+    if not required <= set(drivers) <= required | {'ar_grant'} or any(drivers[k] not in modes for k, modes in
             [('ar', ('queued', 'fixed')), ('bank', ('busy_on_issue', 'fixed')), ('mem', ('on_issue', 'fixed'))]):
         raise ValueError('P_OWNERSHIP: declare ar=queued|fixed, bank=busy_on_issue|fixed, mem=on_issue|fixed')
-    flags = [int(drivers['ar']=='queued'), int(drivers['bank']=='busy_on_issue'), int(drivers['mem']=='on_issue')]
+    grant = drivers.get('ar_grant', 'fixed')
+    if grant not in ('fixed', 'on_req'):
+        raise ValueError('P_OWNERSHIP: ar_grant must be fixed or on_req')
+    flags = [int(drivers['ar']=='queued'), int(drivers['bank']=='busy_on_issue'), int(drivers['mem']=='on_issue'),
+             int(grant=='on_req')]
     owned = (AR if flags[0] else []) + (BANK if flags[1] else []) + (MEM if flags[2] else [])
+    if flags[3]:
+        owned.append('ar_rd_gnt')
     lanes = flatten(cfg.get('signal'))
     names = [l.get('name') for l in lanes]
     if len(names) != len(set(names)) or set(names) & set(owned):
         raise ValueError('P_OWNERSHIP: duplicate lane or fixed lane also owned by automatic driver')
     virtual = (['ar_offer', 'ar_send'] if flags[0] else ['mem_error'])
     virtual += ['bank_busy[{}]'.format(i) for i in range(8)] if flags[1] else []
+    if flags[3]:
+        virtual.append('ar_grant_enable')
     expected = (set(WIDTHS) - set(owned)) | set(virtual)
     if set(names) != expected:
         raise ValueError('P_OWNERSHIP: missing={} unknown={}'.format(sorted(expected-set(names)), sorted(set(names)-expected)))
@@ -56,6 +65,9 @@ def compile_protocol(cfg):
         lane = {'name':name, 'wave':'0'+'.'*(length-1)}
         if name in BANK:
             lane = copy.deepcopy(byname['bank_busy[{}]'.format(BANK.index(name))]); lane['name']=name
+        if name == 'ar_rd_gnt':
+            # The archived grant slot stores permission bits for this owner.
+            lane = dict(byname['ar_grant_enable'], name=name)
         raw['signal'].append(lane)
     plan = compile_wave(raw)
     requests, releases = [], {}
@@ -132,9 +144,9 @@ def compile_protocol(cfg):
 
 def make_program(cfg):
     p=compile_protocol(cfg)
-    lines=['PROTOCOL_V1 {} {} {} {} {} {} {} {} {} {} {}'.format(len(p['frames']),p['tick_ps'],
-        p['duration_ps'],p['clock_skew_ps'],int(p['finish']=='require_empty'),*p['flags'],
-        len(p['requests']),p['queue_limit'],p['wait_cycles'])]
+    fields = [len(p['frames']), p['tick_ps'], p['duration_ps'], p['clock_skew_ps'],
+              int(p['finish']=='require_empty'), *p['flags'], len(p['requests']), p['queue_limit'], p['wait_cycles']]
+    lines = ['PROTOCOL_V2 ' + ' '.join(map(str, fields))]
     for r in p['requests']:
         lines.append('{} {} {:x} {:x} {:x} {:x} {:032x} {} {}'.format(r['token'],r['src'],r['addr'],
             r['id'],r['port'],r['resp'],r['data'],r['pc_err'],r['deadline_cycle']))
@@ -146,8 +158,13 @@ def make_program(cfg):
 
 def read_program(program):
     lines=program.splitlines(); h=lines[0].split()
-    if len(h)!=12 or h[0]!='PROTOCOL_V1': raise ValueError('Unknown protocol archive version')
-    count,tick,duration,skew,empty,ar,bank,mem,nreq,limit,wait=map(int,h[1:])
+    legacy = len(h)==12 and h[0]=='PROTOCOL_V1'
+    if not legacy and not (len(h)==13 and h[0]=='PROTOCOL_V2'):
+        raise ValueError('Unknown protocol archive version')
+    fields = list(map(int, h[1:]))
+    if legacy:
+        fields.insert(8, 0)
+    count,tick,duration,skew,empty,ar,bank,mem,grant,nreq,limit,wait=fields
     reqs=[]
     for line in lines[1:1+nreq]:
         x=line.split(); reqs.append(dict(token=int(x[0]),src=int(x[1]),addr=int(x[2],16),id=int(x[3],16),
@@ -159,7 +176,9 @@ def read_program(program):
         f=dict(zip([n for n,_ in PORTS],x[5:])); f.update(zip(['time_ps','prepare','release','send','mem_error'],map(int,x[:5]))); frames.append(f)
     if len(frames)!=count: raise ValueError('Protocol archive frame count mismatch')
     owned=(AR if ar else [])+(BANK if bank else [])+(MEM if mem else [])
-    return dict(frames=frames,requests=reqs,flags=[ar,bank,mem],owned=owned,
+    if grant:
+        owned.append('ar_rd_gnt')
+    return dict(frames=frames,requests=reqs,flags=[ar,bank,mem,grant],owned=owned,legacy=legacy,
                 fixed=[n for n,_ in PORTS if n not in owned],tick_ps=tick,clock_skew_ps=skew,
                 finish='require_empty' if empty else 'allow_pending',queue_limit=limit,wait_cycles=wait)
 
@@ -223,15 +242,26 @@ def verify_execution(cfg,directory,program):
             if out['arready']==0:
                 cov['E05_ZERO_READY']+=1
                 if v['arvalid']: raise ValueError('E05_ZERO_READY')
+            if not p['legacy']:
+                contracts.check_interface(v, out)
+                cov['E07_SRC_READY'] = cov.get('E07_SRC_READY', 0) + int(v['src'] < 3)
+                cov['E08_AR_GRANT_REQ'] = cov.get('E08_AR_GRANT_REQ', 0) + int(v['ar_rd_gnt'] != 0)
+                if flags[3] and v['ar_rd_gnt'] != (int(latest['ar_rd_gnt'], 2) & out['req']):
+                    raise ValueError('auto AR grant differs from request/permission')
             if flags[0]:
                 intent=bool(q and latest['send'])
-                want=int(intent and bool(out['arready']))
+                ready = out['arready']
+                if intent and not p['legacy']:
+                    ready &= 1 << p['requests'][q[0]]['src']
+                want=int(intent and bool(ready))
                 if v['arvalid']!=want: raise ValueError('AR gate differs from queue/window/ready')
-                if intent and not out['arready']: blocked+=1
-                if intent:
+                if intent and not ready: blocked+=1
+                if want or (p['legacy'] and intent):
                     r=p['requests'][q[0]]
                     for port,key in [('src','src'),('araddr','addr'),('arid','id'),('ar_port_id','port'),('arresp','resp')]:
                         if v[port]!=r[key]: raise ValueError('queued payload changed: '+port)
+                elif not p['legacy'] and v['src']!=3:
+                    raise ValueError('queued AR idle source must be 3')
                 for token in q:
                     deadline=p['requests'][token]['deadline_cycle']
                     if cycle-release_edge[token]>p['wait_cycles'] or (deadline>=0 and cycle>deadline): raise ValueError('P_QUEUE deadline')

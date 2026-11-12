@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "root": "/root/CMDBUF 寄存计数便携包 20261112/cmdbuf-studio",
+  "archive_sha256": "721328be51090e9ce8dd08d92fa88f8b9db5dd18ca14e0f8f97238e8c723465b",
+  "portable_files": 184,
+  "contract_revision": "20261112.2",
+  "checker_sha256": "9d42cf8dd8d20ee38d5c72ca6e81b6c227a6c45c2149cb3cf09dd2941331bd95",
+  "checks": {
+    "package_verify": true,
+    "constraints": true,
+    "smoke": true
+  },
+  "smoke": {
+    "id": "20261112_230500_regress_4f896a",
+    "passed": 3,
+    "coverage": "PASS",
+    "fsdb_and_vcd": [
+      "tc_directed_seed_1",
+      "tc_random_seed_17",
+      "tc_random_seed_42"
+    ],
+    "report": "/tmp/cmdbuf-studio-0/results-1cc15606a42d5742064a/regressions/20261112_230500_regress_4f896a/index.html"
+  }
+}

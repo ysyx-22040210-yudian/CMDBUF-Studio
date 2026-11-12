@@ -4,13 +4,14 @@ import json
 from pathlib import Path
 from wavedrom_adapter import PORTS
 from check_policy import audit_flags
+from contracts import check_interface
 
 
 def has_random(program):
     return any(line.split()[:1] == ['2'] for line in program.splitlines())
 
 
-def verify_execution(directory,program):
+def verify_execution(directory, program, current_contract=True):
     root=Path(directory)
     generic, incomplete = audit_flags(root)
     failures=[]
@@ -45,7 +46,12 @@ def verify_execution(directory,program):
                 if s[n]!=q[n]:raise ValueError('RND_POST_SOLVE_MODIFICATION '+n)
             if any(int(q[n],16)!=o[n] for n in ['arready','req','arb_addr']):raise ValueError('RND_CONTEXT_CHANGED')
             if phase!=0:cov['solver_assignment_equal_pins']+=1
-            if phase in (3,4) and (v['arvalid'] or v['rready']!=7 or v['ar_rd_gnt']!=255 or v['rw_rd_gnt']!=255):raise ValueError('RND_DRAIN_POLICY')
+            if phase in (3,4):
+                expected_grant = o['req'] if current_contract else 255
+                if v['arvalid'] or v['rready']!=7 or v['ar_rd_gnt']!=expected_grant or v['rw_rd_gnt']!=255:
+                    raise ValueError('RND_DRAIN_POLICY')
+                if current_contract and v['src']!=3:
+                    raise ValueError('RND_DRAIN_IDLE_SOURCE')
             if v['arvalid']:
                 if v['src']>=3:raise ValueError('E03_SRC')
                 if v['arresp'] not in (0,3):raise ValueError('E04_ARRESP')
@@ -53,6 +59,10 @@ def verify_execution(directory,program):
             if o['arready']==0:
                 cov['E05_ZERO_READY']+=1
                 if v['arvalid']:raise ValueError('E05_ZERO_READY')
+            if current_contract:
+                check_interface(v, o)
+                cov['E07_SRC_READY'] = cov.get('E07_SRC_READY', 0) + int(v['src'] < 3)
+                cov['E08_AR_GRANT_REQ'] = cov.get('E08_AR_GRANT_REQ', 0) + int(v['ar_rd_gnt'] != 0)
             success=o['req'] & v['ar_rd_gnt'] & v['rw_rd_gnt']
             if o['req'] & (o['req']-1):raise ValueError('DUT req not onehot0')
             half=o['arb_addr']&1

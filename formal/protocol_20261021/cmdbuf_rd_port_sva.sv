@@ -55,7 +55,7 @@ module cmdbuf_rd_port_sva (
     input wire [7:0] req,
     // 来自 DUT：请求事务的 araddr[17:6]；bit0 将奇偶半区送到下游。
     input wire [11:0] arb_addr,
-    // 来自 DUT：组合输出的待发数，含本拍新 AR、扣本拍成功发射，不是总占用数。
+    // 来自 DUT：寄存输出的待发数，时钟沿记录新 AR 与成功发射后的数量。
     input wire [3:0] pending_cnt,
     // 来自 Arbit/MEM：只有同一 req 位的两个 grant 都为 1，本拍才算发射成功。
     input wire [7:0] ar_rd_gnt,
@@ -120,12 +120,27 @@ module cmdbuf_rd_port_sva (
     // 【E05_ZERO_READY 详解】
     // 检查前提：三位 arready 同时为 0；这是上游已确认的输入输出契约。
     // 环境义务：本拍 arvalid 必须为 0；只要存在 ready 通道，本条就不再限制 arvalid。
-    // 本条没有要求 src 指向的位一定 ready；是否真正接收仍由 ar_fire 判断。
+    // E07 进一步约束所有采样拍的 src 与对应 ready。
     // [NO_REF_MODEL_ENV] [NO_REF_MODEL_PORTS] 三个来源都不能接收时，上游不得发送有效 AR。
     E05_ZERO_READY: assume property (
         @(posedge clk) disable iff (!rst_n)
         (arready == 3'b000)
         |-> (!arvalid)
+    );
+
+    // 20261112: even an idle AR cycle may name a real source only when it is ready.
+    // E03 and E05 together require src=3 and arvalid=0 when all lanes are blocked.
+    // [NO_REF_MODEL_ENV] [NO_REF_MODEL_PORTS]
+    E07_SRC_READY: assume property (
+        @(posedge clk) disable iff (!rst_n)
+        (src < 2'd3) |-> arready[src]
+    );
+
+    // 20261112: each downstream AR grant belongs to a request on the same bank.
+    // [NO_REF_MODEL_ENV] [NO_REF_MODEL_PORTS]
+    E08_AR_GRANT_REQ: assume property (
+        @(posedge clk) disable iff (!rst_n)
+        (ar_rd_gnt & ~req) == 8'b0
     );
 
     genvar bank_env; // 环境契约的 Bank 展开编号 0..7。
@@ -152,15 +167,6 @@ module cmdbuf_rd_port_sva (
     // ----------------------------------------------------------------
     // 2. 无事务参考模型的 assert：端口合法性与计数递推
     // ----------------------------------------------------------------
-    // [NO_REF_MODEL_HISTORY] 只保存上拍公开 pending_cnt，不复制 entry。
-    reg [3:0] last_pending; // 上一采样拍的公开 pending_cnt，用于端口计数递推断言。
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n)
-            last_pending <= 0;
-        else
-            last_pending <= pending_cnt;
-    end
-
     // 以下无条件断言每拍都检查；后面的蕴含断言只在前件成立时检查后件。
     // onehot0 允许零项，适合空闲拍；不能误写成必须恰好一位为 1。
     // x & (x-1) == 0 与 onehot0 等价，允许无请求的全零值。
@@ -205,14 +211,12 @@ module cmdbuf_rd_port_sva (
     );
 
     // 【A_PENDING_RECURRENCE 详解】
-    // 检查前提：每个非复位拍；last_pending 只保存上一采样拍的公开输出。
-    // 本拍 AR 握手加一，双 grant 成功减一；仲裁失败不减，MEM/R 事件也不直接减。
-    // 示例：上拍为 5，本拍成功 1 条且新收 1 条，则本拍仍应输出 5。
-    // 失败时先检查计数是否晚一拍，以及是否错误地在 req 或 R 返回时扣减。
-    // [NO_REF_MODEL_HISTORY] 本拍计数 = 上拍计数 + 本拍 AR 握手 - 本拍成功发射。
+    // 在沿 N 采样旧计数与实际握手。寄存器在沿 N 更新，沿 N+1 的沿前采样看到该结果。
+    // |=> 从复位后的有效采样开始递推，disable iff 在复位时取消尚未完成的检查。
+    // [NO_REF_MODEL_HISTORY] 当前采样值 = 上一采样值 + 上一拍 AR 握手 - 上一拍成功发射。
     A_PENDING_RECURRENCE: assert property (
         @(posedge clk) disable iff (!rst_n)
-        pending_cnt == (last_pending+{3'b0,ar_fire}-{3'b0,issue_fire})
+        1'b1 |=> pending_cnt == $past(pending_cnt + {3'b0,ar_fire} - {3'b0,issue_fire})
     );
 
     // ----------------------------------------------------------------
@@ -237,15 +241,13 @@ module cmdbuf_rd_port_sva (
     );
 
     // 【A_COMPARE_PENDING_CNT 详解】
-    // 检查范围：每个非复位拍，使用事务表中尚未发射的条目数 waiting 作为基数。
-    // 期望值组合计入本拍 ar_fire 和 issue_fire，不等下一拍寄存输出。
-    // 已发射但仍等 MEM/R 的事务继续占 entry，却不再属于 waiting。
-    // 它与 A_PENDING_RECURRENCE 采用不同依据，便于发现模型基数或接口计数时点不一致。
-    // [REF_MODEL] 待发数含本拍新 AR，扣除本拍双 grant 成功；仲裁失败不扣除。
+    // 检查范围：每个非复位采样拍，比较寄存计数与事务表的拍初待发条目数。
+    // 已发射但仍等 MEM/R 的事务继续占 entry，waiting 只统计尚未发射的条目。
+    // [REF_MODEL] 当前寄存值等于当前采样时的 waiting。
     // [REF_MODEL] [OUTPUT_COMPARE: pending_cnt] 下方直接比较本端口实际值与模型期望值。
     A_COMPARE_PENDING_CNT: assert property (
         @(posedge clk) disable iff (!rst_n)
-        pending_cnt == (waiting+(ar_fire?1:0)-(issue_fire?1:0))
+        pending_cnt == waiting
     );
 
     // 【A_COMPARE_REQ 详解】
@@ -735,30 +737,24 @@ module cmdbuf_rd_port_sva (
     );
 
     // 【C_PENDING5_DEC 详解】
-    // 拍初模型有 5 条未发射命令，本拍无 AR 握手但成功发射一条。
-    // 命中要求本拍 pending_cnt 已变为 4，不能保持 5 等到下一拍。
-    // [REF_MODEL] 原待发 5 条，本拍只成功发射一条，pending_cnt 本拍为 4。
+    // [REF_MODEL] 沿 N 的待发数为 5，仅发射一条时，沿 N+1 采样得到 4。
     C_PENDING5_DEC: cover property (
         @(posedge clk) disable iff (!rst_n)
-        waiting == 5 && !ar_fire && issue_fire && pending_cnt == 4
+        (waiting == 5 && pending_cnt == 5 && !ar_fire && issue_fire) ##1 (pending_cnt == 4)
     );
 
     // 【C_PENDING5_BOTH 详解】
-    // 拍初模型有 5 条待发，本拍同时接收新 AR 并成功发射旧命令。
-    // 加一减一相抵，本拍 pending_cnt=5；这里同收同发指 AR/下游发射两事件。
-    // [REF_MODEL] 原待发 5 条，本拍同收同发，pending_cnt 本拍仍为 5。
+    // [REF_MODEL] 沿 N 的待发数为 5，同收同发时，沿 N+1 采样仍为 5。
     C_PENDING5_BOTH: cover property (
         @(posedge clk) disable iff (!rst_n)
-        waiting == 5 && ar_fire && issue_fire && pending_cnt == 5
+        (waiting == 5 && pending_cnt == 5 && ar_fire && issue_fire) ##1 (pending_cnt == 5)
     );
 
     // 【C_PENDING5_ADD 详解】
-    // 拍初模型有 5 条待发，本拍只接收新 AR，没有成功发射。
-    // 本拍必须输出 6；req 仲裁失败也属于没有成功发射。
-    // [REF_MODEL] 原待发 5 条，本拍只接收一条，pending_cnt 本拍为 6。
+    // [REF_MODEL] 沿 N 的待发数为 5，仅接收一条时，沿 N+1 采样得到 6。
     C_PENDING5_ADD: cover property (
         @(posedge clk) disable iff (!rst_n)
-        waiting == 5 && ar_fire && !issue_fire && pending_cnt == 6
+        (waiting == 5 && pending_cnt == 5 && ar_fire && !issue_fire) ##1 (pending_cnt == 6)
     );
 
     // 【C_FULL_REUSE 详解】

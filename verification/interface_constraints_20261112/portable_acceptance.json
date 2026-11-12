@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "root": "/root/CMDBUF 接口便携包 20261112/cmdbuf-studio",
+  "checks": {
+    "package_verify": true,
+    "constraints": true,
+    "smoke": true
+  },
+  "archive_sha256": "c91a419e1c24ebb0b0b69bfdf17e5af51ffd9c7bf05b1406f4b0c638f512671e",
+  "portable_files": 181,
+  "smoke": {
+    "id": "20261112_215327_regress_bbeaf0",
+    "passed": 3,
+    "coverage": "PASS"
+  }
+}

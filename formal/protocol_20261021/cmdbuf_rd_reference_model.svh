@@ -57,7 +57,7 @@
     end endgenerate
     // 读扫描完槽 0..8 的末端结果，得到本拍全部尚未回收的事务数。
     assign used = used_prefix[9];
-    // 读待发累计链末端，得到拍初待发数；本拍 AR/发射的增减另由 pending_cnt 属性检查。
+    // 读待发累计链末端，得到拍初待发数，与同一采样拍的寄存 pending_cnt 比较。
     assign waiting = wait_prefix[9];
     generate for (mx=0; mx<3; mx=mx+1) begin : count_sources
         wire signed [31:0] occ_prefix [0:9]; // 当前 XAU 扫描前 k 个槽的累计占用，分源独立展开。

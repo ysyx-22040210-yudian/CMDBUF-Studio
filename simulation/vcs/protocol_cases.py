@@ -15,7 +15,7 @@ def lane(name, values, bus=False):
 def basic(bank=0,half=0,length=24):
     cfg={'description':'协议驱动：输入所有权明确，真实 ISSUE +4 返回；固定时钟和复位。',
          'sim':{'mode':'protocol','tick_ps':10000,'clock_skew_ps':1,'finish':'require_empty',
-                'drivers':{'ar':'queued','bank':'busy_on_issue','mem':'on_issue'},
+                'drivers':{'ar':'queued','bank':'busy_on_issue','mem':'on_issue','ar_grant':'on_req'},
                 'queue_limit':64,'wait_cycles':100,'requests':{'A':{
                     'src':bank%3,'addr':hex(0x12000+bank*8+half*64+1),'id':42,'port':6,'resp':0,
                     'data':'0x00112233445566778899aabbccddeeff','pc_err':half}}},
@@ -23,7 +23,7 @@ def basic(bank=0,half=0,length=24):
                    lane('rst_n',[0]*2+[1]*(length-2)),
                    {'name':'ar_offer','wave':'0.='+'.'*(length-3),'data':['A']},
                    lane('ar_send',[1]*length),lane('rready',[7]*length,True),
-                   lane('ar_rd_gnt',[255]*length,True),lane('rw_rd_gnt',[255]*length,True)],
+                   lane('ar_grant_enable',[255]*length,True),lane('rw_rd_gnt',[255]*length,True)],
          'head':{'text':'Protocol-driven WaveDrom','tick':0},'config':{'hscale':1},
          'require':{'accepted':1,'issued':1,'captured':1,'retired':1}}
     cfg['signal'] += [lane('bank_busy[{}]'.format(b),[0]*length,True) for b in range(8)]
@@ -79,7 +79,7 @@ def interactions():
     result={'protocol_read':basic(),'protocol_demo':traffic(),'protocol_reset':traffic(True),'protocol_fixed_ar':fixed_ar(),
             'protocol_fixed_mem':fixed_mem()}
     c=basic(length=40)
-    replace(c,'ar_rd_gnt',lane('ar_rd_gnt',[255]*8+[0]*5+[255]*27,True))
+    replace(c,'ar_grant_enable',lane('ar_grant_enable',[255]*8+[0]*5+[255]*27,True))
     replace(c,'rw_rd_gnt',lane('rw_rd_gnt',[0]*8+[255]*32,True))
     c['require'].update(issue_failed=1,ar_only=1,rw_only=1); result['protocol_retry']=c
     c=basic(); replace(c,'ar_send',lane('ar_send',[0]*8+[1]*16)); result['protocol_window']=c
@@ -98,7 +98,8 @@ def interactions():
         c['sim']['requests'][name]=dict(src=0,addr=0x12001+i*8,id=42,data=hex(i+1))
     replace(c,'ar_offer',dict(name='ar_offer',wave=''.join(offer),data=names))
     replace(c,'rready',lane('rready',[0]*24+[7]*24,True))
-    c['require'].update(accepted=8,retired=8,ar_rejected=1); result['protocol_selected_reject']=c
+    c['description']='协议驱动：选中源未 ready 时保留原请求，等待该源 ready 再发。'
+    c['require'].update(accepted=8,retired=8,ar_gated=1); result['protocol_selected_reject']=c
     c=basic(length=96); replace(c,'clk',dict(name='clk',wave='00111000'*12))
     result['protocol_duty_cycle']=c
     return result

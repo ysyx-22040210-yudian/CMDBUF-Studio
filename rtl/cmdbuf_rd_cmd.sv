@@ -19,7 +19,7 @@ module cmdbuf_rd_cmd (
     output reg [1:0] rresp,
     output wire [7:0] req,
     output wire [11:0] arb_addr,
-    output wire [3:0] pending_cnt,
+    output reg [3:0] pending_cnt,
     input wire [7:0] ar_rd_gnt,
     // Bank-major unpacked array: status[bank][half], 0=idle, 1=busy.
     input wire [1:0] rd_mem_status [7:0],
@@ -46,7 +46,6 @@ module cmdbuf_rd_cmd (
     reg [8:0] older_q [0:ENTRIES-1];
     reg [8:0] older_next [0:ENTRIES-1];
     reg [3:0] occ_q [0:2];
-    reg [3:0] pending_q;
     reg [1:0] rr_ptr_q;
     reg issue_valid_q;
     reg [3:0] issue_entry_q;
@@ -73,10 +72,6 @@ module cmdbuf_rd_cmd (
     // Successful issue requires the same requested bank in both grants.
     assign issue_success = |(req & ar_rd_gnt & rw_rd_gnt);
     assign issue_entry = issue_entry_q;
-    // This output includes THIS cycle's accepted AR and successful issue.
-    // R retirement frees storage but does not decrement the waiting count.
-    assign pending_cnt = rst_n ? (pending_q + {3'b0, alloc_fire}
-                                            - {3'b0, issue_success}) : 4'b0;
     assign retire_fire = |(rvalid & rready);
     assign retire_entry = rsp_entry;
 
@@ -246,7 +241,7 @@ module cmdbuf_rd_cmd (
             valid_q <= 9'b0;
             issued_q <= 9'b0;
             done_q <= 9'b0;
-            pending_q <= 4'b0;
+            pending_cnt <= 4'b0;
             rr_ptr_q <= 2'b0;
             issue_valid_q <= 1'b0;
             issue_entry_q <= 4'b0;
@@ -263,7 +258,8 @@ module cmdbuf_rd_cmd (
             end
         end else begin
             valid_q <= valid_next;
-            pending_q <= pending_cnt;
+            // Register only the accepted AR and successful issue events at this edge.
+            pending_cnt <= pending_cnt + {3'b0, alloc_fire} - {3'b0, issue_success};
             for (x = 0; x < 3; x = x + 1)
                 occ_q[x] <= occ_q[x] + {3'b0, (alloc_fire && (src == x[1:0]))}
                            - {3'b0, (retire_fire && (winner == x[1:0]))};
@@ -346,7 +342,7 @@ module cmdbuf_rd_cmd (
             if ((onehot0_9({6'b0, rvalid})) !== 1'b1) check_failure("rvalid is not onehot0");
             if (((rvalid & ~rready) == 0) !== 1'b1) check_failure("response without ready");
             if ((onehot0_9(select_onehot)) !== 1'b1) check_failure("ambiguous oldest selection");
-            if ((pending_q == popcount9(valid_q & ~issued_q)) !== 1'b1) check_failure("pending count mismatch");
+            if ((pending_cnt == popcount9(valid_q & ~issued_q)) !== 1'b1) check_failure("pending count mismatch");
             if (({28'b0, occ_q[0]} + {28'b0, occ_q[1]} + {28'b0, occ_q[2]} == {28'b0, popcount9(valid_q)}) !== 1'b1) check_failure("occupancy mismatch");
             if ((quota_cost <= 9) !== 1'b1) check_failure("reserved capacity stolen");
             if (alloc_fire) begin

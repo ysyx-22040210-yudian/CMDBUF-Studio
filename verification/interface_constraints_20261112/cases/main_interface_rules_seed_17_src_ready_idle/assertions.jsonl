@@ -1,0 +1,1 @@
+{"label":"E07_SRC_READY","edge":11,"time_ps":100000,"detail":"path=tb_cmdbuf_rd.checks.E07_SRC_READY sampled_pending=1 last_pending=2 ar_fire=0 issue_fire=1 src=00 arvalid=0 ready=6 req=20 argrant=20 rready=0 rvalid=0 rid=00 expected_ready=6 expected_req=20 expected_rvalid=0"}

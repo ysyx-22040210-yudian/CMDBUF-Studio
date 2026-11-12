@@ -1,11 +1,40 @@
 """VCS acceptance of snapshot boundaries, transaction identity and fatal policy."""
 import argparse
 import concurrent.futures
+import csv
 import json
 from pathlib import Path
 import uuid
 import eda
 import check_policy
+
+
+def pending_wave_check(directory):
+    from gui import vcd
+
+    root = Path(directory)
+    database = vcd.index(root/'waves.vcd', root/'wave_index')
+    metadata = vcd.describe(database)
+    signal = next(s for s in metadata['signals'] if
+                  s['name'].split('[')[0]=='tb_cmdbuf_rd.dut.pending_cnt')
+    series = vcd.window(database, [signal['id']], 0, metadata['end'])['signals'][0]['values']
+    actual = [(time, int(value, 2)) for time,value in series]
+    expected = [(0, 0)]
+    count = 0
+    pre_edge_matches = True
+    with (root/'samples.csv').open() as stream:
+        for sample in csv.DictReader(stream):
+            pre_edge_matches &= int(sample['pending_cnt'], 16)==count
+            accept = sample['arvalid']=='1' and bool(int(sample['arready'], 16) & (1 << int(sample['src'], 2)))
+            issue = bool(int(sample['req'], 16) & int(sample['ar_rd_gnt'], 2) & int(sample['rw_rd_gnt'], 2))
+            updated = count+int(accept)-int(issue)
+            if updated != count:
+                expected.append((int(sample['time_ps']), updated))
+            count = updated
+    return dict(passed=metadata['timescale'].replace(' ', '')=='1ps' and pre_edge_matches and
+                       len(expected)>1 and actual==expected,
+                timescale=metadata['timescale'], actual=actual, expected=expected,
+                pre_edge_matches=pre_edge_matches, scope=signal['name'])
 
 
 def main(argv=None):
@@ -52,14 +81,15 @@ def main(argv=None):
     build=eda.build(env)
     batch=root/'integration';batch.mkdir()
     jobs=[(mode,fatal,mutation) for mode in ('transaction','strict') for fatal in (True,False)
-          for mutation in ('','rid','pending_registered')]
+          for mutation in ('', 'rid', 'pending_lookahead', 'pending_delayed')]
+    jobs.extend((mode, False, 'rvalid_unready') for mode in ('transaction', 'strict'))
     def run(spec):
         mode,fatal,mutation=spec
         container=batch/(mode+'_'+str(int(fatal)));container.mkdir(exist_ok=True)
         seed=17+(100 if mode=='strict' else 0)+(10 if not fatal else 0)
         result=eda.run_case(build,container,'tc_directed',seed,None,env,120,injection=mutation,
                             waves=(mode=='transaction' and fatal and not mutation),check_mode=mode,assert_fatal=fatal)
-        expected='FAIL' if mutation=='rid' or (mutation=='pending_registered' and mode=='strict') else 'PASS'
+        expected='FAIL' if mutation else 'PASS'
         return spec,result,expected
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs) as pool:
         rows=list(pool.map(run,jobs))
@@ -69,9 +99,17 @@ def main(argv=None):
         runtime=result['checks']['runtime']
         if expected=='FAIL' and not fatal:
             require(name+'_continued_to_end',runtime.get('finished')==1 and runtime.get('failures',0)>0,runtime)
+        if mutation in ('pending_lookahead', 'pending_delayed'):
+            require(name+'_pending_label', any(f['label']=='A_PENDING_RECURRENCE' or
+                (mode=='strict' and fatal and f['label']=='A_COMPARE_PENDING_CNT') for f in result['checks']['failures']))
+        if mutation=='rvalid_unready':
+            require(name+'_r_ready_label', any(f['label']=='A_R_READY' for f in result['checks']['failures']))
         if expected=='PASS':
             require(name+'_scope',result['checks']['groups'][2]['status']==('PASS' if mode=='strict' else 'NOT_CHECKED'))
     results=[row[1] for row in rows]
+    waveform = next(r for r in results if r['waves_enabled'])
+    wave_check = pending_wave_check(waveform['directory'])
+    require('registered_pending_updates_at_transfer_edges', wave_check['passed'], wave_check)
     cov=eda.merge_coverage(batch,results,env)
     require('coverage_excludes_failed_and_injected_runs',cov['status']=='PASS' and
             len(cov['included'])==4 and all(r['id'] in cov['excluded'] for r in results if r['status']!='PASS'),cov)

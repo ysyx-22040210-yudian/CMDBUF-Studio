@@ -1,0 +1,15 @@
+{
+  "revision": "20261112.2",
+  "interface_baseline": "docs/timing/interface_constraints_20261112.json",
+  "supersedes": "pending_count in docs/timing/protocol_corrections_20261021.json",
+  "port": "pending_cnt[3:0]",
+  "meaning": "Number of accepted commands that have not successfully issued",
+  "reset": "Asynchronous active-low reset to zero",
+  "update": "At each rising edge, add the accepted AR event and subtract the successful issue event",
+  "sampled_recurrence": "pending_cnt[N+1] = pending_cnt[N] + ar_fire[N] - issue_fire[N]",
+  "sampled_checks": {
+    "A_PENDING_RECURRENCE": "Both modes check the previous edge's transfer events using native SVA sampling",
+    "A_COMPARE_PENDING_CNT": "Strict mode compares the register with the reference model's sampled waiting count"
+  },
+  "checker_source": "The editable port SVA source is archived with the build and reported by content hash"
+}

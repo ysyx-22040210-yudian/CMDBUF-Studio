@@ -1,0 +1,81 @@
+{
+  "status": "PASS",
+  "contract_revision": "20261112",
+  "sampling": "Non-reset sampled rising edges, including idle cycles",
+  "rules": [
+    "E07_SRC_READY",
+    "A_R_READY",
+    "E08_AR_GRANT_REQ"
+  ],
+  "inventory": {
+    "families": 6,
+    "instances": 13,
+    "record": "inventory.json"
+  },
+  "main_phase": {
+    "positive": 12,
+    "expected_negative": 15,
+    "record": "main_phase_acceptance.json",
+    "interface_samples": "interface_samples.json"
+  },
+  "constraints": {
+    "positive": 42,
+    "expected_negative": 34,
+    "record": "constraint_acceptance.json"
+  },
+  "assertion_checks": 82,
+  "environment_fatal_checks": 118,
+  "regression": {
+    "passed": 16,
+    "total": 16,
+    "random_seeds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      11,
+      17,
+      23,
+      42,
+      101
+    ],
+    "random_body_cycles": 20000,
+    "coverage": "PASS",
+    "record": "regression_summary.json"
+  },
+  "replay": {
+    "cases": 4,
+    "record": "replay_acceptance.json"
+  },
+  "portable": {
+    "receipt": {
+      "status": "PASS",
+      "root": "/root/CMDBUF 接口便携包 20261112/cmdbuf-studio",
+      "checks": {
+        "package_verify": true,
+        "constraints": true,
+        "smoke": true
+      },
+      "archive_sha256": "c91a419e1c24ebb0b0b69bfdf17e5af51ffd9c7bf05b1406f4b0c638f512671e",
+      "portable_files": 181,
+      "smoke": {
+        "id": "20261112_215327_regress_bbeaf0",
+        "passed": 3,
+        "coverage": "PASS"
+      }
+    },
+    "archives": {
+      "cmdbuf-studio-portable.zip": {
+        "bytes": 7450401,
+        "sha256": "3bdcb5ea86da2530fa8a7396bac1cd2527f011a6a2fed431717540be3cfbaaf0"
+      },
+      "cmdbuf-studio-portable.tar.gz": {
+        "bytes": 7339912,
+        "sha256": "c91a419e1c24ebb0b0b69bfdf17e5af51ffd9c7bf05b1406f4b0c638f512671e"
+      }
+    },
+    "zip_tar_manifest_match": true
+  },
+  "validation_scope": "Finite VCS/Verdi execution of the baseline DUT. The two environment obligations are expressed as native Formal assumptions and simulation checks. R ready is a DUT assertion."
+}

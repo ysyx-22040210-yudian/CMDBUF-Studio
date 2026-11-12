@@ -1,0 +1,15 @@
+Chronologic VCS simulator copyright 1991-2018
+Contains Synopsys proprietary information.
+Compiler version O-2018.09-1_Full64; Runtime version O-2018.09-1_Full64;  Nov 12 01:01 2026
+
+ VCS Coverage Metrics Release O-2018.09-1_Full64 Copyright (c) 1991-2018 by Synopsys Inc.
+EDA_SIMULATION_STARTED
+CHECK_POLICY mode=transaction assert_fatal=1 env_fatal=0 sampling=pre_edge snapshot_pipeline=1
+ENV_POLICY env_fatal=0 recoverable_errors=record_and_fail
+MAIN_BOOTSTRAP time_ps=10000 rst_n=1
+MAIN_PHASE_CONTEXT case=main_bad_resp cycle=3 edge=4 stage=3 phase=0 rst_n=1 rready=111 arready=111 req=00 arb_addr=000 mem_due=0 due_data=00000000000000000000000000000000 due_error=0
+MAIN_PROPOSED_INPUT arvalid=1 src=00 arresp=01 araddr=12001 arid=2a port=06 argrant=ff rwgrant=ff status='{'h0, 'h0, 'h0, 'h0, 'h0, 'h0, 'h0, 'h0}  mem_rdata=00000000000000000000000000000000 pc_err=0
+ENV_CONTINUE MAIN_E04_ARRESP case=main_bad_resp cycle=3 edge=4 stage=3
+50000 tb_cmdbuf_rd.dut.u_cmd.check_failure CMDBUF_CHECK_FAILURE: undefined arresp input
+$stop at time 50000 Scope: tb_cmdbuf_rd.dut.u_cmd.check_failure File: /tmp/cmdbuf-studio-0/source-06719cdd302251b81d81/rtl/cmdbuf_rd_cmd.sv Line: 334
+ucli% 

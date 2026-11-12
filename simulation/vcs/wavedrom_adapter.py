@@ -17,6 +17,7 @@ PORTS = [('clk', 1), ('rst_n', 1), ('arvalid', 1), ('src', 2), ('araddr', 18),
 PORTS += [('rd_mem_status[{}]'.format(b), 2) for b in range(8)]
 PORTS += [('mem_rdata', 128), ('pc_err', 1)]
 WIDTHS = dict(PORTS)
+PROTOCOL_PROGRAM_PREFIXES = ('PROTOCOL_V1 ', 'PROTOCOL_V2 ')
 META = {'description', 'signal', 'sim', 'require', 'head', 'foot', 'config', 'edge'}
 
 
@@ -209,7 +210,7 @@ def sample_csv(plan):
 
 def verify_execution(cfg, directory, program):
     """Verify all scheduled levels and every sampled edge against simulator logs."""
-    if program.startswith('PROTOCOL_V1 '):
+    if program.startswith(PROTOCOL_PROGRAM_PREFIXES):
         from protocol_adapter import verify_execution as verify_protocol
         return verify_protocol(cfg, directory, program)
     # Audit the archived instruction stream, including on replay. A later edit

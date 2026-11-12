@@ -8,7 +8,7 @@ class cmdbuf_main_tc;
     logic rst_n=1;
     logic [2:0] rready=0;
     logic arvalid=0;
-    logic [1:0] src=0, arresp=0;
+    logic [1:0] src=3, arresp=0;
     logic [17:0] araddr=0;
     logic [7:0] arid=0, ar_rd_gnt=0, rw_rd_gnt=0;
     logic [4:0] ar_port_id=0;
@@ -36,6 +36,6 @@ class cmdbuf_main_tc;
         main_drive(this);
     endtask
     virtual task main_phase;
-        $fatal(1,"MAIN_PHASE_NOT_IMPLEMENTED");
+        tb_cmdbuf_rd.env_fail("MAIN_PHASE_NOT_IMPLEMENTED","TC must implement main_phase",1);
     endtask
 endclass

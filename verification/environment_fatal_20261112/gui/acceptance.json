@@ -1,0 +1,90 @@
+{
+  "status": "PASS",
+  "gui": "native Tk on Linux Python 3.6.8",
+  "batch": "/root/cmdbuf-environment-fatal-20261112/build/vcs/regressions/20261112_005152_regress_530bd9",
+  "saved_policy": {
+    "version": 1,
+    "name": "环境 fatal 继续运行验收",
+    "jobs": 2,
+    "timeout": 120,
+    "waves": true,
+    "check_mode": "transaction",
+    "assert_fatal": true,
+    "env_fatal": false,
+    "cases": [
+      {
+        "case": "tc_env_gui",
+        "enabled": true,
+        "runs": 2,
+        "seed": 901,
+        "cycles": 16
+      },
+      {
+        "case": "tc_directed",
+        "enabled": true,
+        "runs": 1,
+        "seed": 902,
+        "cycles": 64
+      }
+    ]
+  },
+  "make_arguments": [
+    {
+      "argv": [
+        "make",
+        "--no-print-directory",
+        "PYTHON=/usr/bin/python3",
+        "regress",
+        "PLAN=/root/cmdbuf-environment-fatal-20261112/gui_acceptance/state/plans/20261112_005152_872260d2.json",
+        "JOBS=2",
+        "TIMEOUT=120",
+        "WAVES=1",
+        "CHECK_MODE=transaction",
+        "ASSERT_FATAL=1",
+        "ENV_FATAL=0"
+      ],
+      "returncode": 2
+    }
+  ],
+  "total": 3,
+  "completed": 3,
+  "failed_cases": [
+    {
+      "case": "tc_env_gui_seed_901",
+      "cycles": 16,
+      "environment_errors": 6,
+      "assertions": 6
+    },
+    {
+      "case": "tc_env_gui_seed_902",
+      "cycles": 16,
+      "environment_errors": 6,
+      "assertions": 6
+    }
+  ],
+  "coverage": {
+    "status": "PASS",
+    "exit_code": 0,
+    "seconds": 0.405,
+    "database": "/root/cmdbuf-environment-fatal-20261112/build/vcs/regressions/20261112_005152_regress_530bd9/coverage/merged.vdb",
+    "report": "/root/cmdbuf-environment-fatal-20261112/build/vcs/regressions/20261112_005152_regress_530bd9/coverage/urgReport/dashboard.html",
+    "metrics_percent": {
+      "SCORE": "63.32",
+      "LINE": "87.97",
+      "COND": "79.31",
+      "TOGGLE": "15.26",
+      "FSM": "--",
+      "BRANCH": "70.73"
+    },
+    "code_metrics_present": true,
+    "included": [
+      "tc_directed_seed_902"
+    ],
+    "excluded": [
+      "tc_env_gui_seed_901",
+      "tc_env_gui_seed_902"
+    ]
+  },
+  "scope_note": "接口与输入约束：失败  ·  事务与数据：未完成  ·  完整接口时序：未检查  |  环境错误 6 笔 · 断言失败 6 笔  |  环境 fatal 关 · 断言 fatal 关  |  执行完成",
+  "native_wave": "DONE"
+}

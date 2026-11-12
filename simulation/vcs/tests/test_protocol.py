@@ -2,6 +2,7 @@ import copy
 import json
 from pathlib import Path
 import sys
+import tempfile
 import unittest
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 import contracts
@@ -12,8 +13,8 @@ from protocol_cases import basic,interactions
 class ProtocolTests(unittest.TestCase):
     def test_current_catalog_is_complete(self):
         a=contracts.audit()
-        self.assertEqual(11,a['assumption_instances'])
-        self.assertEqual(4,len([r for r in a['rules'] if r['kind']=='environment_assumption']))
+        self.assertEqual(13,a['assumption_instances'])
+        self.assertEqual(6,len([r for r in a['rules'] if r['kind']=='environment_assumption']))
 
     def test_new_or_changed_contract_cannot_silently_run(self):
         c=json.loads((contracts.HERE/'contracts.json').read_text(encoding='utf-8'))
@@ -24,6 +25,23 @@ class ProtocolTests(unittest.TestCase):
             if change=='missing': x['rules'].pop()
             if change=='status': x['rules'][0]['status']='unsupported'
             with self.assertRaisesRegex(ValueError,'CONTRACT_UNSUPPORTED'): contracts.audit(catalog=x)
+
+    def test_user_checker_edits_are_recorded_without_unlocking_rtl(self):
+        catalog = json.loads((contracts.HERE/'contracts.json').read_text(encoding='utf-8'))
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for name in catalog['sources']:
+                path = root/name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes((contracts.ROOT/name).read_bytes())
+            path = root/contracts.PORT_CHECKER
+            path.write_bytes(path.read_bytes().replace(b'E08_AR_GRANT_REQ:', b'USER_GRANT:'))
+            report = contracts.audit(root=root, catalog=catalog)
+            checker = report['checker']
+            self.assertTrue(checker['customized'])
+            self.assertEqual(checker['added_assumptions'], ['USER_GRANT'])
+            self.assertEqual(checker['missing_assumptions'], ['E08_AR_GRANT_REQ'])
+            self.assertEqual(report['sources'][contracts.PORT_CHECKER], checker['sha256'])
 
     def test_requests_have_legal_domains(self):
         for key,value,rule in [('src',3,'E03_SRC'),('resp',1,'E04_ARRESP'),('resp',2,'E04_ARRESP')]:

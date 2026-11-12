@@ -1,0 +1,137 @@
+{
+  "status": "PASS",
+  "feature": "ENV_FATAL master for recoverable environment and assertion failures",
+  "base_commit": "2a04212daeae18fee5bb089d12fe273ba7e1ffbd",
+  "created_at": "2026-11-12T01:04:46.351167+08:00",
+  "policy": {
+    "default_env_fatal": true,
+    "off": "Continue recoverable errors, keep failures and invalidate coverage",
+    "assert_fatal_only": "ENV_FATAL=1 ASSERT_FATAL=0",
+    "sampling": "unchanged pre-edge SVA",
+    "stimulus": "no repair",
+    "user_dut_system_tasks": "not intercepted"
+  },
+  "vcs": {
+    "status": "PASS",
+    "scenarios": 21,
+    "checks": 118,
+    "completed": 17,
+    "expected_stops": 4,
+    "reference": "vcs_acceptance.json"
+  },
+  "assertions": {
+    "status": "PASS",
+    "checks": 76,
+    "reference": "assertion_acceptance.json"
+  },
+  "main_phase": {
+    "status": "PASS",
+    "positive": 11,
+    "expected_negative": 13,
+    "reference": "main_phase_acceptance.json"
+  },
+  "gui": {
+    "status": "PASS",
+    "runs": 3,
+    "completed": 3,
+    "expected_failures": [
+      {
+        "case": "tc_env_gui_seed_901",
+        "cycles": 16,
+        "environment_errors": 6,
+        "assertions": 6
+      },
+      {
+        "case": "tc_env_gui_seed_902",
+        "cycles": 16,
+        "environment_errors": 6,
+        "assertions": 6
+      }
+    ],
+    "reference": "gui/acceptance.json"
+  },
+  "unit": {
+    "linux": {
+      "tests": 62,
+      "skipped": 0,
+      "status": "PASS"
+    },
+    "windows": {
+      "tests": 62,
+      "skipped": 3,
+      "status": "PASS"
+    }
+  },
+  "replay": {
+    "legacy_binary": "old_binary_replay.json",
+    "nonfatal_failed_case": "new_nonfatal_replay.json",
+    "exact_inputs_and_events": true
+  },
+  "noninteractive_stop": {
+    "status": "EXPECTED_FAIL",
+    "seconds": 0.504,
+    "timed_out": false,
+    "completed": false,
+    "detail": "Batch children use DEVNULL stdin; DUT $stop exits instead of waiting in UCLI."
+  },
+  "distribution": {
+    "status": "PASS",
+    "files": 178,
+    "archives": {
+      "cmdbuf-studio-portable.zip": {
+        "bytes": 7412979,
+        "sha256": "fb1ec309b59563d73770483df341e608e5bc6464e1795320b0ce9d25c70e81d2"
+      },
+      "cmdbuf-studio-portable.tar.gz": {
+        "bytes": 7303929,
+        "sha256": "c49ec8ef7090f092a20d99073d3bb302339b92d46f5c5f34929f2bd08584b08b"
+      }
+    },
+    "zip_and_tar_payloads_match": true,
+    "linux_installed_manifest_verified": true
+  },
+  "deployment": {
+    "status": "PASS",
+    "root": "/root/CMDBUF license 发布 20261111/cmdbuf-studio",
+    "package_files": 178,
+    "changed": [
+      "simulation/vcs/execution.py",
+      "simulation/vcs/tests/test_execution.py"
+    ],
+    "archive_sha256": "c49ec8ef7090f092a20d99073d3bb302339b92d46f5c5f34929f2bd08584b08b",
+    "backup": "/root/cmdbuf-environment-fatal-release-20261112-final/backup",
+    "user_data_preserved": true
+  },
+  "source_sha256": {
+    "AGENTS.md": "856f40c4a454a53e56c2cb6e926b889d30f6866191baf71e0bcd45cb56e1b6f4",
+    "README.md": "421e83342de61cfce2eba167c6b615db6ceb032ab9b1e53d67c3064dccaba177",
+    "documents/41_cmdbuf_environment_fatal_20261112.pdf": "ed045d521f3634b61b03b430f03b7012feb06ce17e34665045cac214c0fc1f36",
+    "simulation/vcs/Makefile": "7058c4c0069ee763f3b5b20e2d0979c3872afc03f8eaf54cc9ae27f4b190d525",
+    "simulation/vcs/check_policy.py": "facdef793e6dd172f0731363cabe0c5e2d330b9d7827c0ead439cc7f30b52c87",
+    "simulation/vcs/check_profiles.json": "d0b3105a813d80673915aae4ba4f82a08f0d6fe9d484992e208ea51a78d98e58",
+    "simulation/vcs/eda.py": "38dd5f3d47336f375d7546ed614979ce3e48970d802b8c12d7fb1be1c43c424b",
+    "simulation/vcs/environment_suite.py": "6df4423abeb2a0b002c407935c0a555343e8ae74d75034601858613e9898bbee",
+    "simulation/vcs/execution.py": "608bd3916295c1aeda35182cc39814b868511c75ae0c34ed8d00580898e08c45",
+    "simulation/vcs/gui/backend.py": "6e9fa718eb7016ec1d8ff15bc81ab0b89db88403f06f9a3653a7ce1318f7446b",
+    "simulation/vcs/gui/desktop.py": "c4ea630348df9fa9f4666de546c662711daf1be27cbf358ee9c97ef582acd4f1",
+    "simulation/vcs/gui/model.py": "16c6f9fe0e2f246cb7bbcf539ac9cff7aef9a49a40f0e360799e70ef472d190e",
+    "simulation/vcs/portable.py": "d1280c34457d01b9a5782f76d735434fe2b42624b806ade347e3514e79566ef6",
+    "simulation/vcs/tb/cmdbuf_check_monitor.sv": "735308a3bfb0929602ac08d93c457092245660f14f131240b1d7dcf1848597dc",
+    "simulation/vcs/tb/constrained_random_driver.svh": "fa341382253ca664a201b9807fcc55f03ae5a4313c7f6e24fbcaa166e0e188e7",
+    "simulation/vcs/tb/environment_policy.svh": "d79755661c7a0c5b1f971adf625d9187429479a587647c1f39a4eaaec8784ce7",
+    "simulation/vcs/tb/main_phase_base.svh": "0b91da63467c4843195042e20f4d094eaee7003af92120e91bbc59ef2ecd6b9a",
+    "simulation/vcs/tb/main_phase_driver.svh": "792bc536ef2ad004e2a1aba30929539cce7a0fce07e5d4c980587b5698eb7c29",
+    "simulation/vcs/tb/protocol_driver.svh": "48771f0d9721bcd2788d37fa216f971bfafe5c6136f16b95f922392cacadb7c0",
+    "simulation/vcs/tb/tb_cmdbuf_rd.sv": "627b9c1eaa7ef227bcaf9da73e70caed3935717b05d45703a0a0f36e81cde795",
+    "simulation/vcs/tb/wavedrom_driver.svh": "bca08b2fb7020c92d26977c759c207e2a95395d14afb63ba582ff3e1ce9811cb",
+    "simulation/vcs/tests/main_phase/main_env_multiple.sv": "16b1aadac6da6be16b0fa2f5724e7f533df546f342afeb50a4b43d7c85c7ca1a",
+    "simulation/vcs/tests/test_check_policy.py": "6782a3dbed5e4d1d5bd62579c2e7c0a229947a137f7a2d415d199e59cd1d3c5a",
+    "simulation/vcs/tests/test_execution.py": "2201b6825b912de09214118587b662824cb285909d8373ee4e99fcdc8c310ad9"
+  },
+  "limitations": [
+    "Acceptance PASS means all expected positive/negative outcomes matched; intentional violations remain FAIL.",
+    "Invalid clocks/files/programs, unsatisfiable solvers, corrupted driver state, watchdogs and tool failures still terminate.",
+    "Arbitrary TC/DUT $fatal/$stop/$finish, infinite waits and simulator crashes cannot be made to finish by this switch.",
+    "Finite simulation evidence on VCS O-2018.09-1; not a Formal proof."
+  ]
+}

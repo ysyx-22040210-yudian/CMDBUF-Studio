@@ -37,6 +37,25 @@ class StudioTests(unittest.TestCase):
                 with self.assertRaises(ValueError):model.save_case(dict(name='test_read',version=case['version'],phase=case['phase']))
                 self.assertEqual(path.read_bytes(),saved)
 
+    def test_sva_editor_preserves_backup_and_rejects_external_conflict(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = root/model.eda.PROJECT['checker']
+            path.parent.mkdir(parents=True)
+            original = b'module cmdbuf_rd_port_sva;\r\nendmodule\r\n'
+            path.write_bytes(original)
+            with patch.object(model,'ROOT',root), patch.object(model,'STATE',root/'state'):
+                saved = model.load_sva()
+                edited = saved['source'].replace('endmodule', '// my property\nendmodule')
+                updated = model.save_sva(edited, saved['version'])
+                self.assertNotEqual(updated['version'], saved['version'])
+                self.assertIn(b'// my property\r\n', path.read_bytes())
+                self.assertEqual(next((root/'state/backups').glob('*.sv')).read_bytes(), original)
+                path.write_bytes(original+b'// external edit\r\n')
+                with self.assertRaises(ValueError):
+                    model.save_sva(edited, updated['version'])
+                self.assertIn(b'// external edit\r\n', path.read_bytes())
+
     def test_plan_exact_per_case_counts_and_seed_ranges(self):
         plan=dict(version=1,cases=[dict(case='tc_directed',runs=2,seed=41,cycles=64),dict(case='tc_random',runs=3,seed=7,cycles=2000),dict(case='tc_reset',enabled=False,runs=999,seed=1,cycles=64)])
         self.assertEqual(regression_plan.expand(plan),[('tc_directed',41,64,''),('tc_directed',42,64,''),('tc_random',7,2000,''),('tc_random',8,2000,''),('tc_random',9,2000,'')])

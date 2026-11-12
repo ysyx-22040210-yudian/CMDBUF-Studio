@@ -26,7 +26,7 @@ module cmdbuf_check_monitor (
     input wire pc_err
 );
     string check_mode = "transaction";
-    integer assert_fatal = 1, strict_mode = 0;
+    integer assert_fatal = 1, env_fatal = 1, strict_mode = 0;
     integer failures = 0, incomplete = 0, edge_count = 0, checked_frames = 0;
     integer frames_fd, errors_fd, epoch = 0, model_epoch = -1;
     integer peak_states = 1, state_limit = 4096;
@@ -91,8 +91,8 @@ module cmdbuf_check_monitor (
         begin
             f = $fopen("check_runtime.json", "w");
             if (f) begin
-                $fdisplay(f, "{\"version\":1,\"mode\":\"%s\",\"assert_fatal\":%0d,\"failures\":%0d,\"incomplete\":%0d,\"finished\":%0d,\"sampled_frames\":%0d,\"checked_frames\":%0d,\"outstanding\":%0d,\"accepted\":%0d,\"issued\":%0d,\"returned\":%0d,\"cancelled\":%0d,\"peak_hypotheses\":%0d,\"hypothesis_limit\":%0d}",
-                    check_mode, assert_fatal, failures, incomplete, finished,
+                $fdisplay(f, "{\"version\":1,\"mode\":\"%s\",\"assert_fatal\":%0d,\"env_fatal\":%0d,\"effective_assert_fatal\":%0d,\"failures\":%0d,\"incomplete\":%0d,\"finished\":%0d,\"sampled_frames\":%0d,\"checked_frames\":%0d,\"outstanding\":%0d,\"accepted\":%0d,\"issued\":%0d,\"returned\":%0d,\"cancelled\":%0d,\"peak_hypotheses\":%0d,\"hypothesis_limit\":%0d}",
+                    check_mode, assert_fatal, env_fatal, (env_fatal && assert_fatal), failures, incomplete, finished,
                     edge_count, checked_frames, $countones(live), total_ar, total_issue,
                     total_r, total_cancelled, peak_states, state_limit);
                 $fclose(f);
@@ -100,23 +100,33 @@ module cmdbuf_check_monitor (
         end
     endtask
 
-    task automatic fail_check(input string label, input longint at_edge,
-                              input longint at_time, input string detail);
+    task automatic record_check(input string label, input longint at_edge,
+                                input longint at_time, input string detail);
         begin
             failures++;
             $fdisplay(errors_fd, "{\"label\":\"%s\",\"edge\":%0d,\"time_ps\":%0d,\"detail\":\"%s\"}", label, at_edge, at_time, detail);
             $fflush(errors_fd);
             $display("SVA_FAIL %s edge=%0d time_ps=%0d %s", label, at_edge, at_time, detail);
             write_summary();
-            if (assert_fatal) $fatal(1, "CHECK_STOP %s edge=%0d", label, at_edge);
+        end
+    endtask
+
+    task automatic fail_check(input string label, input longint at_edge,
+                              input longint at_time, input string detail);
+        begin
+            record_check(label, at_edge, at_time, detail);
+            if (env_fatal && assert_fatal) $fatal(1, "CHECK_STOP %s edge=%0d", label, at_edge);
+            else if (!env_fatal) $display("CHECK_CONTINUE %s edge=%0d", label, at_edge);
             else $error("CHECK_CONTINUE %s edge=%0d", label, at_edge);
         end
     endtask
 
     // Native SVA has its own Preponed sampling. Its action passes sampled data,
     // so no expression is re-evaluated using post-NBA DUT/reference values.
-    task automatic native_failure(input string label, input longint at_time, input string detail);
-        fail_check(label, edge_count, at_time, detail);
+    task automatic native_failure(input string label, input longint at_time,
+                                  input string detail, input bit apply_fatal=1);
+        if (apply_fatal) fail_check(label, edge_count, at_time, detail);
+        else record_check(label, edge_count, at_time, detail);
     endtask
 
     task automatic require_check(input logic good, input string label,
@@ -303,15 +313,16 @@ module cmdbuf_check_monitor (
     initial begin
         if ($value$plusargs("CHECK_MODE=%s",check_mode)) begin end
         if ($value$plusargs("ASSERT_FATAL=%d",assert_fatal)) begin end
+        if ($value$plusargs("ENV_FATAL=%d",env_fatal)) begin end
         if ($value$plusargs("CHECK_STATE_LIMIT=%d",state_limit)) begin end
-        if (!(check_mode=="strict" || check_mode=="transaction") || !(assert_fatal==0 || assert_fatal==1) || state_limit<1)
+        if (!(check_mode=="strict" || check_mode=="transaction") || !(assert_fatal==0 || assert_fatal==1) || !(env_fatal==0 || env_fatal==1) || state_limit<1)
             $fatal(1,"CHECK_CONFIGURATION_INVALID");
         strict_mode=(check_mode=="strict");
         frames_fd=$fopen("check_frames.csv","w"); errors_fd=$fopen("assertions.jsonl","w");
         if (!frames_fd || !errors_fd) $fatal(1,"CHECK_ARCHIVE_OPEN");
         $fdisplay(frames_fd,"edge,time_ps,reset_epoch,rst_n,arvalid,arready,araddr,src,arid,ar_port_id,arresp,rvalid,rready,rdata,rid,r_port_id,raddr,rresp,req,arb_addr,pending_cnt,ar_rd_gnt,rw_rd_gnt,status,mem_rdata,pc_err");
         reset_transactions();
-        $display("CHECK_POLICY mode=%s assert_fatal=%0d sampling=pre_edge snapshot_pipeline=1",check_mode,assert_fatal);
+        $display("CHECK_POLICY mode=%s assert_fatal=%0d env_fatal=%0d sampling=pre_edge snapshot_pipeline=1",check_mode,assert_fatal,env_fatal);
     end
     final begin
         write_summary();

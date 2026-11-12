@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "root": "/root/CMDBUF license 发布 20261111/cmdbuf-studio",
+  "package_files": 178,
+  "changed": [
+    "AGENTS.md",
+    "README.md",
+    "documents/41_cmdbuf_environment_fatal_20261112.pdf",
+    "simulation/vcs/Makefile",
+    "simulation/vcs/check_policy.py",
+    "simulation/vcs/check_profiles.json",
+    "simulation/vcs/eda.py",
+    "simulation/vcs/environment_suite.py",
+    "simulation/vcs/gui/backend.py",
+    "simulation/vcs/gui/desktop.py",
+    "simulation/vcs/gui/model.py",
+    "simulation/vcs/portable.py",
+    "simulation/vcs/tb/cmdbuf_check_monitor.sv",
+    "simulation/vcs/tb/constrained_random_driver.svh",
+    "simulation/vcs/tb/environment_policy.svh",
+    "simulation/vcs/tb/main_phase_base.svh",
+    "simulation/vcs/tb/main_phase_driver.svh",
+    "simulation/vcs/tb/protocol_driver.svh",
+    "simulation/vcs/tb/tb_cmdbuf_rd.sv",
+    "simulation/vcs/tb/wavedrom_driver.svh",
+    "simulation/vcs/tests/main_phase/main_env_multiple.sv",
+    "simulation/vcs/tests/test_check_policy.py"
+  ],
+  "archive_sha256": "70e7e440268b6ae117d59c0e8833571f4dd83fd5df98537dff73ca9533f39620",
+  "backup": "/root/cmdbuf-environment-fatal-release-20261112/backup",
+  "user_data_preserved": true
+}
