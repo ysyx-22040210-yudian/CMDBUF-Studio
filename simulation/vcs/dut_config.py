@@ -52,8 +52,8 @@ def load():
     return validate(json.loads((HERE / 'dut.json').read_text(encoding='utf-8')))
 
 
-def source_files():
-    cfg = load()
+def source_files(cfg=None):
+    cfg = cfg or load()
     paths = {project_path(f) for f in cfg['files']}
     for directory in cfg['include_dirs']:
         paths.update(p for p in project_path(directory, True).rglob('*')

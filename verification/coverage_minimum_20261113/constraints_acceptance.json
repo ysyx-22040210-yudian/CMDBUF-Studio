@@ -1,0 +1,1033 @@
+{
+  "status": "PASS",
+  "id": "20261113_001145_contracts_0a22e8",
+  "checks": {
+    "all_cases_match_expectations": true,
+    "unit_tests": true,
+    "all_bank_half_antecedents_observed": true,
+    "all_other_assumption_antecedents_observed": true,
+    "coverage_merged_from_positive_only": true,
+    "independent_audit_detects_mutations": true,
+    "random_audit_detects_mutations": true,
+    "every_rule_has_execution_evidence": true
+  },
+  "verdicts": [
+    {
+      "case": "bank0_half0_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "bad_bank0_half0_seed_1_busy",
+      "expected_marker": "rule=E06_SUCCESS_BUSY",
+      "passed": true
+    },
+    {
+      "case": "bank0_half1_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "bad_bank0_half1_seed_1_busy",
+      "expected_marker": "rule=E06_SUCCESS_BUSY",
+      "passed": true
+    },
+    {
+      "case": "bank1_half0_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "bad_bank1_half0_seed_1_busy",
+      "expected_marker": "rule=E06_SUCCESS_BUSY",
+      "passed": true
+    },
+    {
+      "case": "bank1_half1_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "bad_bank1_half1_seed_1_busy",
+      "expected_marker": "rule=E06_SUCCESS_BUSY",
+      "passed": true
+    },
+    {
+      "case": "bank2_half0_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "bad_bank2_half0_seed_1_busy",
+      "expected_marker": "rule=E06_SUCCESS_BUSY",
+      "passed": true
+    },
+    {
+      "case": "bank2_half1_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "bad_bank2_half1_seed_1_busy",
+      "expected_marker": "rule=E06_SUCCESS_BUSY",
+      "passed": true
+    },
+    {
+      "case": "bank3_half0_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "bad_bank3_half0_seed_1_busy",
+      "expected_marker": "rule=E06_SUCCESS_BUSY",
+      "passed": true
+    },
+    {
+      "case": "bank3_half1_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "bad_bank3_half1_seed_1_busy",
+      "expected_marker": "rule=E06_SUCCESS_BUSY",
+      "passed": true
+    },
+    {
+      "case": "bank4_half0_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "bad_bank4_half0_seed_1_busy",
+      "expected_marker": "rule=E06_SUCCESS_BUSY",
+      "passed": true
+    },
+    {
+      "case": "bank4_half1_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "bad_bank4_half1_seed_1_busy",
+      "expected_marker": "rule=E06_SUCCESS_BUSY",
+      "passed": true
+    },
+    {
+      "case": "bank5_half0_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "bad_bank5_half0_seed_1_busy",
+      "expected_marker": "rule=E06_SUCCESS_BUSY",
+      "passed": true
+    },
+    {
+      "case": "bank5_half1_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "bad_bank5_half1_seed_1_busy",
+      "expected_marker": "rule=E06_SUCCESS_BUSY",
+      "passed": true
+    },
+    {
+      "case": "bank6_half0_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "bad_bank6_half0_seed_1_busy",
+      "expected_marker": "rule=E06_SUCCESS_BUSY",
+      "passed": true
+    },
+    {
+      "case": "bank6_half1_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "bad_bank6_half1_seed_1_busy",
+      "expected_marker": "rule=E06_SUCCESS_BUSY",
+      "passed": true
+    },
+    {
+      "case": "bank7_half0_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "bad_bank7_half0_seed_1_busy",
+      "expected_marker": "rule=E06_SUCCESS_BUSY",
+      "passed": true
+    },
+    {
+      "case": "bank7_half1_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "bad_bank7_half1_seed_1_busy",
+      "expected_marker": "rule=E06_SUCCESS_BUSY",
+      "passed": true
+    },
+    {
+      "case": "protocol_read_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "protocol_demo_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "protocol_reset_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "protocol_fixed_ar_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "protocol_fixed_mem_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "protocol_retry_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "protocol_window_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "protocol_nclock_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "protocol_levels_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "protocol_error_priority_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "protocol_same_address_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "protocol_selected_reject_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "protocol_duty_cycle_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "legacy_smoke_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "legacy_retry_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "legacy_backpressure_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "legacy_ooo_same_xau_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "legacy_wavedrom_read_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "legacy_wavedrom_reset_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "legacy_wavedrom_levels_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "legacy_wavedrom_nclock_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "strict_random_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "strict_random_mixed_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "random_unsatisfiable_seed_1_random_unsat",
+      "expected_marker": "RND_SOLVE_FAILED",
+      "passed": true
+    },
+    {
+      "case": "random_post_solve_change_seed_1_random_post",
+      "expected_marker": "RND_POST_SOLVE_MODIFICATION",
+      "passed": true
+    },
+    {
+      "case": "fixed_bank_legal_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "fixed_bank_conflict_seed_1",
+      "expected_marker": "rule=E06_SUCCESS_BUSY",
+      "passed": true
+    },
+    {
+      "case": "bad_src_seed_1_src",
+      "expected_marker": "rule=E03_SRC",
+      "passed": true
+    },
+    {
+      "case": "bad_arresp_seed_1_arresp",
+      "expected_marker": "rule=E04_ARRESP",
+      "passed": true
+    },
+    {
+      "case": "bad_mem_early_seed_1_mem_early",
+      "expected_marker": "rule=T_MEM4_VALUE",
+      "passed": true
+    },
+    {
+      "case": "bad_mem_late_seed_1_mem_late",
+      "expected_marker": "rule=T_MEM4_VALUE",
+      "passed": true
+    },
+    {
+      "case": "bad_mem_corrupt_seed_1_mem_corrupt",
+      "expected_marker": "rule=T_MEM4_VALUE",
+      "passed": true
+    },
+    {
+      "case": "bad_rid_seed_1_rid",
+      "expected_marker": "SVA_FAIL A_COMPARE_RID",
+      "passed": true
+    },
+    {
+      "case": "fixed_mem_conflict_seed_1",
+      "expected_marker": "rule=T_MEM4_VALUE",
+      "passed": true
+    },
+    {
+      "case": "wait_timeout_seed_1",
+      "expected_marker": "rule=P_QUEUE_TIMEOUT",
+      "passed": true
+    },
+    {
+      "case": "deadline_timeout_seed_1",
+      "expected_marker": "rule=P_QUEUE_TIMEOUT",
+      "passed": true
+    },
+    {
+      "case": "queue_overflow_seed_1",
+      "expected_marker": "rule=P_QUEUE_LIMIT",
+      "passed": true
+    },
+    {
+      "case": "pending_tail_seed_1",
+      "expected_marker": "SVA_FAIL A_DRAIN_COMPLETION",
+      "passed": true
+    },
+    {
+      "case": "allowed_prefix_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "reset_fourstate_seed_1",
+      "expected_marker": null,
+      "passed": true
+    },
+    {
+      "case": "active_fourstate_seed_1",
+      "expected_marker": "rule=P_KNOWN",
+      "passed": true
+    },
+    {
+      "case": "fixed_zero_ready_seed_1",
+      "expected_marker": "rule=E05_ZERO_READY",
+      "passed": true
+    },
+    {
+      "case": "fixed_blocked_idle_src_seed_1",
+      "expected_marker": "rule=E07_SRC_READY",
+      "passed": true
+    },
+    {
+      "case": "fixed_grant_without_req_seed_1",
+      "expected_marker": "rule=E08_AR_GRANT_REQ",
+      "passed": true
+    }
+  ],
+  "positive": 42,
+  "negative": 34,
+  "bank_half_hits": [
+    65,
+    36,
+    29,
+    25,
+    28,
+    28,
+    39,
+    35,
+    31,
+    31,
+    25,
+    34,
+    32,
+    36,
+    38,
+    43
+  ],
+  "rule_hits": {
+    "E03_SRC": 555,
+    "E04_ARRESP": 555,
+    "E05_ZERO_READY": 1158,
+    "T_MEM4": 552,
+    "T_ASSOCIATION": 545,
+    "T_CLOCK_RESET": 33,
+    "P_KNOWN": 2959,
+    "P_OWNERSHIP": 2868,
+    "P_QUEUE": 876,
+    "E07_SRC_READY": 913,
+    "E08_AR_GRANT_REQ": 1040,
+    "solver_assignment_equal_pins": 2131,
+    "selected_source_rejected": 0,
+    "unconstrained_mem_samples": 1627
+  },
+  "inventory": {
+    "status": "PASS",
+    "version": 1,
+    "revision": "20261112.2",
+    "assumption_families": 6,
+    "simulation_profiles": {
+      "version": 1,
+      "protocol": "CMDBUF 20261112.2",
+      "new_run_default": "transaction",
+      "legacy_plan_default": "strict",
+      "native_properties": "formal/protocol_20261021/cmdbuf_rd_port_sva.sv",
+      "simulation_monitor": "simulation/vcs/tb/cmdbuf_check_monitor.sv",
+      "validation": "make check-test",
+      "common_native": [
+        "E03_SRC",
+        "E04_ARRESP",
+        "E05_ZERO_READY",
+        "E06_SUCCESS_BUSY",
+        "E07_SRC_READY",
+        "E08_AR_GRANT_REQ",
+        "A_REQ_ONEHOT",
+        "A_R_ONEHOT",
+        "A_R_READY",
+        "A_PENDING_RANGE",
+        "A_PENDING_RECURRENCE"
+      ],
+      "strict_native": [
+        "A_COMPARE_ARREADY",
+        "A_COMPARE_PENDING_CNT",
+        "A_COMPARE_REQ",
+        "A_COMPARE_ARB_ADDR",
+        "A_COMPARE_RVALID",
+        "A_COMPARE_RID",
+        "A_COMPARE_R_PORT_ID",
+        "A_COMPARE_RADDR",
+        "A_COMPARE_RRESP",
+        "A_COMPARE_RDATA",
+        "A_RR_BOUND",
+        "A_XAU_R_HAS_PENDING",
+        "A_XAU_R_HEAD_COMPLETE",
+        "A_XAU_R_NO_EARLY_BYPASS",
+        "A_XAU_R_ADDR_ORDER",
+        "A_XAU_R_ID_ORDER",
+        "A_XAU_R_PORT_ORDER",
+        "A_XAU_R_DATA_ORDER",
+        "A_XAU_R_RESP_ORDER",
+        "M_XAU_FIFO_COUNT",
+        "M_XAU_FIFO_HEAD",
+        "M_ALLOC",
+        "M_RETIRE",
+        "M_SUCCESS",
+        "M_DUE",
+        "M_NO_BYPASS",
+        "M_STATE",
+        "M_RANGE",
+        "M_QUOTA",
+        "M_ATTEMPT",
+        "M_AGE_RANGE",
+        "M_CALENDAR",
+        "M_AGE_UNIQUE"
+      ],
+      "transaction": {
+        "memory_capture_delay_edges": 4,
+        "max_outstanding": 9,
+        "issue_identity": "Keep all consistent associations of observed Bank/address to accepted tokens; repeated IDs are not identities.",
+        "hypothesis_limit": 4096,
+        "on_limit": "INCOMPLETE; do not choose or silently discard hypotheses",
+        "response_order": "AR acceptance order within each source",
+        "response_latency": "MEM capture edge or later; no exact scheduling or maximum deadline asserted",
+        "not_checked": [
+          "reference-model pending count comparison",
+          "exact arready reservation policy",
+          "five-entry issue window and exact retry/refill cycle",
+          "cross-source RR",
+          "earliest N+5 response"
+        ],
+        "rules": {
+          "P_KNOWN_FRAME": "Preserve four-state values; reject unknown active inputs/control/status and valid payload.",
+          "T_R_HAS_PENDING": "Each observed R handshake belongs to an accepted, not-yet-returned source head.",
+          "T_R_ID_ORDER": "RID equals the head's accepted ARID; validate even when IDs repeat.",
+          "T_R_PORT_ORDER": "Return port equals the same source head's AR port.",
+          "T_R_ADDR_ORDER": "Return low address equals the same source head's AR low address.",
+          "T_R_DATA_RESP_OR_EARLY": "At least one complete global issue association must match the head's MEM data and error priority at each R.",
+          "T_CAPACITY": "At most nine accepted outstanding transactions, including simultaneous return/accept.",
+          "T_REQ_HAS_ACCEPTED": "Each visible request matches a not-yet-issued accepted request in a consistent global association."
+        }
+      },
+      "strict": {
+        "native_property_expressions": "Active user-editable source, with scope and failure actions applied in the simulation copy",
+        "pending_timing": "Registered count equals the reference waiting count at each sample",
+        "validation": "Full native SVA plus input audit; no learning or per-cycle latency matching."
+      },
+      "fatal_policy": {
+        "default": true,
+        "on": "ENV_FATAL=1: recoverable driver errors abort; assertions obey ASSERT_FATAL.",
+        "off": "ENV_FATAL=0: record recoverable environment and assertion errors, continue, final FAIL, exclude coverage. No stimulus repair.",
+        "assertion_only": "ENV_FATAL=1 ASSERT_FATAL=0: keep driver aborts, continue after assertions.",
+        "not_configurable": [
+          "invalid clock/cycle configuration",
+          "missing main_phase/program/files",
+          "unsatisfiable legacy random solver",
+          "corrupted driver calendar or token state",
+          "watchdog",
+          "user or DUT $fatal/$stop/$finish",
+          "tool failures and execution timeout"
+        ],
+        "archives": [
+          "environment_errors.jsonl",
+          "environment_runtime.json",
+          "assertions.jsonl",
+          "check_runtime.json"
+        ]
+      },
+      "sampling": "Complete pre-edge #1step frames. Registered consumer, explicit final flush, asynchronous reset epochs. Native SVA retains its own Preponed sampling and sampled failure operands."
+    },
+    "assumption_instances": 13,
+    "rules": [
+      {
+        "id": "E03_SRC",
+        "kind": "environment_assumption",
+        "instances": 1,
+        "source": "formal/protocol_20261021/cmdbuf_rd_port_sva.sv",
+        "trigger": "arvalid -> src in 0..2",
+        "reads": "arvalid,src",
+        "writes": "queued AR fields",
+        "driver": "main_phase: if (arvalid) choose src in 0..2; pre-drive check and native E03",
+        "monitor": "main_phase_audit.py + sv_audit.py + canonical E03_SRC + independent protocol/random sample audit",
+        "validation": "legal 0/1/2; invalid 3",
+        "status": "implemented"
+      },
+      {
+        "id": "E04_ARRESP",
+        "kind": "environment_assumption",
+        "instances": 1,
+        "source": "formal/protocol_20261021/cmdbuf_rd_port_sva.sv",
+        "trigger": "arvalid -> arresp in 0,3",
+        "reads": "arvalid,arresp",
+        "writes": "queued AR fields",
+        "driver": "main_phase: if (arvalid) choose arresp 0 or 3; pre-drive check and native E04",
+        "monitor": "main_phase_audit.py + sv_audit.py + canonical E04_ARRESP + independent protocol/random sample audit",
+        "validation": "legal 0/3; invalid 1/2",
+        "status": "implemented"
+      },
+      {
+        "id": "E05_ZERO_READY",
+        "kind": "environment_assumption",
+        "instances": 1,
+        "source": "formal/protocol_20261021/cmdbuf_rd_port_sva.sv",
+        "trigger": "arready==0 -> arvalid==0",
+        "reads": "same-cycle arready,send window,AR queue",
+        "writes": "arvalid",
+        "driver": "When no AR lane is ready use arvalid=0, src=3. A queued or fixed-source generator waits for the selected lane.",
+        "monitor": "main_phase_audit.py + sv_audit.py + canonical E05_ZERO_READY + independent sampled-pin/solver and queue audit",
+        "validation": "Full queue blocking, same-cycle reuse and illegal valid with all ready bits clear",
+        "status": "implemented"
+      },
+      {
+        "id": "E06_SUCCESS_BUSY",
+        "kind": "environment_assumption",
+        "instances": 8,
+        "source": "formal/protocol_20261021/cmdbuf_rd_port_sva.sv",
+        "trigger": "req[b] && argrant[b] && rwgrant[b] -> status[b][arb_addr[0]]",
+        "reads": "req,arb_addr,grants,baseline bank status",
+        "writes": "auto-owned bank status",
+        "driver": "main_phase: for every bank/half, if req and both grants select it, assign busy=1; else chosen legal background",
+        "monitor": "main_phase_audit.py + sv_audit.py + canonical 8 E06 instances + independent audit of all 16 half bins",
+        "validation": "all 8 banks x 2 halves legal and injected violation; partial grants",
+        "status": "implemented"
+      },
+      {
+        "id": "E07_SRC_READY",
+        "kind": "environment_assumption",
+        "instances": 1,
+        "source": "formal/protocol_20261021/cmdbuf_rd_port_sva.sv",
+        "trigger": "src < 3 -> arready[src] == 1 in every non-reset sample, including arvalid=0",
+        "reads": "src,arready,arvalid",
+        "writes": "AR source selection",
+        "driver": "main_phase chooses a ready source or uses src=3 with arvalid=0. Queued requests keep their original source.",
+        "monitor": "main_phase_driver + native E07 + independent sampled-interface audit",
+        "validation": "All sources, full-buffer idle src=3, idle blocked source with another lane ready",
+        "status": "implemented"
+      },
+      {
+        "id": "E08_AR_GRANT_REQ",
+        "kind": "environment_assumption",
+        "instances": 1,
+        "source": "formal/protocol_20261021/cmdbuf_rd_port_sva.sv",
+        "trigger": "(ar_rd_gnt & ~req) == 0 per non-reset sample",
+        "reads": "same-cycle req and ar_rd_gnt",
+        "writes": "AR grant from MEM arbiter",
+        "driver": "main_phase sets ar_rd_gnt[b]=0 when req[b]=0, else permits accept or denial. Legacy generation uses explicit grant ownership.",
+        "monitor": "main_phase_driver + native E08 + independent sampled-interface audit",
+        "validation": "Requested-bank grants and non-requested-bank grant violations including rw_rd_gnt=0",
+        "status": "implemented"
+      },
+      {
+        "id": "T_MEM4",
+        "kind": "temporal_environment",
+        "instances": 1,
+        "source": "docs/timing/protocol_corrections_20261021.json",
+        "trigger": "MEM payload on issue edge N + 4 actual positive edges",
+        "reads": "successful issue history,clk,reset",
+        "writes": "auto-owned mem_rdata,pc_err",
+        "driver": "main_phase: if (mem_due) mem_rdata=due_data and pc_err=due_error; else directed/random idle data",
+        "monitor": "main_phase_audit.py + sv_audit.py + independent Python calendar/FIFO + native capture model",
+        "validation": "early/late/corrupted response; stop/restart clock",
+        "status": "implemented"
+      },
+      {
+        "id": "T_ASSOCIATION",
+        "kind": "temporal_environment",
+        "instances": 1,
+        "source": "docs/timing/protocol_corrections_20261021.json",
+        "trigger": "accepted request -> issue -> MEM -> source-ordered R",
+        "reads": "accepted public AR,public issue,R handshake",
+        "writes": "environment transaction records only",
+        "driver": "main_phase_driver.svh; random: fresh 128-bit future payload per successful ISSUE; protocol: request token",
+        "monitor": "main_phase_audit.py + sv_audit.py + independent Python source FIFO/issue calendar + native SVA",
+        "validation": "duplicate IDs/addresses; mixed sources; errors; incorrect RID injection",
+        "status": "implemented"
+      },
+      {
+        "id": "T_CLOCK_RESET",
+        "kind": "environment_policy",
+        "instances": 1,
+        "source": "docs/timing/protocol_corrections_20261021.json",
+        "trigger": "literal clocks; reset cancels outstanding environment work",
+        "reads": "clk,rst_n,queue,calendar",
+        "writes": "environment queues/calendar only",
+        "driver": "main_phase after posedge: explicit reset and low/high/pause durations; one reset bootstrap edge",
+        "monitor": "main_phase_audit.py + sv_audit.py + fixed-input audit + cancellation conservation",
+        "validation": "reset while clock stopped; pending queue and in-flight reset; no hidden clocks",
+        "status": "implemented"
+      },
+      {
+        "id": "P_KNOWN",
+        "kind": "environment_policy",
+        "instances": 1,
+        "source": "docs/timing/protocol_corrections_20261021.json",
+        "trigger": "normal sampled inputs known; clk/rst known always",
+        "reads": "all input values",
+        "writes": "auto-owned values only",
+        "driver": "main_phase_driver.svh; static width/range checks; 4-state preservation and runtime known-value check",
+        "monitor": "main_phase_audit.py + sv_audit.py + ENV_X_INPUT/STATUS + independent sample audit",
+        "validation": "numeric limits; reset X/Z preservation; active X/Z rejected",
+        "status": "implemented"
+      },
+      {
+        "id": "P_OWNERSHIP",
+        "kind": "environment_policy",
+        "instances": 1,
+        "source": "docs/timing/protocol_corrections_20261021.json",
+        "trigger": "each port has exactly one owner; fixed inputs immutable",
+        "reads": "signal lanes,driver declarations",
+        "writes": "declared auto groups only",
+        "driver": "TC if blocks own final values; driver validates then copies once; no hidden fixup",
+        "monitor": "main_phase_audit.py + sv_audit.py + random solver values equal all sampled inputs; protocol all-timestamp fixed audit",
+        "validation": "duplicate owner/missing lane/unsupported mode/source drift rejected",
+        "status": "implemented"
+      },
+      {
+        "id": "P_QUEUE",
+        "kind": "environment_policy",
+        "instances": 1,
+        "source": "docs/timing/protocol_corrections_20261021.json",
+        "trigger": "requests complete/cancel or explicitly remain pending; bounded wait",
+        "reads": "release markers,send window,handshakes,deadlines",
+        "writes": "AR queue bookkeeping",
+        "driver": "Legacy protocol mode only; main_phase uses literal per-edge attempts with no automatic AR retry",
+        "monitor": "main_phase_audit.py + sv_audit.py + independent queue/conservation audit",
+        "validation": "send window; queue limit; timeout; pending tail; reset cancellation",
+        "status": "implemented"
+      },
+      {
+        "id": "DUT_CHECKS",
+        "kind": "dut_obligation",
+        "instances": 145,
+        "source": "formal/protocol_20261021/cmdbuf_rd_port_sva.sv",
+        "trigger": "output correctness remains a DUT responsibility",
+        "reads": "all public ports and independent reference history",
+        "writes": "none (check only)",
+        "driver": "main_phase_driver.svh; never repair DUT outputs or force inputs to satisfy DUT assertions",
+        "monitor": "Current port SVA and reference model, plus independent sampled transaction checks",
+        "validation": "legacy regressions; RID injection; same-cycle capacity; per-XAU ordering; A_R_READY under backpressure and illegal unready R injected into checker; registered pending recurrence and clock-edge waveform checks",
+        "status": "implemented"
+      }
+    ],
+    "sources": {
+      "rtl/files.f": "f8f3f50bce55a8a0301d7c3cba42e7b70139eaafd5a1f57515b8c893f327b4ec",
+      "rtl/cmdbuf_rd.sv": "40b51383c8ea103d0ced9f8b449f6308328cc7fde26008c440879046d9d8133c",
+      "rtl/cmdbuf_rd_cmd.sv": "01b840ab7541a3d16a7f62c8534854c64e96c91af3e165e971e22fb236a4b29a",
+      "rtl/cmdbuf_rd_otb.sv": "ec3ba652df117f804ee74c0f25f6a5aedded7e9c86be6c827146bf7c3b0021d2",
+      "formal/protocol_20261021/cmdbuf_rd_port_sva.sv": "9d42cf8dd8d20ee38d5c72ca6e81b6c227a6c45c2149cb3cf09dd2941331bd95",
+      "formal/protocol_20261021/cmdbuf_rd_reference_model.svh": "92d27bb5ba28dc7116fe5b2646b3586ea5a79c0e4f6a9d5847fbe3b0181b9d23",
+      "formal/protocol_20261021/cmdbuf_rd_xau_order_model.svh": "5976a220a2bf6f1c8e16960352aacc5f29981a0f0441200e463ba71baa070c6b",
+      "docs/timing/protocol_corrections_20261021.json": "96eda718989eca6c7d3035cc2819280634f6cfff384f8483bd857524672cf13f",
+      "docs/timing/interface_constraints_20261112.json": "b7c7e0e3a517e6e32674c40379ef7dc1263f930ed166b20344c1dff85bab48fd",
+      "docs/timing/pending_register_20261112.json": "dea6c5fd7e508c38628bd82115153a63366ef05b296af87d8139f4e8eb92a893"
+    },
+    "checker": {
+      "source": "formal/protocol_20261021/cmdbuf_rd_port_sva.sv",
+      "baseline_sha256": "9d42cf8dd8d20ee38d5c72ca6e81b6c227a6c45c2149cb3cf09dd2941331bd95",
+      "sha256": "9d42cf8dd8d20ee38d5c72ca6e81b6c227a6c45c2149cb3cf09dd2941331bd95",
+      "customized": false,
+      "added_assumptions": [],
+      "missing_assumptions": []
+    },
+    "scope": "Registered stimulus contracts and active checker source identity. Edited properties are validated by the simulator."
+  },
+  "per_rule": {
+    "E03_SRC": {
+      "status": "PASS",
+      "cases": [
+        "bank0_half0_seed_1",
+        "bank1_half0_seed_1",
+        "bank2_half0_seed_1",
+        "bad_src_seed_1_src",
+        "strict_random_seed_1",
+        "strict_random_mixed_seed_1"
+      ]
+    },
+    "E04_ARRESP": {
+      "status": "PASS",
+      "cases": [
+        "protocol_read_seed_1",
+        "protocol_error_priority_seed_1",
+        "bad_arresp_seed_1_arresp",
+        "strict_random_seed_1",
+        "strict_random_mixed_seed_1"
+      ]
+    },
+    "E05_ZERO_READY": {
+      "status": "PASS",
+      "cases": [
+        "protocol_demo_seed_1",
+        "protocol_selected_reject_seed_1",
+        "fixed_zero_ready_seed_1",
+        "strict_random_seed_1",
+        "strict_random_mixed_seed_1"
+      ]
+    },
+    "E07_SRC_READY": {
+      "status": "PASS",
+      "cases": [
+        "protocol_selected_reject_seed_1",
+        "fixed_blocked_idle_src_seed_1",
+        "strict_random_seed_1",
+        "strict_random_mixed_seed_1"
+      ]
+    },
+    "E08_AR_GRANT_REQ": {
+      "status": "PASS",
+      "cases": [
+        "protocol_read_seed_1",
+        "protocol_retry_seed_1",
+        "fixed_grant_without_req_seed_1",
+        "strict_random_seed_1",
+        "strict_random_mixed_seed_1"
+      ]
+    },
+    "E06_SUCCESS_BUSY": {
+      "status": "PASS",
+      "cases": [
+        "bank0_half0_seed_1",
+        "bank0_half1_seed_1",
+        "bank1_half0_seed_1",
+        "bank1_half1_seed_1",
+        "bank2_half0_seed_1",
+        "bank2_half1_seed_1",
+        "bank3_half0_seed_1",
+        "bank3_half1_seed_1",
+        "bank4_half0_seed_1",
+        "bank4_half1_seed_1",
+        "bank5_half0_seed_1",
+        "bank5_half1_seed_1",
+        "bank6_half0_seed_1",
+        "bank6_half1_seed_1",
+        "bank7_half0_seed_1",
+        "bank7_half1_seed_1",
+        "bad_bank0_half0_seed_1_busy",
+        "bad_bank0_half1_seed_1_busy",
+        "bad_bank1_half0_seed_1_busy",
+        "bad_bank1_half1_seed_1_busy",
+        "bad_bank2_half0_seed_1_busy",
+        "bad_bank2_half1_seed_1_busy",
+        "bad_bank3_half0_seed_1_busy",
+        "bad_bank3_half1_seed_1_busy",
+        "bad_bank4_half0_seed_1_busy",
+        "bad_bank4_half1_seed_1_busy",
+        "bad_bank5_half0_seed_1_busy",
+        "bad_bank5_half1_seed_1_busy",
+        "bad_bank6_half0_seed_1_busy",
+        "bad_bank6_half1_seed_1_busy",
+        "bad_bank7_half0_seed_1_busy",
+        "bad_bank7_half1_seed_1_busy",
+        "fixed_bank_conflict_seed_1",
+        "strict_random_seed_1",
+        "strict_random_mixed_seed_1"
+      ]
+    },
+    "T_MEM4": {
+      "status": "PASS",
+      "cases": [
+        "protocol_read_seed_1",
+        "protocol_demo_seed_1",
+        "protocol_nclock_seed_1",
+        "protocol_fixed_mem_seed_1",
+        "fixed_mem_conflict_seed_1",
+        "bad_mem_early_seed_1_mem_early",
+        "bad_mem_late_seed_1_mem_late",
+        "bad_mem_corrupt_seed_1_mem_corrupt",
+        "strict_random_seed_1",
+        "strict_random_mixed_seed_1"
+      ]
+    },
+    "T_ASSOCIATION": {
+      "status": "PASS",
+      "cases": [
+        "protocol_same_address_seed_1",
+        "protocol_demo_seed_1",
+        "protocol_error_priority_seed_1",
+        "bad_rid_seed_1_rid",
+        "strict_random_seed_1",
+        "strict_random_mixed_seed_1"
+      ]
+    },
+    "T_CLOCK_RESET": {
+      "status": "PASS",
+      "cases": [
+        "protocol_reset_seed_1",
+        "protocol_duty_cycle_seed_1",
+        "protocol_nclock_seed_1",
+        "protocol_levels_seed_1"
+      ]
+    },
+    "P_KNOWN": {
+      "status": "PASS",
+      "cases": [
+        "reset_fourstate_seed_1",
+        "active_fourstate_seed_1",
+        "strict_random_seed_1",
+        "strict_random_mixed_seed_1"
+      ]
+    },
+    "P_OWNERSHIP": {
+      "status": "PASS",
+      "cases": [
+        "protocol_fixed_ar_seed_1",
+        "protocol_fixed_mem_seed_1",
+        "fixed_bank_legal_seed_1",
+        "fixed_bank_conflict_seed_1",
+        "fixed_mem_conflict_seed_1",
+        "strict_random_seed_1",
+        "strict_random_mixed_seed_1",
+        "random_unsatisfiable_seed_1_random_unsat",
+        "random_post_solve_change_seed_1_random_post"
+      ]
+    },
+    "P_QUEUE": {
+      "status": "PASS",
+      "cases": [
+        "protocol_window_seed_1",
+        "protocol_selected_reject_seed_1",
+        "wait_timeout_seed_1",
+        "deadline_timeout_seed_1",
+        "queue_overflow_seed_1",
+        "pending_tail_seed_1",
+        "allowed_prefix_seed_1",
+        "protocol_reset_seed_1"
+      ]
+    },
+    "DUT_CHECKS": {
+      "status": "PASS",
+      "cases": [
+        "legacy_smoke_seed_1",
+        "legacy_retry_seed_1",
+        "legacy_backpressure_seed_1",
+        "legacy_ooo_same_xau_seed_1",
+        "bad_rid_seed_1_rid",
+        "strict_random_seed_1",
+        "strict_random_mixed_seed_1"
+      ]
+    }
+  },
+  "independent_audit_negative_checks": [
+    {
+      "mutation": "fixed",
+      "detected": true,
+      "failures": [
+        "P_OWNERSHIP fixed input changed at frame 0"
+      ]
+    },
+    {
+      "mutation": "queued",
+      "detected": true,
+      "failures": [
+        "protocol audit cycle 2: queued payload changed: arid"
+      ]
+    },
+    {
+      "mutation": "busy",
+      "detected": true,
+      "failures": [
+        "protocol audit cycle 4: E06_SUCCESS_BUSY bank=0"
+      ]
+    },
+    {
+      "mutation": "mem",
+      "detected": true,
+      "failures": [
+        "protocol audit cycle 8: T_MEM4 payload/association"
+      ]
+    },
+    {
+      "mutation": "response",
+      "detected": true,
+      "failures": [
+        "protocol audit cycle 9: T_ASSOCIATION R payload/order"
+      ]
+    },
+    {
+      "mutation": "clock",
+      "detected": true,
+      "failures": [
+        "T_CLOCK_RESET clock edge mismatch"
+      ]
+    }
+  ],
+  "random_audit_negative_checks": [
+    {
+      "mutation": "pin_drift",
+      "detected": true,
+      "failures": [
+        "random audit cycle 0: RND_POST_SOLVE_MODIFICATION arid"
+      ]
+    },
+    {
+      "mutation": "src",
+      "detected": true,
+      "failures": [
+        "random audit cycle 0: E03_SRC"
+      ]
+    },
+    {
+      "mutation": "arresp",
+      "detected": true,
+      "failures": [
+        "random audit cycle 0: E04_ARRESP"
+      ]
+    },
+    {
+      "mutation": "zero_ready",
+      "detected": true,
+      "failures": [
+        "random audit cycle 0: E05_ZERO_READY"
+      ]
+    },
+    {
+      "mutation": "src_ready",
+      "detected": true,
+      "failures": [
+        "random audit cycle 1: E07_SRC_READY src=0 arready=110"
+      ]
+    },
+    {
+      "mutation": "grant_req",
+      "detected": true,
+      "failures": [
+        "random audit cycle 0: E08_AR_GRANT_REQ unmatched grants=0x80"
+      ]
+    },
+    {
+      "mutation": "busy",
+      "detected": true,
+      "failures": [
+        "random audit cycle 2: E06_SUCCESS_BUSY"
+      ]
+    },
+    {
+      "mutation": "mem",
+      "detected": true,
+      "failures": [
+        "random audit cycle 6: T_MEM4"
+      ]
+    },
+    {
+      "mutation": "response",
+      "detected": true,
+      "failures": [
+        "random audit cycle 8: T_ASSOCIATION source FIFO/data"
+      ]
+    },
+    {
+      "mutation": "context",
+      "detected": true,
+      "failures": [
+        "random audit cycle 0: RND_CONTEXT_CHANGED"
+      ]
+    }
+  ],
+  "formal_proof": "Not performed. This receipt covers enumerated execution tests, not all possible traces."
+}

@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "dataset": "Synthetic code-bin matrix with 50 disjoint groups",
+  "candidates": 10000,
+  "distinct_profiles": 10000,
+  "minimum": 50,
+  "lower_bound": 50,
+  "solver_seconds": 0.0
+}

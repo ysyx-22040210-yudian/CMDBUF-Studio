@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import re
 import shutil
+import signal
 import subprocess
 import sys
 import threading
@@ -100,6 +101,7 @@ class Jobs:
     def __init__(self):
         self.lock = threading.RLock()
         self.current = None
+        self.coverage_process = None
 
     def snapshot(self):
         with self.lock:
@@ -128,16 +130,27 @@ class Jobs:
         for key in ('EDA_VM_HOST', 'EDA_VM_ROOT', 'EDA_SKIP_SYNC'):
             env.pop(key, None)
         self.log(job, '$ make '+' '.join(arguments)+'\n')
+        coverage_task = job['kind'] in ('coverage_details', 'coverage_minimize')
         process = subprocess.Popen(cmd, cwd=str(ROOT), env=env, stdout=subprocess.PIPE,
-                                   stderr=subprocess.STDOUT, universal_newlines=True, encoding='utf-8', errors='replace')
+                                   stderr=subprocess.STDOUT, universal_newlines=True, encoding='utf-8',
+                                   errors='replace', start_new_session=coverage_task)
+        if coverage_task:
+            with self.lock:
+                self.coverage_process = process
+                if job.get('cancel_requested'):
+                    self.stop_coverage_process()
         for line in process.stdout:
             self.log(job, line)
+            if line.startswith('COVERAGE_STAGE '):
+                self.update(job, stage=line[len('COVERAGE_STAGE '):].strip(), total=0, completed=0)
+            if line.startswith('COVERAGE_RESULT '):
+                self.update(job, coverage_record=line[len('COVERAGE_RESULT '):].strip())
             if line.startswith('EDA_PROCESS '):
                 try:self.process_status(job,json.loads(line[len('EDA_PROCESS '):]))
                 except (ValueError,KeyError,TypeError):pass
             batch = re.search(r'BATCH (\S+) TOTAL (\d+)', line)
             progress = re.search(r'PROGRESS .*? (\d+)/(\d+)', line)
-            npi = re.search(r'NPI_PROGRESS (\d+)/(\d+)', line)
+            npi = re.search(r'(?:NPI|COVERAGE)_PROGRESS (\d+)/(\d+)', line)
             if batch:
                 self.update(job, batch=batch.group(1), total=int(batch.group(2)))
             if progress or npi:
@@ -145,10 +158,27 @@ class Jobs:
                 self.update(job, completed=int(match.group(1)), total=int(match.group(2)))
         rc = process.wait()
         with self.lock:
+            if coverage_task:
+                self.coverage_process = None
             job['commands'].append(dict(argv=cmd, returncode=rc))
         if rc and check:
             raise RuntimeError('make '+arguments[0]+' 失败（退出码 '+str(rc)+'），详见任务日志')
         return rc
+
+    def stop_coverage_process(self):
+        if self.coverage_process is not None:
+            try:
+                os.killpg(self.coverage_process.pid, signal.SIGTERM)
+            except ProcessLookupError:
+                pass
+
+    def cancel_coverage(self):
+        with self.lock:
+            job = self.current
+            if not job or job['state'] != 'RUNNING' or job['kind'] not in ('coverage_details', 'coverage_minimize'):
+                return
+            job.update(cancel_requested=True, stage='正在取消覆盖率分析')
+            self.stop_coverage_process()
 
     def process_status(self,job,event):
         with self.lock:
@@ -161,11 +191,13 @@ class Jobs:
             if any(r['phase']=='compile' for r in rows):stage='VCS 编译 / 等待 License（不限时）'
             elif any(r['phase']=='coverage' for r in rows):stage='合并覆盖率 / 等待 License（不限时）'
             elif any(r['phase']=='legacy_simulation' for r in rows):stage='旧归档重放 / 等待 License（全程不限时）'
-            else:
+            elif job.get('kind') not in ('coverage_details', 'coverage_minimize'):
                 waiting=sum(r['state']=='WAITING_FOR_START' for r in rows)
                 running=sum(r['phase']=='simulation' and r['state']=='RUNNING' for r in rows)
                 stage=('仿真运行 %d · 等待 License / 启动 %d（等待不限时）'%(running,waiting)
                        if waiting or running else '整理结果 / 后续处理')
+            else:
+                return
             job['stage']=stage
 
     def start(self, kind, payload=None):
@@ -173,7 +205,7 @@ class Jobs:
         with self.lock:
             self.require_idle()
             allowed = ('detect', 'compile', 'doctor', 'regress', 'coverage', 'wave', 'wave_file', 'wave_index',
-                       'fsdb_inspect', 'fsdb_formal', 'import_fsdb', 'import_rtl')
+                       'fsdb_inspect', 'fsdb_formal', 'import_fsdb', 'import_rtl', 'coverage_details', 'coverage_minimize')
             if kind not in allowed:
                 raise ValueError('未知任务')
             if kind not in ('detect', 'import_fsdb', 'import_rtl', 'wave_index'):
@@ -185,7 +217,9 @@ class Jobs:
                 if kind == 'fsdb_inspect' and len(payload['sources']) != 1:
                     raise ValueError('每次选择一个 FSDB 解析层级')
             if kind in ('coverage', 'wave'):
-                if not (batch_path(payload['batch'])/'summary.json').is_file():
+                if kind == 'coverage' and payload.get('analysis'):
+                    identifier(payload['analysis'])
+                elif not (batch_path(payload['batch'])/'summary.json').is_file():
                     raise ValueError('找不到回归结果')
                 if kind == 'wave' and not (result_path(payload['batch'], payload['run'])/'waves.fsdb').is_file():
                     raise ValueError('该用例未生成 FSDB；请开启波形后重新回归')
@@ -226,10 +260,22 @@ class Jobs:
                     raise RuntimeError('回归包含失败、未完成验证的用例或工具错误，请查看检查范围和日志')
             elif kind in ('wave', 'coverage'):
                 progress('打开本机 Verdi')
-                arguments = [kind, 'REGRESSION='+payload['batch']]
+                arguments = [kind, 'COVERAGE_SET='+payload['analysis']] if payload.get('analysis') else [
+                    kind, 'REGRESSION='+payload['batch']]
                 if kind == 'wave':
                     arguments.append('RUN_ID='+payload['run'])
                 self.invoke(job, arguments)
+            elif kind in ('coverage_details', 'coverage_minimize'):
+                batches = [identifier(batch) for batch in payload['batches']]
+                if not batches or any(not (batch_path(batch) / 'summary.json').is_file() for batch in batches):
+                    raise ValueError('找不到所选历史回归')
+                arguments = ['coverage-details' if kind == 'coverage_details' else 'coverage-minimize',
+                             'REGRESSIONS='+','.join(batches)]
+                if kind == 'coverage_minimize':
+                    arguments.append('SOLVE_SECONDS='+str(payload.get('seconds', 0)))
+                self.invoke(job, arguments)
+                if not job.get('coverage_record'):
+                    raise RuntimeError('覆盖率分析没有生成记录')
             elif kind == 'wave_file':
                 progress('打开本机 Verdi')
                 arguments = ['wave-file', 'FSDB='+str(Path(payload['path']).resolve())]
@@ -267,8 +313,11 @@ class Jobs:
                 self.update(job, database=str(database), wave_name=Path(payload['path']).name)
             self.update(job, state='DONE', stage='已完成')
         except Exception as exc:
-            self.log(job, '\n'+str(exc)+'\n')
-            self.update(job, state='ERROR', stage='执行失败', error=str(exc))
+            if job.get('cancel_requested'):
+                self.update(job, state='CANCELLED', stage='已取消覆盖率分析')
+            else:
+                self.log(job, '\n'+str(exc)+'\n')
+                self.update(job, state='ERROR', stage='执行失败', error=str(exc))
         finally:
             self.update(job, ended=time.time())
             with self.lock:

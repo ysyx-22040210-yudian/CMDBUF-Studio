@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "repeat_reads": 1000,
+  "distinct_vdbs": 16,
+  "chunks": 10,
+  "elapsed_seconds": 30.48,
+  "peak_child_rss_kb": 265856,
+  "hit_bins": 6157,
+  "coverable": 7219
+}

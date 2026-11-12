@@ -1,0 +1,4 @@
+﻿batch,run_id,case,seed,seconds,replay
+20261113_000235_regress_5d6bad,tc_backpressure_seed_1,tc_backpressure,1,0.405,make replay REGRESSION=20261113_000235_regress_5d6bad RUN_ID=tc_backpressure_seed_1
+20261113_000235_regress_5d6bad,tc_same_id_seed_1,tc_same_id,1,0.456,make replay REGRESSION=20261113_000235_regress_5d6bad RUN_ID=tc_same_id_seed_1
+20261113_000234_regress_f41230,tc_banks_seed_1,tc_banks,1,0.461,make replay REGRESSION=20261113_000234_regress_f41230 RUN_ID=tc_banks_seed_1

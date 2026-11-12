@@ -31,6 +31,9 @@ ENV_FATAL ?=
 PLAN ?=
 REQUEST ?=
 DUT_SCOPE ?=
+REGRESSIONS ?=
+COVERAGE_SET ?=
+SOLVE_SECONDS ?= 0
 EDA_RUN_CASE = $(if $(strip $(CASE)),$(CASE),tc_directed)
 EDA_SELECT = $(if $(strip $(RUN_ID)),--case "$(RUN_ID)",$(if $(strip $(CASE)),--case "$(CASE)_seed_$(SEED)"))
 EDA_CYCLES = $(if $(strip $(CYCLES)),--cycles "$(CYCLES)")
@@ -38,6 +41,9 @@ EDA_CHECKS = $(if $(strip $(CHECK_MODE)),--check-mode "$(CHECK_MODE)") $(if $(st
 EDA_REGRESSION = --regression "$(REGRESSION)"
 EDA_GUI = --display "$(DISPLAY)" $(if $(strip $(XAUTHORITY)),--xauthority "$(XAUTHORITY)")
 EDA_WAVE_SCOPE = $(if $(strip $(DUT_SCOPE)),--dut-scope "$(DUT_SCOPE)")
+EDA_COVERAGE = $(PYTHON) "$(EDA_HERE)code_coverage/engine.py"
+EDA_COVERAGE_BATCHES = $(EDA_REGRESSION) $(if $(strip $(REGRESSIONS)),--regressions "$(REGRESSIONS)")
+EDA_COVERAGE_SET = $(if $(strip $(COVERAGE_SET)),--coverage-set "$(COVERAGE_SET)")
 
 help:
 	@echo 'CMDBUF Studio: native Tk desktop and local Linux EDA'
@@ -68,6 +74,10 @@ help:
 	@echo '       DUT_SCOPE=tb_cmdbuf_rd.dut      Optional explicit instance for imported FSDB'
 	@echo '  make coverage                        Open merged code coverage in Verdi'
 	@echo '       REGRESSION=latest|batch_id DISPLAY=:0 XAUTHORITY=/path (optional)'
+	@echo '  make coverage-details REGRESSION=latest   Inspect each code coverage item in Tk'
+	@echo '  make coverage-minimize REGRESSION=latest  Prove the smallest set and remerge with URG'
+	@echo '       REGRESSIONS=id1,id2 combines compatible histories; SOLVE_SECONDS=0 searches without a limit'
+	@echo '       COVERAGE_SET=id reopens a saved analysis with coverage-details or its verified VDB with coverage'
 	@echo '  make report                          Print verdicts and report path'
 	@echo '  make open-report                     Open results in the native Tk window'
 	@echo '  make new-case CASE=my_retry TEMPLATE=tc_retry'
@@ -145,7 +155,14 @@ wave:
 	$(EDA) view $(EDA_REGRESSION) $(EDA_SELECT) $(EDA_GUI) $(EDA_WAVE_SCOPE)
 
 coverage:
-	$(EDA) coverage $(EDA_REGRESSION) $(EDA_GUI)
+	$(EDA) coverage $(EDA_REGRESSION) $(EDA_GUI) $(EDA_COVERAGE_SET)
+
+.PHONY: coverage-details coverage-minimize
+coverage-details:
+	$(EDA_COVERAGE) --action details $(EDA_COVERAGE_BATCHES) $(if $(strip $(COVERAGE_SET)),--existing "$(COVERAGE_SET)")
+
+coverage-minimize:
+	$(EDA_COVERAGE) --action minimize $(EDA_COVERAGE_BATCHES) --seconds "$(SOLVE_SECONDS)"
 
 report open-report:
 	$(EDA) $@ $(EDA_REGRESSION)

@@ -203,6 +203,15 @@ def build_at(target, identity, inventory, env):
     rc, elapsed = execute(cmd, target, target / 'compile.log', env, None, phase='compile')
     if rc or not (target / 'simv').is_file():
         raise RuntimeError('VCS compile failed ({}): {}'.format(rc, target / 'compile.log'))
+    # Keep the source used by this build available to historical coverage views.
+    for source in dut_config.source_files(dut):
+        relative = source.relative_to(ROOT).as_posix()
+        data = source.read_bytes()
+        if hashlib.sha256(data).hexdigest() != identity['sources'].get(relative):
+            raise RuntimeError('DUT source changed during compilation: ' + relative)
+        archived = target / 'rtl_sources' / relative
+        archived.parent.mkdir(parents=True, exist_ok=True)
+        archived.write_bytes(data)
     contract_path = target / 'contracts.json'
     write_json(contract_path, dict(inventory, checker=checker))
     write_json(receipt, dict(identity, build_id=key, argv=cmd, seconds=elapsed,
@@ -399,19 +408,35 @@ def merge_coverage(regression, results, env):
     accepted = [r for r in results if r['status'] == 'PASS' and not r['injection']]
     if not accepted:
         return {'status': 'NO_PASSING_CASES', 'included': [], 'excluded': [r['id'] for r in results]}
-    cov = regression / 'coverage'
-    cov.mkdir()
-    cmd = ['urg', '-full64', '+urg+lic+wait', '-dir'] + [str(Path(r['directory']) / 'simv.vdb') for r in accepted]
-    cmd += ['-dbname', str(cov / 'merged.vdb'), '-report', str(cov / 'urgReport'),
-            '-metric', PROJECT['coverage'], '-format', 'both']
-    rc, seconds = execute(cmd, regression, cov / 'urg.log', env, None, phase='coverage')
+    included = [r['id'] for r in accepted]
+    included_ids = set(included)
+    result = merge_coverage_databases(regression / 'coverage',
+                                      [Path(r['directory']) / 'simv.vdb' for r in accepted], env)
+    return dict(result, included=included, excluded=[r['id'] for r in results if r['id'] not in included_ids])
+
+
+def merge_coverage_databases(cov, inputs, env, metrics=None, reset=False):
+    """Merge with an argument file so large regressions fit OS argv limits."""
+    cov.mkdir(parents=True)
+    arguments = cov / 'urg_inputs.f'
+    paths = [platform_config.tool_path(path) for path in inputs]
+    if not paths or any(any(char in path for char in ('"', '\n', '\r', '\\')) for path in paths):
+        raise ValueError('Invalid URG input database path')
+    arguments.write_text(''.join('-dir "{}"\n'.format(path) for path in paths), encoding='utf-8')
+    metrics = metrics or PROJECT['coverage']
+    cmd = ['urg', '-full64', '+urg+lic+wait', '-strict', '-f', str(arguments),
+           '-dbname', str(cov / 'merged.vdb'), '-report', str(cov / 'urgReport'),
+           '-metric', metrics, '-format', 'both']
+    if reset:
+        cmd.append('-reset_coverage')
+    rc, seconds = execute(cmd, cov, cov / 'urg.log', env, None, phase='coverage')
     report = cov / 'urgReport' / 'dashboard.html'
     database = cov / 'merged.vdb'
     text_report = cov / 'urgReport' / 'dashboard.txt'
     percentages = {}
     if text_report.exists():
         lines = text_report.read_text(errors='replace').splitlines()
-        for i, line in enumerate(lines):
+        for i, line in enumerate(lines[:-1]):
             if line.strip().startswith('SCORE') and 'LINE' in line:
                 percentages = dict(zip(line.split(), lines[i+1].split()))
                 break
@@ -419,8 +444,7 @@ def merge_coverage(regression, results, env):
     return {'status': 'PASS' if rc == 0 and report.exists() and database.exists() and code_present else 'FAIL',
             'exit_code': rc, 'seconds': seconds, 'database': str(database), 'report': str(report),
             'metrics_percent': percentages, 'code_metrics_present': code_present,
-            'included': [r['id'] for r in accepted],
-            'excluded': [r['id'] for r in results if r not in accepted]}
+            'metrics_requested': metrics}
 
 
 def write_report(regression, summary):
@@ -597,16 +621,26 @@ def replay(args, env):
 
 
 def launch_verdi(args, env):
-    regression = select_regression(args.regression)
-    summary = read_json(regression / 'summary.json')
+    selected = getattr(args, 'coverage_set', None)
+    if selected:
+        from code_coverage.engine import result_file
+        record = result_file(selected)
+        regression = record.parent
+        result = read_json(record)
+        summary = {'coverage': result['selected_coverage'] if result.get('verified') else result['baseline']}
+    else:
+        regression = select_regression(args.regression)
+        summary = read_json(regression / 'summary.json')
     view_dir = regression / 'views' / (args.command + '_' + stamp() + '_' + uuid.uuid4().hex[:6])
     view_dir.mkdir(parents=True)
     log = view_dir / 'verdi.log'
     if args.command == 'coverage':
-        database = summary['coverage'].get('database')
-        if not database or not Path(database).exists():
+        database = Path(summary['coverage'].get('database') or '')
+        if not selected and (regression / 'coverage/merged.vdb').is_dir():
+            database = regression / 'coverage/merged.vdb'
+        if database.suffix != '.vdb' or not database.is_dir():
             raise ValueError('No merged VDB exists for this regression')
-        cmd = ['verdi', '-full64', '-cov', '-covdir', database]
+        cmd = ['verdi', '-full64', '-cov', '-covdir', platform_config.tool_path(database)]
     else:
         result = next((r for r in summary['results'] if args.case and r['id'] == args.case), None)
         if args.case and result is None:
@@ -705,6 +739,8 @@ def parser():
         if name in ('view', 'coverage'):
             s.add_argument('--display', default=os.environ.get('EDA_DISPLAY', os.environ.get('DISPLAY','')))
             s.add_argument('--xauthority', default=os.environ.get('EDA_XAUTHORITY'))
+        if name == 'coverage':
+            s.add_argument('--coverage-set')
         if name == 'export':
             s.add_argument('--all', action='store_true')
     s = sub.add_parser('new-case'); s.add_argument('name'); s.add_argument('--template', default='tc_directed')

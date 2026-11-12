@@ -1,0 +1,103 @@
+{
+  "status": "PASS",
+  "validated_at": "2026-11-13 Asia/Shanghai",
+  "toolchain": {
+    "VCS_URG": "O-2018.09-1",
+    "Verdi_NPI": "O-2018.09-SP2",
+    "Tk": 8.5
+  },
+  "objective": "Exact smallest set of original passing tests preserving the union of covered code bins",
+  "historical_vdb": {
+    "two_batches": {
+      "candidates": 6,
+      "minimum": 3,
+      "code_items": 3515,
+      "scores": {
+        "SCORE": "72.36",
+        "LINE": "88.72",
+        "COND": "81.48",
+        "TOGGLE": "46.73",
+        "FSM": "--",
+        "BRANCH": "72.50"
+      },
+      "record": "two_batches/result.json",
+      "checked_all_smaller_subsets": true,
+      "verified_remerge": true
+    },
+    "legacy": {
+      "candidates": 16,
+      "minimum": 1,
+      "code_items": 6157,
+      "scores": {
+        "SCORE": "82.80",
+        "LINE": "89.47",
+        "COND": "81.48",
+        "TOGGLE": "85.26",
+        "FSM": "--",
+        "BRANCH": "75.00"
+      },
+      "record": "legacy/result.json",
+      "checked_all_smaller_subsets": true,
+      "verified_remerge": true
+    }
+  },
+  "gui": "gui/acceptance.json",
+  "fsm": "fsm.json",
+  "history_compatibility": "history.json",
+  "scale": {
+    "actual_vdb_repeat_scan": {
+      "status": "PASS",
+      "repeat_reads": 1000,
+      "distinct_vdbs": 16,
+      "chunks": 10,
+      "elapsed_seconds": 30.48,
+      "peak_child_rss_kb": 265856,
+      "hit_bins": 6157,
+      "coverable": 7219
+    },
+    "synthetic_optimization": {
+      "status": "PASS",
+      "dataset": "Synthetic code-bin matrix with 50 disjoint groups",
+      "candidates": 10000,
+      "distinct_profiles": 10000,
+      "minimum": 50,
+      "lower_bound": 50,
+      "solver_seconds": 0.0
+    }
+  },
+  "compatibility_checks": {
+    "pending_and_assertions": 96,
+    "environment_fatal": 118,
+    "constraints_positive": 42,
+    "constraints_expected_negative": 34
+  },
+  "portable": {
+    "receipt": {
+      "status": "PASS",
+      "root": "/dev/shm/CMDBUF 覆盖率便携包 20261113/cmdbuf-studio",
+      "archive_sha256": "a1f27b866d3995894d269d5a42f33fa879a42c8ace757934c55ad47798c91bb5",
+      "files": 190,
+      "smoke_passed": 3,
+      "fsdb_and_vcd": true,
+      "coverage": "PASS",
+      "minimized_from": 3,
+      "minimized_to": 3,
+      "minimum_proved": true,
+      "verified": true,
+      "tk_reopened": true,
+      "analysis": "20261113_001551_5d0fc38f"
+    },
+    "archives": {
+      "cmdbuf-studio-portable.zip": {
+        "bytes": 7796702,
+        "sha256": "8e63c3467cbedc6cfbbdaaf830308f865f5d620e71d90f33701169eba1635508"
+      },
+      "cmdbuf-studio-portable.tar.gz": {
+        "bytes": 7683427,
+        "sha256": "a1f27b866d3995894d269d5a42f33fa879a42c8ace757934c55ad47798c91bb5"
+      }
+    },
+    "matching_zip_tar_payload_hashes": true
+  },
+  "scope": "Measured VCS/Verdi historical runs, repeated VDB reads, and a synthetic 10,000-candidate solver input."
+}

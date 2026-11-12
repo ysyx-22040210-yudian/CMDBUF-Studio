@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "verdi",
+    "-full64",
+    "-cov",
+    "-covdir",
+    "/root/cmdbuf-coverage-dev-20261112/build/vcs/coverage_analysis/20261113_000731_d3e8b82f/selected/merged.vdb"
+  ],
+  "DISPLAY": ":99",
+  "cwd": "/root/cmdbuf-coverage-dev-20261112/build/vcs/coverage_analysis/20261113_000731_d3e8b82f/views/coverage_20261113_000734_6b9a4c"
+}

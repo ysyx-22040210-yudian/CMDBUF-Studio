@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "smoke": "20261113_000232_regress_eff0cf",
+  "directed": [
+    "20261113_000234_regress_f41230",
+    "20261113_000235_regress_5d6bad"
+  ],
+  "details": "/root/cmdbuf-coverage-dev-20261112/build/vcs/coverage_analysis/20261113_000237_46b6418d/result.json",
+  "minimum": "/root/cmdbuf-coverage-dev-20261112/build/vcs/coverage_analysis/20261113_000238_1a63527e/result.json",
+  "legacy": "/root/cmdbuf-coverage-dev-20261112/build/vcs/coverage_analysis/20261113_000240_1fbeef2d/result.json"
+}

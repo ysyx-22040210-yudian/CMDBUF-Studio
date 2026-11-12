@@ -1,0 +1,32 @@
+Dashboard
+
+Date: Fri Nov 13 00:02:41 2026
+
+User: root
+
+Version: O-2018.09-1
+Command line: urg -full64 +urg+lic+wait -strict -f /root/cmdbuf-coverage-dev-20261112/build/vcs/coverage_analysis/20261113_000240_1fbeef2d/selected/urg_inputs.f -dbname /root/cmdbuf-coverage-dev-20261112/build/vcs/coverage_analysis/20261113_000240_1fbeef2d/selected/merged.vdb -report /root/cmdbuf-coverage-dev-20261112/build/vcs/coverage_analysis/20261113_000240_1fbeef2d/selected/urgReport -metric line+cond+branch+tgl+fsm -format both 
+
+Number of tests: 1
+
+-------------------------------------------------------------------------------
+Total Coverage Summary 
+SCORE  LINE   COND   TOGGLE FSM    BRANCH 
+ 82.80  89.47  81.48  85.26 --      75.00 
+
+
+-------------------------------------------------------------------------------
+Hierarchical coverage data for top-level instances 
+SCORE  LINE   COND   TOGGLE FSM    BRANCH NAME         
+ 82.80  89.47  81.48  85.26 --      75.00 tb_cmdbuf_rd 
+
+
+-------------------------------------------------------------------------------
+Total Module Definition Coverage Summary 
+SCORE  LINE   COND   TOGGLE FSM    BRANCH 
+ 82.80  89.47  81.48  85.26 --      75.00 
+
+
+-------------------------------------------------------------------------------
+Ignored covdb dirs: 
+-dir 

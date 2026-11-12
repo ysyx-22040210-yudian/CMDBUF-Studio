@@ -1,0 +1,2 @@
+﻿batch,run_id,case,seed,seconds,replay
+20261112_223536_regress_197f6b,tc_random_seed_1,tc_random,1,0.707,make replay REGRESSION=20261112_223536_regress_197f6b RUN_ID=tc_random_seed_1

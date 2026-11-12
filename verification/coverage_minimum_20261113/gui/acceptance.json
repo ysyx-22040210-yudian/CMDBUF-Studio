@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "details": "/root/cmdbuf-coverage-dev-20261112/build/vcs/coverage_analysis/20261113_000730_8cd09dd5/result.json",
+  "minimum": "/root/cmdbuf-coverage-dev-20261112/build/vcs/coverage_analysis/20261113_000731_d3e8b82f/result.json",
+  "original": 6,
+  "minimum_count": 3,
+  "source_highlight": true,
+  "hit_filter": true,
+  "cancelled": true,
+  "selected_verdi_command": "/root/cmdbuf-coverage-dev-20261112/build/vcs/coverage_analysis/20261113_000731_d3e8b82f/views/coverage_20261113_000734_6b9a4c/verdi.command.json",
+  "tk": 8.5
+}

@@ -1,0 +1,164 @@
+{
+  "version": 1,
+  "id": "20261113_000731_d3e8b82f",
+  "status": "PASS",
+  "batches": [
+    "20261113_000235_regress_5d6bad",
+    "20261113_000234_regress_f41230"
+  ],
+  "baseline": {
+    "status": "PASS",
+    "exit_code": 0,
+    "seconds": 0.353,
+    "database": "/root/cmdbuf-coverage-dev-20261112/build/vcs/coverage_analysis/20261113_000731_d3e8b82f/baseline/merged.vdb",
+    "report": "/root/cmdbuf-coverage-dev-20261112/build/vcs/coverage_analysis/20261113_000731_d3e8b82f/baseline/urgReport/dashboard.html",
+    "metrics_percent": {
+      "SCORE": "72.36",
+      "LINE": "88.72",
+      "COND": "81.48",
+      "TOGGLE": "46.73",
+      "FSM": "--",
+      "BRANCH": "72.50"
+    },
+    "code_metrics_present": true,
+    "metrics_requested": "line+cond+branch+tgl+fsm"
+  },
+  "items": "/root/cmdbuf-coverage-dev-20261112/build/vcs/coverage_analysis/20261113_000731_d3e8b82f/npi/items.jsonl",
+  "hits": "/root/cmdbuf-coverage-dev-20261112/build/vcs/coverage_analysis/20261113_000731_d3e8b82f/npi/hits.jsonl",
+  "sources": {
+    "/root/cmdbuf-coverage-dev-20261112/rtl/cmdbuf_rd.sv": {
+      "path": "/root/cmdbuf-coverage-dev-20261112/build/vcs/builds/c07a68dc91162fbc/rtl_sources/rtl/cmdbuf_rd.sv",
+      "sha256": "40b51383c8ea103d0ced9f8b449f6308328cc7fde26008c440879046d9d8133c",
+      "relative": "rtl/cmdbuf_rd.sv"
+    },
+    "/root/cmdbuf-coverage-dev-20261112/rtl/cmdbuf_rd_cmd.sv": {
+      "path": "/root/cmdbuf-coverage-dev-20261112/build/vcs/builds/c07a68dc91162fbc/rtl_sources/rtl/cmdbuf_rd_cmd.sv",
+      "sha256": "01b840ab7541a3d16a7f62c8534854c64e96c91af3e165e971e22fb236a4b29a",
+      "relative": "rtl/cmdbuf_rd_cmd.sv"
+    },
+    "/root/cmdbuf-coverage-dev-20261112/rtl/cmdbuf_rd_otb.sv": {
+      "path": "/root/cmdbuf-coverage-dev-20261112/build/vcs/builds/c07a68dc91162fbc/rtl_sources/rtl/cmdbuf_rd_otb.sv",
+      "sha256": "ec3ba652df117f804ee74c0f25f6a5aedded7e9c86be6c827146bf7c3b0021d2",
+      "relative": "rtl/cmdbuf_rd_otb.sv"
+    },
+    "/root/cmdbuf-coverage-dev-20261112/simulation/vcs/tb/cmdbuf_check_monitor.sv": {
+      "path": "/root/cmdbuf-coverage-dev-20261112/simulation/vcs/tb/cmdbuf_check_monitor.sv",
+      "sha256": "16d8ae49db45894e6c97b8437a274b6bc11120206ca743e764c0996eb7082ad6",
+      "relative": "simulation/vcs/tb/cmdbuf_check_monitor.sv"
+    },
+    "/root/cmdbuf-coverage-dev-20261112/simulation/vcs/tb/tb_cmdbuf_rd.sv": {
+      "path": "/root/cmdbuf-coverage-dev-20261112/simulation/vcs/tb/tb_cmdbuf_rd.sv",
+      "sha256": "76442ef8ccd16d88ce4c10df14ef4b61aef9868b38bc26e324d28c16fd32f047",
+      "relative": "simulation/vcs/tb/tb_cmdbuf_rd.sv"
+    }
+  },
+  "coverable": 7219,
+  "covered": 3515,
+  "case_count": 6,
+  "candidates": [
+    {
+      "key": "20261113_000235_regress_5d6bad/tc_retry_seed_1",
+      "batch": "20261113_000235_regress_5d6bad",
+      "id": "tc_retry_seed_1",
+      "case": "tc_retry",
+      "seed": 1
+    },
+    {
+      "key": "20261113_000235_regress_5d6bad/tc_backpressure_seed_1",
+      "batch": "20261113_000235_regress_5d6bad",
+      "id": "tc_backpressure_seed_1",
+      "case": "tc_backpressure",
+      "seed": 1
+    },
+    {
+      "key": "20261113_000235_regress_5d6bad/tc_same_id_seed_1",
+      "batch": "20261113_000235_regress_5d6bad",
+      "id": "tc_same_id_seed_1",
+      "case": "tc_same_id",
+      "seed": 1
+    },
+    {
+      "key": "20261113_000234_regress_f41230/tc_directed_seed_1",
+      "batch": "20261113_000234_regress_f41230",
+      "id": "tc_directed_seed_1",
+      "case": "tc_directed",
+      "seed": 1
+    },
+    {
+      "key": "20261113_000234_regress_f41230/tc_banks_seed_1",
+      "batch": "20261113_000234_regress_f41230",
+      "id": "tc_banks_seed_1",
+      "case": "tc_banks",
+      "seed": 1
+    },
+    {
+      "key": "20261113_000234_regress_f41230/tc_reset_seed_1",
+      "batch": "20261113_000234_regress_f41230",
+      "id": "tc_reset_seed_1",
+      "case": "tc_reset",
+      "seed": 1
+    }
+  ],
+  "verified": true,
+  "solver": {
+    "selected": [
+      1,
+      2,
+      4
+    ],
+    "optimal": true,
+    "lower_bound": 3,
+    "upper_bound": 3,
+    "nodes": 0,
+    "distinct_profiles": 5,
+    "seconds": 0.0
+  },
+  "selected": [
+    {
+      "key": "20261113_000235_regress_5d6bad/tc_backpressure_seed_1",
+      "batch": "20261113_000235_regress_5d6bad",
+      "id": "tc_backpressure_seed_1",
+      "case": "tc_backpressure",
+      "seed": 1,
+      "seconds": 0.405,
+      "database": "/root/cmdbuf-coverage-dev-20261112/build/vcs/regressions/20261113_000235_regress_5d6bad/cases/tc_backpressure_seed_1/simv.vdb"
+    },
+    {
+      "key": "20261113_000235_regress_5d6bad/tc_same_id_seed_1",
+      "batch": "20261113_000235_regress_5d6bad",
+      "id": "tc_same_id_seed_1",
+      "case": "tc_same_id",
+      "seed": 1,
+      "seconds": 0.456,
+      "database": "/root/cmdbuf-coverage-dev-20261112/build/vcs/regressions/20261113_000235_regress_5d6bad/cases/tc_same_id_seed_1/simv.vdb"
+    },
+    {
+      "key": "20261113_000234_regress_f41230/tc_banks_seed_1",
+      "batch": "20261113_000234_regress_f41230",
+      "id": "tc_banks_seed_1",
+      "case": "tc_banks",
+      "seed": 1,
+      "seconds": 0.461,
+      "database": "/root/cmdbuf-coverage-dev-20261112/build/vcs/regressions/20261113_000234_regress_f41230/cases/tc_banks_seed_1/simv.vdb"
+    }
+  ],
+  "selected_coverage": {
+    "status": "PASS",
+    "exit_code": 0,
+    "seconds": 0.352,
+    "database": "/root/cmdbuf-coverage-dev-20261112/build/vcs/coverage_analysis/20261113_000731_d3e8b82f/selected/merged.vdb",
+    "report": "/root/cmdbuf-coverage-dev-20261112/build/vcs/coverage_analysis/20261113_000731_d3e8b82f/selected/urgReport/dashboard.html",
+    "metrics_percent": {
+      "SCORE": "72.36",
+      "LINE": "88.72",
+      "COND": "81.48",
+      "TOGGLE": "46.73",
+      "FSM": "--",
+      "BRANCH": "72.50"
+    },
+    "code_metrics_present": true,
+    "metrics_requested": "line+cond+branch+tgl+fsm"
+  },
+  "selected_csv": "/root/cmdbuf-coverage-dev-20261112/build/vcs/coverage_analysis/20261113_000731_d3e8b82f/selected_tests.csv",
+  "verification": "/root/cmdbuf-coverage-dev-20261112/build/vcs/coverage_analysis/20261113_000731_d3e8b82f/verification/hits.jsonl"
+}

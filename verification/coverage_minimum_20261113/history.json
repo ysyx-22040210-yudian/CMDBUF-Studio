@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "duplicate_test_ids": 1,
+  "overlapping_batch": "20261113_000518_921846e0",
+  "exhaustive_six_case_minimum": 3,
+  "merged_only_details": true,
+  "missing_case_vdb_rejected": true
+}

@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "root": "/dev/shm/CMDBUF 覆盖率便携包 20261113/cmdbuf-studio",
+  "archive_sha256": "a1f27b866d3995894d269d5a42f33fa879a42c8ace757934c55ad47798c91bb5",
+  "files": 190,
+  "smoke_passed": 3,
+  "fsdb_and_vcd": true,
+  "coverage": "PASS",
+  "minimized_from": 3,
+  "minimized_to": 3,
+  "minimum_proved": true,
+  "verified": true,
+  "tk_reopened": true,
+  "analysis": "20261113_001551_5d0fc38f"
+}

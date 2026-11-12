@@ -19,6 +19,7 @@ except ImportError:
 import backend
 import model
 import formal_model
+from coverage_view import CoverageWindow
 from widgets import BG, INK, MUTED, ACCENT, DARK, CodeEditor, WaveWindow, ScrollPage, style, tree, multiline
 
 eda, ROOT, STATE = model.eda, model.ROOT, model.STATE
@@ -36,6 +37,7 @@ class Studio:
         self.current_tc = None; self.current_batch = None; self.summary = None; self.formal_export = None
         self.dirty = False; self.dut_baseline = None; self.plan_rows = []; self.formal_items = []
         self.status = tk.StringVar(value='就绪 · 当前设备本机执行')
+        self.coverage_busy = tk.BooleanVar(value=False)
         self.pages = {}; self.page_shells = {}; self.nav = {}; self.settings = model.state_read()
         self.build_shell()
         for key, title, subtitle, method in [
@@ -81,6 +83,7 @@ class Studio:
         footer = ttk.Frame(body, padding=(22, 9)); footer.pack(side='bottom', fill='x', before=self.content)
         ttk.Label(footer, textvariable=self.status, style='Muted.TLabel', width=69).pack(side='left', fill='x', expand=True)
         self.progress = ttk.Progressbar(footer, length=150); self.progress.pack(side='left', padx=12)
+        self.cancel_coverage_button = ttk.Button(footer, text='取消覆盖率分析', command=self.jobs.cancel_coverage)
         ttk.Button(footer, text='任务日志', command=self.show_log).pack(side='right')
 
     def button(self, parent, text, action, primary=False, side='left'):
@@ -500,12 +503,16 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
         self.button(bar, '内置波形', self.open_run_wave, True)
         self.button(bar, 'Verdi 波形', self.open_verdi)
         self.button(bar, 'Verdi 覆盖率', self.open_coverage)
+        self.button(bar, '覆盖率明细', self.open_coverage_details)
         self.button(bar, '导入 VCD / FSDB', self.open_wave_file)
         self.button(bar, '加入 Formal', self.add_run_formal)
         f, self.batch_tree = tree(page, [('id', '回归批次', 275), ('dut', 'DUT', 230), ('status', '状态', 80), ('runs', '通过 / 总数', 110), ('wave', '波形', 70)], height=4)
         f.pack(fill='x'); self.batch_tree.bind('<<TreeviewSelect>>', lambda e: self.guard(self.select_batch))
+        coverage_bar = ttk.Frame(page)
+        coverage_bar.pack(fill='x', pady=7)
         self.coverage_note = tk.StringVar(value='选择批次查看代码覆盖率与用例')
-        ttk.Label(page, textvariable=self.coverage_note, style='Muted.TLabel', wraplength=1080).pack(anchor='w', pady=10)
+        ttk.Label(coverage_bar, textvariable=self.coverage_note, style='Muted.TLabel', wraplength=700).pack(side='left')
+        self.button(coverage_bar, '最小用例集', self.choose_coverage_batches, side='right')
         self.scope_note = tk.StringVar(value='每个用例单独列出接口、事务与时序结论')
         ttk.Label(page, textvariable=self.scope_note, style='Muted.TLabel', wraplength=1080).pack(anchor='w', pady=(0, 8))
         f, self.run_tree = tree(page, [('id', '用例 / seed', 280), ('status', '状态', 85), ('cycles', '主体周期', 80), ('seconds', '耗时 / 秒', 100), ('waves', '波形', 65)], height=5, selectmode='extended')
@@ -538,7 +545,7 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
         metrics = coverage.get('metrics_percent', {})
         detail = '  ·  '.join(title+' '+str(metrics[key])+('%' if metrics[key] != '--' else '')
                               for key, title in [('LINE', '行'), ('COND', '条件'), ('TOGGLE', '翻转'), ('BRANCH', '分支'), ('FSM', '状态机')] if key in metrics)
-        self.coverage_note.set('覆盖率 '+coverage.get('status', '—')+'   '+detail+'   ·   Verdi 中查看代码明细')
+        self.coverage_note.set('覆盖率 '+coverage.get('status', '—')+'   '+detail)
         if self.summary['results']: self.run_tree.selection_set(self.summary['results'][0]['id'])
         self.read_artifact()
 
@@ -582,6 +589,54 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
     def open_coverage(self):
         if not self.current_batch: raise ValueError('请先选择回归批次')
         self.launch('coverage', dict(batch=self.current_batch))
+
+    def open_coverage_details(self):
+        if not self.current_batch:
+            raise ValueError('请先选择回归批次')
+        self.launch('coverage_details', dict(batches=[self.current_batch]))
+
+    def choose_coverage_batches(self, selected=None):
+        self.idle()
+        selected = selected or ([self.current_batch] if self.current_batch else [])
+        history = [row for row in backend.history() if row['coverage']]
+        if not history:
+            raise ValueError('请选择已合并覆盖率的历史回归')
+        dialog = tk.Toplevel(self.root)
+        dialog.title('计算最小用例集')
+        dialog.geometry('820x515')
+        dialog.transient(self.root)
+        box = ttk.Frame(dialog, padding=18)
+        box.pack(fill='both', expand=True)
+        ttk.Label(box, text='选择历史回归', style='Heading.TLabel').pack(anchor='w')
+        ttk.Label(box, text='可多选同一覆盖率配置的批次，以合并覆盖率为目标。', style='Muted.TLabel').pack(anchor='w', pady=(5, 9))
+        frame, batches = tree(box, [('batch', '回归批次', 300), ('dut', 'DUT', 160),
+                                     ('count', '通过 / 总数', 110)], height=7, selectmode='extended')
+        frame.pack(fill='both', expand=True)
+        for row in history:
+            batches.insert('', 'end', iid=row['id'],
+                           values=(row['id'], row['dut'], '{}/{}'.format(row['passed'], row['total'])))
+        for identifier in selected:
+            if batches.exists(identifier):
+                batches.selection_add(identifier)
+        seconds = tk.StringVar(value='0')
+        controls = ttk.Frame(box)
+        controls.pack(fill='x', pady=(10, 0))
+        ttk.Label(controls, text='求解秒数（0 不限时）').pack(side='left')
+        ttk.Entry(controls, width=8, textvariable=seconds).pack(side='left', padx=8)
+        def start():
+            ids = list(batches.selection())
+            if not ids or not seconds.get().isdigit():
+                raise ValueError('请选择历史批次，并填写非负整数秒数')
+            self.launch('coverage_minimize', dict(batches=ids, seconds=int(seconds.get())))
+            dialog.destroy()
+        self.button(controls, '开始计算', start, primary=True, side='right')
+        dialog.grab_set()
+
+    def show_coverage_record(self, path):
+        identifier = Path(path).parent.name
+        return CoverageWindow(self.root, path, self.choose_coverage_batches,
+                              lambda: self.launch('coverage', dict(analysis=identifier)), self.guard, self.status,
+                              self.coverage_busy, self.jobs.cancel_coverage)
 
     def open_wave_file(self):
         path = filedialog.askopenfilename(title='在内置查看器打开波形', filetypes=[('波形', '*.vcd *.fsdb')], parent=self.root)
@@ -818,6 +873,13 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
 
     def poll(self):
         job = self.jobs.snapshot()
+        analyzing = bool(job and job['state'] == 'RUNNING' and job['kind'] in ('coverage_details', 'coverage_minimize'))
+        if self.coverage_busy.get() != analyzing:
+            self.coverage_busy.set(analyzing)
+        if analyzing and not self.cancel_coverage_button.winfo_manager():
+            self.cancel_coverage_button.pack(side='right', padx=6)
+        elif not analyzing and self.cancel_coverage_button.winfo_manager():
+            self.cancel_coverage_button.pack_forget()
         if job:
             total, completed = job.get('total', 0), job.get('completed', 0)
             if job['state'] == 'RUNNING':
@@ -828,7 +890,9 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
                     if str(self.progress['mode']) != 'indeterminate': self.progress.configure(mode='indeterminate'); self.progress.start(12)
             elif job['id'] != self.last_finished:
                 self.last_finished = job['id']; self.progress.stop(); self.progress.configure(mode='determinate', maximum=1, value=1 if job['state'] == 'DONE' else 0)
-                self.status.set(job.get('error') or ('已完成：'+job['kind']))
+                finished = {'coverage_details': '覆盖率明细已就绪', 'coverage_minimize': '用例集覆盖率验证完成'}
+                self.status.set(job.get('error') or (job['stage'] if job['state'] == 'CANCELLED'
+                                                   else finished.get(job['kind'], '已完成：'+job['kind'])))
                 self.on_finished(job)
             if self.job_window and self.job_window.winfo_exists():
                 if self.job_log.get() != job['log']:
@@ -838,6 +902,8 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
     def on_finished(self, job):
         if job.get('batch'):
             self.refresh_results(job['batch']); self.show('results')
+        if job['state'] == 'CANCELLED':
+            return
         if job['state'] != 'DONE':
             self.show_log(); return
         kind = job['kind']
@@ -845,6 +911,8 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
             self.show_detected(job['detected'])
         elif kind == 'wave_index':
             WaveWindow(self.root, job['database'], job['wave_name'])
+        elif kind in ('coverage_details', 'coverage_minimize'):
+            self.guard(lambda: self.show_coverage_record(job['coverage_record']))
         elif kind == 'import_rtl':
             data = job['imported']; self.text_set(self.dut_files, '\n'.join(data['files'])); self.text_set(self.dut_includes, '\n'.join(data['include_dirs']))
             self.status.set('RTL 已导入，请检查编译顺序、例化代码并保存 DUT')
@@ -892,6 +960,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--page', choices=['home', 'dut', 'cases', 'regression', 'results', 'formal', 'settings'], default='home')
     parser.add_argument('--batch')
+    parser.add_argument('--coverage-record')
     args = parser.parse_args(argv)
     STATE.mkdir(parents=True, exist_ok=True)
     try:
@@ -904,6 +973,9 @@ def main(argv=None):
         batch = args.batch
         if batch == 'latest' and backend.history(): batch = backend.history()[0]['id']
         app.refresh_results(batch)
+    if args.coverage_record:
+        app.show('results')
+        app.guard(lambda: app.show_coverage_record(args.coverage_record))
     root.mainloop(); return 0
 
 
