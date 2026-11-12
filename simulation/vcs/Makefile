@@ -34,6 +34,8 @@ DUT_SCOPE ?=
 REGRESSIONS ?=
 COVERAGE_SET ?=
 SOLVE_SECONDS ?= 0
+FORMAL_ID ?=
+MAX_EDGES ?= 100000
 EDA_RUN_CASE = $(if $(strip $(CASE)),$(CASE),tc_directed)
 EDA_SELECT = $(if $(strip $(RUN_ID)),--case "$(RUN_ID)",$(if $(strip $(CASE)),--case "$(CASE)_seed_$(SEED)"))
 EDA_CYCLES = $(if $(strip $(CYCLES)),--cycles "$(CYCLES)")
@@ -76,6 +78,7 @@ help:
 	@echo '       REGRESSION=latest|batch_id DISPLAY=:0 XAUTHORITY=/path (optional)'
 	@echo '  make coverage-details REGRESSION=latest   Inspect each code coverage item in Tk'
 	@echo '  make coverage-minimize REGRESSION=latest  Prove the smallest set and remerge with URG'
+	@echo '  make coverage-formal COVERAGE_SET=id      Generate one Formal pattern per selected case'
 	@echo '       REGRESSIONS=id1,id2 combines compatible histories; SOLVE_SECONDS=0 searches without a limit'
 	@echo '       COVERAGE_SET=id reopens a saved analysis with coverage-details or its verified VDB with coverage'
 	@echo '  make report                          Print verdicts and report path'
@@ -157,12 +160,16 @@ wave:
 coverage:
 	$(EDA) coverage $(EDA_REGRESSION) $(EDA_GUI) $(EDA_COVERAGE_SET)
 
-.PHONY: coverage-details coverage-minimize
+.PHONY: coverage-details coverage-minimize coverage-formal
 coverage-details:
 	$(EDA_COVERAGE) --action details $(EDA_COVERAGE_BATCHES) $(if $(strip $(COVERAGE_SET)),--existing "$(COVERAGE_SET)")
 
 coverage-minimize:
 	$(EDA_COVERAGE) --action minimize $(EDA_COVERAGE_BATCHES) --seconds "$(SOLVE_SECONDS)"
+
+coverage-formal:
+	@test -n "$(COVERAGE_SET)" || { echo 'Specify COVERAGE_SET=analysis_id'; exit 2; }
+	$(PYTHON) "$(EDA_HERE)fsdb_formal/coverage_export.py" --coverage-set "$(COVERAGE_SET)" --max-edges "$(MAX_EDGES)" --timeout "$(TIMEOUT)" $(if $(strip $(FORMAL_ID)),--id "$(FORMAL_ID)")
 
 report open-report:
 	$(EDA) $@ $(EDA_REGRESSION)

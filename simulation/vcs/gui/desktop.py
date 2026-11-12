@@ -83,7 +83,7 @@ class Studio:
         footer = ttk.Frame(body, padding=(22, 9)); footer.pack(side='bottom', fill='x', before=self.content)
         ttk.Label(footer, textvariable=self.status, style='Muted.TLabel', width=69).pack(side='left', fill='x', expand=True)
         self.progress = ttk.Progressbar(footer, length=150); self.progress.pack(side='left', padx=12)
-        self.cancel_coverage_button = ttk.Button(footer, text='取消覆盖率分析', command=self.jobs.cancel_coverage)
+        self.cancel_coverage_button = ttk.Button(footer, text='取消任务', command=self.jobs.cancel_coverage)
         ttk.Button(footer, text='任务日志', command=self.show_log).pack(side='right')
 
     def button(self, parent, text, action, primary=False, side='left'):
@@ -636,7 +636,9 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
         identifier = Path(path).parent.name
         return CoverageWindow(self.root, path, self.choose_coverage_batches,
                               lambda: self.launch('coverage', dict(analysis=identifier)), self.guard, self.status,
-                              self.coverage_busy, self.jobs.cancel_coverage)
+                              self.coverage_busy, self.jobs.cancel_coverage,
+                              lambda: self.launch('coverage_formal', dict(analysis=identifier,
+                                                                          max_edges=int(self.max_edges.get()))))
 
     def open_wave_file(self):
         path = filedialog.askopenfilename(title='在内置查看器打开波形', filetypes=[('波形', '*.vcd *.fsdb')], parent=self.root)
@@ -777,8 +779,10 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
     def choose_export(self):
         self.formal_export = self.export_var.get()
         summary = eda.read_json(formal_model.artifact(self.formal_export, 'summary.json')); c = summary['counts']
-        self.formal_note.set('%d patterns  ·  %d cycles  ·  %d assume  ·  %d assert  ·  %d cover  |  已生成，尚不代表 Formal 证明通过' %
-                             (c['patterns'], c['cycles'], c['input_assumptions'], c['output_assertions'], c['terminal_covers']))
+        origin = '选集 ' + summary['coverage_set'] + '  ·  ' if summary.get('coverage_set') else ''
+        counts = '%d patterns  ·  %d cycles  ·  %d assume  ·  %d assert  ·  %d cover' % (
+            c['patterns'], c['cycles'], c['input_assumptions'], c['output_assertions'], c['terminal_covers'])
+        self.formal_note.set(origin + counts + '  |  验证包已生成 · Formal 证明待运行')
         self.formal_preview()
 
     def formal_preview(self):
@@ -873,7 +877,7 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
 
     def poll(self):
         job = self.jobs.snapshot()
-        analyzing = bool(job and job['state'] == 'RUNNING' and job['kind'] in ('coverage_details', 'coverage_minimize'))
+        analyzing = bool(job and job['state'] == 'RUNNING' and job['kind'] in backend.COVERAGE_JOBS)
         if self.coverage_busy.get() != analyzing:
             self.coverage_busy.set(analyzing)
         if analyzing and not self.cancel_coverage_button.winfo_manager():
@@ -890,7 +894,8 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
                     if str(self.progress['mode']) != 'indeterminate': self.progress.configure(mode='indeterminate'); self.progress.start(12)
             elif job['id'] != self.last_finished:
                 self.last_finished = job['id']; self.progress.stop(); self.progress.configure(mode='determinate', maximum=1, value=1 if job['state'] == 'DONE' else 0)
-                finished = {'coverage_details': '覆盖率明细已就绪', 'coverage_minimize': '用例集覆盖率验证完成'}
+                finished = {'coverage_details': '覆盖率明细已就绪', 'coverage_minimize': '用例集覆盖率验证完成',
+                            'coverage_formal': '选集 Formal 验证包已生成'}
                 self.status.set(job.get('error') or (job['stage'] if job['state'] == 'CANCELLED'
                                                    else finished.get(job['kind'], '已完成：'+job['kind'])))
                 self.on_finished(job)
@@ -922,8 +927,9 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
         elif kind == 'fsdb_inspect':
             info = eda.read_json(formal_model.artifact(job['formal_id'], 'inspection.json'))
             self.preview('NPI 层级与信号', json.dumps(info, ensure_ascii=False, indent=2))
-        elif kind == 'fsdb_formal':
+        elif kind in ('fsdb_formal', 'coverage_formal'):
             self.refresh_exports(job['formal_id']); self.show('formal')
+            self.root.lift()
 
     def show_log(self):
         if self.job_window and self.job_window.winfo_exists(): self.job_window.lift(); return

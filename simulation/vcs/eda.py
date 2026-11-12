@@ -239,7 +239,8 @@ def case_path(name):
 
 
 def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection='', replay_program=None,
-             saved_config=None, waves=True, check_mode='strict', assert_fatal=True, env_fatal=True):
+             saved_config=None, waves=True, check_mode='strict', assert_fatal=True, env_fatal=True,
+             convert_vcd=True):
     path = Path(saved_config) if saved_config else case_path(name)
     cfg = read_json(path) if saved_config else load_input(path)
     case_name = name if saved_config else path.stem
@@ -315,7 +316,7 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
     rc, elapsed = execute(cmd, run, run / 'sim.log', env, timeout if start_hook else None,
                           wait_for_start=start_hook, phase='simulation' if start_hook else 'legacy_simulation')
     conversion = None
-    if waves and (run / 'waves.fsdb').is_file():
+    if waves and convert_vcd and (run / 'waves.fsdb').is_file():
         # Verdi's converter preserves unpacked arrays, which VCS $dumpvars
         # omits. Both viewers therefore consume the same captured FSDB data.
         conversion_rc, conversion_time = execute(
@@ -341,7 +342,7 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
         failures.append('simulation exit {}'.format(rc))
     if re.search(r'\$stop at time', log):
         failures.append('TC/DUT $stop interrupted simulation; outside ENV_FATAL control')
-    if waves and (not conversion or conversion['exit_code'] or not (run / 'waves.vcd').is_file()):
+    if waves and convert_vcd and (not conversion or conversion['exit_code'] or not (run / 'waves.vcd').is_file()):
         failures.append('FSDB to VCD conversion failed; see wave_conversion.log')
     if not re.search(r'^TEST_PASS\s', log, re.M) and not (incomplete and re.search(r'^TEST_INCOMPLETE\s', log, re.M)):
         failures.append('missing TEST_PASS')
@@ -573,29 +574,25 @@ def regress(args, env):
     return 0 if ok else 1
 
 
-def replay(args, env):
-    original_regression = select_regression(args.regression)
-    original = read_json(original_regression / 'summary.json')
-    chosen = next((r for r in original['results'] if r['id'] == args.case), None)
-    if chosen is None:
-        raise ValueError('Case not found in saved regression: ' + args.case)
-    old = Path(chosen['directory'])
+def replay_case(chosen, old, destination, env, timeout, waves=None, convert_vcd=True):
+    """Re-execute one archived input program with its original simulator and verify the trace."""
     build_dir = Path(chosen['build'])
+    if not (build_dir / 'build.json').is_file():
+        build_dir = OUT / 'builds' / build_dir.name
     receipt = read_json(build_dir / 'build.json')
     if receipt.get('simv_sha256') and digest(build_dir / 'simv') != receipt['simv_sha256']:
         raise RuntimeError('Saved simulator hash mismatch')
     for name, key in [('stimulus.txt', 'stimulus_sha256'), ('case.json', 'case_sha256')]:
         if digest(old / name) != chosen[key]:
             raise RuntimeError('Saved input hash mismatch: ' + name)
-    rid = stamp() + '_replay_' + uuid.uuid4().hex[:6]
-    regression = OUT / 'regressions' / rid
-    regression.mkdir(parents=True)
-    result = run_case(build_dir, regression, chosen['case'], chosen['seed'], None, env,
-                      args.timeout, chosen['injection'], old / 'stimulus.txt', old / 'case.json',
-                      waves=chosen.get('waves_enabled', True), check_mode=chosen.get('check_mode', 'strict'),
-                      assert_fatal=chosen.get('assert_fatal', True), env_fatal=chosen.get('env_fatal', True))
+    result = run_case(build_dir, destination, chosen['case'], chosen['seed'], None, env,
+                      timeout, chosen.get('injection', ''), old / 'stimulus.txt', old / 'case.json',
+                      waves=chosen.get('waves_enabled', True) if waves is None else waves,
+                      check_mode=chosen.get('check_mode', 'strict'), assert_fatal=chosen.get('assert_fatal', True),
+                      env_fatal=chosen.get('env_fatal', True), convert_vcd=convert_vcd)
     result['replayed_from'] = str(old)
-    result['events_match_original'] = result['events_sha256'] == digest(old / 'events.csv')
+    original_events = digest(old / 'events.csv')
+    result['events_match_original'] = original_events == chosen.get('events_sha256', original_events) == result['events_sha256']
     ok = result['status'] == 'PASS' and result['events_match_original']
     if chosen.get('format') in ('sv_tc','sv_main_phase'):
         assignment='assigned.csv' if chosen.get('format')=='sv_main_phase' else 'sv_solutions.csv'
@@ -604,6 +601,24 @@ def replay(args, env):
         if (old/'clock_reset.csv').exists():
             result['exact_replay']['clock_reset.csv']=digest(Path(result['directory'])/'clock_reset.csv')==digest(old/'clock_reset.csv')
         ok=ok and all(result['exact_replay'].values())
+    write_json(Path(result['directory']) / 'result.json', result)
+    return result, ok
+
+
+def replay(args, env):
+    original_regression = select_regression(args.regression)
+    original = read_json(original_regression / 'summary.json')
+    chosen = next((r for r in original['results'] if r['id'] == args.case), None)
+    if chosen is None:
+        raise ValueError('Case not found in saved regression: ' + args.case)
+    old = original_regression / 'cases' / chosen['id']
+    if not old.is_dir():
+        old = Path(chosen['directory'])
+    rid = stamp() + '_replay_' + uuid.uuid4().hex[:6]
+    regression = OUT / 'regressions' / rid
+    regression.mkdir(parents=True)
+    result, ok = replay_case(chosen, old, regression, env, args.timeout)
+    build_dir = Path(result['build'])
     cov = merge_coverage(regression, [result], env)
     ok = ok and cov['status'] == 'PASS'
     summary = {'id': rid, 'status': 'PASS' if ok else 'FAIL', 'created_at': stamp(),
@@ -612,7 +627,6 @@ def replay(args, env):
                'contract_revision': result['contract_revision'],
                'check_policy': dict(check_mode=result['check_mode'], assert_fatal=result['assert_fatal'], env_fatal=result['env_fatal'])}
     write_report(regression, summary)
-    write_json(Path(result['directory']) / 'result.json', result)
     write_json(OUT / 'last_command.json', {'id': rid})
     if os.environ.get('EDA_REQUEST_ID'):
         write_json(OUT / 'requests' / (os.environ['EDA_REQUEST_ID'] + '.json'), {'id': rid})

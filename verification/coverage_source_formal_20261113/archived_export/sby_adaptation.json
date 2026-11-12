@@ -1,0 +1,9 @@
+{
+  "source": "trace_properties.sv",
+  "executed": "sby_properties.sv",
+  "properties": 496,
+  "rule": "Single-sample A |-> B becomes (!A || B); clock and disable iff preserved.",
+  "sampled_value_expansion": "Two $stable selectors replaced by comparisons against explicit previous-posedge registers. First-cycle guards preserved.",
+  "source_sha256": "064a22f082c1db2de33daa73f2e204849336b47bf8cd6e2195ce59a5eaf21bd3",
+  "executed_sha256": "312d7593a47f67c6f36258234bafc22fa6107360deccd65f501a22fc062d740d"
+}

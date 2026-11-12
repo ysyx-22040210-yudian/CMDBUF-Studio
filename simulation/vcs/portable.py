@@ -16,7 +16,7 @@ ROOT=eda.ROOT
 def selected_files():
     paths=set(eda.sources())
     paths.update(ROOT/p for p in ('CMDBUF Studio.cmd','CMDBUF Studio.sh','eda.example.json','AGENTS.md'))
-    for number in range(32, 45):
+    for number in range(32, 46):
         for extension in ('pdf', 'docx'):
             paths.update((ROOT/'documents').glob(str(number)+'_*.'+extension))
     for p in list(paths):
@@ -58,6 +58,7 @@ Compile / simulate / open waves and coverage all use Make:
     make coverage REGRESSION=latest
     make coverage-details REGRESSION=latest
     make coverage-minimize REGRESSION=latest
+    make coverage-formal COVERAGE_SET=analysis_id
     make wave-file FSDB=/absolute/path/to/input.fsdb
 
 Verdi wave commands automatically add every dumped signal directly under the DUT
@@ -67,13 +68,18 @@ The signal list is checked before reporting success. See documents/40_*.
 
 In Results, select a historical regression and open Coverage details. Verdi NPI
 reads the individual code coverage items and source locations directly from VDB.
+The source browser highlights covered and uncovered lines. Click a line for its
+bins, press F8 / Shift+F8 to navigate gaps, or drill down from the URG score table.
 Minimum set analysis uses passing tests included in the original coverage,
 requires per-test VDBs, and preserves every covered code bin. URG remerges the
 selected tests and the tool verifies the bins and scores against the baseline.
 REGRESSIONS=id1,id2 combines compatible batches. SOLVE_SECONDS=0 has no solver
 deadline. A deadline may return a verified candidate with bounds. Reopen a saved
 analysis with make coverage-details COVERAGE_SET=id or its VDB with
-make coverage COVERAGE_SET=id. See documents/44_*.
+make coverage COVERAGE_SET=id. The set result can generate Formal code directly.
+An archived FSDB is used when available. Missing selected waves are reproduced
+with the saved simulator and inputs and checked against the original run. One
+pattern per case and the matching archived DUT are included. See documents/45_*.
 
 VCS compilation includes -lca -licqueue +vcs+lic+wait. Simulation uses
 +vcs+lic+wait; coverage merging uses +urg+lic+wait. License waiting has no

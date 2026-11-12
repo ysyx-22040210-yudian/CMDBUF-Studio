@@ -1,0 +1,97 @@
+{
+  "status": "GENERATED",
+  "id": "coverage_replay",
+  "counts": {
+    "patterns": 3,
+    "segments": 3,
+    "cycles": 717,
+    "input_assumptions": 717,
+    "output_assertions": 717,
+    "terminal_covers": 3,
+    "transactions": 93
+  },
+  "formal_status": "NOT_RUN",
+  "dut_name": "项目基准 CMDBUF",
+  "sampling": "posedge 前一个 FSDB 时间刻度",
+  "patterns": [
+    {
+      "pattern": 0,
+      "name": "tc_backpressure_seed_1",
+      "fsdb_sha256": "53a19692adaab81325ea24ba83c9cc5fc06458a30ae98131fdfb7e79cf04556a",
+      "cycles": 239,
+      "segments": [
+        {
+          "reset_asserted_at": 0,
+          "reset_released_at": 1000,
+          "segment": 0,
+          "cycles": 239
+        }
+      ],
+      "coverage_case": {
+        "batch": "20261113_000235_regress_5d6bad",
+        "run": "tc_backpressure_seed_1",
+        "seed": 1,
+        "waveform": "replayed",
+        "replay_receipt": "/dev/shm/cmdbuf-coverage-view-20261113/results/coverage_formal_waves/coverage_replay/pattern_0/cases/tc_backpressure_seed_1/result.json"
+      }
+    },
+    {
+      "pattern": 1,
+      "name": "tc_same_id_seed_1",
+      "fsdb_sha256": "090366fafc9641b1f2867b46381dd9bdb674a96465d1ae85ab0d4f0032e10b37",
+      "cycles": 239,
+      "segments": [
+        {
+          "reset_asserted_at": 0,
+          "reset_released_at": 1000,
+          "segment": 0,
+          "cycles": 239
+        }
+      ],
+      "coverage_case": {
+        "batch": "20261113_000235_regress_5d6bad",
+        "run": "tc_same_id_seed_1",
+        "seed": 1,
+        "waveform": "replayed",
+        "replay_receipt": "/dev/shm/cmdbuf-coverage-view-20261113/results/coverage_formal_waves/coverage_replay/pattern_1/cases/tc_same_id_seed_1/result.json"
+      }
+    },
+    {
+      "pattern": 2,
+      "name": "tc_banks_seed_1",
+      "fsdb_sha256": "c6838bd0620ff5ebff7e519a2f3268e880c489a8802c052dca0e28694b741793",
+      "cycles": 239,
+      "segments": [
+        {
+          "reset_asserted_at": 0,
+          "reset_released_at": 1000,
+          "segment": 0,
+          "cycles": 239
+        }
+      ],
+      "coverage_case": {
+        "batch": "20261113_000234_regress_f41230",
+        "run": "tc_banks_seed_1",
+        "seed": 1,
+        "waveform": "replayed",
+        "replay_receipt": "/dev/shm/cmdbuf-coverage-view-20261113/results/coverage_formal_waves/coverage_replay/pattern_2/cases/tc_banks_seed_1/result.json"
+      }
+    }
+  ],
+  "files": [
+    "trace_properties.sv",
+    "formal_top.sv",
+    "files.f",
+    "samples.csv",
+    "transactions.json",
+    "trace.json",
+    "integration.json",
+    "Makefile",
+    "run_bmc.sby",
+    "run_cover.sby",
+    "slang.f",
+    "sby_properties.sv",
+    "sby_adaptation.json"
+  ],
+  "coverage_set": "20261113_000731_d3e8b82f"
+}

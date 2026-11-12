@@ -80,6 +80,7 @@ make wave REGRESSION=latest CASE=tc_random SEED=42
 make coverage REGRESSION=latest
 make coverage-details REGRESSION=latest
 make coverage-minimize REGRESSION=latest
+make coverage-formal COVERAGE_SET=analysis_id
 make wave-file FSDB=/absolute/path/to/input.fsdb
 make new-case CASE=my_read TEMPLATE=tc_user_example
 make dist
@@ -87,11 +88,13 @@ make dist
 
 `WAVES=0` 保留日志和代码覆盖率，该轮不生成 FSDB / VCD。GUI 运行中可查看实时 Make 日志，任务结束后保留日志与结果。
 
-在「结果与波形」选择历史批次，打开「覆盖率明细」。窗口按实例、模块和指标查找覆盖项，可查看行与语句、条件向量、分支结果、信号每位的两个翻转方向、已采集的 FSM 状态及转换，以及源码位置、命中状态和 VDB 中的计数。顶部使用 URG 原报告分数。源码按构建哈希校验，新构建归档对应 DUT 源码。窗口内还可浏览 URG 的层级、模块和用例报告。
+在「结果与波形」选择历史批次，打开「覆盖率明细」。顶部可直接切换指标，左侧选择实例或模块，右侧在源码行号旁标出已覆盖、部分覆盖、未覆盖和排除状态。点源码行，下方列出对应语句、条件向量、分支结果、每位翻转方向或 FSM 覆盖项。点「上一缺口」「下一缺口」或用 Shift+F8 / F8 跳转。「层级总览」展示 URG 的各项分数，双击指标跳到该范围的源码。源码按构建哈希校验，新构建归档对应 DUT 源码。
 
 点击「最小用例集」可选择一个或多个覆盖定义相同的历史批次。多选以所选批次的合并覆盖率为目标。工具从原来纳入覆盖率的通过用例读取逐例 VDB，以保留每个已命中的代码覆盖项为目标，按用例数求精确最小集。URG 会重新合并所选用例，再核对覆盖项与分数。选集可导出 CSV（批次、用例、seed 与重放命令），也可直接在 Verdi 打开。历史合并库可以单独看明细，筛选需要每个参与合并用例的原始 VDB。
 
-`make coverage-minimize REGRESSIONS=id1,id2 SOLVE_SECONDS=0` 计算多个批次，`0` 表示求解不限时。设定求解时限且未完成证明时，显示已复核候选及最优值上下界。VDB 分块读取并报告进度。终端输出分析编号后，可用 `make coverage-details COVERAGE_SET=编号` 再次打开该分析，或用 `make coverage COVERAGE_SET=编号` 打开对应 VDB。操作见说明 44。
+`make coverage-minimize REGRESSIONS=id1,id2 SOLVE_SECONDS=0` 计算多个批次，`0` 表示求解不限时。设定求解时限且未完成证明时，显示已复核候选及最优值上下界。VDB 分块读取并报告进度。终端输出分析编号后，可用 `make coverage-details COVERAGE_SET=编号` 再次打开该分析，或用 `make coverage COVERAGE_SET=编号` 打开对应 VDB。
+
+在选集结果页点「生成选集 Formal」。表中的 `pattern` 从 0 开始，逐个对应原批次、用例与 seed。已有 FSDB 直接使用，缺少 FSDB 的选中用例用原仿真器和归档输入重放，核对原轨迹后读取补出的波形。生成包使用历史构建中可校验的 DUT 源码和接线，包含逐拍输入 `assume`、输出 `assert` 和 pattern 对照。终端可用 `make coverage-formal COVERAGE_SET=编号`。操作见说明 45。
 
 `make wave`、`make wave-file` 及对应 GUI 按钮会自动加入 DUT 顶层全部已记录的信号，包括端口、内部信号和数组，并缩放到完整时间范围。信号列表直接来自 FSDB，更换 RTL 后无需维护固定信号名。外部 FSDB 可指定 `DUT_SCOPE=top.u_cmdbuf`；GUI 使用当前“实例”栏。加载后会核对完整清单，错误实例路径明确报错。操作补充见说明 40。
 
@@ -109,6 +112,7 @@ make dist
 
 ## 下载与说明
 
+- [源码覆盖浏览与选集 Formal PDF](documents/45_cmdbuf_coverage_source_formal_20261113.pdf)
 - [代码覆盖率与最小用例集 PDF](documents/44_cmdbuf_coverage_minimum_20261113.pdf)
 - [寄存待发计数与 SVA 编辑 PDF](documents/43_cmdbuf_pending_sva_20261112.pdf)
 - [接口约束与用例赋值 PDF](documents/42_cmdbuf_interface_constraints_20261112.pdf)
@@ -125,6 +129,8 @@ make dist
 说明 33 和 35 保留为历史版本，其浏览器界面、SSH 操作流程已由 36 替代。便携包可运行 `python3 simulation/vcs/portable.py --verify` 核对文件，修改工程后通过 `make dist` 重新打包。机器配置、许可证、EDA 二进制、编译缓存和既有结果均不分发。
 
 ## 验证记录
+
+[源码覆盖浏览与选集 Formal 验收](verification/coverage_source_formal_20261113/acceptance.json)记录实例和模块分数、源码行联动、缺口导航、带波形与补波形的选集导出，以及生成 SVA 的原生编译。
 
 [代码覆盖率与最小用例集验收](verification/coverage_minimum_20261113/acceptance.json)记录真实历史 VDB 读取、Tk 源码定位、跨批次精确求解、URG 复核和 Verdi 打开选集，以及一万候选的独立求解测试。
 

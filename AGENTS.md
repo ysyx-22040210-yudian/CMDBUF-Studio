@@ -13,7 +13,8 @@
 - 仿真检查模式登记于 `simulation/vcs/check_profiles.json`。新运行默认 transaction，旧计划缺少模式字段时保持 strict。通用事务模式按实际握手检查 pending 寄存递推。参考模型的待发数和精确 ready/req/R 调度仅在完整模式检查，报告必须列出 NOT_CHECKED；对应关系超限或事务未结束为 INCOMPLETE。不得将这些结果标为完整时序通过。
 - 用户可直接修改 `cmdbuf_rd_port_sva.sv` 或使用 Tk 的端口 SVA 编辑器。编译和回归按实际源码哈希构建与归档，自定义 SVA 结果标记所用版本。
 - 代码覆盖率明细直接读取已归档的 VDB，分数使用 URG 原报告。最小用例集仅从原来纳入覆盖率的通过用例中求解，要求保留所有已命中的代码覆盖项，重新合并核对逐项命中、分母与分数。跨批次须核对 DUT 和覆盖定义。求解中止或超时未证最优时不得称最小，原回归档案保持不变。
+- 覆盖选集通过 `make coverage-formal` 导出，一条选中记录对应一个 pattern。优先读取存档 FSDB。缺失波形时用原二进制和输入重放，并在单独目录保留重放证据。Formal 包使用可核验的历史 DUT 源码与例化，记录 pattern、原批次、用例和 seed。
 - 观察器保存沿前四态完整快照并显式刷新末帧；原生 SVA 保留自身采样和原表达式。`ENV_FATAL=0` 关闭可恢复环境检查和断言的立即终止，TC 赋值/时序错误记录后继续，仍判 FAIL、排除失败覆盖率；不修补输入、不改变 SVA 采样。`ENV_FATAL=1 ASSERT_FATAL=0` 仅关闭断言立即终止，环境检查仍中止。无效时钟、文件/程序/求解/驱动状态错误、watchdog 仍终止；用户在 TC、DUT 或 SVA 动作中写出的 $fatal/$stop/$finish 按其代码执行。环境错误归档于 environment_errors.jsonl，environment_runtime.json 区分执行完成与验证通过。重放保留原检查模式及两个 fatal 设置，旧计划缺少 env_fatal 时默认开启。
 - FSDB 转 Formal 使用目标设备的 Verdi NPI 直接解析，复位释放后逐上升沿提取，一份 FSDB 一个 pattern；多次复位使用 reset_segment，保留空拍、背压和完整周期号。真实复位初始化、原生 SVA 与执行引擎适配分别说明。
 - VCS 所有编译入口带 -lca -licqueue +vcs+lic+wait；simv 带 +vcs+lic+wait，URG 带 +urg+lic+wait。许可证等待不限时。TIMEOUT 只在 VPI cbStartOfSimulation 后计时，0 表示执行也不限时；旧归档没有回调时保留原二进制并关闭进程超时。不得用外层 subprocess 超时再次截断许可证排队。
-- 现有操作说明在 documents/32 至 44（36 为 Tk 本机版入口，37 为检查模式，38 为启动时序，39 为 License 等待与超时，40 为 Verdi 自动加载信号，41 为环境 fatal 总开关，42 为接口约束，43 为寄存待发计数与 SVA 编辑，44 为覆盖率明细与最小用例集，33/35 的浏览器与 SSH 界面属于历史版本）。verification/ 内已封存的输入、日志、SHA256 和结论保持不变；新增验证另建目录，明确版本和有限验证范围。
+- 现有操作说明在 documents/32 至 45（36 为 Tk 本机版入口，37 为检查模式，38 为启动时序，39 为 License 等待与超时，40 为 Verdi 自动加载信号，41 为环境 fatal 总开关，42 为接口约束，43 为寄存待发计数与 SVA 编辑，44 为覆盖率明细与最小用例集，45 为源码覆盖浏览与选集 Formal，33/35 的浏览器与 SSH 界面属于历史版本）。verification/ 内已封存的输入、日志、SHA256 和结论保持不变；新增验证另建目录，明确版本和有限验证范围。

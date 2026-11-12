@@ -1,0 +1,121 @@
+{
+  "status": "PASS",
+  "coverage_record": "/dev/shm/cmdbuf-coverage-view-20261113/results/coverage_analysis/20261113_005448_0672633c/result.json",
+  "source_line": 168,
+  "condition_vectors": [
+    [
+      "(arvalid && src_ready)",
+      "01",
+      "168",
+      "未覆盖",
+      "0/1",
+      "—"
+    ],
+    [
+      "(arvalid && src_ready)",
+      "10",
+      "168",
+      "未覆盖",
+      "0/1",
+      "—"
+    ],
+    [
+      "(arvalid && src_ready)",
+      "11",
+      "168",
+      "已覆盖",
+      "1/1",
+      "—"
+    ]
+  ],
+  "module_scores": [
+    "60.41%",
+    "88.84%",
+    "70.00%",
+    "70.69%",
+    "12.10%",
+    "—"
+  ],
+  "gap_navigation": true,
+  "source_click": true,
+  "compact_layout": true,
+  "hit_filter": true,
+  "formal_id": "20261113_005450_11a720cc",
+  "selected_patterns": [
+    {
+      "pattern": 0,
+      "name": "tc_backpressure_seed_1",
+      "fsdb_sha256": "e673d053252598e1a551f356c08c469f75078492a263dc67bc88cce5b8aa33c0",
+      "cycles": 239,
+      "segments": [
+        {
+          "reset_asserted_at": 0,
+          "reset_released_at": 1000,
+          "segment": 0,
+          "cycles": 239
+        }
+      ],
+      "coverage_case": {
+        "batch": "20261113_000235_regress_5d6bad",
+        "run": "tc_backpressure_seed_1",
+        "seed": 1,
+        "waveform": "replayed",
+        "replay_receipt": "/dev/shm/cmdbuf-coverage-view-20261113/results/coverage_formal_waves/20261113_005450_11a720cc/pattern_0/cases/tc_backpressure_seed_1/result.json"
+      }
+    },
+    {
+      "pattern": 1,
+      "name": "tc_same_id_seed_1",
+      "fsdb_sha256": "130a8d2d42fd2f9d5d5e7316acaea31ce2b77fa73a7a3fab29e708a24f57b949",
+      "cycles": 239,
+      "segments": [
+        {
+          "reset_asserted_at": 0,
+          "reset_released_at": 1000,
+          "segment": 0,
+          "cycles": 239
+        }
+      ],
+      "coverage_case": {
+        "batch": "20261113_000235_regress_5d6bad",
+        "run": "tc_same_id_seed_1",
+        "seed": 1,
+        "waveform": "replayed",
+        "replay_receipt": "/dev/shm/cmdbuf-coverage-view-20261113/results/coverage_formal_waves/20261113_005450_11a720cc/pattern_1/cases/tc_same_id_seed_1/result.json"
+      }
+    },
+    {
+      "pattern": 2,
+      "name": "tc_banks_seed_1",
+      "fsdb_sha256": "b4c8cd16233e4a2c326527b1512158843dff0a045c57a80b5b8ba713c33ebbf2",
+      "cycles": 239,
+      "segments": [
+        {
+          "reset_asserted_at": 0,
+          "reset_released_at": 1000,
+          "segment": 0,
+          "cycles": 239
+        }
+      ],
+      "coverage_case": {
+        "batch": "20261113_000234_regress_f41230",
+        "run": "tc_banks_seed_1",
+        "seed": 1,
+        "waveform": "replayed",
+        "replay_receipt": "/dev/shm/cmdbuf-coverage-view-20261113/results/coverage_formal_waves/20261113_005450_11a720cc/pattern_2/cases/tc_banks_seed_1/result.json"
+      }
+    }
+  ],
+  "counts": {
+    "patterns": 3,
+    "segments": 3,
+    "cycles": 717,
+    "input_assumptions": 717,
+    "output_assertions": 717,
+    "terminal_covers": 3,
+    "transactions": 93
+  },
+  "coverage_set": "20261113_000731_d3e8b82f",
+  "archived_coverage_unchanged": true,
+  "tk": 8.5
+}

@@ -1,0 +1,21 @@
+[options]
+mode bmc
+depth 241
+timeout 600
+
+[engines]
+abc bmc3
+
+[script]
+read_slang --top cmdbuf_fsdb_formal_top --no-implicit-memories -f slang.f
+prep -top cmdbuf_fsdb_formal_top
+async2sync
+dffunmap
+chformal -lower
+sim -clock clk -resetn rst_n -rstlen 1 -n 1 -w -vcd reset_initialization.vcd
+
+[files]
+rtl_snapshot
+sby_properties.sv
+formal_top.sv
+slang.f

@@ -1,0 +1,46 @@
+{
+  "id": "coverage_archived",
+  "coverage_set": "20261113_001551_5d0fc38f",
+  "max_edges": 100000,
+  "sources": [
+    {
+      "kind": "file",
+      "name": "tc_directed_seed_1",
+      "pattern": 0,
+      "path": "/dev/shm/cmdbuf-coverage-view-20261113/results/regressions/20261113_001549_regress_c14ad2/cases/tc_directed_seed_1/waves.fsdb",
+      "scope": "tb_cmdbuf_rd",
+      "coverage_case": {
+        "batch": "20261113_001549_regress_c14ad2",
+        "run": "tc_directed_seed_1",
+        "seed": 1,
+        "waveform": "archived"
+      }
+    },
+    {
+      "kind": "file",
+      "name": "tc_random_seed_17",
+      "pattern": 1,
+      "path": "/dev/shm/cmdbuf-coverage-view-20261113/results/regressions/20261113_001549_regress_c14ad2/cases/tc_random_seed_17/waves.fsdb",
+      "scope": "tb_cmdbuf_rd",
+      "coverage_case": {
+        "batch": "20261113_001549_regress_c14ad2",
+        "run": "tc_random_seed_17",
+        "seed": 17,
+        "waveform": "archived"
+      }
+    },
+    {
+      "kind": "file",
+      "name": "tc_random_seed_42",
+      "pattern": 2,
+      "path": "/dev/shm/cmdbuf-coverage-view-20261113/results/regressions/20261113_001549_regress_c14ad2/cases/tc_random_seed_42/waves.fsdb",
+      "scope": "tb_cmdbuf_rd",
+      "coverage_case": {
+        "batch": "20261113_001549_regress_c14ad2",
+        "run": "tc_random_seed_42",
+        "seed": 42,
+        "waveform": "archived"
+      }
+    }
+  ]
+}

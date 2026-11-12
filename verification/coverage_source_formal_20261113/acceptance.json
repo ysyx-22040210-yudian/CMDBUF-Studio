@@ -1,0 +1,56 @@
+{
+ "status": "PASS",
+ "validated_at": "2026-11-13 Asia/Shanghai",
+ "objective": "Tk source-level coverage browsing with gap navigation and coverage-selection Formal export using archived or replayed waveforms",
+ "toolchain": {
+  "VCS_URG": "O-2018.09-1",
+  "Verdi_NPI": "O-2018.09-SP2",
+  "Tk": 8.5,
+  "GUI_log": "gui_acceptance.log"
+ },
+ "environment": {
+  "host": "Linux VM (toolchain.sh site environment, xvfb-run 1540x1020x24)",
+  "unit_tests_linux": "Ran 70 tests, OK",
+  "unit_tests_windows": "Ran 70 tests, OK (skipped=3)",
+  "logs": ["unit_linux.log", "unit_windows.log", "smoke.log"]
+ },
+ "source_browser": {
+  "instance_score": "tb_cmdbuf_rd.dut.u_cmd COND 70.00%",
+  "module_scores": {
+   "cmdbuf_rd_cmd": ["60.41%", "88.84%", "70.00%", "70.69%", "12.10%"]
+  },
+  "metric_switch": "LINE->COND verified",
+  "source_line_click": "cmdbuf_rd_cmd.sv line 168 marked 部分覆盖 with condition vectors {01,10,11}, one covered bin",
+  "gap_navigation": "下一缺口/上一缺口 round-trip returns to the same file and line",
+  "overview_double_click": "层级总览 module row jumps to that scope in source view",
+  "screenshots": ["gui/coverage_source.png", "gui/coverage_compact.png", "gui/coverage_overview.png", "gui/coverage_formal_action.png"]
+ },
+ "selection_formal": {
+  "gui_record": "gui/acceptance.json",
+  "button": "生成选集 Formal",
+  "replayed_waves": {
+   "coverage_set": "20261113_000731_d3e8b82f",
+   "patterns": 3,
+   "cycles": 717,
+   "input_assumptions": 717,
+   "output_assertions": 717,
+   "runs": ["tc_backpressure_seed_1", "tc_same_id_seed_1", "tc_banks_seed_1"],
+   "receipts": "replay_evidence/pattern_*/cases/*/result.json",
+   "events_match_original": true,
+   "exact_replay_inputs": ["case.sv", "assigned.csv", "samples.csv", "tc_config.json", "clock_reset.csv"],
+   "archived_regression_bytes_unchanged": true,
+   "evidence": ["replay_export", "replay.log"]
+  },
+  "archived_waves": {
+   "coverage_set": "20261113_001551_5d0fc38f",
+   "patterns": 3,
+   "cycles": 247,
+   "input_assumptions": 247,
+   "output_assertions": 247,
+   "runs": ["tc_directed_seed_1", "tc_random_seed_17", "tc_random_seed_42"],
+   "waveform_source": "archived FSDB, no replay needed",
+   "evidence": ["archived_export", "archived.log"]
+  }
+ },
+ "scope_note": "Verified on the listed historical regressions and tool versions; does not claim arbitrary inputs or other EDA versions are covered."
+}

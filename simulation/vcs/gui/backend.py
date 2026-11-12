@@ -15,6 +15,7 @@ import formal_model
 import vcd
 
 eda, ROOT, STATE = model.eda, model.ROOT, model.STATE
+COVERAGE_JOBS = ('coverage_details', 'coverage_minimize', 'coverage_formal')
 
 
 def identifier(value):
@@ -130,7 +131,7 @@ class Jobs:
         for key in ('EDA_VM_HOST', 'EDA_VM_ROOT', 'EDA_SKIP_SYNC'):
             env.pop(key, None)
         self.log(job, '$ make '+' '.join(arguments)+'\n')
-        coverage_task = job['kind'] in ('coverage_details', 'coverage_minimize')
+        coverage_task = job['kind'] in COVERAGE_JOBS
         process = subprocess.Popen(cmd, cwd=str(ROOT), env=env, stdout=subprocess.PIPE,
                                    stderr=subprocess.STDOUT, universal_newlines=True, encoding='utf-8',
                                    errors='replace', start_new_session=coverage_task)
@@ -175,7 +176,7 @@ class Jobs:
     def cancel_coverage(self):
         with self.lock:
             job = self.current
-            if not job or job['state'] != 'RUNNING' or job['kind'] not in ('coverage_details', 'coverage_minimize'):
+            if not job or job['state'] != 'RUNNING' or job['kind'] not in COVERAGE_JOBS:
                 return
             job.update(cancel_requested=True, stage='正在取消覆盖率分析')
             self.stop_coverage_process()
@@ -191,7 +192,7 @@ class Jobs:
             if any(r['phase']=='compile' for r in rows):stage='VCS 编译 / 等待 License（不限时）'
             elif any(r['phase']=='coverage' for r in rows):stage='合并覆盖率 / 等待 License（不限时）'
             elif any(r['phase']=='legacy_simulation' for r in rows):stage='旧归档重放 / 等待 License（全程不限时）'
-            elif job.get('kind') not in ('coverage_details', 'coverage_minimize'):
+            elif job.get('kind') not in COVERAGE_JOBS or any(r['phase']=='simulation' for r in rows):
                 waiting=sum(r['state']=='WAITING_FOR_START' for r in rows)
                 running=sum(r['phase']=='simulation' and r['state']=='RUNNING' for r in rows)
                 stage=('仿真运行 %d · 等待 License / 启动 %d（等待不限时）'%(running,waiting)
@@ -205,7 +206,7 @@ class Jobs:
         with self.lock:
             self.require_idle()
             allowed = ('detect', 'compile', 'doctor', 'regress', 'coverage', 'wave', 'wave_file', 'wave_index',
-                       'fsdb_inspect', 'fsdb_formal', 'import_fsdb', 'import_rtl', 'coverage_details', 'coverage_minimize')
+                       'fsdb_inspect', 'fsdb_formal', 'import_fsdb', 'import_rtl') + COVERAGE_JOBS
             if kind not in allowed:
                 raise ValueError('未知任务')
             if kind not in ('detect', 'import_fsdb', 'import_rtl', 'wave_index'):
@@ -276,6 +277,13 @@ class Jobs:
                 self.invoke(job, arguments)
                 if not job.get('coverage_record'):
                     raise RuntimeError('覆盖率分析没有生成记录')
+            elif kind == 'coverage_formal':
+                analysis = identifier(payload['analysis'])
+                limit = formal_model.core.number(payload['max_edges'], '采样沿上限', 1, 1000000)
+                self.invoke(job, ['coverage-formal', 'COVERAGE_SET='+analysis, 'FORMAL_ID='+job['id'],
+                                  'MAX_EDGES='+str(limit)])
+                progress('校验选集 Formal 生成包')
+                self.update(job, formal_id=formal_model.fetch(model.state_read(), job['id']))
             elif kind == 'wave_file':
                 progress('打开本机 Verdi')
                 arguments = ['wave-file', 'FSDB='+str(Path(payload['path']).resolve())]

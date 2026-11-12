@@ -1,0 +1,94 @@
+{
+  "status": "GENERATED",
+  "id": "coverage_archived",
+  "counts": {
+    "patterns": 3,
+    "segments": 3,
+    "cycles": 247,
+    "input_assumptions": 247,
+    "output_assertions": 247,
+    "terminal_covers": 3,
+    "transactions": 138
+  },
+  "formal_status": "NOT_RUN",
+  "dut_name": "项目基准 CMDBUF",
+  "sampling": "posedge 前一个 FSDB 时间刻度",
+  "patterns": [
+    {
+      "pattern": 0,
+      "name": "tc_directed_seed_1",
+      "fsdb_sha256": "e4c76335aea60bd08dd472d67801160025d560d55ee864436a6413ed2f9bb7fa",
+      "cycles": 73,
+      "segments": [
+        {
+          "reset_asserted_at": 0,
+          "reset_released_at": 1000,
+          "segment": 0,
+          "cycles": 73
+        }
+      ],
+      "coverage_case": {
+        "batch": "20261113_001549_regress_c14ad2",
+        "run": "tc_directed_seed_1",
+        "seed": 1,
+        "waveform": "archived"
+      }
+    },
+    {
+      "pattern": 1,
+      "name": "tc_random_seed_17",
+      "fsdb_sha256": "1c09332ce324bface93e50631b0e2a96418afdd5e279027b8c7515819b16d544",
+      "cycles": 86,
+      "segments": [
+        {
+          "reset_asserted_at": 0,
+          "reset_released_at": 1000,
+          "segment": 0,
+          "cycles": 86
+        }
+      ],
+      "coverage_case": {
+        "batch": "20261113_001549_regress_c14ad2",
+        "run": "tc_random_seed_17",
+        "seed": 17,
+        "waveform": "archived"
+      }
+    },
+    {
+      "pattern": 2,
+      "name": "tc_random_seed_42",
+      "fsdb_sha256": "a0da9b334402b36886b29652dac64cfc8a2ef29d21010a64209b97675552ecaa",
+      "cycles": 88,
+      "segments": [
+        {
+          "reset_asserted_at": 0,
+          "reset_released_at": 1000,
+          "segment": 0,
+          "cycles": 88
+        }
+      ],
+      "coverage_case": {
+        "batch": "20261113_001549_regress_c14ad2",
+        "run": "tc_random_seed_42",
+        "seed": 42,
+        "waveform": "archived"
+      }
+    }
+  ],
+  "files": [
+    "trace_properties.sv",
+    "formal_top.sv",
+    "files.f",
+    "samples.csv",
+    "transactions.json",
+    "trace.json",
+    "integration.json",
+    "Makefile",
+    "run_bmc.sby",
+    "run_cover.sby",
+    "slang.f",
+    "sby_properties.sv",
+    "sby_adaptation.json"
+  ],
+  "coverage_set": "20261113_001551_5d0fc38f"
+}

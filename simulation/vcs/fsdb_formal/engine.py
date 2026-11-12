@@ -7,7 +7,6 @@ import os
 from pathlib import Path
 import re
 import shlex
-import shutil
 import sys
 import zipfile
 
@@ -15,7 +14,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
 import eda
 import dut_config
-import core
+from fsdb_formal import core
 
 
 def safe_id(value):
@@ -89,11 +88,15 @@ def inspection(directory, binary, source, env):
     return result
 
 
-def package_rtl(directory, cfg):
-    files = dut_config.source_files()
-    for path in files:
-        dest = directory/'rtl_snapshot'/path.relative_to(eda.ROOT)
-        dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(str(path),str(dest))
+def package_rtl(directory, cfg, archived_sources=None):
+    sources = archived_sources
+    if sources is None:
+        sources = {path.relative_to(eda.ROOT).as_posix(): path.read_bytes()
+                   for path in dut_config.source_files(cfg)}
+    for name, data in sources.items():
+        dest = directory/'rtl_snapshot'/name
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_bytes(data)
     names = ['rtl_snapshot/'+p for p in cfg['files']]
     includes = ['rtl_snapshot/'+p for p in cfg['include_dirs']]
     lines = ['+incdir+'+d for d in includes] + ['+define+'+d for d in cfg['defines']]
@@ -147,7 +150,7 @@ def sby_configs(directory, traces, names, includes, cfg):
     return depth
 
 
-def run(request, action):
+def run(request, action, archived_dut=None):
     identifier = safe_id(request['id'])
     directory = eda.OUT/'fsdb_formal'/identifier
     directory.mkdir(parents=True,exist_ok=False)
@@ -157,7 +160,7 @@ def run(request, action):
         inspection(directory,binary,request['sources'][0],env)
     else:
         sources = request.get('sources',[])
-        if not 1 <= len(sources) <= 100:
+        if not sources or (archived_dut is None and len(sources) > 100):
             raise ValueError('请选择 1..100 个 FSDB 用例')
         ids = [core.number(s['pattern'],'pattern') for s in sources]
         if len(set(ids)) != len(ids):raise ValueError('每个 FSDB 的 pattern 编号必须唯一')
@@ -175,9 +178,9 @@ def run(request, action):
             trace.update(fsdb_sha256=file_hash(wave),fsdb_bytes=wave.stat().st_size,mapping=mapping)
             traces.append(trace)
             print('NPI_PROGRESS %d/%d pattern=%d' % (i+1,len(sources),source['pattern']),flush=True)
-        cfg=dut_config.load()
+        cfg, archived_sources = archived_dut if archived_dut is not None else (dut_config.load(), None)
         counts=core.export_data(directory,traces,cfg['instance'])
-        names,includes=package_rtl(directory,cfg)
+        names,includes=package_rtl(directory,cfg,archived_sources)
         depth=sby_configs(directory,traces,names,includes,cfg)
         integration=dict(top='cmdbuf_fsdb_formal_top',native_checker='trace_properties.sv',filelist='files.f',
             selectors=['pattern','reset_segment'],sampling='posedge preponed; FSDB time T-1 tick',
@@ -190,7 +193,6 @@ def run(request, action):
             sby_requirements='Yosys with read_slang, SBY, ABC and Yices. SBY performs an explicit real-reset initialization; no reset-sequence assume or zinit.',
             depth=depth,scope='Recorded finite traces only; not an unbounded proof of the interface protocol.',
             dut=cfg)
-        eda.write_json(directory/'integration.json',integration)
         summary=dict(status='GENERATED',id=identifier,counts=counts,formal_status='NOT_RUN',dut_name=cfg['name'],
             sampling='posedge 前一个 FSDB 时间刻度',
             patterns=[dict(pattern=t['pattern'],name=t['name'],fsdb_sha256=t['fsdb_sha256'],
@@ -198,6 +200,12 @@ def run(request, action):
                            segments=[{k:v for k,v in s.items() if k!='rows'} for s in t['segments']]) for t in traces],
             files=['trace_properties.sv','formal_top.sv','files.f','samples.csv','transactions.json','trace.json',
                    'integration.json','Makefile','run_bmc.sby','run_cover.sby','slang.f','sby_properties.sv','sby_adaptation.json'])
+        if archived_dut is not None:
+            summary['coverage_set'] = integration['coverage_set'] = request['coverage_set']
+            integration['rtl_source'] = 'Verified archived DUT sources and instance wiring'
+            for pattern, trace in zip(summary['patterns'], traces):
+                pattern['coverage_case'] = trace['source']['coverage_case']
+        eda.write_json(directory/'integration.json',integration)
         eda.write_json(directory/'summary.json',summary)
     manifest={p.relative_to(directory).as_posix():eda.digest(p) for p in directory.rglob('*') if p.is_file()}
     eda.write_json(directory/'SHA256SUMS.json',manifest)

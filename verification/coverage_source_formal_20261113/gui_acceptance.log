@@ -1,0 +1,2 @@
+compact 1180 700 169 103 196 1
+Tk coverage + Formal PASS {'patterns': 3, 'segments': 3, 'cycles': 717, 'input_assumptions': 717, 'output_assertions': 717, 'terminal_covers': 3, 'transactions': 93}

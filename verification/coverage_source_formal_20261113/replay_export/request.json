@@ -1,0 +1,49 @@
+{
+  "id": "coverage_replay",
+  "coverage_set": "20261113_000731_d3e8b82f",
+  "max_edges": 100000,
+  "sources": [
+    {
+      "kind": "file",
+      "name": "tc_backpressure_seed_1",
+      "pattern": 0,
+      "path": "/dev/shm/cmdbuf-coverage-view-20261113/results/coverage_formal_waves/coverage_replay/pattern_0/cases/tc_backpressure_seed_1/waves.fsdb",
+      "scope": "tb_cmdbuf_rd",
+      "coverage_case": {
+        "batch": "20261113_000235_regress_5d6bad",
+        "run": "tc_backpressure_seed_1",
+        "seed": 1,
+        "waveform": "replayed",
+        "replay_receipt": "/dev/shm/cmdbuf-coverage-view-20261113/results/coverage_formal_waves/coverage_replay/pattern_0/cases/tc_backpressure_seed_1/result.json"
+      }
+    },
+    {
+      "kind": "file",
+      "name": "tc_same_id_seed_1",
+      "pattern": 1,
+      "path": "/dev/shm/cmdbuf-coverage-view-20261113/results/coverage_formal_waves/coverage_replay/pattern_1/cases/tc_same_id_seed_1/waves.fsdb",
+      "scope": "tb_cmdbuf_rd",
+      "coverage_case": {
+        "batch": "20261113_000235_regress_5d6bad",
+        "run": "tc_same_id_seed_1",
+        "seed": 1,
+        "waveform": "replayed",
+        "replay_receipt": "/dev/shm/cmdbuf-coverage-view-20261113/results/coverage_formal_waves/coverage_replay/pattern_1/cases/tc_same_id_seed_1/result.json"
+      }
+    },
+    {
+      "kind": "file",
+      "name": "tc_banks_seed_1",
+      "pattern": 2,
+      "path": "/dev/shm/cmdbuf-coverage-view-20261113/results/coverage_formal_waves/coverage_replay/pattern_2/cases/tc_banks_seed_1/waves.fsdb",
+      "scope": "tb_cmdbuf_rd",
+      "coverage_case": {
+        "batch": "20261113_000234_regress_f41230",
+        "run": "tc_banks_seed_1",
+        "seed": 1,
+        "waveform": "replayed",
+        "replay_receipt": "/dev/shm/cmdbuf-coverage-view-20261113/results/coverage_formal_waves/coverage_replay/pattern_2/cases/tc_banks_seed_1/result.json"
+      }
+    }
+  ]
+}
