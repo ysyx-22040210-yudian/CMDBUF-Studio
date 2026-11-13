@@ -4,9 +4,10 @@ import json
 from pathlib import Path
 from wavedrom_adapter import PORTS
 from check_policy import audit_flags
+from contracts import REVISION, expected_rresp
 
 
-def verify_execution(directory, program):
+def verify_execution(directory, program, contract_revision=REVISION):
     root=Path(directory); failures=[]
     generic, incomplete = audit_flags(root)
     cov={'E03_SRC':0,'E04_ARRESP':0,'E05_ZERO_READY':0,'E06_SUCCESS_BUSY':[0]*16,
@@ -83,7 +84,7 @@ def verify_execution(directory, program):
                         src=response.bit_length()-1
                         if not heads[src]: raise ValueError('T_ASSOCIATION_UNSOLICITED_R')
                         token=heads[src].pop(0)
-                        resp=3 if token['resp']==3 else token.get('error',0)
+                        resp=expected_rresp(token['resp'], token.get('error', 0), contract_revision)
                         if not generic and (not token['done'] or (o['rid'],o['r_port_id'],o['raddr'],o['rdata'],o['rresp'])!=(
                             token['id'],token['port'],token['addr']&7,token.get('data'),resp)):
                             raise ValueError('T_ASSOCIATION_FIFO_DATA')

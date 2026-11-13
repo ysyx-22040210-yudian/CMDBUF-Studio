@@ -1,0 +1,33 @@
+Note: Bumping stack limit from 8192 to unlimited Kbytes.
+URG Version O-2018.09-1 Copyright (c) 1991-2018 by Synopsys Inc.
+
+Warning-[URG-DNF] Directory not found
+  The directory '-dir' could not be found: No such file or directory.
+  Please verify all the directories given to the -dir option are valid.
+
+
+Warning-[URG-DNF] Directory not found
+  The directory '-dir' could not be found: No such file or directory.
+  Please verify all the directories given to the -dir option are valid.
+
+
+Warning-[URG-DNF] Directory not found
+  The directory '-dir' could not be found: No such file or directory.
+  Please verify all the directories given to the -dir option are valid.
+
+
+Warning-[URG-DNF] Directory not found
+  The directory '-dir' could not be found: No such file or directory.
+  Please verify all the directories given to the -dir option are valid.
+
+Load Failed: 
+Warning-[UCAPI-SNF] Shape Not Found
+  'Fsm' coverage shape is not there in the vdb 
+  '/dev/shm/cmdbuf-response-diagnostics-20261113/results/check_tests/20261113_115511_afff2b/integration/transaction_1/cases/tc_directed_seed_17/simv.vdb'.
+  Coverage of this metric will not be reported.
+  Please check if proper -cm option was used at compile time.
+
+Note-[URG-RDG] Report directory generated
+  Report written to directory 
+  /dev/shm/cmdbuf-response-diagnostics-20261113/results/check_tests/20261113_115511_afff2b/integration/coverage/urgReport
+

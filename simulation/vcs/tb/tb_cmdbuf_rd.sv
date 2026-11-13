@@ -38,6 +38,8 @@ module tb_cmdbuf_rd;
 
     string inject = "";
     wire [7:0] checked_rid = (inject == "rid" && |rvalid) ? (rid ^ 8'h01) : rid;
+    // Regression fault: expose the former parity response to both checkers.
+    wire [1:0] checked_rresp = (inject == "rresp_legacy" && |rvalid && rresp == 2'b10) ? 2'b01 : rresp;
     // Fault injection for early (lookahead) and late (extra register) counts.
     reg [3:0] delayed_pending;
     always @(posedge clk or negedge rst_n)
@@ -49,10 +51,12 @@ module tb_cmdbuf_rd;
     wire [3:0] checked_pending = inject == "pending_lookahead" ? lookahead_pending :
                                  inject == "pending_delayed" ? delayed_pending : pending_cnt;
     wire [2:0] checked_rvalid = (inject == "rvalid_unready" && !rready[0]) ? (rvalid | 3'b001) : rvalid;
-    cmdbuf_check_monitor monitor (.rid(checked_rid), .rvalid(checked_rvalid), .pending_cnt(checked_pending), .*);
+    cmdbuf_check_monitor monitor (.rid(checked_rid), .rvalid(checked_rvalid), .rresp(checked_rresp),
+                                  .pending_cnt(checked_pending), .*);
     // The canonical Formal properties remain unchanged. The simulation copy
     // selects common/full scope and sends sampled failures to the monitor.
-    cmdbuf_rd_port_sva checks (.rid(checked_rid), .rvalid(checked_rvalid), .pending_cnt(checked_pending), .*);
+    cmdbuf_rd_port_sva checks (.rid(checked_rid), .rvalid(checked_rvalid), .rresp(checked_rresp),
+                               .pending_cnt(checked_pending), .*);
 
     integer cycle = 0, seed = 1, accepted = 0, issued = 0, retired = 0;
     integer captured = 0, issue_failed = 0, ar_rejected = 0, ar_gated = 0;
@@ -190,7 +194,9 @@ module tb_cmdbuf_rd;
                           cycle, src, araddr, arid, ar_port_id, arresp);
                 accepted = accepted + 1;
             end
-            #1; // Let native concurrent assertions and NBA updates complete.
+            // Main-phase drive waits for Observed in the same time slot.
+            // Legacy sequence/solver drivers keep their original delay.
+            if (!sv_tc_mode) #1;
             cycle = cycle + 1;
         end
     endtask
@@ -272,7 +278,8 @@ module tb_cmdbuf_rd;
         $fdisplay(metrics, "\"aborted_unissued\":%0d,\"aborted_mem\":%0d,\"aborted_response\":%0d,\"pending_at_end\":%0d,", wave_aborted_unissued, wave_aborted_mem, wave_aborted_response, accepted-retired-wave_aborted);
         $fdisplay(metrics, "\"issue_failed\":%0d,\"ar_rejected\":%0d,\"ar_gated\":%0d,\"ar_only\":%0d,\"rw_only\":%0d,", issue_failed, ar_rejected, ar_gated, ar_only, rw_only);
         $fdisplay(metrics, "\"full\":%0d,\"full_reuse\":%0d,\"ready_zero\":%0d,\"head_blocked\":%0d,", full, full_reuse, ready_zero, head_blocked);
-        $fdisplay(metrics, "\"src0\":%0d,\"src1\":%0d,\"src2\":%0d,\"resp0\":%0d,\"resp1\":%0d,\"resp3\":%0d,", src_hits[0], src_hits[1], src_hits[2], resp_hits[0], resp_hits[1], resp_hits[3]);
+        $fdisplay(metrics, "\"src0\":%0d,\"src1\":%0d,\"src2\":%0d,\"resp0\":%0d,\"resp1\":%0d,\"resp2\":%0d,\"resp3\":%0d,",
+            src_hits[0], src_hits[1], src_hits[2], resp_hits[0], resp_hits[1], resp_hits[2], resp_hits[3]);
         $fwrite(metrics, "\"bank_half_hits\":[");
         for (n = 0; n < 16; n = n + 1) $fwrite(metrics, "%s%0d", n ? "," : "", bank_hits[n]);
         $fdisplay(metrics, "]}");

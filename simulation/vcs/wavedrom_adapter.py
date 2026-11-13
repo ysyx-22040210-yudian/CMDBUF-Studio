@@ -10,6 +10,7 @@ import io
 import json
 import re
 from pathlib import Path
+from contracts import REVISION
 
 PORTS = [('clk', 1), ('rst_n', 1), ('arvalid', 1), ('src', 2), ('araddr', 18),
          ('arid', 8), ('ar_port_id', 5), ('arresp', 2), ('rready', 3),
@@ -208,11 +209,11 @@ def sample_csv(plan):
     return stream.getvalue()
 
 
-def verify_execution(cfg, directory, program):
+def verify_execution(cfg, directory, program, contract_revision=REVISION):
     """Verify all scheduled levels and every sampled edge against simulator logs."""
     if program.startswith(PROTOCOL_PROGRAM_PREFIXES):
         from protocol_adapter import verify_execution as verify_protocol
-        return verify_protocol(cfg, directory, program)
+        return verify_protocol(cfg, directory, program, contract_revision=contract_revision)
     # Audit the archived instruction stream, including on replay. A later edit
     # to the WaveJSON compiler must not change the intent of a saved run.
     rows = program.splitlines()

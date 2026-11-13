@@ -1,14 +1,31 @@
-// main_phase drives once AFTER each posedge. A separate posedge sampler checks
-// what the DUT actually consumed. Clock starts high at t=0; reset releases at 1 ns.
+// Main-phase stimulus is driven after sampling, in the rising edge's time slot.
+// A separate posedge observer records the inputs consumed by the DUT.
 `include "main_phase_base.svh"
 `include "sv_tc_factory.svh"
 reg sv_tc_mode=0, main_clock_start=0, main_clock_stop=0, main_have_inputs=0;
 integer sv_frames=0, sv_body_slots=0, sv_active=0;
 integer main_samples, main_assignments, main_clock_trace=0, main_stage=0;
+integer main_sample_cycle, main_sample_phase;
+logic [127:0] main_sample_issue_data;
+logic main_sample_issue_error;
 integer main_low_ns=5, main_high_ns=5, main_pause_ns=0, main_current_high_ns=5;
-longint main_edge_ps=0;
+longint main_edge_ps=-1, main_ready_ps=-1;
+bit main_settle_marker=0;
 string main_name;
 cmdbuf_main_tc main_tc;
+
+// Input #0 is sampled in Observed, after DUT NBA and combinational evaluation.
+clocking main_edge_cb @(posedge clk);
+    input #0 rst_n;
+endclocking
+clocking main_feedback_cb @(main_settle_marker);
+    input #0 arready, req, arb_addr;
+endclocking
+
+task automatic main_wait_for_feedback;
+    main_settle_marker <= ~main_settle_marker;
+    @(main_feedback_cb);
+endtask
 
 initial begin : main_clock
     integer lo,hi,pause_ns;
@@ -40,9 +57,14 @@ task automatic main_fail(input string reason, input bit unrecoverable=0);
 endtask
 
 task automatic main_begin(input cmdbuf_main_tc t);
+    longint now_ps;
     begin
+        now_ps=$realtime/1ps;
+        // Let the active-region observer identify the edge, then wait past NBA.
+        #0;
+        if (now_ps==main_edge_ps && now_ps!=main_ready_ps) @(main_edge_cb);
         if (main_have_inputs || main_stage!=0 || t.cycle!=sv_frames ||
-            $realtime*1000.0 != main_edge_ps+1000) main_fail("MAIN_ONCE_AFTER_POSEDGE");
+            now_ps!=main_edge_ps) main_fail("MAIN_ONCE_AFTER_POSEDGE");
         main_stage=1;
     end
 endtask
@@ -64,7 +86,8 @@ endtask
 
 task automatic main_context(input cmdbuf_main_tc t);
     begin
-        if (main_stage!=2 || $realtime*1000.0 != main_edge_ps+2000) main_fail("MAIN_CONTEXT_TIMING");
+        if (main_stage!=2 || $realtime/1ps != main_edge_ps) main_fail("MAIN_CONTEXT_TIMING");
+        main_wait_for_feedback();
         if ($isunknown({arready,req}) || ((|req) && $isunknown(arb_addr))) main_fail("MAIN_UNKNOWN_CONTEXT");
         t.edge_count=cycle; t.arready=arready; t.req=req; t.arb_addr=arb_addr;
         t.mem_due=due_data.exists(cycle);
@@ -85,7 +108,7 @@ endtask
 
 task automatic main_record_sample;
     $fdisplay(main_samples,"%0d,%0d,%0d,%0.0f,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%h,%h,%h,%h,%h,%h,%h,%h,%h,%h",
-        main_tc.cycle,cycle,main_tc.phase,$realtime*1000.0,clk,rst_n,arvalid,
+        main_sample_cycle,cycle,main_sample_phase,$realtime*1000.0,clk,rst_n,arvalid,
         src,araddr,arid,ar_port_id,arresp,rready,ar_rd_gnt,
         rw_rd_gnt,rd_mem_status[0],rd_mem_status[1],rd_mem_status[2],rd_mem_status[3],rd_mem_status[4],rd_mem_status[5],
         rd_mem_status[6],rd_mem_status[7],mem_rdata,pc_err,arready,req,arb_addr,
@@ -94,7 +117,7 @@ endtask
 
 task automatic main_drive(input cmdbuf_main_tc t);
     begin
-        if (main_stage!=3 || $realtime*1000.0 != main_edge_ps+2000) main_fail("MAIN_DRIVE_ORDER");
+        if (main_stage!=3 || $realtime/1ps != main_edge_ps) main_fail("MAIN_DRIVE_ORDER");
         // Validate, never repair. Legal values are assigned by the TC's if blocks.
         if ($isunknown({t.rst_n,t.rready,t.arvalid,t.src,t.araddr,t.arid,t.ar_port_id,
             t.arresp,t.ar_rd_gnt,t.rw_rd_gnt,t.mem_rdata,t.pc_err,t.issue_data,t.issue_error})) main_fail("MAIN_P_KNOWN");
@@ -117,10 +140,12 @@ task automatic main_drive(input cmdbuf_main_tc t);
         ar_rd_gnt=t.ar_rd_gnt; rw_rd_gnt=t.rw_rd_gnt;
         for (integer b=0;b<8;b++) rd_mem_status[b]=t.rd_mem_status[b];
         mem_rdata=t.mem_rdata; pc_err=t.pc_err;
+        main_sample_cycle=t.cycle; main_sample_phase=t.phase;
+        main_sample_issue_data=t.issue_data; main_sample_issue_error=t.issue_error;
         sv_frames++;
         if (t.phase==0) sv_body_slots++;
         main_have_inputs=1; main_stage=0;
-        #0.001;
+        main_wait_for_feedback();
         if (inject=="main_post") arid=arid ^ 8'h01;
         if ({rst_n,rready,arvalid,src,araddr,arid,ar_port_id,arresp,ar_rd_gnt,rw_rd_gnt,mem_rdata,pc_err} !==
             {t.rst_n,t.rready,t.arvalid,t.src,t.araddr,t.arid,t.ar_port_id,t.arresp,t.ar_rd_gnt,t.rw_rd_gnt,t.mem_rdata,t.pc_err})
@@ -141,25 +166,27 @@ endtask
 
 // This observer is an independent posedge process. It never drives any input.
 always @(posedge clk) if (sv_tc_mode && main_clock_start) begin
-    main_edge_ps=$realtime*1000.0;
+    main_edge_ps=$realtime/1ps;
     if (main_have_inputs) begin
         main_record_sample();
         main_have_inputs=0;
         if (rst_n) begin
             sv_active++;
-            observe_active(main_tc.issue_error,main_tc.issue_data);
-        end else begin #1; cycle++; end
+            observe_active(main_sample_issue_error,main_sample_issue_data);
+        end else cycle++;
     end else if (cycle==0 && main_edge_ps==10000 && rst_n===1'b1) begin
         // First normal edge is idle and launches the first main_phase assignment.
         $display("MAIN_BOOTSTRAP time_ps=%0d rst_n=1",main_edge_ps);
-        #0.001; cycle++;
+        cycle++;
     end else begin
         main_fail("MAIN_MISSING_ASSIGNMENT");
         // Continue observing actual held pins; do not invent a missing assignment.
-        if (rst_n) observe_active(main_tc.issue_error,main_tc.issue_data);
-        else begin #1; cycle++; end
+        if (rst_n) observe_active(main_sample_issue_error,main_sample_issue_data);
+        else cycle++;
     end
 end
+
+always @(main_edge_cb) if (sv_tc_mode && main_clock_start) main_ready_ps=$realtime/1ps;
 
 task automatic main_tail(input integer tail_phase);
     begin
@@ -167,7 +194,7 @@ task automatic main_tail(input integer tail_phase);
         main_tc.rst_n=1; main_tc.rready=7;
         main_tc.clk_low_ns=5; main_tc.clk_high_ns=5; main_tc.clk_pause_ns=0;
         main_tc.drive_control();
-        #1; main_tc.sample_context();
+        main_tc.sample_context();
         main_tc.arvalid=0; main_tc.src=3; main_tc.arresp=0;
         main_tc.araddr=0; main_tc.arid=0; main_tc.ar_port_id=0;
         main_tc.ar_rd_gnt=main_tc.req; main_tc.rw_rd_gnt=255;
@@ -197,7 +224,7 @@ task automatic run_sv_tc;
         rng=process::self(); rng.srandom(seed);
         config_fd=$fopen("tc_config.json","w");
         if (!config_fd) env_fail("MAIN_ARCHIVE_OPEN","tc_config.json",1);
-        $fdisplay(config_fd,"{\"name\":\"%s\",\"seed\":%0d,\"num_cycles\":%0d,\"bootstrap_edges\":1,\"startup\":{\"clock_initial\":1,\"reset_release_ps\":1000,\"first_posedge_ps\":10000}}",main_name,seed,main_tc.num_cycles);
+        $fdisplay(config_fd,"{\"name\":\"%s\",\"seed\":%0d,\"num_cycles\":%0d,\"bootstrap_edges\":1,\"drive_offset_ps\":0,\"startup\":{\"clock_initial\":1,\"reset_release_ps\":1000,\"first_posedge_ps\":10000}}",main_name,seed,main_tc.num_cycles);
         $fclose(config_fd);
         main_samples=$fopen("samples.csv","w"); main_assignments=$fopen("assigned.csv","w");
         if (!main_samples || !main_assignments) env_fail("MAIN_ARCHIVE_OPEN","samples.csv or assigned.csv",1);
@@ -216,20 +243,22 @@ task automatic run_sv_tc;
         main_tc.main_phase();
         if (sv_body_slots!=main_tc.num_cycles) main_fail("MAIN_BODY_COUNT");
         // Consume the final body assignment before examining the drain condition.
-        @(posedge clk); #1;
+        @(main_edge_cb);
         for (integer k=0;k<drain_limit &&
              (accepted!=retired+wave_aborted || due_data.num()!=0 || req!=0 || (monitor.strict_mode && pending_cnt!=0));k++) begin
             main_tail(1);
-            @(posedge clk); #1;
+            @(main_edge_cb);
         end
         if (accepted!=retired+wave_aborted || accepted!=issued+wave_aborted_unissued ||
             issued!=captured+wave_aborted_mem || captured!=retired+wave_aborted_response ||
             due_data.num()!=0 || req!=0 || (monitor.strict_mode && pending_cnt!=0)) drain_failure("MAIN_DRAIN_FAILED");
         repeat (8) begin
             main_tail(2);
-            @(posedge clk); #1;
+            @(main_edge_cb);
         end
-        #0.001; main_clock_stop=1;
+        // Settle the last monitor sample before flushing it in finish_checks.
+        main_wait_for_feedback();
+        main_clock_stop=1;
         $fclose(main_samples); $fclose(main_assignments); $fclose(main_clock_trace); main_clock_trace=0;
         $display("MAIN_PHASE_DONE case=%s assignments=%0d edges=%0d active_edges=%0d resets=%0d cancelled=%0d",
             main_name,sv_frames,cycle,sv_active,wave_resets,wave_aborted);

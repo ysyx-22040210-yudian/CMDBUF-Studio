@@ -322,7 +322,7 @@ module cmdbuf_rd_port_sva (
 
     // 【A_COMPARE_RRESP 详解】
     // 检查前提：真实 R 握手，状态必须对应 rsp_e 保存的上游状态和 MEM pc_err。
-    // 优先级：原 arresp=11 则返回 11；否则 pc_err=1 返回 01；否则返回 00。
+    // 原 arresp=11 时返回 11，否则按捕获的 pc_err 返回 10（校验异常）或 00（正常）。
     // 地址越界与校验错同时存在时必须为 11，不能被较晚捕获的校验错覆盖。
     // [REF_MODEL] R 错误状态来自预期事务；地址越界优先于奇偶校验异常。
     // [REF_MODEL] [OUTPUT_COMPARE: rresp] 下方直接比较本端口实际值与模型期望值。

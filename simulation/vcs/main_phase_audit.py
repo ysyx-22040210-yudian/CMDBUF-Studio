@@ -4,10 +4,10 @@ import json
 from pathlib import Path
 from wavedrom_adapter import PORTS
 from check_policy import audit_flags
-from contracts import check_interface
+from contracts import REVISION, check_interface, expected_rresp
 
 
-def verify_execution(directory, program, current_contract=True):
+def verify_execution(directory, program, current_contract=True, contract_revision=REVISION):
     root=Path(directory); failures=[]
     generic, incomplete = audit_flags(root)
     cov={'E03_SRC':0,'E04_ARRESP':0,'E05_ZERO_READY':0,'E06_SUCCESS_BUSY':[0]*16,
@@ -24,6 +24,8 @@ def verify_execution(directory, program, current_contract=True):
             raise ValueError('MAIN_CONFIG_ARCHIVE')
         if int(tokens[3]) and config['num_cycles']!=int(tokens[3]): raise ValueError('MAIN_CYCLES_OVERRIDE')
         fixed_startup='startup' in config
+        drive_offset_ps=config.get('drive_offset_ps', 2000)
+        if drive_offset_ps not in (0, 2000): raise ValueError('MAIN_DRIVE_OFFSET')
         if fixed_startup:
             with (root/'clock_reset.csv').open() as f: clock_reset=list(csv.DictReader(f))
             transitions=[(int(row['time_ps']),row['clk'],row['rst_n']) for row in clock_reset]
@@ -54,7 +56,8 @@ def verify_execution(directory, program, current_contract=True):
             lo=int(q['clk_low_ns']);hi=int(q['clk_high_ns']);pause=int(q['clk_pause_ns'])
             if lo<3 or hi<3 or pause<0: raise ValueError('MAIN_CLOCK_CONFIG')
             launch=int(q['launch_ps']);sample_time=int(s['time_ps'])
-            if launch!=previous_sample or int(q['time_ps'])!=launch+2000: raise ValueError('MAIN_AFTER_POSEDGE')
+            if launch!=previous_sample or int(q['time_ps'])!=launch+drive_offset_ps:
+                raise ValueError('MAIN_AFTER_POSEDGE')
             expected=launch+1000*(previous_high+lo+pause)
             if sample_time!=expected or int(q['expected_sample_ps'])!=expected: raise ValueError('MAIN_CLOCK_TIME')
             previous_sample=sample_time;previous_high=hi
@@ -117,7 +120,7 @@ def verify_execution(directory, program, current_contract=True):
                         src=response.bit_length()-1
                         if not heads[src]: raise ValueError('T_ASSOCIATION_UNSOLICITED_R')
                         token=heads[src].pop(0)
-                        resp=3 if token['resp']==3 else token.get('error',0)
+                        resp=expected_rresp(token['resp'], token.get('error', 0), contract_revision)
                         if not generic and (not token['done'] or (o['rid'],o['r_port_id'],o['raddr'],o['rdata'],o['rresp'])!=(
                             token['id'],token['port'],token['addr']&7,token.get('data'),resp)):
                             raise ValueError('T_ASSOCIATION_FIFO_DATA')
@@ -136,6 +139,7 @@ def verify_execution(directory, program, current_contract=True):
         failures.append('main_phase audit cycle {} edge {}: {}'.format(locals().get('slot','?'),locals().get('edge','?'),exc))
     report=dict(status='FAIL' if failures else 'PASS',failures=failures,phases=phases,coverage=cov,
                 startup_policy='clock_high_reset_1ns' if locals().get('fixed_startup') else 'legacy_archived_tc',
+                drive_offset_ps=locals().get('drive_offset_ps'),
                 transaction_association='check_scope.json hypothesis monitor' if generic else 'baseline FIFO audit',
                 body_histograms=hist,method='Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO',
                 distribution='Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim')

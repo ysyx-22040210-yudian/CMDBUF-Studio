@@ -1,0 +1,111 @@
+[package-verify]
+PACKAGE PASS: 199 files
+
+[transaction]
+SVA baseline 719ecad54c1ac6267c3a12dcaee06a1c037c8683b79876c6b577b40450a3d08f
+BATCH 20261113_130353_regress_00be3b TOTAL 46
+PASS tc_retry_seed_1 (0.41s)
+PASS tc_backpressure_seed_1 (0.41s)
+PASS tc_directed_seed_1 (0.41s)
+PASS tc_same_id_seed_1 (0.46s)
+PASS tc_banks_seed_1 (0.41s)
+PASS tc_reset_seed_1 (0.41s)
+PASS tc_random_seed_1 (1.87s)
+PASS tc_random_seed_2 (1.93s)
+PASS tc_random_seed_4 (1.88s)
+PASS tc_random_seed_3 (2.06s)
+PASS tc_random_seed_7 (1.76s)
+PASS tc_random_seed_8 (1.76s)
+PASS tc_random_seed_5 (1.87s)
+PASS tc_random_seed_6 (1.89s)
+PASS tc_random_seed_10 (1.76s)
+PASS tc_random_seed_12 (1.86s)
+PASS tc_random_seed_9 (1.95s)
+PASS tc_random_seed_11 (1.82s)
+PASS tc_random_seed_13 (1.81s)
+PASS tc_random_seed_15 (1.86s)
+PASS tc_random_seed_16 (1.88s)
+PASS tc_random_seed_14 (1.86s)
+PASS tc_random_seed_20 (1.61s)
+PASS tc_random_seed_17 (1.61s)
+PASS tc_random_seed_18 (1.78s)
+PASS tc_random_seed_19 (1.77s)
+PASS tc_random_seed_21 (1.66s)
+PASS tc_random_seed_23 (1.66s)
+PASS tc_random_seed_22 (1.79s)
+PASS tc_random_seed_24 (1.82s)
+PASS tc_random_seed_26 (1.61s)
+PASS tc_random_seed_28 (1.69s)
+PASS tc_random_seed_27 (1.73s)
+PASS tc_random_seed_25 (1.70s)
+PASS tc_random_seed_29 (1.61s)
+PASS tc_random_seed_30 (1.69s)
+PASS tc_random_seed_32 (1.71s)
+PASS tc_random_seed_31 (1.68s)
+PASS tc_random_seed_33 (1.76s)
+PASS tc_random_seed_34 (1.84s)
+PASS tc_random_seed_35 (1.90s)
+PASS tc_random_seed_36 (1.85s)
+PASS tc_random_seed_39 (1.86s)
+PASS tc_random_seed_40 (1.89s)
+PASS tc_random_seed_37 (1.94s)
+PASS tc_random_seed_38 (1.95s)
+REPORT <stress-root>/results/regressions/20261113_130353_regress_00be3b/index.html
+
+[strict]
+BATCH 20261113_130436_regress_550fdc TOTAL 32
+PASS tc_random_seed_43 (1.76s)
+PASS tc_random_seed_41 (1.90s)
+PASS tc_random_seed_44 (1.94s)
+PASS tc_random_seed_42 (1.91s)
+PASS tc_random_seed_47 (1.76s)
+PASS tc_random_seed_45 (1.87s)
+PASS tc_random_seed_48 (1.95s)
+PASS tc_random_seed_46 (1.85s)
+PASS tc_random_seed_49 (1.86s)
+PASS tc_random_seed_52 (1.94s)
+PASS tc_random_seed_50 (1.90s)
+PASS tc_random_seed_51 (1.90s)
+PASS tc_random_seed_53 (1.76s)
+PASS tc_random_seed_55 (1.82s)
+PASS tc_random_seed_54 (1.83s)
+PASS tc_random_seed_56 (1.84s)
+PASS tc_random_seed_58 (1.71s)
+PASS tc_random_seed_59 (1.71s)
+PASS tc_random_seed_57 (1.94s)
+PASS tc_random_seed_60 (1.84s)
+PASS tc_random_seed_63 (1.71s)
+PASS tc_random_seed_62 (1.80s)
+PASS tc_random_seed_61 (1.85s)
+PASS tc_random_seed_64 (1.79s)
+PASS tc_random_seed_68 (1.81s)
+PASS tc_random_seed_67 (1.90s)
+PASS tc_random_seed_66 (1.92s)
+PASS tc_random_seed_65 (1.92s)
+PASS tc_random_seed_69 (1.86s)
+PASS tc_random_seed_71 (1.95s)
+PASS tc_random_seed_70 (1.95s)
+PASS tc_random_seed_72 (1.95s)
+REPORT <stress-root>/results/regressions/20261113_130436_regress_550fdc/index.html
+
+[wave_transaction]
+BATCH 20261113_130510_run_145581 TOTAL 1
+PASS tc_random_seed_42 (2.96s)
+REPORT <stress-root>/results/regressions/20261113_130510_run_145581/index.html
+
+[wave_strict]
+BATCH 20261113_130515_run_e4930d TOTAL 1
+PASS tc_random_seed_17 (2.56s)
+REPORT <stress-root>/results/regressions/20261113_130515_run_e4930d/index.html
+
+[wave_pause]
+BATCH 20261113_130519_run_813a08 TOTAL 1
+PASS tc_reset_seed_1 (0.40s)
+REPORT <stress-root>/results/regressions/20261113_130519_run_813a08/index.html
+
+[formal]
+NPI_FORMAL stress_long_waves TOTAL 2
+NPI_PROGRESS 1/2 pattern=0
+NPI_PROGRESS 2/2 pattern=1
+NPI_PACKAGE <stress-root>/results/fsdb_formal/stress_long_waves/package.zip
+

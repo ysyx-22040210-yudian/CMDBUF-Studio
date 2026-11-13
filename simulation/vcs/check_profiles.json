@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "protocol": "CMDBUF 20261112.2",
+  "protocol": "CMDBUF 20261113",
   "new_run_default": "transaction",
   "legacy_plan_default": "strict",
   "native_properties": "formal/protocol_20261021/cmdbuf_rd_port_sva.sv",
@@ -50,6 +50,13 @@
     "on_limit": "INCOMPLETE; do not choose or silently discard hypotheses",
     "response_order": "AR acceptance order within each source",
     "response_latency": "MEM capture edge or later; no exact scheduling or maximum deadline asserted",
+    "response_code": "RRESP is 3 for saved ARRESP=3, otherwise 2 for captured PC_ERR=1, otherwise 0.",
+    "response_failure_diagnostics": {
+      "label": "T_R_DATA_RESP_OR_EARLY",
+      "reasons": ["NO_ACCEPTED_HEAD", "NOT_ISSUED", "MEM_NOT_CAPTURED", "DATA_MISMATCH", "RESP_MISMATCH", "DATA_AND_RESP_MISMATCH", "NO_COMMON_ASSOCIATION"],
+      "evidence": "Original sampled edge/time, accepted transaction and edge, actual payload, all hypothesis counts and up to four expected-value examples. Included in assertions.jsonl, SVA_FAIL and CHECK_STOP.",
+      "scope": "Diagnostics preserve the original N+4 capture, source order, error priority, hypothesis search and verdict. Marginal data/response matches must belong to the same hypothesis."
+    },
     "not_checked": ["reference-model pending count comparison", "exact arready reservation policy", "five-entry issue window and exact retry/refill cycle", "cross-source RR", "earliest N+5 response"],
     "rules": {
       "P_KNOWN_FRAME": "Preserve four-state values; reject unknown active inputs/control/status and valid payload.",

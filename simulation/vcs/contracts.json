@@ -3,14 +3,15 @@
   "sources": {
     "rtl/files.f": "f8f3f50bce55a8a0301d7c3cba42e7b70139eaafd5a1f57515b8c893f327b4ec",
     "rtl/cmdbuf_rd.sv": "40b51383c8ea103d0ced9f8b449f6308328cc7fde26008c440879046d9d8133c",
-    "rtl/cmdbuf_rd_cmd.sv": "01b840ab7541a3d16a7f62c8534854c64e96c91af3e165e971e22fb236a4b29a",
+    "rtl/cmdbuf_rd_cmd.sv": "d6907daf129e9fcabdf4131841fc95fd4e6b47d84be6b7f3b39bbc37cce14627",
     "rtl/cmdbuf_rd_otb.sv": "ec3ba652df117f804ee74c0f25f6a5aedded7e9c86be6c827146bf7c3b0021d2",
-    "formal/protocol_20261021/cmdbuf_rd_port_sva.sv": "9d42cf8dd8d20ee38d5c72ca6e81b6c227a6c45c2149cb3cf09dd2941331bd95",
-    "formal/protocol_20261021/cmdbuf_rd_reference_model.svh": "92d27bb5ba28dc7116fe5b2646b3586ea5a79c0e4f6a9d5847fbe3b0181b9d23",
-    "formal/protocol_20261021/cmdbuf_rd_xau_order_model.svh": "5976a220a2bf6f1c8e16960352aacc5f29981a0f0441200e463ba71baa070c6b",
+    "formal/protocol_20261021/cmdbuf_rd_port_sva.sv": "719ecad54c1ac6267c3a12dcaee06a1c037c8683b79876c6b577b40450a3d08f",
+    "formal/protocol_20261021/cmdbuf_rd_reference_model.svh": "06eb9b29b477531e6df7b1a8fe93e515d2a3cd2b0616447e1b02c4537564c23d",
+    "formal/protocol_20261021/cmdbuf_rd_xau_order_model.svh": "c4114b0f8921fac2d140e5d812c192498790b2d719fb3919daca8b668179026b",
     "docs/timing/protocol_corrections_20261021.json": "96eda718989eca6c7d3035cc2819280634f6cfff384f8483bd857524672cf13f",
     "docs/timing/interface_constraints_20261112.json": "b7c7e0e3a517e6e32674c40379ef7dc1263f930ed166b20344c1dff85bab48fd",
-    "docs/timing/pending_register_20261112.json": "dea6c5fd7e508c38628bd82115153a63366ef05b296af87d8139f4e8eb92a893"
+    "docs/timing/pending_register_20261112.json": "dea6c5fd7e508c38628bd82115153a63366ef05b296af87d8139f4e8eb92a893",
+    "docs/timing/parity_response_20261113.json": "9353546fbc7e77277ec5166f1107fc4102ed04ed3080a9594422ab2c74a195c6"
   },
   "rules": [
     {
@@ -108,13 +109,13 @@
       "id": "T_ASSOCIATION",
       "kind": "temporal_environment",
       "instances": 1,
-      "source": "docs/timing/protocol_corrections_20261021.json",
-      "trigger": "accepted request -> issue -> MEM -> source-ordered R",
+      "source": "docs/timing/parity_response_20261113.json",
+      "trigger": "accepted request -> issue -> MEM -> source-ordered R; RRESP is 3 for ARRESP=3, otherwise 2 for captured PC_ERR=1, otherwise 0",
       "reads": "accepted public AR,public issue,R handshake",
       "writes": "environment transaction records only",
       "driver": "main_phase_driver.svh; random: fresh 128-bit future payload per successful ISSUE; protocol: request token",
       "monitor": "main_phase_audit.py + sv_audit.py + independent Python source FIFO/issue calendar + native SVA",
-      "validation": "duplicate IDs/addresses; mixed sources; errors; incorrect RID injection",
+      "validation": "duplicate IDs/addresses, mixed sources, incorrect RID, and all saved ARRESP/captured PC_ERR combinations",
       "status": "implemented"
     },
     {
@@ -125,7 +126,7 @@
       "trigger": "literal clocks; reset cancels outstanding environment work",
       "reads": "clk,rst_n,queue,calendar",
       "writes": "environment queues/calendar only",
-      "driver": "main_phase after posedge: explicit reset and low/high/pause durations; one reset bootstrap edge",
+      "driver": "main_phase drives in the posedge time slot after DUT updates; explicit low/high/pause durations; one reset bootstrap edge",
       "monitor": "main_phase_audit.py + sv_audit.py + fixed-input audit + cancellation conservation",
       "validation": "reset while clock stopped; pending queue and in-flight reset; no hidden clocks",
       "status": "implemented"
@@ -183,5 +184,5 @@
       "status": "implemented"
     }
   ],
-  "revision": "20261112.2"
+  "revision": "20261113"
 }

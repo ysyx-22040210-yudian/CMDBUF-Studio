@@ -7,6 +7,21 @@ HERE = Path(__file__).resolve().parent
 TC_DIR = HERE / 'tc'
 
 
+def align_template_delays(code):
+    """Migrate only the two standalone waits used by older main_phase templates."""
+    from sva_source import mask_sv
+    clean = mask_sv(code)
+    waits = (
+        r'@\s*\(\s*posedge\s+clk\s*\)\s*;\s*(#\s*1\s*;)(?=\s*begin_cycle\s*\()',
+        r'\bdrive_control\s*\(\s*\)\s*;\s*(#\s*1\s*;)(?=\s*sample_context\s*\()',
+    )
+    for pattern in waits:
+        for match in re.finditer(pattern, clean):
+            a, b = match.span(1)
+            code = code[:a] + re.sub(r'[^\r\n]', ' ', code[a:b]) + code[b:]
+    return code
+
+
 def load(path):
     path = Path(path)
     if not re.fullmatch(r'[A-Za-z][A-Za-z0-9_]*', path.stem):
@@ -38,7 +53,12 @@ def generate_factory(destination):
     for c in entries:
         p = archive / (c['name'] + '.sv')
         p.write_text(c['source'], encoding='utf-8')
-        lines.append('`include "{}"'.format(p.as_posix()))
+        compiled_source = align_template_delays(c['source'])
+        compiled = p
+        if compiled_source != c['source']:
+            compiled = directory / (c['name'] + '.sv')
+            compiled.write_text(compiled_source, encoding='utf-8')
+        lines.append('`include "{}"'.format(compiled.as_posix()))
     lines += ['function automatic cmdbuf_main_tc create_sv_tc(input string name);']
     for c in entries:
         lines.append('    {} obj_{};'.format(c['name'], c['name']))
@@ -52,7 +72,7 @@ def generate_factory(destination):
 
 def new_case(name, template):
     source = load(template)
-    code = re.sub(r'\bclass\s+'+source['name']+r'\b', 'class '+name, source['source'], count=1)
+    code = re.sub(r'\bclass\s+'+source['name']+r'\b', 'class '+name, align_template_delays(source['source']), count=1)
     target = TC_DIR / (name+'.sv')
     with target.open('x',encoding='utf-8') as stream: stream.write(code)
     return target
@@ -62,9 +82,10 @@ def explain(cfg):
     return ('SV main_phase TC: {name}\n'
       '用户在 main_phase 中，每次 @(posedge clk) 后用 = 赋值，用 if/else 实现输入约束。\n'
       '时钟初始为 1；rst_n 在 0..1 ns 为 0，1 ns 释放后始终为 1。\n'
-      '默认模板先 #1 等待 DUT 本拍更新；驱动 rready 后再 #1 读取稳定反馈。\n'
+      'begin_cycle() 等待本沿 DUT 更新，sample_context() 等待 rready 的组合反馈稳定。两步都不增加仿真时间。\n'
       'AR/grant/Bank/MEM 的本次赋值由下一次上升沿采样，不回写到刚结束的采样沿。\n'
-      'cycle 是赋值编号，从 0 开始；默认 10 ns 的首次上升沿启动 cycle=0，12 ns 驱动，20 ns 采样。\n'
+      'cycle 从 0 开始；默认首次上升沿 10 ns 启动并驱动 cycle=0，20 ns 采样。\n'
+      '当前模板在 begin_cycle() 和 sample_context() 前无需 #1。旧模板的这两处固定等待在编译副本中迁移。\n'
       'TC 中 rst_n 保持 1；再次拉低会报 MAIN_RESET_FIXED_HIGH_AFTER_1NS，不会被静默改写。\n'
       'clk_low_ns/high_ns 控制时钟，clk_pause_ns 延长下一段低电平，保持每上升沿执行一次。\n'
       '缺失约束或赋了非法值会报错；driver 只检查并复制 TC 值，不隐藏修补输入。\n'

@@ -191,7 +191,7 @@ def memory_pattern(token,addr,seed):
     return (d<<96)|(c<<64)|(b<<32)|a
 
 
-def verify_execution(cfg,directory,program):
+def verify_execution(cfg,directory,program,contract_revision=contracts.REVISION):
     """Independent Python queue/calendar/FIFO monitor of the archived inputs."""
     p=read_program(program); root=Path(directory); errors=[]
     def read(name):
@@ -287,7 +287,8 @@ def verify_execution(cfg,directory,program):
                 if not heads[x]: raise ValueError('T_ASSOCIATION unexpected R')
                 r=heads[x].pop(0)
                 if not r.get('done') or r is arriving: raise ValueError('T_ASSOCIATION premature R')
-                expected=(r['id'],r['port'],r['addr']&7,r['data'],3 if r['resp']==3 else r['pc_err'])
+                expected=(r['id'],r['port'],r['addr']&7,r['data'],
+                          contracts.expected_rresp(r['resp'], r['pc_err'], contract_revision))
                 actual=tuple(out[n] for n in ['rid','r_port_id','raddr','rdata','rresp'])
                 if actual!=expected: raise ValueError('T_ASSOCIATION R payload/order')
                 live.remove(r); cov['T_ASSOCIATION']+=1

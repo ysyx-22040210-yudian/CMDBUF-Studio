@@ -1,0 +1,47 @@
+{
+  "status": "GENERATED",
+  "id": "aligned_wave_trace",
+  "counts": {
+    "patterns": 1,
+    "segments": 1,
+    "cycles": 276,
+    "input_assumptions": 276,
+    "output_assertions": 276,
+    "terminal_covers": 1,
+    "transactions": 198
+  },
+  "formal_status": "NOT_RUN",
+  "dut_name": "项目基准 CMDBUF",
+  "sampling": "posedge 前一个 FSDB 时间刻度",
+  "patterns": [
+    {
+      "pattern": 0,
+      "name": "aligned-random",
+      "fsdb_sha256": "02022b27427c0031af16ac7cafa4fb0b0bf6693ae8b0ec9c1d0ee3702d21a423",
+      "cycles": 276,
+      "segments": [
+        {
+          "reset_asserted_at": 0,
+          "reset_released_at": 1000,
+          "segment": 0,
+          "cycles": 276
+        }
+      ]
+    }
+  ],
+  "files": [
+    "trace_properties.sv",
+    "formal_top.sv",
+    "files.f",
+    "samples.csv",
+    "transactions.json",
+    "trace.json",
+    "integration.json",
+    "Makefile",
+    "run_bmc.sby",
+    "run_cover.sby",
+    "slang.f",
+    "sby_properties.sv",
+    "sby_adaptation.json"
+  ]
+}

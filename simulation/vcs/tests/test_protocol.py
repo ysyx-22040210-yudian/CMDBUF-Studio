@@ -16,6 +16,15 @@ class ProtocolTests(unittest.TestCase):
         self.assertEqual(13,a['assumption_instances'])
         self.assertEqual(6,len([r for r in a['rules'] if r['kind']=='environment_assumption']))
 
+    def test_response_encoding_follows_the_archived_contract(self):
+        for revision, parity_code in [(contracts.BASELINE_REVISION, 1), (contracts.INTERFACE_REVISION, 1),
+                                      (contracts.PENDING_REVISION, 1), (contracts.REVISION, 2)]:
+            with self.subTest(revision=revision):
+                self.assertEqual(0, contracts.expected_rresp(0, 0, revision))
+                self.assertEqual(parity_code, contracts.expected_rresp(0, 1, revision))
+                self.assertEqual(3, contracts.expected_rresp(3, 0, revision))
+                self.assertEqual(3, contracts.expected_rresp(3, 1, revision))
+
     def test_new_or_changed_contract_cannot_silently_run(self):
         c=json.loads((contracts.HERE/'contracts.json').read_text(encoding='utf-8'))
         for change in ('hash','new','missing','status'):

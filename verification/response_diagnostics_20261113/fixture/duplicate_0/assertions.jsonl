@@ -1,0 +1,2 @@
+{"label":"T_R_HAS_PENDING","edge":9,"time_ps":85000,"detail":"source=0"}
+{"label":"T_R_DATA_RESP_OR_EARLY","edge":9,"time_ps":85000,"detail":"reason=NO_ACCEPTED_HEAD source=0 actual_data=00000000000000000000000012345678 actual_resp=0"}

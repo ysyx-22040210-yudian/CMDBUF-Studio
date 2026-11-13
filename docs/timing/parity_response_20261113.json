@@ -1,0 +1,15 @@
+{
+  "revision": "20261113",
+  "previous_revision": "20261112.2",
+  "mem_capture_delay_edges": 4,
+  "arresp_on_acceptance": [0, 3],
+  "response_uses": "Saved ARRESP and PC_ERR captured with MEM_RDATA for the same transaction at issue N+4.",
+  "rresp_by_priority": [
+    {"saved_arresp": 3, "captured_pc_err": "either", "rresp": 3},
+    {"saved_arresp": 0, "captured_pc_err": 1, "rresp": 2},
+    {"saved_arresp": 0, "captured_pc_err": 0, "rresp": 0}
+  ],
+  "previous_parity_error_rresp": 1,
+  "historical_replay": "Use the archived simulator and its contract revision to audit the original response encoding.",
+  "validation": "make check-test JOBS=2"
+}

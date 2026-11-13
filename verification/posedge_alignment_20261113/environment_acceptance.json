@@ -1,0 +1,1308 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "name": "tc_directed_seed_17_verdict",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "tc_directed_seed_17_completion",
+      "passed": true,
+      "detail": {
+        "version": 1,
+        "env_fatal": 0,
+        "failures": 0,
+        "unrecoverable": 0,
+        "finished": 1
+      }
+    },
+    {
+      "name": "tc_directed_seed_17_body_cycles",
+      "passed": true,
+      "detail": 64
+    },
+    {
+      "name": "tc_directed_seed_17_tail",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "tc_directed_seed_17_archive_integrity",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "tc_directed_seed_17_waves",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "tc_random_seed_17_verdict",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "tc_random_seed_17_completion",
+      "passed": true,
+      "detail": {
+        "version": 1,
+        "env_fatal": 0,
+        "failures": 0,
+        "unrecoverable": 0,
+        "finished": 1
+      }
+    },
+    {
+      "name": "tc_random_seed_17_body_cycles",
+      "passed": true,
+      "detail": 64
+    },
+    {
+      "name": "tc_random_seed_17_tail",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "tc_random_seed_17_archive_integrity",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "tc_random_seed_42_verdict",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "tc_random_seed_42_completion",
+      "passed": true,
+      "detail": {
+        "version": 1,
+        "env_fatal": 0,
+        "failures": 0,
+        "unrecoverable": 0,
+        "finished": 1
+      }
+    },
+    {
+      "name": "tc_random_seed_42_body_cycles",
+      "passed": true,
+      "detail": 64
+    },
+    {
+      "name": "tc_random_seed_42_tail",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "tc_random_seed_42_archive_integrity",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "main_bad_src_seed_1_verdict",
+      "passed": true,
+      "detail": [
+        "verification monitor did not finish",
+        "1 environment errors; see environment_errors.jsonl",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle 2 edge 4: MAIN_BODY_COUNT"
+      ]
+    },
+    {
+      "name": "main_bad_src_seed_1_completion",
+      "passed": true,
+      "detail": {
+        "version": 1,
+        "env_fatal": 1,
+        "failures": 1,
+        "unrecoverable": 0,
+        "finished": 0
+      }
+    },
+    {
+      "name": "main_bad_src_seed_1_diagnostic",
+      "passed": true,
+      "detail": "MAIN_E03_SRC"
+    },
+    {
+      "name": "main_bad_src_seed_1_waves",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "main_bad_src_seed_2_verdict",
+      "passed": true,
+      "detail": [
+        "1 environment errors; see environment_errors.jsonl",
+        "1 assertion failures; see assertions.jsonl",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle 3 edge 4: E03_SRC"
+      ]
+    },
+    {
+      "name": "main_bad_src_seed_2_completion",
+      "passed": true,
+      "detail": {
+        "version": 1,
+        "env_fatal": 0,
+        "failures": 1,
+        "unrecoverable": 0,
+        "finished": 1
+      }
+    },
+    {
+      "name": "main_bad_src_seed_2_diagnostic",
+      "passed": true,
+      "detail": "MAIN_E03_SRC"
+    },
+    {
+      "name": "main_bad_src_seed_2_body_cycles",
+      "passed": true,
+      "detail": 16
+    },
+    {
+      "name": "main_bad_src_seed_2_tail",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "main_bad_src_seed_2_archive_integrity",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "main_bad_src_seed_2_waves",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "invalid_input_not_repaired",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "master_disables_assertion_abort",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "main_bad_src_seed_3_verdict",
+      "passed": true,
+      "detail": [
+        "verification monitor did not finish",
+        "1 environment errors; see environment_errors.jsonl",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle 2 edge 4: MAIN_BODY_COUNT"
+      ]
+    },
+    {
+      "name": "main_bad_src_seed_3_completion",
+      "passed": true,
+      "detail": {
+        "version": 1,
+        "env_fatal": 1,
+        "failures": 1,
+        "unrecoverable": 0,
+        "finished": 0
+      }
+    },
+    {
+      "name": "main_bad_src_seed_3_diagnostic",
+      "passed": true,
+      "detail": "MAIN_E03_SRC"
+    },
+    {
+      "name": "main_bad_resp_seed_1_verdict",
+      "passed": true,
+      "detail": [
+        "verification monitor did not finish",
+        "1 environment errors; see environment_errors.jsonl",
+        "TC/DUT $stop interrupted simulation; outside ENV_FATAL control",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle ? edge ?: MAIN_ARCHIVE_COUNT"
+      ]
+    },
+    {
+      "name": "main_bad_resp_seed_1_completion",
+      "passed": true,
+      "detail": {
+        "version": 1,
+        "env_fatal": 0,
+        "failures": 1,
+        "unrecoverable": 0,
+        "finished": 0
+      }
+    },
+    {
+      "name": "main_bad_resp_seed_1_diagnostic",
+      "passed": true,
+      "detail": "MAIN_E04_ARRESP"
+    },
+    {
+      "name": "dut_stop_not_silently_suppressed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "main_env_multiple_seed_1_verdict",
+      "passed": true,
+      "detail": [
+        "6 environment errors; see environment_errors.jsonl",
+        "6 assertion failures; see assertions.jsonl",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle 3 edge 4: E03_SRC"
+      ]
+    },
+    {
+      "name": "main_env_multiple_seed_1_completion",
+      "passed": true,
+      "detail": {
+        "version": 1,
+        "env_fatal": 0,
+        "failures": 6,
+        "unrecoverable": 0,
+        "finished": 1
+      }
+    },
+    {
+      "name": "main_env_multiple_seed_1_diagnostic",
+      "passed": true,
+      "detail": "MAIN_E04_ARRESP"
+    },
+    {
+      "name": "main_env_multiple_seed_1_body_cycles",
+      "passed": true,
+      "detail": 16
+    },
+    {
+      "name": "main_env_multiple_seed_1_tail",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "main_env_multiple_seed_1_archive_integrity",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "all_repeated_environment_errors_archived",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "main_bad_busy_seed_1_verdict",
+      "passed": true,
+      "detail": [
+        "1 environment errors; see environment_errors.jsonl",
+        "1 assertion failures; see assertions.jsonl",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle 5 edge 6: E06_SUCCESS_BUSY"
+      ]
+    },
+    {
+      "name": "main_bad_busy_seed_1_completion",
+      "passed": true,
+      "detail": {
+        "version": 1,
+        "env_fatal": 0,
+        "failures": 1,
+        "unrecoverable": 0,
+        "finished": 1
+      }
+    },
+    {
+      "name": "main_bad_busy_seed_1_diagnostic",
+      "passed": true,
+      "detail": "MAIN_E06_SUCCESS_BUSY"
+    },
+    {
+      "name": "main_bad_busy_seed_1_body_cycles",
+      "passed": true,
+      "detail": 16
+    },
+    {
+      "name": "main_bad_busy_seed_1_tail",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "main_bad_busy_seed_1_archive_integrity",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "main_bad_mem_seed_1_verdict",
+      "passed": true,
+      "detail": [
+        "1 environment errors; see environment_errors.jsonl",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle 9 edge 10: T_MEM4"
+      ]
+    },
+    {
+      "name": "main_bad_mem_seed_1_completion",
+      "passed": true,
+      "detail": {
+        "version": 1,
+        "env_fatal": 0,
+        "failures": 1,
+        "unrecoverable": 0,
+        "finished": 1
+      }
+    },
+    {
+      "name": "main_bad_mem_seed_1_diagnostic",
+      "passed": true,
+      "detail": "MAIN_T_MEM4"
+    },
+    {
+      "name": "main_bad_mem_seed_1_body_cycles",
+      "passed": true,
+      "detail": 16
+    },
+    {
+      "name": "main_bad_mem_seed_1_tail",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "main_bad_mem_seed_1_archive_integrity",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "main_bad_unknown_seed_1_verdict",
+      "passed": true,
+      "detail": [
+        "16 environment errors; see environment_errors.jsonl",
+        "16 assertion failures; see assertions.jsonl",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle 0 edge 1: P_KNOWN arid"
+      ]
+    },
+    {
+      "name": "main_bad_unknown_seed_1_completion",
+      "passed": true,
+      "detail": {
+        "version": 1,
+        "env_fatal": 0,
+        "failures": 16,
+        "unrecoverable": 0,
+        "finished": 1
+      }
+    },
+    {
+      "name": "main_bad_unknown_seed_1_diagnostic",
+      "passed": true,
+      "detail": "MAIN_P_KNOWN"
+    },
+    {
+      "name": "main_bad_unknown_seed_1_body_cycles",
+      "passed": true,
+      "detail": 16
+    },
+    {
+      "name": "main_bad_unknown_seed_1_tail",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "main_bad_unknown_seed_1_archive_integrity",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "main_bad_missing_seed_1_verdict",
+      "passed": true,
+      "detail": [
+        "16 environment errors; see environment_errors.jsonl",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle ? edge ?: MAIN_CLOCK_RISING_TRACE"
+      ]
+    },
+    {
+      "name": "main_bad_missing_seed_1_completion",
+      "passed": true,
+      "detail": {
+        "version": 1,
+        "env_fatal": 0,
+        "failures": 16,
+        "unrecoverable": 0,
+        "finished": 1
+      }
+    },
+    {
+      "name": "main_bad_missing_seed_1_diagnostic",
+      "passed": true,
+      "detail": "MAIN_MISSING_ASSIGNMENT"
+    },
+    {
+      "name": "main_bad_missing_seed_1_tail",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "main_bad_missing_seed_1_archive_integrity",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "main_bad_duplicate_seed_1_verdict",
+      "passed": true,
+      "detail": [
+        "32 environment errors; see environment_errors.jsonl",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle ? edge ?: MAIN_ARCHIVE_COUNT"
+      ]
+    },
+    {
+      "name": "main_bad_duplicate_seed_1_completion",
+      "passed": true,
+      "detail": {
+        "version": 1,
+        "env_fatal": 0,
+        "failures": 32,
+        "unrecoverable": 0,
+        "finished": 1
+      }
+    },
+    {
+      "name": "main_bad_duplicate_seed_1_diagnostic",
+      "passed": true,
+      "detail": "MAIN_DRIVE_ORDER"
+    },
+    {
+      "name": "main_bad_duplicate_seed_1_tail",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "main_bad_duplicate_seed_1_archive_integrity",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "main_bad_race_seed_1_verdict",
+      "passed": true,
+      "detail": [
+        "48 environment errors; see environment_errors.jsonl",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle 0 edge 1: MAIN_AFTER_POSEDGE"
+      ]
+    },
+    {
+      "name": "main_bad_race_seed_1_completion",
+      "passed": true,
+      "detail": {
+        "version": 1,
+        "env_fatal": 0,
+        "failures": 48,
+        "unrecoverable": 0,
+        "finished": 1
+      }
+    },
+    {
+      "name": "main_bad_race_seed_1_diagnostic",
+      "passed": true,
+      "detail": "MAIN_ONCE_AFTER_POSEDGE"
+    },
+    {
+      "name": "main_bad_race_seed_1_body_cycles",
+      "passed": true,
+      "detail": 16
+    },
+    {
+      "name": "main_bad_race_seed_1_tail",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "main_bad_race_seed_1_archive_integrity",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "main_bad_stale_context_seed_1_verdict",
+      "passed": true,
+      "detail": [
+        "32 environment errors; see environment_errors.jsonl",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle 0 edge 1: MAIN_AFTER_POSEDGE"
+      ]
+    },
+    {
+      "name": "main_bad_stale_context_seed_1_completion",
+      "passed": true,
+      "detail": {
+        "version": 1,
+        "env_fatal": 0,
+        "failures": 32,
+        "unrecoverable": 0,
+        "finished": 1
+      }
+    },
+    {
+      "name": "main_bad_stale_context_seed_1_diagnostic",
+      "passed": true,
+      "detail": "MAIN_CONTEXT_TIMING"
+    },
+    {
+      "name": "main_bad_stale_context_seed_1_body_cycles",
+      "passed": true,
+      "detail": 16
+    },
+    {
+      "name": "main_bad_stale_context_seed_1_tail",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "main_bad_stale_context_seed_1_archive_integrity",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "main_bad_reset_seed_1_verdict",
+      "passed": true,
+      "detail": [
+        "32 environment errors; see environment_errors.jsonl",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle 0 edge 1: MAIN_PIN_MISMATCH rst_n"
+      ]
+    },
+    {
+      "name": "main_bad_reset_seed_1_completion",
+      "passed": true,
+      "detail": {
+        "version": 1,
+        "env_fatal": 0,
+        "failures": 32,
+        "unrecoverable": 0,
+        "finished": 1
+      }
+    },
+    {
+      "name": "main_bad_reset_seed_1_diagnostic",
+      "passed": true,
+      "detail": "MAIN_RESET_FIXED_HIGH_AFTER_1NS"
+    },
+    {
+      "name": "main_bad_reset_seed_1_body_cycles",
+      "passed": true,
+      "detail": 16
+    },
+    {
+      "name": "main_bad_reset_seed_1_tail",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "main_bad_reset_seed_1_archive_integrity",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "main_bad_zero_ready_seed_1_verdict",
+      "passed": true,
+      "detail": [
+        "8 environment errors; see environment_errors.jsonl",
+        "8 assertion failures; see assertions.jsonl",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle 12 edge 13: E05_ZERO_READY"
+      ]
+    },
+    {
+      "name": "main_bad_zero_ready_seed_1_completion",
+      "passed": true,
+      "detail": {
+        "version": 1,
+        "env_fatal": 0,
+        "failures": 8,
+        "unrecoverable": 0,
+        "finished": 1
+      }
+    },
+    {
+      "name": "main_bad_zero_ready_seed_1_diagnostic",
+      "passed": true,
+      "detail": "MAIN_E05_ZERO_READY"
+    },
+    {
+      "name": "main_bad_zero_ready_seed_1_body_cycles",
+      "passed": true,
+      "detail": 16
+    },
+    {
+      "name": "main_bad_zero_ready_seed_1_tail",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "main_bad_zero_ready_seed_1_archive_integrity",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "main_bad_control_seed_1_verdict",
+      "passed": true,
+      "detail": [
+        "verification monitor did not finish",
+        "1 environment errors; see environment_errors.jsonl",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle ? edge ?: MAIN_ARCHIVE_COUNT"
+      ]
+    },
+    {
+      "name": "main_bad_control_seed_1_completion",
+      "passed": true,
+      "detail": {
+        "version": 1,
+        "env_fatal": 0,
+        "failures": 1,
+        "unrecoverable": 1,
+        "finished": 0
+      }
+    },
+    {
+      "name": "main_bad_control_seed_1_diagnostic",
+      "passed": true,
+      "detail": "MAIN_CONTROL_INVALID"
+    },
+    {
+      "name": "main_bad_control_seed_1_unrecoverable",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "tc_directed_seed_1_rid_verdict",
+      "passed": true,
+      "detail": [
+        "1 assertion failures; see assertions.jsonl",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error"
+      ]
+    },
+    {
+      "name": "tc_directed_seed_1_rid_completion",
+      "passed": true,
+      "detail": {
+        "version": 1,
+        "env_fatal": 0,
+        "failures": 0,
+        "unrecoverable": 0,
+        "finished": 1
+      }
+    },
+    {
+      "name": "tc_directed_seed_1_rid_diagnostic",
+      "passed": true,
+      "detail": "T_R_ID_ORDER"
+    },
+    {
+      "name": "tc_directed_seed_1_rid_body_cycles",
+      "passed": true,
+      "detail": 64
+    },
+    {
+      "name": "tc_directed_seed_1_rid_tail",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "tc_directed_seed_1_rid_archive_integrity",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "tc_directed_seed_2_rid_verdict",
+      "passed": true,
+      "detail": [
+        "1 assertion failures; see assertions.jsonl",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error"
+      ]
+    },
+    {
+      "name": "tc_directed_seed_2_rid_completion",
+      "passed": true,
+      "detail": {
+        "version": 1,
+        "env_fatal": 1,
+        "failures": 0,
+        "unrecoverable": 0,
+        "finished": 1
+      }
+    },
+    {
+      "name": "tc_directed_seed_2_rid_diagnostic",
+      "passed": true,
+      "detail": "T_R_ID_ORDER"
+    },
+    {
+      "name": "tc_directed_seed_2_rid_body_cycles",
+      "passed": true,
+      "detail": 64
+    },
+    {
+      "name": "tc_directed_seed_2_rid_tail",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "tc_directed_seed_2_rid_archive_integrity",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "main_bad_mem_seed_2_verdict",
+      "passed": true,
+      "detail": [
+        "1 environment errors; see environment_errors.jsonl",
+        "missing TEST_PASS",
+        "simulator/assertion/environment error",
+        "main_phase audit cycle 9 edge 10: T_MEM4"
+      ]
+    },
+    {
+      "name": "main_bad_mem_seed_2_completion",
+      "passed": true,
+      "detail": {
+        "version": 1,
+        "env_fatal": 0,
+        "failures": 1,
+        "unrecoverable": 0,
+        "finished": 1
+      }
+    },
+    {
+      "name": "main_bad_mem_seed_2_diagnostic",
+      "passed": true,
+      "detail": "MAIN_T_MEM4"
+    },
+    {
+      "name": "main_bad_mem_seed_2_body_cycles",
+      "passed": true,
+      "detail": 16
+    },
+    {
+      "name": "main_bad_mem_seed_2_tail",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "main_bad_mem_seed_2_archive_integrity",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "coverage_includes_only_valid_passes",
+      "passed": true,
+      "detail": {
+        "status": "PASS",
+        "exit_code": 0,
+        "seconds": 0.353,
+        "database": "/dev/shm/cmdbuf-posedge-20261113.S9SBQG/final-results/regressions/20261113_125019_environment_2b6564/coverage/merged.vdb",
+        "report": "/dev/shm/cmdbuf-posedge-20261113.S9SBQG/final-results/regressions/20261113_125019_environment_2b6564/coverage/urgReport/dashboard.html",
+        "metrics_percent": {
+          "SCORE": "82.18",
+          "LINE": "89.47",
+          "COND": "81.48",
+          "TOGGLE": "82.75",
+          "FSM": "--",
+          "BRANCH": "75.00"
+        },
+        "code_metrics_present": true,
+        "metrics_requested": "line+cond+branch+tgl+fsm",
+        "included": [
+          "tc_directed_seed_17",
+          "tc_random_seed_17",
+          "tc_random_seed_42"
+        ],
+        "excluded": [
+          "main_bad_src_seed_1",
+          "main_bad_src_seed_2",
+          "main_bad_src_seed_3",
+          "main_bad_resp_seed_1",
+          "main_env_multiple_seed_1",
+          "main_bad_busy_seed_1",
+          "main_bad_mem_seed_1",
+          "main_bad_unknown_seed_1",
+          "main_bad_missing_seed_1",
+          "main_bad_duplicate_seed_1",
+          "main_bad_race_seed_1",
+          "main_bad_stale_context_seed_1",
+          "main_bad_reset_seed_1",
+          "main_bad_zero_ready_seed_1",
+          "main_bad_control_seed_1",
+          "tc_directed_seed_1_rid",
+          "tc_directed_seed_2_rid",
+          "main_bad_mem_seed_2"
+        ]
+      }
+    }
+  ],
+  "scope": "Finite VCS testcases; explicit hard stops remain. No arbitrary user code completion guarantee.",
+  "specifications": [
+    {
+      "case": "tc_directed",
+      "seed": 17,
+      "env_fatal": false,
+      "assert_fatal": true,
+      "failure": "",
+      "completed": true,
+      "cycles": 64,
+      "waves": true,
+      "injection": "",
+      "hard": false,
+      "mode": "transaction"
+    },
+    {
+      "case": "tc_random",
+      "seed": 17,
+      "env_fatal": false,
+      "assert_fatal": true,
+      "failure": "",
+      "completed": true,
+      "cycles": 64,
+      "waves": false,
+      "injection": "",
+      "hard": false,
+      "mode": "transaction"
+    },
+    {
+      "case": "tc_random",
+      "seed": 42,
+      "env_fatal": false,
+      "assert_fatal": true,
+      "failure": "",
+      "completed": true,
+      "cycles": 64,
+      "waves": false,
+      "injection": "",
+      "hard": false,
+      "mode": "transaction"
+    },
+    {
+      "case": "/dev/shm/cmdbuf-posedge-20261113.S9SBQG/simulation/vcs/tests/main_phase/main_bad_src.sv",
+      "seed": 1,
+      "env_fatal": true,
+      "assert_fatal": true,
+      "failure": "MAIN_E03_SRC",
+      "completed": false,
+      "cycles": 16,
+      "waves": true,
+      "injection": "",
+      "hard": false,
+      "mode": "transaction"
+    },
+    {
+      "case": "/dev/shm/cmdbuf-posedge-20261113.S9SBQG/simulation/vcs/tests/main_phase/main_bad_src.sv",
+      "seed": 2,
+      "env_fatal": false,
+      "assert_fatal": true,
+      "failure": "MAIN_E03_SRC",
+      "completed": true,
+      "cycles": 16,
+      "waves": true,
+      "injection": "",
+      "hard": false,
+      "mode": "transaction"
+    },
+    {
+      "case": "/dev/shm/cmdbuf-posedge-20261113.S9SBQG/simulation/vcs/tests/main_phase/main_bad_src.sv",
+      "seed": 3,
+      "env_fatal": true,
+      "assert_fatal": false,
+      "failure": "MAIN_E03_SRC",
+      "completed": false,
+      "cycles": 16,
+      "waves": false,
+      "injection": "",
+      "hard": false,
+      "mode": "transaction"
+    },
+    {
+      "case": "/dev/shm/cmdbuf-posedge-20261113.S9SBQG/simulation/vcs/tests/main_phase/main_bad_resp.sv",
+      "seed": 1,
+      "env_fatal": false,
+      "assert_fatal": true,
+      "failure": "MAIN_E04_ARRESP",
+      "completed": false,
+      "cycles": 16,
+      "waves": false,
+      "injection": "",
+      "hard": false,
+      "mode": "transaction"
+    },
+    {
+      "case": "/dev/shm/cmdbuf-posedge-20261113.S9SBQG/simulation/vcs/tests/main_phase/main_env_multiple.sv",
+      "seed": 1,
+      "env_fatal": false,
+      "assert_fatal": true,
+      "failure": "MAIN_E04_ARRESP",
+      "completed": true,
+      "cycles": 16,
+      "waves": false,
+      "injection": "",
+      "hard": false,
+      "mode": "transaction"
+    },
+    {
+      "case": "/dev/shm/cmdbuf-posedge-20261113.S9SBQG/simulation/vcs/tests/main_phase/main_bad_busy.sv",
+      "seed": 1,
+      "env_fatal": false,
+      "assert_fatal": true,
+      "failure": "MAIN_E06_SUCCESS_BUSY",
+      "completed": true,
+      "cycles": 16,
+      "waves": false,
+      "injection": "",
+      "hard": false,
+      "mode": "transaction"
+    },
+    {
+      "case": "/dev/shm/cmdbuf-posedge-20261113.S9SBQG/simulation/vcs/tests/main_phase/main_bad_mem.sv",
+      "seed": 1,
+      "env_fatal": false,
+      "assert_fatal": true,
+      "failure": "MAIN_T_MEM4",
+      "completed": true,
+      "cycles": 16,
+      "waves": false,
+      "injection": "",
+      "hard": false,
+      "mode": "transaction"
+    },
+    {
+      "case": "/dev/shm/cmdbuf-posedge-20261113.S9SBQG/simulation/vcs/tests/main_phase/main_bad_unknown.sv",
+      "seed": 1,
+      "env_fatal": false,
+      "assert_fatal": true,
+      "failure": "MAIN_P_KNOWN",
+      "completed": true,
+      "cycles": 16,
+      "waves": false,
+      "injection": "",
+      "hard": false,
+      "mode": "transaction"
+    },
+    {
+      "case": "/dev/shm/cmdbuf-posedge-20261113.S9SBQG/simulation/vcs/tests/main_phase/main_bad_missing.sv",
+      "seed": 1,
+      "env_fatal": false,
+      "assert_fatal": true,
+      "failure": "MAIN_MISSING_ASSIGNMENT",
+      "completed": true,
+      "cycles": 16,
+      "waves": false,
+      "injection": "",
+      "hard": false,
+      "mode": "transaction"
+    },
+    {
+      "case": "/dev/shm/cmdbuf-posedge-20261113.S9SBQG/simulation/vcs/tests/main_phase/main_bad_duplicate.sv",
+      "seed": 1,
+      "env_fatal": false,
+      "assert_fatal": true,
+      "failure": "MAIN_DRIVE_ORDER",
+      "completed": true,
+      "cycles": 16,
+      "waves": false,
+      "injection": "",
+      "hard": false,
+      "mode": "transaction"
+    },
+    {
+      "case": "/dev/shm/cmdbuf-posedge-20261113.S9SBQG/simulation/vcs/tests/main_phase/main_bad_race.sv",
+      "seed": 1,
+      "env_fatal": false,
+      "assert_fatal": true,
+      "failure": "MAIN_ONCE_AFTER_POSEDGE",
+      "completed": true,
+      "cycles": 16,
+      "waves": false,
+      "injection": "",
+      "hard": false,
+      "mode": "transaction"
+    },
+    {
+      "case": "/dev/shm/cmdbuf-posedge-20261113.S9SBQG/simulation/vcs/tests/main_phase/main_bad_stale_context.sv",
+      "seed": 1,
+      "env_fatal": false,
+      "assert_fatal": true,
+      "failure": "MAIN_CONTEXT_TIMING",
+      "completed": true,
+      "cycles": 16,
+      "waves": false,
+      "injection": "",
+      "hard": false,
+      "mode": "transaction"
+    },
+    {
+      "case": "/dev/shm/cmdbuf-posedge-20261113.S9SBQG/simulation/vcs/tests/main_phase/main_bad_reset.sv",
+      "seed": 1,
+      "env_fatal": false,
+      "assert_fatal": true,
+      "failure": "MAIN_RESET_FIXED_HIGH_AFTER_1NS",
+      "completed": true,
+      "cycles": 16,
+      "waves": false,
+      "injection": "",
+      "hard": false,
+      "mode": "transaction"
+    },
+    {
+      "case": "/dev/shm/cmdbuf-posedge-20261113.S9SBQG/simulation/vcs/tests/main_phase/main_bad_zero_ready.sv",
+      "seed": 1,
+      "env_fatal": false,
+      "assert_fatal": true,
+      "failure": "MAIN_E05_ZERO_READY",
+      "completed": true,
+      "cycles": 16,
+      "waves": false,
+      "injection": "",
+      "hard": false,
+      "mode": "transaction"
+    },
+    {
+      "case": "/dev/shm/cmdbuf-posedge-20261113.S9SBQG/simulation/vcs/tests/main_phase/main_bad_control.sv",
+      "seed": 1,
+      "env_fatal": false,
+      "assert_fatal": true,
+      "failure": "MAIN_CONTROL_INVALID",
+      "completed": false,
+      "cycles": 16,
+      "waves": false,
+      "injection": "",
+      "hard": true,
+      "mode": "transaction"
+    },
+    {
+      "case": "tc_directed",
+      "seed": 1,
+      "env_fatal": false,
+      "assert_fatal": true,
+      "failure": "T_R_ID_ORDER",
+      "completed": true,
+      "cycles": 64,
+      "waves": false,
+      "injection": "rid",
+      "hard": false,
+      "mode": "transaction"
+    },
+    {
+      "case": "tc_directed",
+      "seed": 2,
+      "env_fatal": true,
+      "assert_fatal": false,
+      "failure": "T_R_ID_ORDER",
+      "completed": true,
+      "cycles": 64,
+      "waves": false,
+      "injection": "rid",
+      "hard": false,
+      "mode": "transaction"
+    },
+    {
+      "case": "/dev/shm/cmdbuf-posedge-20261113.S9SBQG/simulation/vcs/tests/main_phase/main_bad_mem.sv",
+      "seed": 2,
+      "env_fatal": false,
+      "assert_fatal": true,
+      "failure": "MAIN_T_MEM4",
+      "completed": true,
+      "cycles": 16,
+      "waves": false,
+      "injection": "",
+      "hard": false,
+      "mode": "strict"
+    }
+  ],
+  "sources": {
+    "Makefile": "8ffc47f97351dd214e30fda819826b681a3a19e77e25869a69259455c1476e75",
+    "docs/timing/interface_constraints_20261112.json": "b7c7e0e3a517e6e32674c40379ef7dc1263f930ed166b20344c1dff85bab48fd",
+    "docs/timing/parity_response_20261113.json": "9353546fbc7e77277ec5166f1107fc4102ed04ed3080a9594422ab2c74a195c6",
+    "docs/timing/pending_register_20261112.json": "dea6c5fd7e508c38628bd82115153a63366ef05b296af87d8139f4e8eb92a893",
+    "docs/timing/protocol_corrections_20261021.json": "96eda718989eca6c7d3035cc2819280634f6cfff384f8483bd857524672cf13f",
+    "formal/protocol_20261021/cmdbuf_rd_port_sva.sv": "719ecad54c1ac6267c3a12dcaee06a1c037c8683b79876c6b577b40450a3d08f",
+    "formal/protocol_20261021/cmdbuf_rd_reference_model.svh": "06eb9b29b477531e6df7b1a8fe93e515d2a3cd2b0616447e1b02c4537564c23d",
+    "formal/protocol_20261021/cmdbuf_rd_xau_order_model.svh": "c4114b0f8921fac2d140e5d812c192498790b2d719fb3919daca8b668179026b",
+    "make.cmd": "c5f686b33d112a31329a4b88e496abb83f9664aea4b6a5de1f2d46e305b8a960",
+    "rtl/cmdbuf_rd.sv": "40b51383c8ea103d0ced9f8b449f6308328cc7fde26008c440879046d9d8133c",
+    "rtl/cmdbuf_rd.v": "b48bc45ad3a0ae153286ffc55c5f5dfc33da5b3f8f3936ff4bf45fbf10a2282b",
+    "rtl/cmdbuf_rd_cmd.sv": "d6907daf129e9fcabdf4131841fc95fd4e6b47d84be6b7f3b39bbc37cce14627",
+    "rtl/cmdbuf_rd_cmd.v": "8f10bee27f0bb0d099d7fca9bd1e8ecfb50377fb4795d16910ea278d11ccc480",
+    "rtl/cmdbuf_rd_otb.sv": "ec3ba652df117f804ee74c0f25f6a5aedded7e9c86be6c827146bf7c3b0021d2",
+    "rtl/cmdbuf_rd_otb.v": "63b2752eeb1a3430a6ba0b63075d1efeb35d2dfa690559417ad5ff494d49cc54",
+    "rtl/files.f": "f8f3f50bce55a8a0301d7c3cba42e7b70139eaafd5a1f57515b8c893f327b4ec",
+    "simulation/vcs/01_Run_Regression.cmd": "849495c0d2b401e0aeda109bb2834bc38505f02201541c31701fb1cd7ae31783",
+    "simulation/vcs/02_Open_Waves.cmd": "b1834e54f69fa5e1aba733b697085939f06f33a2c971300f363470b05f80b714",
+    "simulation/vcs/03_Open_Coverage.cmd": "a1146c53b066e36e0c5b4132b026b8cde6c5ad7d73511f716d8a70b85ff310b5",
+    "simulation/vcs/04_Open_Report.cmd": "1801c9299132c3a0b481006d1c9f0eaecf0e8db8ee565731bacd6236bf86f747",
+    "simulation/vcs/Makefile": "2a05d105485d650cc1732fbff51ab575cdee84a3dde331f8cf189b6b9d2e77bf",
+    "simulation/vcs/bootstrap.ps1": "8068b1d8d51deb5744efccbe7a8bc910931868c8a0a82c1243d7f5cdd5033a4c",
+    "simulation/vcs/case_adapter.py": "071f2cb13e321fcdbc4daa9eaf56b26889b2d425780398c36180a8068caef8da",
+    "simulation/vcs/cases/backpressure.json": "14dbd4916ca4cc6f42c735bead10a16336b375eba18c02b18b4b5314833e5420",
+    "simulation/vcs/cases/ooo_same_xau.json": "8bb3fe8e518e6b4250d128b46c45db9cdff721a61e647c05f2fce6ae78bf6288",
+    "simulation/vcs/cases/protocol_demo.json": "ef2c7408939a53aefb4ee87c0c2e4a53c6b7b03d325c985bb0ef66a8b960feb9",
+    "simulation/vcs/cases/protocol_duty_cycle.json": "c3a419323d2e3b93e8e2f9be5448c59bc66bd2c8d9ddcca6402e42d6b9662d2a",
+    "simulation/vcs/cases/protocol_error_priority.json": "cebf33a6ebd5d23066fbb7576789404a8b59298f700bee54abedc81d6f5119fd",
+    "simulation/vcs/cases/protocol_fixed_ar.json": "30c58a3979245d93047a42a2373bd64a4fd3f15f1d8c3001c2f96cedead4dde6",
+    "simulation/vcs/cases/protocol_fixed_mem.json": "1fae86362ad962a0d9962e3dbe349efdec11fc0d7ed4fa136d66b4cc3a080803",
+    "simulation/vcs/cases/protocol_levels.json": "f0f48b9a9f1d25e16f534e8a63e6ed2051863c069c1395a7736328ae72e5d70b",
+    "simulation/vcs/cases/protocol_nclock.json": "684a1a9885523fb005e34d0417619e158743638f64ad72cfc82713d70f542b37",
+    "simulation/vcs/cases/protocol_read.json": "fe89ca1da207cbada26ca56cc4c3441b031306574d7f55e860a89528a17f671e",
+    "simulation/vcs/cases/protocol_reset.json": "c5ddc4f3af1a3006643ba9db49359c336b189661dea466756550155190e143f1",
+    "simulation/vcs/cases/protocol_retry.json": "113c63b37e9347e8c08fef308d3e02cbd3e4680f256317f33b796b1feabf5977",
+    "simulation/vcs/cases/protocol_same_address.json": "eb13a1fd69f27632ef4d426e5769eea321273eef276e2ce53e3ebd86cd7fee8b",
+    "simulation/vcs/cases/protocol_selected_reject.json": "69cb213d95e21e861404a09a8f6b133e385d83aa5c638f7016ad4aea78b22579",
+    "simulation/vcs/cases/protocol_window.json": "96984a22cadb752db480940b9bb2576fcb232ec09c4365d0ceb0b3f6fcecb817",
+    "simulation/vcs/cases/random.json": "8766da7e39fd4ddd48e4027508b1191b8174bbbd4370e681afb29c5ab106ea9b",
+    "simulation/vcs/cases/retry.json": "20509fd16da85d9e4a0cd8040934749e867707791a463f3df07d586fae3ffa48",
+    "simulation/vcs/cases/smoke.json": "7c380fe8ff5ce7dfc30b243294483942a903716d46dba1ffae5a0da5083dfd80",
+    "simulation/vcs/cases/template.json": "b590d0ee008ee9ff501b447af54573fd67c445659e4e3144bd659f61e7b3d2bf",
+    "simulation/vcs/cases/tutorial_retry.json": "17d951ff4fa182ce06cdd307a7efe18731bff48cf86475e7a6e8697cc4f25b07",
+    "simulation/vcs/cases/wavedrom_levels.json": "81e67596263acf3e1eab1bf514aeeee90688b97b9ccc5809d272f0d67069315a",
+    "simulation/vcs/cases/wavedrom_nclock.json": "587d2071fe8120df1312ea712a0aaed845bae55d731c4753821764b47d03e6d4",
+    "simulation/vcs/cases/wavedrom_read.json": "a1dd1d15362a0237afa120c56808f90dd65c79adc14e3c1b2fe28eab676f79e5",
+    "simulation/vcs/cases/wavedrom_reset.json": "244128d881e6a9ae73b7f7f968e4692390a6f5beb6a3e22217611659f06fc8a3",
+    "simulation/vcs/check_policy.py": "bc5a1233c2307bb8109573e1424aacbbf3f50751939fb80075697eeb7d6cb103",
+    "simulation/vcs/check_profiles.json": "e7ea3c9df846ee465ab0f278d20cc00b9a6f69d8715de4479bd9a8db6f5db9a8",
+    "simulation/vcs/check_suite.py": "f20b3103d85dcaeed36adaf3382a4de5ab10e601f040c29891fac4b3b29753db",
+    "simulation/vcs/code_coverage/engine.py": "8d11ccac2943c43c27279eca89d8c2dbc868c60f21e7daa59dbd973ef50cc42c",
+    "simulation/vcs/code_coverage/npi_reader.cpp": "213fba674d60831056b1bf3b9efb676336dfc99ba215f672dade086543a7f17c",
+    "simulation/vcs/code_coverage/set_cover.py": "dd2e1e2981dcb28d8a1f58d7bc763825159d1cf1f33958a84ab115405fc6793d",
+    "simulation/vcs/constraint_suite.py": "e02f8beb691b9bf18e9ba9ad053bcd62b9ade1a414d8cbd2f9a7dc24f36cdd62",
+    "simulation/vcs/contracts.json": "6323648189f2abd59089f0d07df6cd1f236137ff991e2f133b6bab9082dd10f2",
+    "simulation/vcs/contracts.py": "b6e4bbd0291d452be34119e5f34f5eb23db37362aaca6bcb3baad846578eb92b",
+    "simulation/vcs/coverage.hier": "f738b75b38f7116b86d32f541cef31ac838e3c9e210eeb5f89d8dc14db5bff45",
+    "simulation/vcs/dut.json": "a2cfd1e95ca3a4435945f5bd3f1bc8d985169f7d4aa153c73bc2a490c12bcfb7",
+    "simulation/vcs/dut_config.py": "8b1b88b75c5e492d9a6caba8c0364913700345edd71d8d82c6d053531f9fc645",
+    "simulation/vcs/dut_sources/import_20261111_040418_d13b99/alternate_cmdbuf.sv": "3e49d4043c20abf2605d8ecd75a77ce7ebfa4fa3c53c942fb76c419ece876339",
+    "simulation/vcs/dut_sources/import_20261111_040418_d13b99/cmdbuf_rd_cmd.sv": "70cbe3101bbce7bbd8d68bd032b01a5e7e6af79663b049121187cb545c5f3d6f",
+    "simulation/vcs/dut_sources/import_20261111_040418_d13b99/cmdbuf_rd_otb.sv": "ec3ba652df117f804ee74c0f25f6a5aedded7e9c86be6c827146bf7c3b0021d2",
+    "simulation/vcs/dut_sources/import_20261111_040952_2d7bb3/alternate_cmdbuf.sv": "3e49d4043c20abf2605d8ecd75a77ce7ebfa4fa3c53c942fb76c419ece876339",
+    "simulation/vcs/dut_sources/import_20261111_040952_2d7bb3/cmdbuf_rd_cmd.sv": "70cbe3101bbce7bbd8d68bd032b01a5e7e6af79663b049121187cb545c5f3d6f",
+    "simulation/vcs/dut_sources/import_20261111_040952_2d7bb3/cmdbuf_rd_otb.sv": "ec3ba652df117f804ee74c0f25f6a5aedded7e9c86be6c827146bf7c3b0021d2",
+    "simulation/vcs/eda.py": "864203e298f0dfe463e44edca1ebd64b2c8961040c1324597e7516aa0cccff7e",
+    "simulation/vcs/environment_suite.py": "6df4423abeb2a0b002c407935c0a555343e8ae74d75034601858613e9898bbee",
+    "simulation/vcs/execution.py": "608bd3916295c1aeda35182cc39814b868511c75ae0c34ed8d00580898e08c45",
+    "simulation/vcs/execution_start.c": "7955fec53973e26ac0cf06f0ea1d62d979ecbea0f5642918097f823cc3976847",
+    "simulation/vcs/fsdb_formal/core.py": "b987e786acb66761d1ec5f7027472570e62f4f99f4fd6f19dd62635b74419c89",
+    "simulation/vcs/fsdb_formal/coverage_export.py": "687979febf545889dea7a18c65a933879e90ada8f0ff8d85919062822cd9c821",
+    "simulation/vcs/fsdb_formal/engine.py": "61eda3024bb8af93600c1fddda8ea35db4c414cba56a61b7620e35c1ad1203c0",
+    "simulation/vcs/fsdb_formal/npi_reader.cpp": "7656272ebe7cc857d8fd6548668aeb98863b658d37c04d7a6355fa8e90577456",
+    "simulation/vcs/gui/backend.py": "349bbd61265856a03f4dcd74c9b1ede38f35bca2c0c9d69c81ee54cbc2f3b491",
+    "simulation/vcs/gui/coverage_data.py": "2f1c05cfdfc2681d3a968a0e6cc0807a6062254134299811b7891d8d1aa0a9d9",
+    "simulation/vcs/gui/coverage_view.py": "8c8fa5d7ce41c0c72844bb256a35622b1aa0cf871b0a54751ed34087d1ba8ca1",
+    "simulation/vcs/gui/default_dut.json": "843e673451addd3b88449a9f74ff158832f00fa25b4fd2baf94d1b851c0f1d0d",
+    "simulation/vcs/gui/desktop.py": "e621b4ef30a72e74ec9e27d9629f3986c9113985fdf6b5c746c15431832b2c78",
+    "simulation/vcs/gui/formal_model.py": "b34b82dc0b3af9d64651ed245181e97df990e08fd7f6f70ea51711f253ba10aa",
+    "simulation/vcs/gui/model.py": "b524abc2f9a9f374a8eeec68082b804cda7674d0c739958be711331ac57e6e02",
+    "simulation/vcs/gui/vcd.py": "c922e16af51b36ee81b34fef6f12b075f4984231c1431aba464b1361278fdfb0",
+    "simulation/vcs/gui/widgets.py": "5bbcb84b4a17d1d59325a63f0f53688a7f339daa27c4c2b5073236656e868dce",
+    "simulation/vcs/launcher.py": "c44ed75833bcc7aea73937ee47dcd7b7911dae123623be0406ac1cc143f3e132",
+    "simulation/vcs/main_phase_audit.py": "a86fd9a4d2c3dd365c0f574b077fdffc46126c6e8898470fe2e85665ed165280",
+    "simulation/vcs/main_phase_suite.py": "f1ddbfed9c2050fd4568ba6ba768c7454e68c42a44fa736a28705bcac78eb892",
+    "simulation/vcs/platform_config.py": "8ff70956c418881fa050f2f941f90dad295552d9b665ff38b7f3c538328f6c07",
+    "simulation/vcs/portable.py": "834b58dfbae2bda452bdaf8f63ac5220803e270f6d58dce0991ddf2d5cee01ff",
+    "simulation/vcs/project.json": "2873a3178b4d466aba9bebb603e261e999f7487a3aac99ac4ca20d940875fd99",
+    "simulation/vcs/protocol_adapter.py": "3f1450801c9743e875acd964337b6f47f4fb55de568a8e0e3bebcad37a9e2040",
+    "simulation/vcs/protocol_cases.py": "0be0953a587bed6fcd32d7042475a9a64b20237de9f03ec6a3d0a4a6a0e79553",
+    "simulation/vcs/protocol_views.py": "6e0f5207b1dc6d67c06de038e393557ee7c803de91b88e0ecea9dff2e80f3ef2",
+    "simulation/vcs/random_audit.py": "d14707843a994113e8bfb4abbad4875a1bcf030710ead4193f5cecc5bbf23a9b",
+    "simulation/vcs/regression.json": "96fde269c2f91f550d9da58398e321ce7ff1bf38e0bd32f02d4d31dd41bf8ce8",
+    "simulation/vcs/regression_plan.py": "b399d7d2aa889eb79c45ae6e73755cbb8c54c08c8a3ceeb3af09e8ba773a8b5e",
+    "simulation/vcs/run.sh": "67d81798c5b2eeb2c8c5575f6a8a72691cd9ec2249e93aa814180f1291395210",
+    "simulation/vcs/sv_audit.py": "995038f55754acaaeb089ac909a88ec7fd28feba27e3310e66ba7179de8ca8aa",
+    "simulation/vcs/sv_cases.py": "5211f6b9ff6241e3b9f62056f6221430a4434170f141e5ab74521181ce77616e",
+    "simulation/vcs/sv_suite.py": "808a4b3704086df077f9ed32b100981167ea8fa87a3861e1e0f1d1164e6c7822",
+    "simulation/vcs/sva_source.py": "a0ce4c4b29e4759e11958c18caed535c24761d15c7e1a3ac1d94ea2b90754e65",
+    "simulation/vcs/tb/cmdbuf_check_monitor.sv": "85711f8c5f7338a7c55cff11e044377bc047ff1483495f265b74bfcc5dce1101",
+    "simulation/vcs/tb/constrained_random_driver.svh": "6e6dacdeee01e5e6e52bb18679e656c8b15ca2add60aee3474984d8342d80934",
+    "simulation/vcs/tb/environment_policy.svh": "d79755661c7a0c5b1f971adf625d9187429479a587647c1f39a4eaaec8784ce7",
+    "simulation/vcs/tb/main_phase_base.svh": "e84d34ab5fa2e9995d8c34fc9fc4d80b4e5cab8b0856bfbe6dd667df3bf3113a",
+    "simulation/vcs/tb/main_phase_driver.svh": "17f5a7c42ad934b10057134a7a7e53ac7b8b3c5ee26a4810d30b8f0de0e1657c",
+    "simulation/vcs/tb/protocol_driver.svh": "b854c28e7c38539a6a80f58e9d181768cb906ccf60e32e3b4bcb876826cc8bb7",
+    "simulation/vcs/tb/sv_tc_base.svh": "dcc030fd199258ae604ab96b7f5ab7ddcb8901e9f182727382500c89dcba8b1a",
+    "simulation/vcs/tb/sv_tc_driver.svh": "3f0c85194e52a47cc7f3a789e7a70f862821e652666b35ccc6fd1f8d4559f77e",
+    "simulation/vcs/tb/tb_cmdbuf_rd.sv": "b0c9397a29407e74f48f0c416d3dfb7228532d3cee7010a97949135514891eae",
+    "simulation/vcs/tb/wavedrom_driver.svh": "bca08b2fb7020c92d26977c759c207e2a95395d14afb63ba582ff3e1ce9811cb",
+    "simulation/vcs/tc/tc_backpressure.sv": "a774c33dfeb9b2a3bea86006898fb38e4c523acb2093a1a822c65b76a9afc747",
+    "simulation/vcs/tc/tc_banks.sv": "dd2c6a205287ddbe47b6f3fe5870fc597932d27f54290beb741a7bf62dfa8685",
+    "simulation/vcs/tc/tc_directed.sv": "02e77e1136920fe96aa3bdbfc6e2ec5fe31c22e551fd2f027c83858ef1a3c0b5",
+    "simulation/vcs/tc/tc_random.sv": "81cba510f20b4421d721597e9a999e1ec94435d17545a44600b0e4e3a42d96be",
+    "simulation/vcs/tc/tc_reset.sv": "ee2df54b45b0af4d9d9887e9c3740b0ce7d86051b9f3436804cd5a963a8bb3fc",
+    "simulation/vcs/tc/tc_retry.sv": "a57ab8ffd93b5847b39bca9fce7f4e1f0f1e38b66705e057b97375406bd20902",
+    "simulation/vcs/tc/tc_same_id.sv": "91b367f5387d2b3518aa0267d60f505276787909149120ccb3a95feb2f8bb80d",
+    "simulation/vcs/tc/tc_studio_demo.sv": "899055b3889265010c06079d0cbfc498037dda41cd652f3cea5d68bfb2985776",
+    "simulation/vcs/tc/tc_user_example.sv": "1f77249525e709f0edb23cc12fd94a7393a9c6755b1dea6f5cda7a45ea33f9b2",
+    "simulation/vcs/tests/checks/monitor_fixture.sv": "7956d87e50d6f5f6c1830f05931b73bda848036e9fe2223b5327c46f682b8cbf",
+    "simulation/vcs/tests/fixtures/wavedrom_bad_busy.json": "dca673b4ca3dc3fdfb9ca6e90f1bf80f1f42a0a5e5b3c4a1f1d7647cb8cfe828",
+    "simulation/vcs/tests/fixtures/wavedrom_bad_pending.json": "d9171e6dd91df7e6bf0b17dbbd53197b05fe9785fe86d355110281fa51c81113",
+    "simulation/vcs/tests/fixtures/wavedrom_bad_zero_ready.json": "3ad7bd81e8820f3dabed1fb58f227aa9e059ea80bd36b4bf0d7c60b28ef5e449",
+    "simulation/vcs/tests/fixtures/wavedrom_fourstate.json": "ce50c492370ecdf0b1b2673478c7b514454ca20c5afd3acc294d04c8fdfefce7",
+    "simulation/vcs/tests/main_phase/main_bad_busy.sv": "92f77957977385382e76373362e94461e79e7931b078eeee0c783c6cf2ee0853",
+    "simulation/vcs/tests/main_phase/main_bad_control.sv": "9e527a3518fc190e4ab152b17757c1b7f9d257c747b7c03ec67ec93fa5e1b455",
+    "simulation/vcs/tests/main_phase/main_bad_duplicate.sv": "2f85882f59c6accbd9bd0f8365539d8355ecc9c5ed97b9dd44b08e0f4e2fcc9e",
+    "simulation/vcs/tests/main_phase/main_bad_mem.sv": "d1b885c6a861bd93e4b4e6b2ab1b50c6000f4a399ddd78883bda46524927034e",
+    "simulation/vcs/tests/main_phase/main_bad_missing.sv": "35c3d3784dcf30d6d1323a62fb89f7eba11b793fbc97504867fb171ce62918e2",
+    "simulation/vcs/tests/main_phase/main_bad_race.sv": "68c1590393510d3b3611c4e21ea7bf33f4a3afdd5e4572230187adefe2211dd4",
+    "simulation/vcs/tests/main_phase/main_bad_reset.sv": "b111575a23311e1118d22cb5f93689abe0515cd7799251c30c22c1b3933a8da9",
+    "simulation/vcs/tests/main_phase/main_bad_resp.sv": "aed2a354cd9c20ef71d17c25fc5d70a06a85569ea72b207cd19d030dabd55117",
+    "simulation/vcs/tests/main_phase/main_bad_src.sv": "d1db323d4ebec8f5d63e5b5fd7d8ace2785e4b07b1606b7ae83b32d408d6f989",
+    "simulation/vcs/tests/main_phase/main_bad_stale_context.sv": "ea8936051299260b015e1ea64796742fc1bd07826348f9a20efc287534585515",
+    "simulation/vcs/tests/main_phase/main_bad_unknown.sv": "7aad4062f34a1d495b3266fd15dd22f1f266d8fbfca92f88673c3c1b12c6842f",
+    "simulation/vcs/tests/main_phase/main_bad_zero_ready.sv": "9b4a1c1dcea9f21de595aa20c25eba7eecef0d6653615a14f6ca4e4021715226",
+    "simulation/vcs/tests/main_phase/main_env_multiple.sv": "095ed6b7eeb32b105c80149faff5286cb8b4a3c774baf5922fa911a302bf83fb",
+    "simulation/vcs/tests/main_phase/main_first_cycle.sv": "bc8e4039132d570252c58c2232df10f3f2a7ea836ffb1c44e931193f7ca99e5b",
+    "simulation/vcs/tests/main_phase/main_interface_rules.sv": "a2cc759ea2e3b2111d0a4e4bd9a3c968452534fa73352e47cba4567cae5114e4",
+    "simulation/vcs/tests/main_phase/main_response_codes.sv": "c60fb641cb6e4184c7f029fb0e9addcbdf729876129a66aaac315faff60ed173",
+    "simulation/vcs/tests/main_phase/main_user_values.sv": "6a49f4334b5a744758762633476bcb34d511305b01911a812bb6b31a078e640c",
+    "simulation/vcs/tests/sv_tc/sv_bad_busy.sv": "b7fc0f788296d18140f3cce1abbe01e9e98399fbf51c6f95df38e0cacd1903ec",
+    "simulation/vcs/tests/sv_tc/sv_bad_control.sv": "ebd2cd3e6bab7d9216a312c9936b820a273423caeefeb12644c1f0021c9a3f01",
+    "simulation/vcs/tests/sv_tc/sv_bad_mem.sv": "4bf3a234909ad92f4ed884d9f8e9f5031f6ceb5f39fa845468a34fa3a3f5946e",
+    "simulation/vcs/tests/sv_tc/sv_bad_resp.sv": "8ba2490b5d0defae7400cec0b33efec1a35d4db4f382f8c218cfc3258fc88a5a",
+    "simulation/vcs/tests/sv_tc/sv_bad_src.sv": "938774e3af037c30d843e0a52240d7fff846a7cdf56e247d34451855c3d82f41",
+    "simulation/vcs/tests/sv_tc/sv_bad_user_collision.sv": "5871ed5e4de12d3b6550fe12fc070796f576381c4b0b8e37b64d20dcc355a9dd",
+    "simulation/vcs/tests/sv_tc/sv_bad_zero_ready.sv": "87e21aa063a66f75d3e6ad4058b72f6e762d4d495daf9202d3858915dd09b9f6",
+    "simulation/vcs/tests/sv_tc/sv_user_values.sv": "bccae60d8952c609c64e37fba7b41aadcde27adbb025c57247780cf4e7383ab7",
+    "simulation/vcs/tests/test_adapter.py": "060924fb8fd7e34ae3167a26ed8a8a24af137dcd1245459219515d97aa2b5ff4",
+    "simulation/vcs/tests/test_check_policy.py": "269f29481bd09933b3928af18a52e04ae8b8d2fb1272b510fcc20d449295844d",
+    "simulation/vcs/tests/test_coverage_browser.py": "ac7e157371d6550420a6a378c9dbf31576f5e34711cc754e43dad61694e8ab99",
+    "simulation/vcs/tests/test_coverage_set.py": "d4db66347423aded92d5b18c2a85dd5ce6c47be09d4a02fb421a43ac8e803f96",
+    "simulation/vcs/tests/test_execution.py": "2201b6825b912de09214118587b662824cb285909d8373ee4e99fcdc8c310ad9",
+    "simulation/vcs/tests/test_fsdb_formal.py": "c35e4e8386ce6de540161a5ac7222b1e9ee57e2d11e318ac0b929d0df0d8b26d",
+    "simulation/vcs/tests/test_native.py": "6aaf755d327cd853c5536c1491b7e2a3c30e57327781b3ee951e1834af85e192",
+    "simulation/vcs/tests/test_portability.py": "5bb17b1c374f82da5216417868b6e477112db76938ebe11f24802cc5d1e9e2fc",
+    "simulation/vcs/tests/test_protocol.py": "a4e54fe4877b9c029a59c0962049b67475506aedc1836e37c6bcc050ec6f732c",
+    "simulation/vcs/tests/test_studio.py": "1b8fa653283d1f697fe35c8f574332240c99bc879bb3d0e0a7c89b1d7763b9b5",
+    "simulation/vcs/tests/test_sv_cases.py": "d338273d1564ba630012c1ddeff21ca6a5e94581789dfd9a9ae123818a05f544",
+    "simulation/vcs/tests/test_wavedrom.py": "65aead783532b6343d8322741a44ca390f39004aa3b373cc6e455b19488933b5",
+    "simulation/vcs/toolchain.sh": "024d6186c2fc20a8777056ebe443f0fa04a284600464dbba2f73ca0cf255091f",
+    "simulation/vcs/vendor/wavedrom/LICENSE": "68f6442e5967ddb6a75ec8a4570215cac8cc415ea293c05cf857843c73fa5a57",
+    "simulation/vcs/vendor/wavedrom/default.js": "6d42a35297a5faa2e07e565ddc47dd6e1228af045881291a64a336b3f062d152",
+    "simulation/vcs/vendor/wavedrom/manifest.json": "ede3489fcf14eeb9c8058a53504d50eb159f9e28ec21fc9ae707adc89c91dc2d",
+    "simulation/vcs/vendor/wavedrom/wavedrom.min.js": "c02e6212b9515036b9531cb708996e95eef50bc8a030eb13d128c77b550a79e5",
+    "simulation/vcs/verdi_wave.py": "a3ff39bd46388adb9ca48e6fbc30659b74611f81c27fabcb071679f44e48803f",
+    "simulation/vcs/wave_tools.py": "21557e1dd71a30ff29d3e3e69f661c16d77d018448519104eb9c82e54877b76c",
+    "simulation/vcs/wavedrom_adapter.py": "1049d5cd909a6ad60d54575be81f5938d8af0547e3992d5bf53b1e2dda08b4fd",
+    "simulation/vcs/waves.tcl": "4270ca7925a48e25c23119c8566c05ba0d0be1acf2267feba34165dc4eee397b"
+  },
+  "directory": "/dev/shm/cmdbuf-posedge-20261113.S9SBQG/final-results/regressions/20261113_125019_environment_2b6564"
+}

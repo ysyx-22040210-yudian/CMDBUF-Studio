@@ -33,28 +33,53 @@ module monitor_fixture;
         if ($value$plusargs("SCENARIO=%s",scenario)) begin end
         for (integer b=0;b<8;b++) rd_mem_status[b]=1;
         tick(); rst_n=1;
+        if (scenario=="priority" || scenario=="bad_priority") arresp=3;
         offer(0,8'h11,5'h03);
+        if (scenario=="not_issued") begin
+            response(0,8'h11,5'h03,128'h12345678);
+            monitor.finish_checks(); $finish;
+        end
         if (scenario=="unfinished") begin monitor.finish_checks(); $finish; end
         if (scenario=="reset_cancel") begin
             #1; rst_n=0; #1; rst_n=1; tick();
             monitor.finish_checks(); $finish;
         end
-        if (scenario=="ambiguous" || scenario=="ambiguous_bad_data" || scenario=="same_id_order") begin
+        if (scenario=="ambiguous" || scenario=="ambiguous_bad_data" || scenario=="same_id_order" || scenario=="association_conflict") begin
             // Same visible issue address, different source. B issues before A.
             offer(scenario=="same_id_order"?0:1,scenario=="same_id_order"?8'h11:8'h22,5'h04);
             req=1; tick(); tick(); req=0;
             tick(); tick();
-            mem_rdata=128'hbbbb; tick(); mem_rdata=128'haaaa; tick();
-            response(0,8'h11,scenario=="same_id_order"?5'h04:5'h03,scenario=="ambiguous_bad_data" ? 128'hdead : 128'haaaa);
+            mem_rdata=128'hbbbb; tick(); mem_rdata=128'haaaa;
+            if (scenario=="association_conflict") pc_err=1;
+            tick();
+            if (scenario=="association_conflict") rresp=2;
+            response(0,8'h11,scenario=="same_id_order"?5'h04:5'h03,
+                     scenario=="ambiguous_bad_data" ? 128'hdead : scenario=="association_conflict" ? 128'hbbbb : 128'haaaa);
+            rresp=0;
             response(scenario=="same_id_order"?0:1,scenario=="same_id_order"?8'h11:8'h22,scenario=="same_id_order"?5'h03:5'h04,128'hbbbb);
         end else begin
             req=1; tick(); req=0;
+            if (scenario=="early") begin
+                tick(); tick(); response(0,8'h11,5'h03,128'h12345678);
+                monitor.finish_checks(); $finish;
+            end
             tick(); tick(); tick();
-            mem_rdata=128'h12345678; tick();
+            mem_rdata=128'h12345678;
+            if (scenario=="parity" || scenario=="legacy_parity" || scenario=="priority" || scenario=="bad_priority") pc_err=1;
+            if (scenario=="capture_forward") begin
+                response(0,8'h11,5'h03,128'h12345678);
+                monitor.finish_checks(); $finish;
+            end
+            tick();
+            pc_err=0;  // R uses the saved error bit even after the MEM inputs change.
+            if (scenario=="parity" || scenario=="bad_priority") rresp=2;
+            if (scenario=="legacy_parity" || scenario=="bad_resp" || scenario=="bad_both") rresp=1;
+            if (scenario=="priority") rresp=3;
             if (scenario=="late") repeat(6) tick();
             if (scenario=="reuse") begin arvalid=1; arid=8'h33; ar_port_id=5'h05; end
             response(0,(scenario=="last_bad" || scenario=="two_errors" || scenario=="reset_masks_error")?8'h99:8'h11,
-                     scenario=="two_errors"?5'h1f:5'h03,scenario=="last_x"?'x:128'h12345678);
+                     scenario=="two_errors"?5'h1f:5'h03,
+                     scenario=="last_x"?'x:(scenario=="bad_data" || scenario=="bad_both")?128'hdead:128'h12345678);
             if (scenario=="reuse") begin
                 arvalid=0;req=1;tick();req=0;tick();tick();tick();
                 mem_rdata=128'h98765432;tick();response(0,8'h33,5'h05,128'h98765432);

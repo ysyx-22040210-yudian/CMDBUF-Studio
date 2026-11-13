@@ -1,0 +1,37 @@
+                         Chronologic VCS (TM)
+        Version O-2018.09-1_Full64 -- Fri Nov 13 11:55:11 2026
+               Copyright (c) 1991-2018 by Synopsys Inc.
+                         ALL RIGHTS RESERVED
+
+This program is proprietary and confidential information of Synopsys Inc.
+and may be used and disclosed only as authorized in a license agreement
+controlling such use and disclosure.
+
+
+Warning-[LCA_FEATURES_ENABLED] Usage warning
+  LCA features enabled by '-lca' argument on the command line.  For more 
+  information regarding list of LCA features please refer to Chapter "LCA 
+  features" in the VCS/VCS-MX Release Notes
+
+
+Warning-[VPI-CT-NS] VPI function is not supported
+  The VPI function 'vpi_register_cb' is not supported in the compiler.
+
+Parsing design file '/dev/shm/cmdbuf-response-diagnostics-20261113/simulation/vcs/tb/cmdbuf_check_monitor.sv'
+Parsing design file '/dev/shm/cmdbuf-response-diagnostics-20261113/simulation/vcs/tests/checks/monitor_fixture.sv'
+Top Level Modules:
+       monitor_fixture
+TimeScale is 1 ns / 1 ps
+Starting vcs inline pass...
+
+1 module and 0 UDP read.
+recompiling module monitor_fixture
+make[1]: Entering directory '/dev/shm/cmdbuf-response-diagnostics-20261113/results/check_tests/20261113_115511_afff2b/fixture/csrc'
+make[1]: Leaving directory '/dev/shm/cmdbuf-response-diagnostics-20261113/results/check_tests/20261113_115511_afff2b/fixture/csrc'
+make[1]: Entering directory '/dev/shm/cmdbuf-response-diagnostics-20261113/results/check_tests/20261113_115511_afff2b/fixture/csrc'
+rm -f _csrc*.so pre_vcsobj_*.so share_vcsobj_*.so
+if [ -x /dev/shm/cmdbuf-response-diagnostics-20261113/results/check_tests/20261113_115511_afff2b/fixture/simv ]; then chmod -x /dev/shm/cmdbuf-response-diagnostics-20261113/results/check_tests/20261113_115511_afff2b/fixture/simv; fi
+g++  -o /dev/shm/cmdbuf-response-diagnostics-20261113/results/check_tests/20261113_115511_afff2b/fixture/simv    -Wl,-rpath-link=./ -Wl,-rpath='$ORIGIN'/simv.daidir/ -Wl,-rpath=./simv.daidir/ -Wl,-rpath='$ORIGIN'/simv.daidir//scsim.db.dir  -rdynamic  -Wl,-rpath=/home/synopsys/vcs-mx/O-2018.09-1/linux64/lib -L/home/synopsys/vcs-mx/O-2018.09-1/linux64/lib   objs/amcQw_d.o   _5178_archive_1.so  SIM_l.o       rmapats_mop.o rmapats.o rmar.o rmar_nd.o  rmar_llvm_0_1.o rmar_llvm_0_0.o          -lzerosoft_rt_stubs -lvirsim -lerrorinf -lsnpsmalloc -lvfs    -lvcsnew -lsimprofile -luclinative /home/synopsys/vcs-mx/O-2018.09-1/linux64/lib/vcs_tls.o   -Wl,-whole-archive -lvcsucli -Wl,-no-whole-archive          /home/synopsys/vcs-mx/O-2018.09-1/linux64/lib/vcs_save_restore_new.o -ldl  -lc -lm -lpthread -ldl 
+/dev/shm/cmdbuf-response-diagnostics-20261113/results/check_tests/20261113_115511_afff2b/fixture/simv up to date
+make[1]: Leaving directory '/dev/shm/cmdbuf-response-diagnostics-20261113/results/check_tests/20261113_115511_afff2b/fixture/csrc'
+CPU time: .357 seconds to compile + .346 seconds to elab + .086 seconds to link

@@ -1,0 +1,18 @@
+Chronologic VCS simulator copyright 1991-2018
+Contains Synopsys proprietary information.
+Compiler version O-2018.09-1_Full64; Runtime version O-2018.09-1_Full64;  Nov 13 11:55 2026
+EDA_SIMULATION_STARTED
+CHECK_POLICY mode=transaction assert_fatal=0 env_fatal=1 sampling=pre_edge snapshot_pipeline=1
+"/dev/shm/cmdbuf-response-diagnostics-20261113/simulation/vcs/tb/cmdbuf_check_monitor.sv", 134: monitor_fixture.monitor.require_check.unnamed$$_0: started at 105000ps failed at 105000ps
+	Offending '(good === 1'b1)'
+SVA_FAIL T_R_DATA_RESP_OR_EARLY edge=10 time_ps=95000 reason=NO_COMMON_ASSOCIATION source=0 token=0 accepted_edge=2 araddr=00000 arid=11 port=03 arresp=0 actual_data=0000000000000000000000000000bbbb actual_resp=1 hypotheses=2 complete=2 not_issued=0 waiting_mem=0 data_matches=1 resp_matches=1 joint_matches=0 examples_max=4 [h0 complete expected_data=0000000000000000000000000000bbbb expected_resp=0 captured_pc_err=0] [h1 complete expected_data=0000000000000000000000000000aaaa expected_resp=1 captured_pc_err=1]
+Error: "/dev/shm/cmdbuf-response-diagnostics-20261113/simulation/vcs/tb/cmdbuf_check_monitor.sv", 120: monitor_fixture.monitor: at time 105000 ps
+CHECK_CONTINUE T_R_DATA_RESP_OR_EARLY edge=10
+CHECK_COMPLETE mode=transaction failures=1 incomplete=0 frames=11 checked=11
+FIXTURE_DONE scenario=association_conflict failures=1
+$finish called from file "/dev/shm/cmdbuf-response-diagnostics-20261113/simulation/vcs/tests/checks/monitor_fixture.sv", line 91.
+$finish at simulation time               110000
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 110000 ps
+CPU Time:      0.150 seconds;       Data structure size:   0.0Mb
+Fri Nov 13 11:55:23 2026

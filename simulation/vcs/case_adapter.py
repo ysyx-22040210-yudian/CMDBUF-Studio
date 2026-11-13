@@ -4,7 +4,7 @@ from pathlib import Path
 
 COUNTERS = {'accepted', 'issued', 'captured', 'retired', 'issue_failed', 'ar_rejected', 'ar_gated',
             'ar_only', 'rw_only', 'full', 'full_reuse', 'ready_zero', 'head_blocked',
-            'src0', 'src1', 'src2', 'resp0', 'resp1', 'resp3'}
+            'src0', 'src1', 'src2', 'resp0', 'resp1', 'resp2', 'resp3'}
 COUNTERS |= {'reset_assertions', 'aborted', 'aborted_unissued', 'aborted_mem', 'aborted_response',
              'clock_edges', 'active_edges'}
 COUNTERS |= {'submitted', 'queued_cancelled', 'queue_pending'}

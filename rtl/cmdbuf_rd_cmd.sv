@@ -136,7 +136,7 @@ module cmdbuf_rd_cmd (
             if (arresp_q[rsp_entry] == 2'b11)
                 rresp = 2'b11;
             else if (rsp_pc_err)
-                rresp = 2'b01;
+                rresp = 2'b10;
         end
     end
 

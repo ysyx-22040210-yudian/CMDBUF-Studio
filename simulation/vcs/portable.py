@@ -16,7 +16,7 @@ ROOT=eda.ROOT
 def selected_files():
     paths=set(eda.sources())
     paths.update(ROOT/p for p in ('CMDBUF Studio.cmd','CMDBUF Studio.sh','eda.example.json','AGENTS.md'))
-    for number in range(32, 46):
+    for number in range(32, 48):
         for extension in ('pdf', 'docx'):
             paths.update((ROOT/'documents').glob(str(number)+'_*.'+extension))
     for p in list(paths):
@@ -98,6 +98,12 @@ Windows: make.cmd gui opens the same native editor and existing VCD viewer.
 EDA commands intentionally require Linux; there is no remote-execution fallback.
 
 Checking scopes and fatal policy: documents/37_*. Current desktop manual: documents/36_*.
+Response mismatch diagnosis: documents/46_*. T_R_DATA_RESP_OR_EARLY now includes
+a reason, accepted transaction, actual/expected payload and hypothesis counts in
+the fatal line and assertions.jsonl. In contract 20261113, saved ARRESP=3
+returns RRESP=3. Otherwise captured PC_ERR=1 returns RRESP=2 (resp2 in
+metrics.json), and a normal response is RRESP=0. Run a new regression to apply
+the current contract. Historical replay uses the saved simulator and encoding.
 New runs use transaction mode. It checks registered pending recurrence.
 Strict mode additionally compares the reference waiting count and scheduling.
 Old saved plans keep strict mode. ENV_FATAL defaults to 1 for new and old plans.
@@ -120,7 +126,10 @@ formal/protocol_20261021/. Compile and regression use the saved file. Results
 archive its source and hash, and replay uses the original simulator. See documents/43_*.
 Startup timing: documents/38_*. SV clock starts high at t=0; rst_n is low until
 1 ns and remains high afterwards. Each TC keeps rst_n=1. Default first rising
-edge is 10 ns; cycle=0 drives at 12 ns for sampling at 20 ns.
+edge is 10 ns. The main_phase driver updates cycle=0 at the 10 ns timestamp
+after DUT sampling and updates. The DUT samples that input at 20 ns. The two
+fixed waits in old main_phase templates are migrated in the compiled copy.
+See documents/47_* for edge alignment and waveform examples.
 TC guide: documents/32_* (its older multi-cycle reset examples are superseded).
 FSDB semantics: documents/34_*. Guides 33/35 describe the previous web/SSH UI.
 Verify the archive: python3 simulation/vcs/portable.py --verify

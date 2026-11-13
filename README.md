@@ -43,7 +43,7 @@ Windows 的 `CMDBUF Studio.cmd` 或 `.\make.cmd gui` 可打开同一原生窗口
 | FSDB 转 Formal | 原生文件对话框导入 FSDB，或加入回归 FSDB；层级检查、端口映射、pattern 编号和验证包导出 |
 | 本机工具 | 自动检测本机环境并显示结果，默认无路径输入；特殊站点覆盖收纳在高级选项 |
 
-用例在每次 `@(posedge clk)` 后按模板的 `#1`、控制驱动、反馈采样顺序赋值。约束写成普通 `if / else`；随机数只能在合法分支内选择。driver 检查并原样驱动，不隐式修正。时钟低/高电平与暂停、复位也由模板中的变量控制。新协议需要显式补充约束清单和检查器。
+用例在每次 `@(posedge clk)` 后按模板顺序赋值。`begin_cycle()` 等待 DUT 更新，`drive_control()` 更新 `rready`，`sample_context()` 等待同一时间点内的组合反馈，`drive_inputs()` 检查并驱动供下一上升沿采样的值。约束写成普通 `if / else`，随机数在合法分支内选择。时钟低/高电平与暂停由模板变量控制。新协议需要显式补充约束清单和检查器。
 
 2026-11-12 接口补充契约适用于复位释放后的每个上升沿采样拍。
 
@@ -100,7 +100,7 @@ make dist
 
 所有 VCS 编译自动加入 `-lca -licqueue +vcs+lic+wait`；仿真自动加入 `+vcs+lic+wait`，URG 合并自动加入 `+urg+lic+wait`。等待 License 不设超时上限，编译和合并进程也不再使用外层固定超时。`TIMEOUT=120` 只从 VCS 的仿真启动回调之后计算执行时间；`TIMEOUT=0` 表示执行也不限时。GUI 显示等待/启动及执行状态，结果中的 `sim.process.json` 分别记录启动等待和执行耗时。旧归档二进制没有启动回调时，重放保留原二进制并关闭整个进程的超时，以免中断许可证等待。
 
-当前 SV 用例从 t=0 启动时钟，`clk` 初始为 1。`rst_n` 在 t=0 为 0，在 `#1`（1 ns）释放后一直为 1。默认 5 ns 下降、10 ns 上升；`main_phase` 的 `cycle=0` 在 12 ns 驱动，供 20 ns 采样。TC 保持 `rst_n=1`，再次请求拉低会报错。`clock_reset.csv` 记录实际时钟和复位跳变；旧归档重放沿用其原二进制和原时序。说明 38 覆盖旧说明中的多周期复位及用例中再次复位示例。
+当前 SV 用例从 t=0 启动时钟，`clk` 初始为 1。`rst_n` 在 t=0 为 0，在 `#1`（1 ns）释放后一直为 1。默认 5 ns 下降、10 ns 上升。`main_phase` 的 `cycle=0` 在 10 ns 的上升沿时间点驱动，供 20 ns 采样。SVA 及事务观察器继续读取沿前值。`clock_reset.csv` 记录实际时钟和复位跳变，`assigned.csv` 的 `time_ps` 与 `launch_ps` 相等。旧模板的两个固定 `#1` 等待在编译副本中迁移。`make replay` 使用归档时序。说明 47 更新了说明 38 中的驱动时间。[上升沿对齐说明](documents/47_cmdbuf_posedge_drive_20261113.pdf)
 
 新计划和无计划的命令行运行默认采用通用事务模式。它保存完整沿前四态快照，按实际握手检查事务、数据和单源顺序；同地址发射保留所有相容的事务对应关系。MEM 输入仍遵守 N+4 契约。参考模型待发数、精确 ready/req/R 调度和最早 N+5 返回显示 `NOT_CHECKED`，不把通用模式通过当作完整时序通过。事务未结束或对应关系候选超过上限时，结果为 `INCOMPLETE`。
 
@@ -112,6 +112,8 @@ make dist
 
 ## 下载与说明
 
+- [上升沿对齐与 `main_phase` 用例 PDF](documents/47_cmdbuf_posedge_drive_20261113.pdf)
+- [R 通道响应码与失败诊断 PDF](documents/46_cmdbuf_response_diagnostics_20261113.pdf)
 - [源码覆盖浏览与选集 Formal PDF](documents/45_cmdbuf_coverage_source_formal_20261113.pdf)
 - [代码覆盖率与最小用例集 PDF](documents/44_cmdbuf_coverage_minimum_20261113.pdf)
 - [寄存待发计数与 SVA 编辑 PDF](documents/43_cmdbuf_pending_sva_20261112.pdf)
@@ -128,7 +130,18 @@ make dist
 
 说明 33 和 35 保留为历史版本，其浏览器界面、SSH 操作流程已由 36 替代。便携包可运行 `python3 simulation/vcs/portable.py --verify` 核对文件，修改工程后通过 `make dist` 重新打包。机器配置、许可证、EDA 二进制、编译缓存和既有结果均不分发。
 
+20261113 契约按返回事务保存的状态计算 `rresp`。原 `arresp=3` 优先返回 `2'b11`。其余事务在 N+4 捕获到 `pc_err=1` 时返回 `2'b10`，正常返回 `2'b00`。`metrics.json` 的 `resp2` 统计新校验错误响应。新回归通过 `make run` 或 `make regress` 使用新契约。`make replay` 使用原二进制和契约，旧版校验错误仍按 `rresp=1` 核对。[响应码契约](docs/timing/parity_response_20261113.json)
+
+`CHECK_STOP T_R_DATA_RESP_OR_EARLY` 表示观测到的 R 返回无法同时满足同源队头、N+4 MEM 捕获、数据和错误优先级。日志及 `assertions.jsonl` 写入具体 `reason`、原采样拍、接收事务、实际值与最多四个候选期望值。`RESP_MISMATCH` 会显示 `actual_resp`、`expected_resp` 和捕获的 `pc_err`。按 `time_ps` 定位失败波形。
+
 ## 验证记录
+
+[发布压测](verification/release_stress_20261113/acceptance.json)使用便携包运行 81 例，覆盖 74.4 万拍随机激励。三份波形的 447,526 次业务端口跳变均落在上升沿，两份长波形导出的 24,043 个沿前快照与仿真记录逐项相等。
+
+[上升沿对齐验收](verification/posedge_alignment_20261113/acceptance.json)记录真实 VCS/Verdi 波形、基准 DUT 端口跳变与复位时刻、原采样数据对照、旧归档重放及 FSDB 逐拍提取。
+
+[响应码验收](verification/pc_err_response_20261113/check_suite.json)记录两种检查模式的四种响应组合、旧码反例及归档重放。[旧版诊断验收](verification/response_diagnostics_20261113/acceptance.json)对应 20261112.2 契约。
+
 
 [源码覆盖浏览与选集 Formal 验收](verification/coverage_source_formal_20261113/acceptance.json)记录实例和模块分数、源码行联动、缺口导航、带波形与补波形的选集导出，以及生成 SVA 的原生编译。
 

@@ -1,0 +1,2 @@
+{"label":"A_COMPARE_RRESP","edge":18,"time_ps":170000,"detail":"path=tb_cmdbuf_rd.checks.A_COMPARE_RRESP sampled_pending=0 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=1 rid=21"}
+{"label":"A_XAU_R_RESP_ORDER","edge":18,"time_ps":170000,"detail":"path=tb_cmdbuf_rd.checks.sources[0].A_XAU_R_RESP_ORDER sampled_pending=0 src=11 arvalid=0 ready=7 req=00 argrant=00 rwgrant=ff rready=7 rvalid=1 rid=21"}

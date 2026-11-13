@@ -7,7 +7,6 @@ class main_interface_rules extends cmdbuf_main_tc;
         if ($value$plusargs("INJECT=%s", violation)) begin end
         for (int unsigned cycle=0; cycle<num_cycles; cycle++) begin
             @(posedge clk);
-            #1;
             begin_cycle(cycle);
             rst_n = 1;
             if (cycle < 24 || cycle == 28) rready = 3'b000;
@@ -15,7 +14,6 @@ class main_interface_rules extends cmdbuf_main_tc;
             else rready = 3'b111;
             clk_low_ns = 5; clk_high_ns = 5; clk_pause_ns = 0;
             drive_control();
-            #1;
             sample_context();
 
             src = 3; arvalid = 0;

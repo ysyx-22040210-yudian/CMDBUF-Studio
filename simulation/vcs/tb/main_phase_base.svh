@@ -15,7 +15,7 @@ class cmdbuf_main_tc;
     logic [1:0] rd_mem_status[8];
     logic [127:0] mem_rdata=0, issue_data=0;
     logic pc_err=0, issue_error=0;
-    // Refreshed after driving reset/rready and letting combinational logic settle.
+    // Refreshed after rready settles, at the same timestamp as the launch edge.
     logic [2:0] arready=0;
     logic [7:0] req=0;
     logic [11:0] arb_addr=0;

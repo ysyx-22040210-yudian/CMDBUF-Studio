@@ -1,0 +1,80 @@
+{
+  "version": 1,
+  "check_mode": "transaction",
+  "assert_fatal": true,
+  "profile_version": 1,
+  "runtime": {
+    "version": 1,
+    "mode": "transaction",
+    "assert_fatal": 1,
+    "env_fatal": 1,
+    "effective_assert_fatal": 1,
+    "failures": 1,
+    "incomplete": 0,
+    "finished": 0,
+    "sampled_frames": 8,
+    "checked_frames": 8,
+    "outstanding": 1,
+    "accepted": 1,
+    "issued": 1,
+    "returned": 0,
+    "cancelled": 0,
+    "peak_hypotheses": 1,
+    "hypothesis_limit": 4096
+  },
+  "failures": [
+    {
+      "label": "T_R_DATA_RESP_OR_EARLY",
+      "edge": 8,
+      "time_ps": 75000,
+      "detail": "reason=RESP_MISMATCH source=0 token=0 accepted_edge=2 araddr=00000 arid=11 port=03 arresp=0 actual_data=00000000000000000000000012345678 actual_resp=1 hypotheses=1 complete=1 not_issued=0 waiting_mem=0 data_matches=1 resp_matches=0 joint_matches=0 examples_max=4 [h0 complete expected_data=00000000000000000000000012345678 expected_resp=0 captured_pc_err=0]"
+    }
+  ],
+  "integrity_errors": [],
+  "environment": {
+    "runtime": {},
+    "failures": [],
+    "integrity_errors": [],
+    "completed": false,
+    "status": "NOT_RECORDED"
+  },
+  "effective_assert_fatal": true,
+  "groups": [
+    {
+      "id": "interface",
+      "title": "接口与输入约束",
+      "rules": "同拍 E03–E08、req/rvalid 独热、R ready、pending 范围与寄存递推、四态未知值",
+      "failures": 0,
+      "status": "INCOMPLETE",
+      "reason": ""
+    },
+    {
+      "id": "transactions",
+      "title": "事务与数据",
+      "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+      "failures": 1,
+      "status": "FAIL",
+      "reason": ""
+    },
+    {
+      "id": "timing",
+      "title": "完整接口时序",
+      "rules": "pending 参考计数、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+      "failures": 0,
+      "status": "NOT_CHECKED",
+      "reason": "通用模式不执行pending 参考计数、精确调度及最早 N+5 的检查。"
+    }
+  ],
+  "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+  "contract_revision": "20261112.2",
+  "checker": {},
+  "contract": "CMDBUF interface 20261112.2; MEM capture remains issue N+4",
+  "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+  "limitations": [
+    "Finite simulation evidence, not a formal proof.",
+    "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+    "ENV_FATAL=0 continues after recoverable driver and assertion errors; failures still invalidate the run.",
+    "Invalid clocks, missing inputs/files, unsatisfiable solvers, corrupted driver state and watchdogs remain fatal.",
+    "User/DUT $fatal, $stop, $finish, simulator crashes and infinite loops are outside this switch."
+  ]
+}

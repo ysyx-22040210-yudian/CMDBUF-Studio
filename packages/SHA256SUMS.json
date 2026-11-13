@@ -1,13 +1,13 @@
 {
-  "files": 190,
+  "files": 199,
   "archives": {
     "cmdbuf-studio-portable.zip": {
-      "bytes": 7796702,
-      "sha256": "8e63c3467cbedc6cfbbdaaf830308f865f5d620e71d90f33701169eba1635508"
+      "bytes": 8746763,
+      "sha256": "f2b07828f5c5aef1bd0da15309e3cb43630f39eb40845049a2f8b8bf1f704f5f"
     },
     "cmdbuf-studio-portable.tar.gz": {
-      "bytes": 7683427,
-      "sha256": "a1f27b866d3995894d269d5a42f33fa879a42c8ace757934c55ad47798c91bb5"
+      "bytes": 8632080,
+      "sha256": "46c1be560125f7d2c776c97e9ad09d94d9ded1f32e4142cb87f7aa18e155c262"
     }
   }
 }

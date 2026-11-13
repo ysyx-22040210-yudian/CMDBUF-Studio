@@ -1,0 +1,78 @@
+Chronologic VCS simulator copyright 1991-2018
+Contains Synopsys proprietary information.
+Compiler version O-2018.09-1_Full64; Runtime version O-2018.09-1_Full64;  Nov 13 12:22 2026
+
+ VCS Coverage Metrics Release O-2018.09-1_Full64 Copyright (c) 1991-2018 by Synopsys Inc.
+EDA_SIMULATION_STARTED
+CHECK_POLICY mode=transaction assert_fatal=0 env_fatal=1 sampling=pre_edge snapshot_pipeline=1
+ENV_POLICY env_fatal=1 recoverable_errors=record_and_fail
+SELFTEST injection=rresp_legacy
+MAIN_BOOTSTRAP time_ps=10000 rst_n=1
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/simulation/vcs/tb/cmdbuf_check_monitor.sv", 134: tb_cmdbuf_rd.monitor.require_check.unnamed$$_0: started at 180000ps failed at 180000ps
+	Offending '(good === 1'b1)'
+SVA_FAIL T_R_DATA_RESP_OR_EARLY edge=18 time_ps=170000 reason=RESP_MISMATCH source=0 token=1 accepted_edge=11 araddr=12041 arid=21 port=06 arresp=0 actual_data=0123456789abcdeffedcba9876543210 actual_resp=1 hypotheses=1 complete=1 not_issued=0 waiting_mem=0 data_matches=1 resp_matches=0 joint_matches=0 examples_max=4 [h0 complete expected_data=0123456789abcdeffedcba9876543210 expected_resp=2 captured_pc_err=1]
+Error: "/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/simulation/vcs/tb/cmdbuf_check_monitor.sv", 120: tb_cmdbuf_rd.monitor: at time 180000 ps
+CHECK_CONTINUE T_R_DATA_RESP_OR_EARLY edge=18
+MAIN_PHASE_DONE case=main_response_codes assignments=48 edges=49 active_edges=48 resets=1 cancelled=0
+CHECK_COMPLETE mode=transaction failures=1 incomplete=0 frames=50 checked=50
+ENV_RUN_COMPLETE failures=0
+TEST_FAIL seed=27 assertions=1
+$finish called from file "/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/simulation/vcs/tb/tb_cmdbuf_rd.sv", line 291.
+$finish at simulation time               491001
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 694: tb_cmdbuf_rd.checks.C_RETRY_NEXT_CYCLE, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 704: tb_cmdbuf_rd.checks.C_FAILURE_SELECT_OTHER, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 714: tb_cmdbuf_rd.checks.C_REFILL_NEXT_CYCLE, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 724: tb_cmdbuf_rd.checks.C_NONHEAD_REFILL, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 734: tb_cmdbuf_rd.checks.C_BLOCKED_SIX, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 741: tb_cmdbuf_rd.checks.C_PENDING5_DEC, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 748: tb_cmdbuf_rd.checks.C_PENDING5_BOTH, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 755: tb_cmdbuf_rd.checks.C_PENDING5_ADD, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 765: tb_cmdbuf_rd.checks.C_FULL_REUSE, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 775: tb_cmdbuf_rd.checks.C_ALL_FOUR_EVENTS, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 785: tb_cmdbuf_rd.checks.C_CAPACITY700, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 795: tb_cmdbuf_rd.checks.C_CAPACITY440, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 804: tb_cmdbuf_rd.checks.C_RETURN_ERROR_PRIORITY, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 813: tb_cmdbuf_rd.checks.C_READY_MASK_RR, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 823: tb_cmdbuf_rd.checks.C_FOUR_SUCCESS, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 484: tb_cmdbuf_rd.checks.sources[0].C_XAU_EARLY_THIRD_BLOCKED, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 494: tb_cmdbuf_rd.checks.sources[0].C_XAU_R_123_AFTER_ISSUE3_FIRST, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 504: tb_cmdbuf_rd.checks.sources[0].C_XAU_OTHER_SOURCE_PROGRESS, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 514: tb_cmdbuf_rd.checks.sources[0].C_XAU_SAME_CYCLE_POP_PUSH, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 524: tb_cmdbuf_rd.checks.sources[0].C_XAU_REPEAT_ID_HEAD_R, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 484: tb_cmdbuf_rd.checks.sources[1].C_XAU_EARLY_THIRD_BLOCKED, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 494: tb_cmdbuf_rd.checks.sources[1].C_XAU_R_123_AFTER_ISSUE3_FIRST, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 504: tb_cmdbuf_rd.checks.sources[1].C_XAU_OTHER_SOURCE_PROGRESS, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 514: tb_cmdbuf_rd.checks.sources[1].C_XAU_SAME_CYCLE_POP_PUSH, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 524: tb_cmdbuf_rd.checks.sources[1].C_XAU_REPEAT_ID_HEAD_R, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 484: tb_cmdbuf_rd.checks.sources[2].C_XAU_EARLY_THIRD_BLOCKED, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 494: tb_cmdbuf_rd.checks.sources[2].C_XAU_R_123_AFTER_ISSUE3_FIRST, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 504: tb_cmdbuf_rd.checks.sources[2].C_XAU_OTHER_SOURCE_PROGRESS, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 514: tb_cmdbuf_rd.checks.sources[2].C_XAU_SAME_CYCLE_POP_PUSH, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 524: tb_cmdbuf_rd.checks.sources[2].C_XAU_REPEAT_ID_HEAD_R, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 842: tb_cmdbuf_rd.checks.bank_covers[0].half_covers[0].C_SUCCESS_BUSY_TARGET, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 842: tb_cmdbuf_rd.checks.bank_covers[0].half_covers[1].C_SUCCESS_BUSY_TARGET, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 842: tb_cmdbuf_rd.checks.bank_covers[1].half_covers[0].C_SUCCESS_BUSY_TARGET, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 842: tb_cmdbuf_rd.checks.bank_covers[1].half_covers[1].C_SUCCESS_BUSY_TARGET, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 842: tb_cmdbuf_rd.checks.bank_covers[2].half_covers[0].C_SUCCESS_BUSY_TARGET, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 842: tb_cmdbuf_rd.checks.bank_covers[2].half_covers[1].C_SUCCESS_BUSY_TARGET, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 842: tb_cmdbuf_rd.checks.bank_covers[3].half_covers[0].C_SUCCESS_BUSY_TARGET, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 842: tb_cmdbuf_rd.checks.bank_covers[3].half_covers[1].C_SUCCESS_BUSY_TARGET, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 842: tb_cmdbuf_rd.checks.bank_covers[4].half_covers[0].C_SUCCESS_BUSY_TARGET, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 842: tb_cmdbuf_rd.checks.bank_covers[4].half_covers[1].C_SUCCESS_BUSY_TARGET, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 842: tb_cmdbuf_rd.checks.bank_covers[5].half_covers[0].C_SUCCESS_BUSY_TARGET, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 842: tb_cmdbuf_rd.checks.bank_covers[5].half_covers[1].C_SUCCESS_BUSY_TARGET, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 842: tb_cmdbuf_rd.checks.bank_covers[6].half_covers[0].C_SUCCESS_BUSY_TARGET, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 842: tb_cmdbuf_rd.checks.bank_covers[6].half_covers[1].C_SUCCESS_BUSY_TARGET, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 842: tb_cmdbuf_rd.checks.bank_covers[7].half_covers[0].C_SUCCESS_BUSY_TARGET, 50 attempts, 0 match
+"/dev/shm/cmdbuf-parity-response-20261113.DDu5u3/results/builds/3584f8ff8816f4e5/checker/cmdbuf_rd_port_sva.sv", 842: tb_cmdbuf_rd.checks.bank_covers[7].half_covers[1].C_SUCCESS_BUSY_TARGET, 50 attempts, 0 match
+
+---------------------------------------------------------------------------
+VCS Coverage Metrics: during simulation line, cond, FSM, branch, tgl was monitored
+---------------------------------------------------------------------------
+
+ Coverage status: End of All Coverages ...
+
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 491001 ps
+CPU Time:      0.160 seconds;       Data structure size:   0.3Mb
+Fri Nov 13 12:22:28 2026

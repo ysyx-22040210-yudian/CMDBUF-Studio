@@ -341,11 +341,11 @@ class Studio:
         dialog.grab_set()
 
     def case_help(self):
-        self.preview('main_phase 编写说明', '''每次 @(posedge clk) 后执行一组赋值，供下一个上升沿采样。
+        self.preview('main_phase 编写说明', '''每次 @(posedge clk) 在同一仿真时间点驱动一组输入，供下一个上升沿采样。
 
-1. 保留模板循环与 #1，避开 DUT 的 NBA 更新竞争。
-2. begin_cycle(cycle) 记录周期；rst_n 保持 1，设置 rready、clk_low_ns / clk_high_ns / clk_pause_ns。
-3. drive_control(); #1; sample_context(); 更新控制后读取已稳定的 DUT 反馈。
+1. 保留模板的 @(posedge clk) 与 begin_cycle(cycle)。begin_cycle 等待本沿 DUT 更新完成。
+2. rst_n 保持 1，设置 rready、clk_low_ns / clk_high_ns / clk_pause_ns。
+3. drive_control(); sample_context(); 更新控制并读取同一时间点内稳定的 DUT 反馈。
 4. 用普通 if / else 约束 AR 和 Bank 输入，再给数据赋值。
    if (cycle == 8 && arready[0] === 1'b1) begin
        src = 0; arvalid = 1;
@@ -359,16 +359,18 @@ class Studio:
    src=0/1/2 时对应 arready 必须为 1，空闲拍也要满足。随机时从已 ready 的源中选。
    ar_rd_gnt 只发给同拍有 req 的 Bank。成功发射的 Bank 半区按模板设置 busy。
 5. 按模板处理 mem_due / due_data / due_error，保持固定延迟返回。
-6. drive_inputs() 检查并驱动；它不会替你修正非法激励。
+6. drive_inputs() 检查并驱动输入。用例需要在赋值时满足约束。
 
 定向用例：if (cycle == 8) ... 指定某一拍；其他拍在 else 给明确值。
 随机用例：将 $urandom / $urandom_range 写在满足已登记约束的分支内。
 时钟：在每拍设置三个 clk_*_ns 控制下一段低/高电平与暂停。
-启动：clk 初始为 1；默认 5 ns 下降、10 ns 上升，cycle=0 在 12 ns 驱动供 20 ns 采样。
-复位：环境在 t=0 拉低 rst_n，#1（1 ns）释放，之后一直为 1。TC 再次拉低会明确报错。
+启动时 clk 为 1。默认 5 ns 下降、10 ns 上升，cycle=0 在 10 ns 驱动供 20 ns 采样。
+
+旧模板中的两个固定 #1 等待会在编译副本中迁移。其他过程延时仍按源码执行。
+环境在 t=0 拉低 rst_n，#1（1 ns）释放，之后一直为 1。TC 再次拉低会报错。
 
 所有注册约束的正反例与检查器继续使用原环境；不能自动推断任意新 RTL 的全部约束。
-详细说明：documents/42_*（当前接口约束）、documents/38_*（启动时序）、documents/32_* 与 documents/36_*。''')
+详细说明：documents/47_*（沿对齐）、documents/42_*（接口约束）、documents/38_*（启动时序）。''')
 
     def build_regression(self, page):
         bar = self.bar(page)

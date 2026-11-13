@@ -1,0 +1,92 @@
+{
+  "version": 1,
+  "protocol": "CMDBUF 20261112.2",
+  "new_run_default": "transaction",
+  "legacy_plan_default": "strict",
+  "native_properties": "formal/protocol_20261021/cmdbuf_rd_port_sva.sv",
+  "simulation_monitor": "simulation/vcs/tb/cmdbuf_check_monitor.sv",
+  "validation": "make check-test",
+  "common_native": ["E03_SRC", "E04_ARRESP", "E05_ZERO_READY", "E06_SUCCESS_BUSY", "E07_SRC_READY", "E08_AR_GRANT_REQ", "A_REQ_ONEHOT", "A_R_ONEHOT", "A_R_READY", "A_PENDING_RANGE", "A_PENDING_RECURRENCE"],
+  "strict_native": [
+    "A_COMPARE_ARREADY",
+    "A_COMPARE_PENDING_CNT",
+    "A_COMPARE_REQ",
+    "A_COMPARE_ARB_ADDR",
+    "A_COMPARE_RVALID",
+    "A_COMPARE_RID",
+    "A_COMPARE_R_PORT_ID",
+    "A_COMPARE_RADDR",
+    "A_COMPARE_RRESP",
+    "A_COMPARE_RDATA",
+    "A_RR_BOUND",
+    "A_XAU_R_HAS_PENDING",
+    "A_XAU_R_HEAD_COMPLETE",
+    "A_XAU_R_NO_EARLY_BYPASS",
+    "A_XAU_R_ADDR_ORDER",
+    "A_XAU_R_ID_ORDER",
+    "A_XAU_R_PORT_ORDER",
+    "A_XAU_R_DATA_ORDER",
+    "A_XAU_R_RESP_ORDER",
+    "M_XAU_FIFO_COUNT",
+    "M_XAU_FIFO_HEAD",
+    "M_ALLOC",
+    "M_RETIRE",
+    "M_SUCCESS",
+    "M_DUE",
+    "M_NO_BYPASS",
+    "M_STATE",
+    "M_RANGE",
+    "M_QUOTA",
+    "M_ATTEMPT",
+    "M_AGE_RANGE",
+    "M_CALENDAR",
+    "M_AGE_UNIQUE"
+  ],
+  "transaction": {
+    "memory_capture_delay_edges": 4,
+    "max_outstanding": 9,
+    "issue_identity": "Keep all consistent associations of observed Bank/address to accepted tokens; repeated IDs are not identities.",
+    "hypothesis_limit": 4096,
+    "on_limit": "INCOMPLETE; do not choose or silently discard hypotheses",
+    "response_order": "AR acceptance order within each source",
+    "response_latency": "MEM capture edge or later; no exact scheduling or maximum deadline asserted",
+    "not_checked": ["reference-model pending count comparison", "exact arready reservation policy", "five-entry issue window and exact retry/refill cycle", "cross-source RR", "earliest N+5 response"],
+    "rules": {
+      "P_KNOWN_FRAME": "Preserve four-state values; reject unknown active inputs/control/status and valid payload.",
+      "T_R_HAS_PENDING": "Each observed R handshake belongs to an accepted, not-yet-returned source head.",
+      "T_R_ID_ORDER": "RID equals the head's accepted ARID; validate even when IDs repeat.",
+      "T_R_PORT_ORDER": "Return port equals the same source head's AR port.",
+      "T_R_ADDR_ORDER": "Return low address equals the same source head's AR low address.",
+      "T_R_DATA_RESP_OR_EARLY": "At least one complete global issue association must match the head's MEM data and error priority at each R.",
+      "T_CAPACITY": "At most nine accepted outstanding transactions, including simultaneous return/accept.",
+      "T_REQ_HAS_ACCEPTED": "Each visible request matches a not-yet-issued accepted request in a consistent global association."
+    }
+  },
+  "strict": {
+    "native_property_expressions": "Active user-editable source, with scope and failure actions applied in the simulation copy",
+    "pending_timing": "Registered count equals the reference waiting count at each sample",
+    "validation": "Full native SVA plus input audit; no learning or per-cycle latency matching."
+  },
+  "fatal_policy": {
+    "default": true,
+    "on": "ENV_FATAL=1: recoverable driver errors abort; assertions obey ASSERT_FATAL.",
+    "off": "ENV_FATAL=0: record recoverable environment and assertion errors, continue, final FAIL, exclude coverage. No stimulus repair.",
+    "assertion_only": "ENV_FATAL=1 ASSERT_FATAL=0: keep driver aborts, continue after assertions.",
+    "not_configurable": [
+      "invalid clock/cycle configuration",
+      "missing main_phase/program/files",
+      "unsatisfiable legacy random solver",
+      "corrupted driver calendar or token state",
+      "watchdog",
+      "user or DUT $fatal/$stop/$finish",
+      "tool failures and execution timeout"
+    ],
+    "archives": [
+      "environment_errors.jsonl",
+      "environment_runtime.json",
+      "assertions.jsonl",
+      "check_runtime.json"
+    ]
+  },
+  "sampling": "Complete pre-edge #1step frames. Registered consumer, explicit final flush, asynchronous reset epochs. Native SVA retains its own Preponed sampling and sampled failure operands."
+}

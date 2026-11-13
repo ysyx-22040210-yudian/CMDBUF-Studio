@@ -33,3 +33,13 @@ class SvAuthoringTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             p=Path(directory)/'wrong_name.sv';p.write_text('class some_other_name extends cmdbuf_main_tc; endclass')
             with self.assertRaises(ValueError):sv_cases.load(p)
+
+    def test_compile_copy_migrates_only_old_template_waits(self):
+        source = ('@(posedge clk);\n#1; // old NBA wait\nbegin_cycle(cycle);\n'
+                  'drive_control(); #1; sample_context();\n'
+                  '// Keep this comment: #1;\n#1; drive_inputs();\n')
+        adapted = sv_cases.align_template_delays(source)
+        self.assertEqual(source.count('\n'), adapted.count('\n'))
+        self.assertIn('   // old NBA wait\nbegin_cycle(cycle);', adapted)
+        self.assertIn('drive_control();     sample_context();', adapted)
+        self.assertTrue(adapted.endswith('// Keep this comment: #1;\n#1; drive_inputs();\n'))

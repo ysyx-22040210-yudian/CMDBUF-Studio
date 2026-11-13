@@ -8,10 +8,14 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 BASELINE_REVISION = '20261021'
 INTERFACE_REVISION = '20261112'
-REVISION = '20261112.2'
-REVISIONS = (BASELINE_REVISION, INTERFACE_REVISION, REVISION)
+PENDING_REVISION = '20261112.2'
+REVISION = '20261113'
+REGISTERED_PENDING_REVISIONS = (PENDING_REVISION, REVISION)
+PARITY_RESPONSE_CODES = {BASELINE_REVISION: 1, INTERFACE_REVISION: 1, PENDING_REVISION: 1, REVISION: 2}
+REVISIONS = tuple(PARITY_RESPONSE_CODES)
 SUPPLEMENT = 'docs/timing/interface_constraints_20261112.json'
 PENDING_SPEC = 'docs/timing/pending_register_20261112.json'
+RESPONSE_SPEC = 'docs/timing/parity_response_20261113.json'
 PORT_CHECKER = 'formal/protocol_20261021/cmdbuf_rd_port_sva.sv'
 IMPLEMENTED = {'E03_SRC', 'E04_ARRESP', 'E05_ZERO_READY', 'E06_SUCCESS_BUSY',
                'E07_SRC_READY', 'E08_AR_GRANT_REQ',
@@ -55,7 +59,7 @@ def audit(root=None, catalog=None):
                 PORT_CHECKER,
                 'formal/protocol_20261021/cmdbuf_rd_reference_model.svh',
                 'formal/protocol_20261021/cmdbuf_rd_xau_order_model.svh',
-                'docs/timing/protocol_corrections_20261021.json', SUPPLEMENT, PENDING_SPEC}
+                'docs/timing/protocol_corrections_20261021.json', SUPPLEMENT, PENDING_SPEC, RESPONSE_SPEC}
     if set(expected_sources) != required:
         failures.append('incomplete source inventory')
     for r in rules:
@@ -74,6 +78,13 @@ def audit(root=None, catalog=None):
             'assumption_instances': sum(r['instances'] for r in assumptions), 'rules': rules, 'sources': sources,
             'checker': checker,
             'scope': 'Registered stimulus contracts and active checker source identity. Edited properties are validated by the simulator.'}
+
+
+def expected_rresp(arresp, captured_pc_err, revision=REVISION):
+    """Use the response encoding of the build that captured this transaction."""
+    if arresp == 3:
+        return 3
+    return PARITY_RESPONSE_CODES[revision] if captured_pc_err else 0
 
 
 def check_interface(inputs, outputs):

@@ -26,5 +26,5 @@
   ],
   "head": {"text": "WaveDrom：Bank0 odd 读，column 5..7 停钟；column 11 手工返回数据，pc_err=1", "tick": 0},
   "config": {"hscale": 2},
-  "require": {"accepted": 1, "issued": 1, "captured": 1, "retired": 1, "src1": 1, "resp1": 1, "reset_assertions": 1, "clock_edges": 17}
+  "require": {"accepted": 1, "issued": 1, "captured": 1, "retired": 1, "src1": 1, "resp2": 1, "reset_assertions": 1, "clock_edges": 17}
  }

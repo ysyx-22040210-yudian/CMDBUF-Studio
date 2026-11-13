@@ -64,7 +64,11 @@ def cases():
 
 
 def save_case(payload):
+    from sv_cases import align_template_delays
+
     name, phase = payload['name'], check_phase(payload['phase'])
+    if payload.get('create'):
+        phase = align_template_delays(phase)
     path = tc_path(name)
     if payload.get('create'):
         if path.exists():

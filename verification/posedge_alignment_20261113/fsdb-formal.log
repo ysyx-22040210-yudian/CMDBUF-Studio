@@ -1,0 +1,8 @@
+python3 "/dev/shm/cmdbuf-posedge-20261113.S9SBQG/simulation/vcs/fsdb_formal/engine.py" --action export --request "aligned-formal-request.json"
+EDA_PROCESS {"key": "/dev/shm/cmdbuf-posedge-20261113.S9SBQG/final-results/npi_readers/1b67eed9c71879f7/compile.log", "phase": "tool", "task": "1b67eed9c71879f7", "state": "RUNNING", "timeout_scope": "process", "execution_timeout_seconds": 600, "license_wait_limit_seconds": null, "startup_wait_seconds": null, "execution_seconds": null}
+EDA_PROCESS {"key": "/dev/shm/cmdbuf-posedge-20261113.S9SBQG/final-results/npi_readers/1b67eed9c71879f7/compile.log", "phase": "tool", "task": "1b67eed9c71879f7", "state": "FINISHED", "timeout_scope": "process", "execution_timeout_seconds": 600, "license_wait_limit_seconds": null, "startup_wait_seconds": null, "execution_seconds": 0.454, "seconds": 0.454, "returncode": 0}
+NPI_FORMAL aligned_wave_trace TOTAL 1
+EDA_PROCESS {"key": "/dev/shm/cmdbuf-posedge-20261113.S9SBQG/final-results/fsdb_formal/aligned_wave_trace/pattern_0_npi.log", "phase": "tool", "task": "aligned_wave_trace", "state": "RUNNING", "timeout_scope": "process", "execution_timeout_seconds": 600, "license_wait_limit_seconds": null, "startup_wait_seconds": null, "execution_seconds": null}
+EDA_PROCESS {"key": "/dev/shm/cmdbuf-posedge-20261113.S9SBQG/final-results/fsdb_formal/aligned_wave_trace/pattern_0_npi.log", "phase": "tool", "task": "aligned_wave_trace", "state": "FINISHED", "timeout_scope": "process", "execution_timeout_seconds": 600, "license_wait_limit_seconds": null, "startup_wait_seconds": null, "execution_seconds": 0.302, "seconds": 0.302, "returncode": 0}
+NPI_PROGRESS 1/1 pattern=0
+NPI_PACKAGE /dev/shm/cmdbuf-posedge-20261113.S9SBQG/final-results/fsdb_formal/aligned_wave_trace/package.zip

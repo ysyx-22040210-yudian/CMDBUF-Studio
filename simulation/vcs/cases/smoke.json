@@ -7,5 +7,5 @@
     {"send": {"src": 2, "addr": "0x1829b", "id": 90, "port": 17}},
     {"wait": 12}
   ],
-  "require": {"accepted": 3, "retired": 3, "src0": 1, "src1": 1, "src2": 1, "resp3": 1, "resp1": 1}
+  "require": {"accepted": 3, "retired": 3, "src0": 1, "src1": 1, "src2": 1, "resp3": 1, "resp2": 1}
 }

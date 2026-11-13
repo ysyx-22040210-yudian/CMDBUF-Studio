@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "check_mode": "transaction",
+  "assert_fatal": false,
+  "profile_version": 1,
+  "runtime": {
+    "version": 1,
+    "mode": "transaction",
+    "assert_fatal": 0,
+    "env_fatal": 1,
+    "effective_assert_fatal": 0,
+    "failures": 2,
+    "incomplete": 0,
+    "finished": 1,
+    "sampled_frames": 8,
+    "checked_frames": 8,
+    "outstanding": 0,
+    "accepted": 1,
+    "issued": 1,
+    "returned": 1,
+    "cancelled": 0,
+    "peak_hypotheses": 1,
+    "hypothesis_limit": 4096
+  },
+  "failures": [
+    {
+      "label": "T_R_ID_ORDER",
+      "edge": 8,
+      "time_ps": 75000,
+      "detail": "actual=99 expected=11 token=0"
+    },
+    {
+      "label": "T_R_PORT_ORDER",
+      "edge": 8,
+      "time_ps": 75000,
+      "detail": "actual=1f expected=03"
+    }
+  ],
+  "integrity_errors": [],
+  "environment": {
+    "runtime": {},
+    "failures": [],
+    "integrity_errors": [],
+    "completed": false,
+    "status": "NOT_RECORDED"
+  },
+  "effective_assert_fatal": false,
+  "groups": [
+    {
+      "id": "interface",
+      "title": "接口与输入约束",
+      "rules": "同拍 E03–E08、req/rvalid 独热、R ready、pending 范围与寄存递推、四态未知值",
+      "failures": 0,
+      "status": "PASS",
+      "reason": ""
+    },
+    {
+      "id": "transactions",
+      "title": "事务与数据",
+      "rules": "接受/发射/返回对应、九项容量、单源顺序、ID/port/低地址、MEM 数据与错误优先级",
+      "failures": 2,
+      "status": "FAIL",
+      "reason": ""
+    },
+    {
+      "id": "timing",
+      "title": "完整接口时序",
+      "rules": "pending 参考计数、精确 ready/req/R 调度、五项窗口、RR、最早 N+5 响应",
+      "failures": 0,
+      "status": "NOT_CHECKED",
+      "reason": "通用模式不执行pending 参考计数、精确调度及最早 N+5 的检查。"
+    }
+  ],
+  "sampling": "pre-edge #1step; complete four-state frame; final frame explicitly flushed",
+  "contract_revision": "20261112.2",
+  "checker": {},
+  "contract": "CMDBUF interface 20261112.2; MEM capture remains issue N+4",
+  "transaction_policy": "All observable issue identities retained (bounded); same-source AR order; capture-edge R forwarding permitted in transaction mode; no fixed response deadline.",
+  "limitations": [
+    "Finite simulation evidence, not a formal proof.",
+    "An exhausted issue-identity hypothesis budget or outstanding requests is INCOMPLETE, never PASS.",
+    "ENV_FATAL=0 continues after recoverable driver and assertion errors; failures still invalidate the run.",
+    "Invalid clocks, missing inputs/files, unsatisfiable solvers, corrupted driver state and watchdogs remain fatal.",
+    "User/DUT $fatal, $stop, $finish, simulator crashes and infinite loops are outside this switch."
+  ]
+}

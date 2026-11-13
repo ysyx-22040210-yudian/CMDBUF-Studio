@@ -42,7 +42,7 @@
         wire [1:0] oldest_resp; // 本源 FIFO 队头的预期错误状态，越界优先于校验异常。
         // 从独立 FIFO 队头保存的 arresp/pc_err 合成响应状态，保持地址越界高于奇偶校验异常的优先级。
         assign oldest_resp = m_err[oldest]==2'b11 ? 2'b11 :
-                                (m_pc[oldest] ? 2'b01 : 2'b00);
+                                (m_pc[oldest] ? 2'b10 : 2'b00);
         // 一次比较五类负载：低地址、ID、port、128 位数据、错误状态，必须全部来自同一个队头。
         // 此信号供 cover 记录正确返回；各字段另有独立 assert，便于从失败标签定位错误字段。
         wire head_payload_matches; // R 的五类负载是否都属于本源 FIFO 队头，供完整业务见证使用。

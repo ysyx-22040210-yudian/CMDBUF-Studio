@@ -1,0 +1,1051 @@
+{
+  "status": "PASS",
+  "package_manifest_files": 199,
+  "transaction": {
+    "batch": "20261113_130353_regress_00be3b",
+    "mode": "transaction",
+    "runs": 46,
+    "random_runs": 40,
+    "random_cycles": 400000,
+    "waves": false,
+    "coverage": {
+      "SCORE": "82.80",
+      "LINE": "89.47",
+      "COND": "81.48",
+      "TOGGLE": "85.26",
+      "FSM": "--",
+      "BRANCH": "75.00"
+    },
+    "metrics": {
+      "accepted": 92772,
+      "issued": 92772,
+      "captured": 92772,
+      "retired": 92772,
+      "resp0": 23131,
+      "resp1": 0,
+      "resp2": 23220,
+      "resp3": 46421,
+      "tc_body_cycles": 400602
+    },
+    "cases": [
+      {
+        "id": "tc_directed_seed_1",
+        "status": "PASS",
+        "seed": 1,
+        "seconds": 0.409,
+        "cycles": 64,
+        "returned": 1,
+        "resp2": 0
+      },
+      {
+        "id": "tc_retry_seed_1",
+        "status": "PASS",
+        "seed": 1,
+        "seconds": 0.405,
+        "cycles": 64,
+        "returned": 1,
+        "resp2": 0
+      },
+      {
+        "id": "tc_backpressure_seed_1",
+        "status": "PASS",
+        "seed": 1,
+        "seconds": 0.405,
+        "cycles": 100,
+        "returned": 9,
+        "resp2": 0
+      },
+      {
+        "id": "tc_same_id_seed_1",
+        "status": "PASS",
+        "seed": 1,
+        "seconds": 0.457,
+        "cycles": 100,
+        "returned": 6,
+        "resp2": 0
+      },
+      {
+        "id": "tc_banks_seed_1",
+        "status": "PASS",
+        "seed": 1,
+        "seconds": 0.405,
+        "cycles": 210,
+        "returned": 16,
+        "resp2": 0
+      },
+      {
+        "id": "tc_reset_seed_1",
+        "status": "PASS",
+        "seed": 1,
+        "seconds": 0.415,
+        "cycles": 64,
+        "returned": 3,
+        "resp2": 0
+      },
+      {
+        "id": "tc_random_seed_1",
+        "status": "PASS",
+        "seed": 1,
+        "seconds": 1.87,
+        "cycles": 10000,
+        "returned": 2327,
+        "resp2": 589
+      },
+      {
+        "id": "tc_random_seed_2",
+        "status": "PASS",
+        "seed": 2,
+        "seconds": 1.933,
+        "cycles": 10000,
+        "returned": 2286,
+        "resp2": 576
+      },
+      {
+        "id": "tc_random_seed_3",
+        "status": "PASS",
+        "seed": 3,
+        "seconds": 2.058,
+        "cycles": 10000,
+        "returned": 2389,
+        "resp2": 595
+      },
+      {
+        "id": "tc_random_seed_4",
+        "status": "PASS",
+        "seed": 4,
+        "seconds": 1.876,
+        "cycles": 10000,
+        "returned": 2335,
+        "resp2": 586
+      },
+      {
+        "id": "tc_random_seed_5",
+        "status": "PASS",
+        "seed": 5,
+        "seconds": 1.869,
+        "cycles": 10000,
+        "returned": 2293,
+        "resp2": 604
+      },
+      {
+        "id": "tc_random_seed_6",
+        "status": "PASS",
+        "seed": 6,
+        "seconds": 1.889,
+        "cycles": 10000,
+        "returned": 2302,
+        "resp2": 582
+      },
+      {
+        "id": "tc_random_seed_7",
+        "status": "PASS",
+        "seed": 7,
+        "seconds": 1.76,
+        "cycles": 10000,
+        "returned": 2308,
+        "resp2": 594
+      },
+      {
+        "id": "tc_random_seed_8",
+        "status": "PASS",
+        "seed": 8,
+        "seconds": 1.758,
+        "cycles": 10000,
+        "returned": 2323,
+        "resp2": 557
+      },
+      {
+        "id": "tc_random_seed_9",
+        "status": "PASS",
+        "seed": 9,
+        "seconds": 1.947,
+        "cycles": 10000,
+        "returned": 2312,
+        "resp2": 552
+      },
+      {
+        "id": "tc_random_seed_10",
+        "status": "PASS",
+        "seed": 10,
+        "seconds": 1.761,
+        "cycles": 10000,
+        "returned": 2306,
+        "resp2": 611
+      },
+      {
+        "id": "tc_random_seed_11",
+        "status": "PASS",
+        "seed": 11,
+        "seconds": 1.818,
+        "cycles": 10000,
+        "returned": 2241,
+        "resp2": 559
+      },
+      {
+        "id": "tc_random_seed_12",
+        "status": "PASS",
+        "seed": 12,
+        "seconds": 1.856,
+        "cycles": 10000,
+        "returned": 2262,
+        "resp2": 590
+      },
+      {
+        "id": "tc_random_seed_13",
+        "status": "PASS",
+        "seed": 13,
+        "seconds": 1.812,
+        "cycles": 10000,
+        "returned": 2339,
+        "resp2": 581
+      },
+      {
+        "id": "tc_random_seed_14",
+        "status": "PASS",
+        "seed": 14,
+        "seconds": 1.858,
+        "cycles": 10000,
+        "returned": 2274,
+        "resp2": 576
+      },
+      {
+        "id": "tc_random_seed_15",
+        "status": "PASS",
+        "seed": 15,
+        "seconds": 1.863,
+        "cycles": 10000,
+        "returned": 2337,
+        "resp2": 595
+      },
+      {
+        "id": "tc_random_seed_16",
+        "status": "PASS",
+        "seed": 16,
+        "seconds": 1.883,
+        "cycles": 10000,
+        "returned": 2253,
+        "resp2": 553
+      },
+      {
+        "id": "tc_random_seed_17",
+        "status": "PASS",
+        "seed": 17,
+        "seconds": 1.612,
+        "cycles": 10000,
+        "returned": 2269,
+        "resp2": 608
+      },
+      {
+        "id": "tc_random_seed_18",
+        "status": "PASS",
+        "seed": 18,
+        "seconds": 1.776,
+        "cycles": 10000,
+        "returned": 2297,
+        "resp2": 546
+      },
+      {
+        "id": "tc_random_seed_19",
+        "status": "PASS",
+        "seed": 19,
+        "seconds": 1.774,
+        "cycles": 10000,
+        "returned": 2287,
+        "resp2": 550
+      },
+      {
+        "id": "tc_random_seed_20",
+        "status": "PASS",
+        "seed": 20,
+        "seconds": 1.606,
+        "cycles": 10000,
+        "returned": 2302,
+        "resp2": 578
+      },
+      {
+        "id": "tc_random_seed_21",
+        "status": "PASS",
+        "seed": 21,
+        "seconds": 1.661,
+        "cycles": 10000,
+        "returned": 2300,
+        "resp2": 572
+      },
+      {
+        "id": "tc_random_seed_22",
+        "status": "PASS",
+        "seed": 22,
+        "seconds": 1.79,
+        "cycles": 10000,
+        "returned": 2391,
+        "resp2": 591
+      },
+      {
+        "id": "tc_random_seed_23",
+        "status": "PASS",
+        "seed": 23,
+        "seconds": 1.658,
+        "cycles": 10000,
+        "returned": 2315,
+        "resp2": 582
+      },
+      {
+        "id": "tc_random_seed_24",
+        "status": "PASS",
+        "seed": 24,
+        "seconds": 1.818,
+        "cycles": 10000,
+        "returned": 2298,
+        "resp2": 601
+      },
+      {
+        "id": "tc_random_seed_25",
+        "status": "PASS",
+        "seed": 25,
+        "seconds": 1.701,
+        "cycles": 10000,
+        "returned": 2340,
+        "resp2": 572
+      },
+      {
+        "id": "tc_random_seed_26",
+        "status": "PASS",
+        "seed": 26,
+        "seconds": 1.608,
+        "cycles": 10000,
+        "returned": 2239,
+        "resp2": 557
+      },
+      {
+        "id": "tc_random_seed_27",
+        "status": "PASS",
+        "seed": 27,
+        "seconds": 1.725,
+        "cycles": 10000,
+        "returned": 2349,
+        "resp2": 609
+      },
+      {
+        "id": "tc_random_seed_28",
+        "status": "PASS",
+        "seed": 28,
+        "seconds": 1.685,
+        "cycles": 10000,
+        "returned": 2344,
+        "resp2": 624
+      },
+      {
+        "id": "tc_random_seed_29",
+        "status": "PASS",
+        "seed": 29,
+        "seconds": 1.612,
+        "cycles": 10000,
+        "returned": 2359,
+        "resp2": 602
+      },
+      {
+        "id": "tc_random_seed_30",
+        "status": "PASS",
+        "seed": 30,
+        "seconds": 1.69,
+        "cycles": 10000,
+        "returned": 2375,
+        "resp2": 565
+      },
+      {
+        "id": "tc_random_seed_31",
+        "status": "PASS",
+        "seed": 31,
+        "seconds": 1.684,
+        "cycles": 10000,
+        "returned": 2281,
+        "resp2": 551
+      },
+      {
+        "id": "tc_random_seed_32",
+        "status": "PASS",
+        "seed": 32,
+        "seconds": 1.711,
+        "cycles": 10000,
+        "returned": 2336,
+        "resp2": 561
+      },
+      {
+        "id": "tc_random_seed_33",
+        "status": "PASS",
+        "seed": 33,
+        "seconds": 1.765,
+        "cycles": 10000,
+        "returned": 2346,
+        "resp2": 538
+      },
+      {
+        "id": "tc_random_seed_34",
+        "status": "PASS",
+        "seed": 34,
+        "seconds": 1.842,
+        "cycles": 10000,
+        "returned": 2303,
+        "resp2": 566
+      },
+      {
+        "id": "tc_random_seed_35",
+        "status": "PASS",
+        "seed": 35,
+        "seconds": 1.903,
+        "cycles": 10000,
+        "returned": 2307,
+        "resp2": 559
+      },
+      {
+        "id": "tc_random_seed_36",
+        "status": "PASS",
+        "seed": 36,
+        "seconds": 1.849,
+        "cycles": 10000,
+        "returned": 2323,
+        "resp2": 587
+      },
+      {
+        "id": "tc_random_seed_37",
+        "status": "PASS",
+        "seed": 37,
+        "seconds": 1.941,
+        "cycles": 10000,
+        "returned": 2367,
+        "resp2": 587
+      },
+      {
+        "id": "tc_random_seed_38",
+        "status": "PASS",
+        "seed": 38,
+        "seconds": 1.954,
+        "cycles": 10000,
+        "returned": 2368,
+        "resp2": 583
+      },
+      {
+        "id": "tc_random_seed_39",
+        "status": "PASS",
+        "seed": 39,
+        "seconds": 1.862,
+        "cycles": 10000,
+        "returned": 2352,
+        "resp2": 621
+      },
+      {
+        "id": "tc_random_seed_40",
+        "status": "PASS",
+        "seed": 40,
+        "seconds": 1.89,
+        "cycles": 10000,
+        "returned": 2401,
+        "resp2": 610
+      }
+    ]
+  },
+  "strict": {
+    "batch": "20261113_130436_regress_550fdc",
+    "mode": "strict",
+    "runs": 32,
+    "random_runs": 32,
+    "random_cycles": 320000,
+    "waves": false,
+    "coverage": {
+      "SCORE": "82.80",
+      "LINE": "89.47",
+      "COND": "81.48",
+      "TOGGLE": "85.26",
+      "FSM": "--",
+      "BRANCH": "75.00"
+    },
+    "metrics": {
+      "accepted": 74097,
+      "issued": 74097,
+      "captured": 74097,
+      "retired": 74097,
+      "resp0": 18602,
+      "resp1": 0,
+      "resp2": 18338,
+      "resp3": 37157,
+      "tc_body_cycles": 320000
+    },
+    "cases": [
+      {
+        "id": "tc_random_seed_41",
+        "status": "PASS",
+        "seed": 41,
+        "seconds": 1.9,
+        "cycles": 10000,
+        "returned": 2371,
+        "resp2": 571
+      },
+      {
+        "id": "tc_random_seed_42",
+        "status": "PASS",
+        "seed": 42,
+        "seconds": 1.913,
+        "cycles": 10000,
+        "returned": 2303,
+        "resp2": 573
+      },
+      {
+        "id": "tc_random_seed_43",
+        "status": "PASS",
+        "seed": 43,
+        "seconds": 1.758,
+        "cycles": 10000,
+        "returned": 2231,
+        "resp2": 563
+      },
+      {
+        "id": "tc_random_seed_44",
+        "status": "PASS",
+        "seed": 44,
+        "seconds": 1.935,
+        "cycles": 10000,
+        "returned": 2367,
+        "resp2": 581
+      },
+      {
+        "id": "tc_random_seed_45",
+        "status": "PASS",
+        "seed": 45,
+        "seconds": 1.872,
+        "cycles": 10000,
+        "returned": 2312,
+        "resp2": 590
+      },
+      {
+        "id": "tc_random_seed_46",
+        "status": "PASS",
+        "seed": 46,
+        "seconds": 1.854,
+        "cycles": 10000,
+        "returned": 2258,
+        "resp2": 551
+      },
+      {
+        "id": "tc_random_seed_47",
+        "status": "PASS",
+        "seed": 47,
+        "seconds": 1.757,
+        "cycles": 10000,
+        "returned": 2322,
+        "resp2": 535
+      },
+      {
+        "id": "tc_random_seed_48",
+        "status": "PASS",
+        "seed": 48,
+        "seconds": 1.95,
+        "cycles": 10000,
+        "returned": 2330,
+        "resp2": 555
+      },
+      {
+        "id": "tc_random_seed_49",
+        "status": "PASS",
+        "seed": 49,
+        "seconds": 1.862,
+        "cycles": 10000,
+        "returned": 2319,
+        "resp2": 592
+      },
+      {
+        "id": "tc_random_seed_50",
+        "status": "PASS",
+        "seed": 50,
+        "seconds": 1.901,
+        "cycles": 10000,
+        "returned": 2263,
+        "resp2": 574
+      },
+      {
+        "id": "tc_random_seed_51",
+        "status": "PASS",
+        "seed": 51,
+        "seconds": 1.902,
+        "cycles": 10000,
+        "returned": 2350,
+        "resp2": 580
+      },
+      {
+        "id": "tc_random_seed_52",
+        "status": "PASS",
+        "seed": 52,
+        "seconds": 1.941,
+        "cycles": 10000,
+        "returned": 2317,
+        "resp2": 588
+      },
+      {
+        "id": "tc_random_seed_53",
+        "status": "PASS",
+        "seed": 53,
+        "seconds": 1.762,
+        "cycles": 10000,
+        "returned": 2306,
+        "resp2": 583
+      },
+      {
+        "id": "tc_random_seed_54",
+        "status": "PASS",
+        "seed": 54,
+        "seconds": 1.83,
+        "cycles": 10000,
+        "returned": 2267,
+        "resp2": 583
+      },
+      {
+        "id": "tc_random_seed_55",
+        "status": "PASS",
+        "seed": 55,
+        "seconds": 1.825,
+        "cycles": 10000,
+        "returned": 2300,
+        "resp2": 533
+      },
+      {
+        "id": "tc_random_seed_56",
+        "status": "PASS",
+        "seed": 56,
+        "seconds": 1.838,
+        "cycles": 10000,
+        "returned": 2320,
+        "resp2": 574
+      },
+      {
+        "id": "tc_random_seed_57",
+        "status": "PASS",
+        "seed": 57,
+        "seconds": 1.939,
+        "cycles": 10000,
+        "returned": 2335,
+        "resp2": 565
+      },
+      {
+        "id": "tc_random_seed_58",
+        "status": "PASS",
+        "seed": 58,
+        "seconds": 1.707,
+        "cycles": 10000,
+        "returned": 2267,
+        "resp2": 556
+      },
+      {
+        "id": "tc_random_seed_59",
+        "status": "PASS",
+        "seed": 59,
+        "seconds": 1.714,
+        "cycles": 10000,
+        "returned": 2271,
+        "resp2": 575
+      },
+      {
+        "id": "tc_random_seed_60",
+        "status": "PASS",
+        "seed": 60,
+        "seconds": 1.841,
+        "cycles": 10000,
+        "returned": 2301,
+        "resp2": 562
+      },
+      {
+        "id": "tc_random_seed_61",
+        "status": "PASS",
+        "seed": 61,
+        "seconds": 1.846,
+        "cycles": 10000,
+        "returned": 2300,
+        "resp2": 574
+      },
+      {
+        "id": "tc_random_seed_62",
+        "status": "PASS",
+        "seed": 62,
+        "seconds": 1.803,
+        "cycles": 10000,
+        "returned": 2306,
+        "resp2": 509
+      },
+      {
+        "id": "tc_random_seed_63",
+        "status": "PASS",
+        "seed": 63,
+        "seconds": 1.709,
+        "cycles": 10000,
+        "returned": 2335,
+        "resp2": 591
+      },
+      {
+        "id": "tc_random_seed_64",
+        "status": "PASS",
+        "seed": 64,
+        "seconds": 1.794,
+        "cycles": 10000,
+        "returned": 2357,
+        "resp2": 565
+      },
+      {
+        "id": "tc_random_seed_65",
+        "status": "PASS",
+        "seed": 65,
+        "seconds": 1.919,
+        "cycles": 10000,
+        "returned": 2397,
+        "resp2": 633
+      },
+      {
+        "id": "tc_random_seed_66",
+        "status": "PASS",
+        "seed": 66,
+        "seconds": 1.918,
+        "cycles": 10000,
+        "returned": 2329,
+        "resp2": 601
+      },
+      {
+        "id": "tc_random_seed_67",
+        "status": "PASS",
+        "seed": 67,
+        "seconds": 1.904,
+        "cycles": 10000,
+        "returned": 2282,
+        "resp2": 570
+      },
+      {
+        "id": "tc_random_seed_68",
+        "status": "PASS",
+        "seed": 68,
+        "seconds": 1.813,
+        "cycles": 10000,
+        "returned": 2317,
+        "resp2": 589
+      },
+      {
+        "id": "tc_random_seed_69",
+        "status": "PASS",
+        "seed": 69,
+        "seconds": 1.865,
+        "cycles": 10000,
+        "returned": 2375,
+        "resp2": 575
+      },
+      {
+        "id": "tc_random_seed_70",
+        "status": "PASS",
+        "seed": 70,
+        "seconds": 1.952,
+        "cycles": 10000,
+        "returned": 2291,
+        "resp2": 581
+      },
+      {
+        "id": "tc_random_seed_71",
+        "status": "PASS",
+        "seed": 71,
+        "seconds": 1.95,
+        "cycles": 10000,
+        "returned": 2314,
+        "resp2": 568
+      },
+      {
+        "id": "tc_random_seed_72",
+        "status": "PASS",
+        "seed": 72,
+        "seconds": 1.949,
+        "cycles": 10000,
+        "returned": 2384,
+        "resp2": 598
+      }
+    ]
+  },
+  "wave_transaction": {
+    "batch": "20261113_130510_run_145581",
+    "mode": "transaction",
+    "runs": 1,
+    "random_runs": 1,
+    "random_cycles": 12000,
+    "waves": true,
+    "coverage": {
+      "SCORE": "82.80",
+      "LINE": "89.47",
+      "COND": "81.48",
+      "TOGGLE": "85.26",
+      "FSM": "--",
+      "BRANCH": "75.00"
+    },
+    "metrics": {
+      "accepted": 2765,
+      "issued": 2765,
+      "captured": 2765,
+      "retired": 2765,
+      "resp0": 688,
+      "resp1": 0,
+      "resp2": 699,
+      "resp3": 1378,
+      "tc_body_cycles": 12000
+    },
+    "cases": [
+      {
+        "id": "tc_random_seed_42",
+        "status": "PASS",
+        "seed": 42,
+        "seconds": 2.96,
+        "cycles": 12000,
+        "returned": 2765,
+        "resp2": 699
+      }
+    ]
+  },
+  "wave_strict": {
+    "batch": "20261113_130515_run_e4930d",
+    "mode": "strict",
+    "runs": 1,
+    "random_runs": 1,
+    "random_cycles": 12000,
+    "waves": true,
+    "coverage": {
+      "SCORE": "82.80",
+      "LINE": "89.47",
+      "COND": "81.48",
+      "TOGGLE": "85.26",
+      "FSM": "--",
+      "BRANCH": "75.00"
+    },
+    "metrics": {
+      "accepted": 2709,
+      "issued": 2709,
+      "captured": 2709,
+      "retired": 2709,
+      "resp0": 718,
+      "resp1": 0,
+      "resp2": 713,
+      "resp3": 1278,
+      "tc_body_cycles": 12000
+    },
+    "cases": [
+      {
+        "id": "tc_random_seed_17",
+        "status": "PASS",
+        "seed": 17,
+        "seconds": 2.556,
+        "cycles": 12000,
+        "returned": 2709,
+        "resp2": 713
+      }
+    ]
+  },
+  "wave_pause": {
+    "batch": "20261113_130519_run_813a08",
+    "mode": "strict",
+    "runs": 1,
+    "random_runs": 0,
+    "random_cycles": 0,
+    "waves": true,
+    "coverage": {
+      "SCORE": "63.09",
+      "LINE": "88.35",
+      "COND": "74.07",
+      "TOGGLE": "18.68",
+      "FSM": "--",
+      "BRANCH": "71.25"
+    },
+    "metrics": {
+      "accepted": 3,
+      "issued": 3,
+      "captured": 3,
+      "retired": 3,
+      "resp0": 3,
+      "resp1": 0,
+      "resp2": 0,
+      "resp3": 0,
+      "tc_body_cycles": 64
+    },
+    "cases": [
+      {
+        "id": "tc_reset_seed_1",
+        "status": "PASS",
+        "seed": 1,
+        "seconds": 0.403,
+        "cycles": 64,
+        "returned": 3,
+        "resp2": 0
+      }
+    ]
+  },
+  "wave_alignment": [
+    {
+      "run": "tc_random_seed_42",
+      "ports": 31,
+      "posedges": 12024,
+      "reset_release_ps": 1000,
+      "transitions": 223916,
+      "by_signal": {
+        "ar_port_id": 11627,
+        "ar_rd_gnt": 7874,
+        "araddr": 12001,
+        "arb_addr": 8931,
+        "arid": 11959,
+        "arready": 2713,
+        "arresp": 8870,
+        "arvalid": 4012,
+        "mem_rdata": 12012,
+        "pc_err": 5978,
+        "pending_cnt": 4274,
+        "r_port_id": 4549,
+        "raddr": 4164,
+        "rd_mem_status[0]": 9133,
+        "rd_mem_status[1]": 9004,
+        "rd_mem_status[2]": 9148,
+        "rd_mem_status[3]": 9077,
+        "rd_mem_status[4]": 9065,
+        "rd_mem_status[5]": 9055,
+        "rd_mem_status[6]": 8935,
+        "rd_mem_status[7]": 9037,
+        "rdata": 4691,
+        "req": 8414,
+        "rid": 4679,
+        "rready": 10535,
+        "rresp": 3404,
+        "rvalid": 4298,
+        "rw_rd_gnt": 11957,
+        "src": 4520
+      }
+    },
+    {
+      "run": "tc_random_seed_17",
+      "ports": 31,
+      "posedges": 12019,
+      "reset_release_ps": 1000,
+      "transitions": 223534,
+      "by_signal": {
+        "ar_port_id": 11624,
+        "ar_rd_gnt": 7829,
+        "araddr": 12001,
+        "arb_addr": 9013,
+        "arid": 11959,
+        "arready": 2694,
+        "arresp": 8826,
+        "arvalid": 4028,
+        "mem_rdata": 12008,
+        "pc_err": 5902,
+        "pending_cnt": 4252,
+        "r_port_id": 4446,
+        "raddr": 3960,
+        "rd_mem_status[0]": 9028,
+        "rd_mem_status[1]": 9177,
+        "rd_mem_status[2]": 9083,
+        "rd_mem_status[3]": 9179,
+        "rd_mem_status[4]": 9073,
+        "rd_mem_status[5]": 9035,
+        "rd_mem_status[6]": 9110,
+        "rd_mem_status[7]": 9132,
+        "rdata": 4602,
+        "req": 8522,
+        "rid": 4590,
+        "rready": 10480,
+        "rresp": 3320,
+        "rvalid": 4199,
+        "rw_rd_gnt": 11952,
+        "src": 4510
+      }
+    },
+    {
+      "run": "tc_reset_seed_1",
+      "ports": 31,
+      "posedges": 73,
+      "reset_release_ps": 1000,
+      "transitions": 76,
+      "by_signal": {
+        "ar_port_id": 2,
+        "ar_rd_gnt": 6,
+        "araddr": 2,
+        "arb_addr": 6,
+        "arid": 2,
+        "arready": 0,
+        "arresp": 0,
+        "arvalid": 6,
+        "mem_rdata": 6,
+        "pc_err": 0,
+        "pending_cnt": 6,
+        "r_port_id": 4,
+        "raddr": 4,
+        "rd_mem_status[0]": 6,
+        "rd_mem_status[1]": 0,
+        "rd_mem_status[2]": 0,
+        "rd_mem_status[3]": 0,
+        "rd_mem_status[4]": 0,
+        "rd_mem_status[5]": 0,
+        "rd_mem_status[6]": 0,
+        "rd_mem_status[7]": 0,
+        "rdata": 4,
+        "req": 6,
+        "rid": 4,
+        "rready": 1,
+        "rresp": 0,
+        "rvalid": 4,
+        "rw_rd_gnt": 1,
+        "src": 6
+      }
+    }
+  ],
+  "simulations": 81,
+  "random_body_cycles": 744000,
+  "returned": 172346,
+  "resp2": 42970,
+  "formal": {
+    "patterns": 2,
+    "frames": [
+      12024,
+      12019
+    ],
+    "compared_signals": 30,
+    "package_sha256": "7f77215c209bf9b77da26287ea26b38955f3a7cf07fdcf1ce412ead8a6fc54e7",
+    "counts": {
+      "patterns": 2,
+      "segments": 2,
+      "cycles": 24043,
+      "input_assumptions": 24043,
+      "output_assertions": 24043,
+      "terminal_covers": 2,
+      "transactions": 16422
+    },
+    "status": "GENERATED",
+    "proof_status": "NOT_RUN"
+  },
+  "tools": {
+    "vcs": "O-2018.09-1",
+    "verdi_npi": "O-2018.09-SP2"
+  },
+  "scope": "Release candidate package on baseline CMDBUF RTL. Clock alignment is measured on the actual DUT waveform. Formal export is checked against simulation samples.",
+  "package_checksums": {
+    "files": 199,
+    "archives": {
+      "cmdbuf-studio-portable.zip": {
+        "bytes": 8746763,
+        "sha256": "f2b07828f5c5aef1bd0da15309e3cb43630f39eb40845049a2f8b8bf1f704f5f"
+      },
+      "cmdbuf-studio-portable.tar.gz": {
+        "bytes": 8632080,
+        "sha256": "46c1be560125f7d2c776c97e9ad09d94d9ded1f32e4142cb87f7aa18e155c262"
+      }
+    }
+  },
+  "random_seed_plan": {
+    "transaction": {
+      "first": 1,
+      "last": 40,
+      "cycles": 10000,
+      "parallel_jobs": 4
+    },
+    "strict": {
+      "first": 41,
+      "last": 72,
+      "cycles": 10000,
+      "parallel_jobs": 4
+    }
+  },
+  "wave_transitions": 447526
+}

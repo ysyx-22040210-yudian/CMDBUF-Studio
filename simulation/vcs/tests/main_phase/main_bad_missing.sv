@@ -7,7 +7,7 @@ class main_bad_missing extends cmdbuf_main_tc;
     virtual task main_phase;
         for (int unsigned cycle=0; cycle<num_cycles; cycle++) begin
             @(posedge clk);
-            #1; // DUT 本拍的 NBA 更新完成后再驱动，避免采样竞争。
+            // begin_cycle 等待本沿 NBA 完成。
             begin_cycle(cycle);
 
             // 编辑区 A：复位保持 1；时钟单位 ns，pause 延长下一段低电平。
@@ -15,7 +15,7 @@ class main_bad_missing extends cmdbuf_main_tc;
             rready = 3'b111;
             clk_low_ns = 5; clk_high_ns = 5; clk_pause_ns = 0;
             drive_control();
-            #1; // rready 影响组合反馈，先等待稳定，再读取。
+            // sample_context 等待同一时间点的反馈稳定。
             sample_context();
 
             // 编辑区 B：选中的 src 必须 ready，空闲拍使用 src=3。

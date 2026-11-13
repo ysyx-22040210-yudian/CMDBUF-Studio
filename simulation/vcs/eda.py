@@ -79,7 +79,8 @@ def sources():
     files.extend(ROOT / p for p in [PROJECT['checker']] + PROJECT['checker_includes'])
     files.extend(dut_config.source_files())
     files.extend(ROOT / p for p in ('Makefile', 'make.cmd'))
-    files.extend(ROOT / p for p in ('docs/timing/protocol_corrections_20261021.json', contracts.SUPPLEMENT, contracts.PENDING_SPEC))
+    files.extend(ROOT / p for p in ('docs/timing/protocol_corrections_20261021.json', contracts.SUPPLEMENT,
+                                   contracts.PENDING_SPEC, contracts.RESPONSE_SPEC))
     files.extend(p for p in HERE.rglob('*') if p.is_file() and
                  '__pycache__' not in p.parts and p.suffix not in ('.pyc', '.log'))
     return sorted(set(files))
@@ -360,10 +361,11 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
     if sv_case:
         if cfg.get('format') == 'sv_main_phase':
             from main_phase_audit import verify_execution as verify_sv
-            drive_audit = verify_sv(run, program, current_contract=current_contract)
+            drive_audit = verify_sv(run, program, current_contract=current_contract,
+                                    contract_revision=contract_revision)
         else:
             from sv_audit import verify_execution as verify_sv
-            drive_audit = verify_sv(run, program)
+            drive_audit = verify_sv(run, program, contract_revision=contract_revision)
         write_json(run / 'drive_audit.json', drive_audit)
         failures.extend(drive_audit['failures'])
         diagnostic=re.search(r'^(?:SV_TC_CONTEXT|MAIN_PHASE_CONTEXT) (.+)$',log,re.M)
@@ -373,12 +375,13 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
                 policy='TC if branches choose inputs; driver validates and copies without repair'))
     if strict_random:
         from random_audit import verify_execution as verify_random
-        drive_audit = verify_random(run, program, current_contract=current_contract)
+        drive_audit = verify_random(run, program, current_contract=current_contract,
+                                    contract_revision=contract_revision)
         write_json(run / 'drive_audit.json', drive_audit)
         failures.extend(drive_audit['failures'])
     if wave_case:
         from wavedrom_adapter import verify_execution
-        drive_audit = verify_execution(cfg, run, program)
+        drive_audit = verify_execution(cfg, run, program, contract_revision=contract_revision)
         write_json(run / 'drive_audit.json', drive_audit)
         failures.extend(drive_audit['failures'])
         if protocol_case:

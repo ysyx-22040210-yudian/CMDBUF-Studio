@@ -1,0 +1,51 @@
+{
+  "status": "PASS",
+  "check_count": 144,
+  "fixture_cases": 26,
+  "integration_runs": 18,
+  "fixtures": [
+    "ambiguous_0",
+    "ambiguous_bad_data_0",
+    "ambiguous_limit_0",
+    "association_conflict_0",
+    "bad_both_0",
+    "bad_data_0",
+    "bad_priority_0",
+    "bad_resp_0",
+    "bad_resp_1",
+    "capture_forward_0",
+    "duplicate_0",
+    "early_0",
+    "last_bad_0",
+    "last_x_0",
+    "late_0",
+    "not_issued_0",
+    "parity_0",
+    "priority_0",
+    "reset_cancel_0",
+    "reset_masks_error_0",
+    "reuse_0",
+    "same_id_order_0",
+    "snapshot_0",
+    "two_errors_0",
+    "two_errors_1",
+    "unfinished_0"
+  ],
+  "origin": "User-reported label only; no failing user RTL/log supplied.",
+  "changes": "Added diagnostics; existing acceptance expression and policy preserved.",
+  "tested_sources_equal_working_tree": true,
+  "portable": {
+    "files": 196,
+    "archives": {
+      "cmdbuf-studio-portable.zip": {
+        "bytes": 8630220,
+        "sha256": "7bbda32674acc5e7d5322144f1e9cd4a34a007e44e8b1cf8a1bd01c438b13206"
+      },
+      "cmdbuf-studio-portable.tar.gz": {
+        "bytes": 8515545,
+        "sha256": "e605db827d596545cd67b594d3b76a9c99001f00f391c83798cacdf3164d835c"
+      }
+    }
+  },
+  "portable_verified": true
+}

@@ -1,7 +1,7 @@
 """Explicit verification scope; unknown timing is never reported as proven."""
 import json
 from pathlib import Path
-from contracts import BASELINE_REVISION, REVISION
+from contracts import BASELINE_REVISION, REGISTERED_PENDING_REVISIONS, REVISION, expected_rresp
 
 MODES = ('transaction', 'strict')
 COMMON = frozenset(('E03_SRC', 'E04_ARRESP', 'E05_ZERO_READY', 'E06_SUCCESS_BUSY',
@@ -74,7 +74,7 @@ def environment_report(directory, options, required=False):
 def category(label, revision=REVISION, user_labels=()):
     if label in user_labels:
         return 'user_sva'
-    if label == 'A_PENDING_RECURRENCE' and revision != REVISION:
+    if label == 'A_PENDING_RECURRENCE' and revision not in REGISTERED_PENDING_REVISIONS:
         return 'timing'
     if label in COMMON or label == 'P_KNOWN_FRAME':
         return 'interface'
@@ -157,12 +157,13 @@ def report(directory, options, required=True, environment_required=False, contra
         key = category(record['label'], contract_revision, user_labels)
         by_scope[key] = by_scope.get(key, 0)+1
     groups = []
+    registered_pending = contract_revision in REGISTERED_PENDING_REVISIONS
     for item in scopes:
         group = dict(item)
-        if item['id']=='interface' and contract_revision!=REVISION:
+        if item['id']=='interface' and not registered_pending:
             end_rule = 'E06' if contract_revision==BASELINE_REVISION else 'E08'
             group['rules'] = '同拍 E03–{}、req/rvalid 独热、R ready、pending 范围、四态未知值'.format(end_rule)
-        if item['id']=='timing' and contract_revision!=REVISION:
+        if item['id']=='timing' and not registered_pending:
             group['rules'] = group['rules'].replace('pending 参考计数', 'pending 组合递推')
         failures = by_scope.get(item['id'], 0)
         disabled = item['id'] == 'timing' and options['check_mode'] == 'transaction'
@@ -172,7 +173,7 @@ def report(directory, options, required=True, environment_required=False, contra
                      (runtime.get('incomplete') or invalid_environment))
         group['status'] = ('NOT_CHECKED' if disabled else 'FAIL' if failures else 'INCOMPLETE' if unfinished else 'PASS')
         if disabled:
-            pending_scope = 'pending 参考计数' if contract_revision==REVISION else 'pending 组合时点'
+            pending_scope = 'pending 参考计数' if registered_pending else 'pending 组合时点'
             group['reason'] = '通用模式不执行{}、精确调度及最早 N+5 的检查。'.format(pending_scope)
         else:
             group['reason'] = ''
@@ -181,7 +182,8 @@ def report(directory, options, required=True, environment_required=False, contra
                 environment=environment, effective_assert_fatal=bool(options.get('env_fatal', True) and options['assert_fatal']),
                 groups=groups, sampling='pre-edge #1step; complete four-state frame; final frame explicitly flushed',
                 contract_revision=contract_revision, checker=checker,
-                contract='CMDBUF interface {}; MEM capture remains issue N+4'.format(contract_revision),
+                contract='CMDBUF {}: MEM capture at issue N+4, parity error RRESP={}'.format(
+                    contract_revision, expected_rresp(0, 1, contract_revision)),
                 transaction_policy='All observable issue identities retained (bounded); same-source AR order; '
                                    'capture-edge R forwarding permitted in transaction mode; no fixed response deadline.',
                 limitations=['Finite simulation evidence, not a formal proof.',

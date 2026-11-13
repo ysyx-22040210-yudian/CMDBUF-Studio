@@ -1,0 +1,87 @@
+{
+  "status": "PASS",
+  "contract_revision": "20261113",
+  "vcs": "O-2018.09-1",
+  "response_codes": [
+    0,
+    2,
+    3,
+    3
+  ],
+  "check_test": {
+    "passed": 161,
+    "total": 161
+  },
+  "constraint_test": {
+    "status": "PASS",
+    "checks": {
+      "all_cases_match_expectations": true,
+      "unit_tests": true,
+      "all_bank_half_antecedents_observed": true,
+      "all_other_assumption_antecedents_observed": true,
+      "coverage_merged_from_positive_only": true,
+      "independent_audit_detects_mutations": true,
+      "random_audit_detects_mutations": true,
+      "every_rule_has_execution_evidence": true
+    }
+  },
+  "main_phase": {
+    "status": "PASS",
+    "positive": 12,
+    "expected_negative": 15
+  },
+  "replay": [
+    {
+      "case": "bank0_half1_seed_1",
+      "contract": "20261112.2",
+      "legacy_parity_responses": 1,
+      "events_match_original": true,
+      "exact_replay": null
+    },
+    {
+      "case": "tc_random_seed_1",
+      "contract": "20261112.2",
+      "legacy_parity_responses": 117,
+      "events_match_original": true,
+      "exact_replay": {
+        "case.sv": true,
+        "assigned.csv": true,
+        "samples.csv": true,
+        "tc_config.json": true,
+        "clock_reset.csv": true
+      }
+    }
+  ],
+  "portable": {
+    "status": "PASS",
+    "batch": "20261113_123335_run_4f9b78",
+    "run": "main_response_codes_seed_17",
+    "contract": "20261113",
+    "return_codes": [
+      0,
+      2,
+      3,
+      3
+    ],
+    "resp2": 1,
+    "coverage": "PASS",
+    "artifacts": [
+      "waves.fsdb",
+      "waves.vcd"
+    ]
+  },
+  "package_manifest": {
+    "files": 198,
+    "archives": {
+      "cmdbuf-studio-portable.zip": {
+        "bytes": 8619391,
+        "sha256": "0f57de374b44aab3c4d539b49d7fbf4de4e14b7dd32e65adf1f44dbde8a7c539"
+      },
+      "cmdbuf-studio-portable.tar.gz": {
+        "bytes": 8503111,
+        "sha256": "7e412cea3616b0085bb11a4878776a00e2475c41164df1f540556f514e9360b0"
+      }
+    }
+  },
+  "scope": "Verified with the project baseline and archived cases; no other DUT was supplied."
+}

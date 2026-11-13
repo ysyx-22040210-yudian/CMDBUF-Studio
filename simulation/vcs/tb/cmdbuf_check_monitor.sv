@@ -75,7 +75,7 @@ module cmdbuf_check_monitor (
     logic [1:0] tx_src[0:8], tx_err[0:8];
     logic [7:0] tx_id[0:8];
     logic [4:0] tx_port[0:8];
-    longint tx_age[0:8], serial = 0;
+    longint tx_age[0:8], tx_accept_edge[0:8], serial = 0;
 
     always @(negedge rst_n) epoch = epoch + 1;
     clocking sample_cb @(posedge clk);
@@ -115,7 +115,7 @@ module cmdbuf_check_monitor (
                               input longint at_time, input string detail);
         begin
             record_check(label, at_edge, at_time, detail);
-            if (env_fatal && assert_fatal) $fatal(1, "CHECK_STOP %s edge=%0d", label, at_edge);
+            if (env_fatal && assert_fatal) $fatal(1, "CHECK_STOP %s edge=%0d time_ps=%0d %s", label, at_edge, at_time, detail);
             else if (!env_fatal) $display("CHECK_CONTINUE %s edge=%0d", label, at_edge);
             else $error("CHECK_CONTINUE %s edge=%0d", label, at_edge);
         end
@@ -166,6 +166,56 @@ module cmdbuf_check_monitor (
         end
     endtask
 
+    function automatic logic [1:0] response_code(input logic [1:0] ar_response, input logic captured_pc_err);
+        return ar_response==2'b11 ? 2'b11 : (captured_pc_err ? 2'b10 : 2'b00);
+    endfunction
+
+    // Diagnostics only: inspect the SAME pre-edge hypotheses and N+4 capture
+    // used below. Never choose a transaction, relax a check, or mutate states.
+    // Separate marginal matches are not evidence of a joint data/RESP match.
+    function automatic string response_failure_detail(input frame_t f, input integer head, lane);
+        integer complete_count, not_issued_count, waiting_count, data_matches, resp_matches;
+        longint due_edge;
+        logic [1:0] expected;
+        state_t view;
+        string reason, examples;
+        begin
+            if (head<0) return $sformatf("reason=NO_ACCEPTED_HEAD source=%0d actual_data=%032h actual_resp=%h",lane,f.rdata,f.rresp);
+            complete_count=0; not_issued_count=0; waiting_count=0;
+            data_matches=0; resp_matches=0; examples="";
+            foreach (states[i]) begin
+                view=states[i]; due_edge=-1;
+                for (integer k=0;k<4;k++)
+                    if (view.due[k] && view.slots[k]==head) due_edge=f.edge_id+3-k;
+                if (view.due[3]) begin
+                    view.done[view.slots[3]]=1;
+                    view.data[view.slots[3]]=f.mem_rdata; view.pc[view.slots[3]]=f.pc_err;
+                end
+                if (view.done[head]) begin
+                    complete_count++;
+                    expected=response_code(tx_err[head],view.pc[head]);
+                    if (f.rdata === view.data[head]) data_matches++;
+                    if (f.rresp === expected) resp_matches++;
+                    if (i<4) examples={examples,$sformatf(" [h%0d complete expected_data=%032h expected_resp=%h captured_pc_err=%b]",
+                        i,view.data[head],expected,view.pc[head])};
+                end else begin
+                    if (view.sent[head]) waiting_count++; else not_issued_count++;
+                    if (i<4) examples={examples,$sformatf(" [h%0d issued=%b mem_complete=0 due_edge=%0d expected_data=NA expected_resp=NA]",
+                        i,view.sent[head],due_edge)};
+                end
+            end
+            if (complete_count==0)
+                reason=waiting_count>0 ? "MEM_NOT_CAPTURED" : "NOT_ISSUED";
+            else if (data_matches==0 && resp_matches==0) reason="DATA_AND_RESP_MISMATCH";
+            else if (data_matches==0) reason="DATA_MISMATCH";
+            else if (resp_matches==0) reason="RESP_MISMATCH";
+            else reason="NO_COMMON_ASSOCIATION";
+            return $sformatf("reason=%s source=%0d token=%0d accepted_edge=%0d araddr=%h arid=%h port=%h arresp=%h actual_data=%032h actual_resp=%h hypotheses=%0d complete=%0d not_issued=%0d waiting_mem=%0d data_matches=%0d resp_matches=%0d joint_matches=0 examples_max=4%s",
+                reason,lane,tx_age[head],tx_accept_edge[head],tx_addr[head],tx_id[head],tx_port[head],tx_err[head],
+                f.rdata,f.rresp,states.size(),complete_count,not_issued_count,waiting_count,data_matches,resp_matches,examples);
+        end
+    endfunction
+
     task automatic check_transactions(input frame_t f);
         integer head, lane, alloc, bank, match_count;
         bit af, rf, issue;
@@ -202,14 +252,14 @@ module cmdbuf_check_monitor (
                     s.due={s.due[2:0],1'b0}; s.slots={s.slots[2:0],4'd0};
                     if (rf) begin
                         if (head<0) continue;
-                        expected_resp=tx_err[head]==3 ? 2'b11 : (s.pc[head] ? 2'b01 : 2'b00);
+                        expected_resp=response_code(tx_err[head],s.pc[head]);
                         if (!s.done[head] || f.rdata !== s.data[head] || f.rresp !== expected_resp) continue;
                         s.sent[head]=0; s.done[head]=0; s.pc[head]=0; s.data[head]=0;
                     end
                     add_candidate(s);
                 end
                 if (candidates.size()==0 && !uncertain) begin
-                    require_check(0, "T_R_DATA_RESP_OR_EARLY", f, $sformatf("source=%0d data=%h resp=%h no consistent accepted/issued transaction",lane,f.rdata,f.rresp));
+                    require_check(0, "T_R_DATA_RESP_OR_EARLY", f, response_failure_detail(f,head,lane));
                     poisoned=1;
                 end
                 states=candidates;
@@ -221,7 +271,7 @@ module cmdbuf_check_monitor (
                 if (alloc>=0) begin
                     live[alloc]=1; tx_src[alloc]=f.src; tx_addr[alloc]=f.araddr;
                     tx_id[alloc]=f.arid; tx_port[alloc]=f.ar_port_id;
-                    tx_err[alloc]=f.arresp; tx_age[alloc]=serial; serial++; total_ar++;
+                    tx_err[alloc]=f.arresp; tx_age[alloc]=serial; tx_accept_edge[alloc]=f.edge_id; serial++; total_ar++;
                 end else poisoned=1;
             end
             if (issue) total_issue++;

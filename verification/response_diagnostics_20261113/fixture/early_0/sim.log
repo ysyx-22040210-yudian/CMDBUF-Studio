@@ -1,0 +1,17 @@
+Chronologic VCS simulator copyright 1991-2018
+Contains Synopsys proprietary information.
+Compiler version O-2018.09-1_Full64; Runtime version O-2018.09-1_Full64;  Nov 13 11:55 2026
+EDA_SIMULATION_STARTED
+CHECK_POLICY mode=transaction assert_fatal=0 env_fatal=1 sampling=pre_edge snapshot_pipeline=1
+"/dev/shm/cmdbuf-response-diagnostics-20261113/simulation/vcs/tb/cmdbuf_check_monitor.sv", 134: monitor_fixture.monitor.require_check.unnamed$$_0: started at 60000ps failed at 60000ps
+	Offending '(good === 1'b1)'
+SVA_FAIL T_R_DATA_RESP_OR_EARLY edge=6 time_ps=55000 reason=MEM_NOT_CAPTURED source=0 token=0 accepted_edge=2 araddr=00000 arid=11 port=03 arresp=0 actual_data=00000000000000000000000012345678 actual_resp=0 hypotheses=1 complete=0 not_issued=0 waiting_mem=1 data_matches=0 resp_matches=0 joint_matches=0 examples_max=4 [h0 issued=1 mem_complete=0 due_edge=7 expected_data=NA expected_resp=NA]
+Error: "/dev/shm/cmdbuf-response-diagnostics-20261113/simulation/vcs/tb/cmdbuf_check_monitor.sv", 120: monitor_fixture.monitor: at time 60000 ps
+CHECK_CONTINUE T_R_DATA_RESP_OR_EARLY edge=6
+CHECK_COMPLETE mode=transaction failures=1 incomplete=0 frames=6 checked=6
+$finish called from file "/dev/shm/cmdbuf-response-diagnostics-20261113/simulation/vcs/tests/checks/monitor_fixture.sv", line 64.
+$finish at simulation time                60000
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 60000 ps
+CPU Time:      0.150 seconds;       Data structure size:   0.0Mb
+Fri Nov 13 11:55:20 2026

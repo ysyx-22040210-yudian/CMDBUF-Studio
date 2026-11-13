@@ -1,0 +1,13 @@
+Chronologic VCS simulator copyright 1991-2018
+Contains Synopsys proprietary information.
+Compiler version O-2018.09-1_Full64; Runtime version O-2018.09-1_Full64;  Nov 13 11:55 2026
+EDA_SIMULATION_STARTED
+CHECK_POLICY mode=transaction assert_fatal=0 env_fatal=1 sampling=pre_edge snapshot_pipeline=1
+CHECK_COMPLETE mode=transaction failures=0 incomplete=0 frames=8 checked=8
+FIXTURE_DONE scenario=priority failures=0
+$finish called from file "/dev/shm/cmdbuf-response-diagnostics-20261113/simulation/vcs/tests/checks/monitor_fixture.sv", line 91.
+$finish at simulation time                80000
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 80000 ps
+CPU Time:      0.140 seconds;       Data structure size:   0.0Mb
+Fri Nov 13 11:55:20 2026

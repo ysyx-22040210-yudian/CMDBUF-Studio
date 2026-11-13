@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "batch": "20261113_123335_run_4f9b78",
+  "run": "main_response_codes_seed_17",
+  "contract": "20261113",
+  "return_codes": [
+    0,
+    2,
+    3,
+    3
+  ],
+  "resp2": 1,
+  "coverage": "PASS",
+  "artifacts": [
+    "waves.fsdb",
+    "waves.vcd"
+  ]
+}
