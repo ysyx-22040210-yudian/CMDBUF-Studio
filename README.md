@@ -1,6 +1,6 @@
 # CMDBUF Studio
 
-原生 **Python Tk / ttk** EDA 验证工作台，直接运行于装有 VCS、Verdi 的 **Linux 目标设备**。包含 DUT 集成、仅编辑 `main_phase` 的 SV 用例窗口、严格按已登记约束随机的回归、内置波形查看、Verdi 波形和代码覆盖率，以及 Verdi NPI 直接解析 FSDB 后生成 Formal 代码。
+原生 **Python Tk / ttk** EDA 验证工作台。包含 DUT 集成、仅编辑 `main_phase` 的 SV 用例窗口、约束随机回归、波形、覆盖率和 FSDB 转 Formal。Linux 便携版内置开源 Formal 运行时，VCS 和 Verdi 用于仿真、调试与提取 FSDB。
 
 GUI 不依赖浏览器、HTTP 服务、Node.js 或 SSH。所有 EDA 操作经本机 Make 执行。VM 只用于开发调试，分发包不含 VM 地址或连接流程。本仓库具有独立 Git 历史，与之前的验证仓库分开维护。
 
@@ -8,7 +8,11 @@ GUI 不依赖浏览器、HTTP 服务、Node.js 或 SSH。所有 EDA 操作经本
 
 ## 在 Linux 上启动
 
-在已加载本站点 EDA 工具及许可证环境的图形桌面终端，从工程根目录执行：
+从 [Linux 免安装版](https://github.com/ysyx-22040210-yudian/CMDBUF-Studio/releases/tag/formal-portable-20261114) 下载对应架构的完整包和 SHA256 校验清单。
+
+解压对应 CPU 架构的 `cmdbuf-studio-linux-x64.tar.gz` 或 `cmdbuf-studio-linux-arm64.tar.gz`，进入 `cmdbuf-studio`，在 Linux 图形桌面终端执行 `make gui`。便携版包含 Python、Tk、Yosys、SymbiYosys、ABC 和 Yices。证明阶段可离线执行，无需安装工具链。
+
+使用仿真和 FSDB 提取时，加载本站点 EDA 工具和许可证环境后执行以下命令。
 
 ```bash
 python3 -c "import tkinter; print(tkinter.TkVersion)"
@@ -17,7 +21,7 @@ make smoke
 make gui
 ```
 
-需要 Python ≥ 3.6、Tk ≥ 8.5、Bash、GNU Make、兼容的 C/C++ 编译器，以及 VCS / Verdi / URG 与 PLI / NPI。GUI 使用 Python 标准库，无需 pip 安装第三方包。若缺少 Tk，Ubuntu/Debian 安装 `python3-tk`，RHEL/CentOS 对应包通常为 `python3-tkinter`。
+Make 命令需要 GNU Make，仿真和 FSDB 提取使用 VCS、Verdi、URG 与兼容的 C/C++ 编译器。直接从源码启动 GUI 使用目标机的 Python ≥ 3.6 和 Tk ≥ 8.5。
 
 `make doctor` 检查 Tk、工具与组件；`make smoke` 真实运行 `tc_directed`（seed 1）和 `tc_random`（seed 17、42），并合并覆盖率。启动 GUI 需要有效的 `DISPLAY`。Verdi 继续使用同一图形桌面和授权。
 
@@ -40,7 +44,7 @@ Windows 的 `CMDBUF Studio.cmd` 或 `.\make.cmd gui` 可打开同一原生窗口
 | 用例编辑 | 从模板新建用例；窗口仅显示 `main_phase`，保存时保留构造函数和外层 class |
 | 回归计划 | 每用例的启用、运行次数、起始 seed、周期；检查模式、环境 fatal 总开关、断言 fatal 开关、并行数、超时、波形开关 |
 | 结果与波形 | 分别显示接口、事务、完整时序结论；失败原拍号、完整快照、日志、波形与覆盖率 |
-| FSDB 转 Formal | 原生文件对话框导入 FSDB，或加入回归 FSDB；层级检查、端口映射、pattern 编号和验证包导出 |
+| FSDB 转 Formal | 层级检查、端口映射、pattern 编号、验证包导出、检查内置工具、运行证明、查看反例波形 |
 | 本机工具 | 自动检测本机环境并显示结果，默认无路径输入；特殊站点覆盖收纳在高级选项 |
 
 用例在每次 `@(posedge clk)` 后按模板顺序赋值。`begin_cycle()` 等待 DUT 更新，`drive_control()` 更新 `rready`，`sample_context()` 等待同一时间点内的组合反馈，`drive_inputs()` 检查并驱动供下一上升沿采样的值。约束写成普通 `if / else`，随机数在合法分支内选择。时钟低/高电平与暂停由模板变量控制。新协议需要显式补充约束清单和检查器。
@@ -64,6 +68,20 @@ Windows 的 `CMDBUF Studio.cmd` 或 `.\make.cmd gui` 可打开同一原生窗口
 内置查看器是 Tk Canvas，保留四态数值，提供信号筛选、时间缩放、平移、A/B 游标和进制切换。FSDB 显示通过本机 `fsdb2vcd` 转换；**Formal 提取直接使用 NPI 读取 FSDB**。
 
 每份 FSDB 对应一个 `pattern`，复位释放后逐上升沿提取，保留空拍、背压、`reset_segment` 和 `trace_cycle`。输入生成 assume，应比较的输出生成 assert；无效输出负载保留记录但不强制比较。生成 SVA 不等于已完成 Formal 证明，仍需在目标引擎初始化 DUT 并检查断言与终点 cover。
+
+### 运行开源 Formal
+
+在 Linux 便携版 Tk 的「FSDB → Formal」选择验证包后点击「运行证明」。需要诊断工具链时使用「检查内置工具」。也可在便携版根目录运行以下命令。
+
+```bash
+make formal-doctor
+make formal-prove FORMAL_ID=导出编号
+make formal-prove FORMAL_PACKAGE="/path/to/extracted export"
+```
+
+证明使用导出包中的 DUT 快照。旧导出包也可使用 `FORMAL_PACKAGE` 指向其解压目录。新导出的验证包解压在便携版目录树下时，可在包内运行 `make prove`。操作与结果判读见[开源 Formal 说明](documents/48_cmdbuf_open_formal_20261114.pdf)。
+
+源码包维护者可用 `make dist SUITE_X64=/path/to/official-x64.tgz SUITE_ARM64=/path/to/official-arm64.tgz` 生成两个带运行时的 Linux 包，固定发行版和摘要见 `simulation/vcs/fsdb_formal/toolchain.py`。Linux 完整包及其 SHA256 输出到 `dist/`。
 
 ## Make 命令
 
@@ -123,7 +141,7 @@ make dist
 - [License 等待与执行超时 PDF](documents/39_cmdbuf_license_wait_20261111.pdf) / [Word](documents/39_cmdbuf_license_wait_20261111.docx)
 - [时钟与复位启动时序 PDF](documents/38_cmdbuf_startup_20261111.pdf) / [Word](documents/38_cmdbuf_startup_20261111.docx)
 - [检查模式与 fatal 操作说明 PDF](documents/37_cmdbuf_check_modes_20261111.pdf) / [Word](documents/37_cmdbuf_check_modes_20261111.docx)
-- [便携 ZIP](packages/cmdbuf-studio-portable.zip) / [Linux tar.gz](packages/cmdbuf-studio-portable.tar.gz) / [SHA256](packages/SHA256SUMS.json)
+- [源码 ZIP](packages/cmdbuf-studio-portable.zip) / [源码 tar.gz](packages/cmdbuf-studio-portable.tar.gz) / [SHA256](packages/SHA256SUMS.json)
 - **当前 Tk 本机版操作手册**：[PDF](documents/36_cmdbuf_native_tk_20261111.pdf) / [Word](documents/36_cmdbuf_native_tk_20261111.docx)
 - main_phase 详细写法：[PDF](documents/32_cmdbuf_rd_main_phase_tc_20261111.pdf) / [Word](documents/32_cmdbuf_rd_main_phase_tc_20261111.docx)
 - NPI 与 Formal 语义：[PDF](documents/34_cmdbuf_fsdb_formal_20261111.pdf) / [Word](documents/34_cmdbuf_fsdb_formal_20261111.docx)

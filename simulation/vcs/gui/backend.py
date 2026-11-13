@@ -16,6 +16,8 @@ import vcd
 
 eda, ROOT, STATE = model.eda, model.ROOT, model.STATE
 COVERAGE_JOBS = ('coverage_details', 'coverage_minimize', 'coverage_formal')
+FORMAL_JOBS = ('formal_doctor', 'formal_prove')
+CANCELLABLE_JOBS = COVERAGE_JOBS + FORMAL_JOBS
 
 
 def identifier(value):
@@ -121,6 +123,8 @@ def import_rtl(paths, base=None):
 
 def make_command(arguments):
     if sys.platform != 'linux':
+        if arguments[0].replace('-', '_') in FORMAL_JOBS:
+            raise RuntimeError('开源 Formal 任务需要在 Linux 上运行。')
         raise RuntimeError('EDA 任务需要在安装 VCS / Verdi 的 Linux 设备上运行。当前窗口可编辑工程和查看已有 VCD。')
     if not shutil.which('make'):
         raise RuntimeError('未找到 GNU Make，请在 Linux 上安装 make')
@@ -129,14 +133,17 @@ def make_command(arguments):
     for arg in arguments:
         if any(ch in str(arg) for ch in ('$', '`', '"', '\n', '\r', '\0')):
             raise ValueError('Make 参数路径不能含 $、反引号、双引号或换行，请改名后重试')
-    return ['make', '--no-print-directory', 'PYTHON='+sys.executable]+list(arguments)
+    cmd = ['make', '--no-print-directory']
+    if os.environ.get('CMDBUF_BUNDLED_PYTHON') != '1':
+        cmd.append('PYTHON='+sys.executable)
+    return cmd+list(arguments)
 
 
 class Jobs:
     def __init__(self):
         self.lock = threading.RLock()
         self.current = None
-        self.coverage_process = None
+        self.cancellable_process = None
 
     def snapshot(self):
         with self.lock:
@@ -176,15 +183,15 @@ class Jobs:
         if job['kind'] == 'regress':
             env['CMDBUF_STUDIO_REGRESSION_STOP'] = str(self.regression_stop_file(job))
         self.log(job, '$ make '+' '.join(arguments)+'\n')
-        coverage_task = job['kind'] in COVERAGE_JOBS
+        cancellable = job['kind'] in CANCELLABLE_JOBS
         process = subprocess.Popen(cmd, cwd=str(ROOT), env=env, stdout=subprocess.PIPE,
                                    stderr=subprocess.STDOUT, universal_newlines=True, encoding='utf-8',
-                                   errors='replace', start_new_session=coverage_task)
-        if coverage_task:
+                                   errors='replace', start_new_session=cancellable)
+        if cancellable:
             with self.lock:
-                self.coverage_process = process
+                self.cancellable_process = process
                 if job.get('cancel_requested'):
-                    self.stop_coverage_process()
+                    self.stop_cancellable_process()
         for line in process.stdout:
             self.log(job, line)
             notice = line.strip()
@@ -198,6 +205,8 @@ class Jobs:
                 self.update(job, stage=line[len('COVERAGE_STAGE '):].strip(), total=0, completed=0)
             if line.startswith('COVERAGE_RESULT '):
                 self.update(job, coverage_record=line[len('COVERAGE_RESULT '):].strip())
+            if line.startswith('FORMAL_STAGE '):
+                self.update(job, stage=line[len('FORMAL_STAGE '):].strip())
             if line.startswith('EDA_PROCESS '):
                 try:self.process_status(job,json.loads(line[len('EDA_PROCESS '):]))
                 except (ValueError,KeyError,TypeError):pass
@@ -211,27 +220,28 @@ class Jobs:
                 self.update(job, completed=int(match.group(1)), total=int(match.group(2)))
         rc = process.wait()
         with self.lock:
-            if coverage_task:
-                self.coverage_process = None
+            if cancellable:
+                self.cancellable_process = None
             job['commands'].append(dict(argv=cmd, returncode=rc))
         if rc and check:
             raise RuntimeError('make '+arguments[0]+' 失败（退出码 '+str(rc)+'），详见任务日志')
         return rc
 
-    def stop_coverage_process(self):
-        if self.coverage_process is not None:
+    def stop_cancellable_process(self):
+        if self.cancellable_process is not None:
             try:
-                os.killpg(self.coverage_process.pid, signal.SIGTERM)
+                os.killpg(self.cancellable_process.pid, signal.SIGTERM)
             except ProcessLookupError:
                 pass
 
-    def cancel_coverage(self):
+    def cancel_current(self):
         with self.lock:
             job = self.current
-            if not job or job['state'] != 'RUNNING' or job['kind'] not in COVERAGE_JOBS:
+            if (not job or job['state'] != 'RUNNING' or job['kind'] not in CANCELLABLE_JOBS
+                    or job.get('cancel_requested')):
                 return
-            job.update(cancel_requested=True, stage='正在取消覆盖率分析')
-            self.stop_coverage_process()
+            job.update(cancel_requested=True, stage='正在取消任务')
+            self.stop_cancellable_process()
 
     def regression_stop_file(self, job):
         return (STATE/'jobs'/(job['id']+'.stop')).resolve()
@@ -273,10 +283,10 @@ class Jobs:
         with self.lock:
             self.require_idle()
             allowed = ('detect', 'compile', 'doctor', 'regress', 'coverage', 'wave', 'wave_file', 'wave_index',
-                       'fsdb_inspect', 'fsdb_formal', 'import_fsdb', 'import_rtl') + COVERAGE_JOBS
+                       'fsdb_inspect', 'fsdb_formal', 'import_fsdb', 'import_formal', 'import_rtl') + CANCELLABLE_JOBS
             if kind not in allowed:
                 raise ValueError('未知任务')
-            if kind not in ('detect', 'import_fsdb', 'import_rtl', 'wave_index'):
+            if kind not in ('detect', 'import_fsdb', 'import_formal', 'import_rtl', 'wave_index'):
                 make_command([kind])
             if kind == 'regress':
                 payload['plan'] = save_plan(payload['plan'])
@@ -313,6 +323,25 @@ class Jobs:
             elif kind in ('compile', 'doctor'):
                 progress('VCS 编译' if kind == 'compile' else '检查本机工具链')
                 self.invoke(job, [kind])
+            elif kind == 'formal_doctor':
+                self.invoke(job, ['formal-doctor'])
+            elif kind == 'formal_prove':
+                key = formal_model.identifier(payload['export_id'])
+                package = formal_model.artifact(key, 'summary.json').parent
+                args = ['formal-prove', 'FORMAL_PACKAGE='+str(package), 'FORMAL_RUN_ID='+job['id']]
+                if payload.get('timeout'):
+                    args.append('FORMAL_TIMEOUT='+str(payload['timeout']))
+                rc = self.invoke(job, args, check=False)
+                receipt = eda.OUT/'formal_runs'/key/job['id']/'proof.json'
+                if not receipt.is_file():
+                    raise RuntimeError('没有生成 Formal 证明记录，请查看任务日志')
+                result = eda.read_json(receipt)
+                self.update(job, proof_export=key, verdict=result['status'])
+                if result['status'] in ('ERROR', 'RUNNING') or (rc and result['status'] == 'PASS'):
+                    raise RuntimeError(result.get('error', 'Formal 执行失败，请查看证明详情和任务日志'))
+                if result['status'] == 'CANCELLED':
+                    self.update(job, state='CANCELLED', stage='已取消 Formal 证明')
+                    return
             elif kind == 'regress':
                 plan = payload['plan']
                 path = STATE/'plans'/(job['id']+'.json'); eda.write_json(path, plan)
@@ -371,7 +400,7 @@ class Jobs:
                 self.invoke(job, ['coverage-formal', 'COVERAGE_SET='+analysis, 'FORMAL_ID='+job['id'],
                                   'MAX_EDGES='+str(limit), 'FORMAL_FORMAT='+style])
                 progress('校验选集 Formal 生成包')
-                self.update(job, formal_id=formal_model.fetch(model.state_read(), job['id']))
+                self.update(job, formal_id=formal_model.fetch(job['id']))
             elif kind == 'wave_file':
                 progress('打开本机 Verdi')
                 arguments = ['wave-file', 'FSDB='+str(Path(payload['path']).resolve())]
@@ -384,6 +413,9 @@ class Jobs:
             elif kind == 'import_fsdb':
                 imported = [formal_model.import_file(p, progress) for p in payload['paths']]
                 self.update(job, imported=imported)
+            elif kind == 'import_formal':
+                progress('校验并导入 Formal 验证包')
+                self.update(job, formal_id=formal_model.unpack_export(payload['path']))
             elif kind in ('fsdb_inspect', 'fsdb_formal'):
                 settings = model.state_read()
                 if kind == 'fsdb_formal':
@@ -392,7 +424,7 @@ class Jobs:
                 progress('NPI 解析 FSDB' if kind == 'fsdb_inspect' else '逐拍提取并生成 Formal')
                 self.invoke(job, ['fsdb-inspect' if kind == 'fsdb_inspect' else 'fsdb-formal', 'REQUEST='+request])
                 progress('校验生成文件')
-                self.update(job, formal_id=formal_model.fetch(settings, job['id']))
+                self.update(job, formal_id=formal_model.fetch(job['id']))
             elif kind == 'wave_index':
                 path = Path(payload['path']).resolve()
                 if path.suffix.lower() == '.fsdb':
@@ -410,7 +442,7 @@ class Jobs:
             self.update(job, state='DONE', stage='已完成')
         except Exception as exc:
             if job.get('cancel_requested'):
-                self.update(job, state='CANCELLED', stage='已取消覆盖率分析')
+                self.update(job, state='CANCELLED', stage='已取消任务')
             else:
                 self.log(job, '\n'+str(exc)+'\n')
                 self.update(job, state='ERROR', stage='执行失败', error=str(exc))

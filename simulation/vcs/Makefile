@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := help
 .PHONY: help gui doctor compile build run regress check-test env-fatal-test wave coverage report open-report list \
         new-case validate explain diagram trace replay selftest export constraints constraint-test tc-test fsdb-inspect fsdb-formal smoke dist configure
-PYTHON ?= python3
+PYTHON ?= /bin/sh "$(EDA_HERE)fsdb_formal/run_python.sh"
 # Keep Chinese diagnostics readable on Linux installations with a C locale.
 export PYTHONIOENCODING := utf-8
 EDA_PROJECT_ROOT ?= $(CURDIR)
@@ -35,6 +35,11 @@ REGRESSIONS ?=
 COVERAGE_SET ?=
 SOLVE_SECONDS ?= 0
 FORMAL_ID ?=
+FORMAL_PACKAGE ?=
+FORMAL_RUN_ID ?=
+FORMAL_TIMEOUT ?=
+SUITE_X64 ?=
+SUITE_ARM64 ?=
 MAX_EDGES ?= 100000
 FORMAL_FORMAT ?=
 EDA_RUN_CASE = $(if $(strip $(CASE)),$(CASE),tc_directed)
@@ -52,11 +57,16 @@ EDA_FORMAL_FORMAT = $(if $(strip $(FORMAL_FORMAT)),--format "$(FORMAL_FORMAT)")
 help:
 	@echo 'CMDBUF Studio: native Tk desktop and local Linux EDA'
 	@echo '  make doctor | smoke                 Check tools, then real compile/simulation/coverage'
-	@echo '  make dist                           Build a clean portable ZIP and tar.gz'
+	@echo '  make dist                           Build the source ZIP and tar.gz'
+	@echo '       SUITE_X64=/path/to/oss-cad-suite.tgz or SUITE_ARM64=... builds the corresponding self-contained Linux archive'
 	@echo '  make gui                             Open CMDBUF Studio on this computer'
 	@echo '  make fsdb-inspect REQUEST=request.json  Inspect FSDB through NPI'
 	@echo '  make fsdb-formal REQUEST=request.json   Extract FSDB and generate pattern-selected SVA'
 	@echo '       FORMAL_FORMAT=cycle|signal|table|packed|property|boolean|channel|range|rom|generate'
+	@echo '  make formal-doctor                    Check Yosys, SymbiYosys, ABC and Yices'
+	@echo '  make formal-prove FORMAL_ID=id        Check the exported DUT and all trace endpoints'
+	@echo '       FORMAL_PACKAGE=/path/to/extracted/export is an alternative to FORMAL_ID.'
+	@echo '       FORMAL_TIMEOUT=seconds per check (default from export); 0 means unlimited.'
 	@echo '  make doctor                          Check VCS / Verdi / URG'
 	@echo '  make compile                         Compile, or reuse identical build'
 	@echo '  make run CASE=tc_directed SEED=17           Compile if needed, simulate, merge coverage'
@@ -107,7 +117,7 @@ gui:
 	$(PYTHON) "$(EDA_HERE)gui/desktop.py"
 
 dist:
-	$(PYTHON) "$(EDA_HERE)portable.py"
+	$(PYTHON) "$(EDA_HERE)portable.py" $(if $(strip $(SUITE_X64)),--suite-x64 "$(SUITE_X64)") $(if $(strip $(SUITE_ARM64)),--suite-arm64 "$(SUITE_ARM64)")
 
 configure:
 	$(PYTHON) "$(EDA_HERE)launcher.py" configure $(if $(strip $(TOOL_SETUP)),"TOOL_SETUP=$(TOOL_SETUP)") $(if $(strip $(VCS_HOME)),"VCS_HOME=$(VCS_HOME)") $(if $(strip $(VERDI_HOME)),"VERDI_HOME=$(VERDI_HOME)")
@@ -126,6 +136,13 @@ smoke:
 fsdb-inspect fsdb-formal:
 	@test -n "$(REQUEST)" || { echo 'Specify REQUEST=path/to/request.json'; exit 2; }
 	$(PYTHON) "$(EDA_HERE)fsdb_formal/engine.py" --action $(if $(filter fsdb-inspect,$@),inspect,export) --request "$(REQUEST)" $(EDA_FORMAL_FORMAT)
+
+.PHONY: formal-doctor formal-prove
+formal-doctor:
+	$(PYTHON) "$(EDA_HERE)fsdb_formal/toolchain.py"
+
+formal-prove:
+	$(PYTHON) "$(EDA_HERE)fsdb_formal/proof.py" --project $(if $(strip $(FORMAL_ID)),--export-id "$(FORMAL_ID)") $(if $(strip $(FORMAL_PACKAGE)),--package "$(FORMAL_PACKAGE)") $(if $(strip $(FORMAL_RUN_ID)),--run-id "$(FORMAL_RUN_ID)") $(if $(strip $(FORMAL_TIMEOUT)),--timeout "$(FORMAL_TIMEOUT)")
 
 doctor selftest list:
 	$(EDA) $@ $(if $(filter selftest,$@),--jobs "$(JOBS)" --timeout "$(TIMEOUT)" $(EDA_CHECKS))

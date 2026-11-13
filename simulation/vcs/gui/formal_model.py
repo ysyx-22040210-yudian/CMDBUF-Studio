@@ -2,6 +2,7 @@
 import json
 from pathlib import Path
 import re
+import tempfile
 import zipfile
 import shutil
 import model
@@ -135,21 +136,49 @@ def stage(payload, settings, job_id, progress):
     return str(local)
 
 
-def fetch(settings,key):
-    key=identifier(key);folder=EXPORTS/key;folder.mkdir(parents=True,exist_ok=True)
-    shutil.copyfile(str(eda.OUT/'fsdb_formal'/key/'package.zip'),str(folder/'package.zip'))
-    with zipfile.ZipFile(str(folder/'package.zip')) as archive:
-        if sum(i.file_size for i in archive.infolist())>16*1024**3:raise ValueError('导出包解压后超过 16 GB')
-        for item in archive.infolist():
-            target=(folder/item.filename).resolve()
-            if folder.resolve() not in target.parents or (item.external_attr>>16)&0o170000==0o120000:
-                raise ValueError('导出包含不安全路径')
-        archive.extractall(str(folder))
-    manifest=eda.read_json(folder/'SHA256SUMS.json')
-    for rel,digest in manifest.items():
-        path=(folder/rel).resolve()
-        if folder.resolve() not in path.parents or file_hash(path)!=digest:raise ValueError('导出文件校验失败: '+rel)
-    return key
+def fetch(key):
+    key = identifier(key)
+    return unpack_export(eda.OUT/'fsdb_formal'/key/'package.zip', expected=key)
+
+
+def unpack_export(path, expected=None):
+    EXPORTS.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix='.formal-', dir=str(EXPORTS)) as temp:
+        folder = Path(temp).resolve()/'export'
+        folder.mkdir()
+        with zipfile.ZipFile(str(path)) as archive:
+            if sum(item.file_size for item in archive.infolist()) > 16*1024**3:
+                raise ValueError('导出包解压后超过 16 GB')
+            for item in archive.infolist():
+                target = (folder/item.filename).resolve()
+                if (folder not in target.parents or '\\' in item.filename or item.filename == 'package.zip'
+                        or (item.external_attr >> 16) & 0o170000 == 0o120000):
+                    raise ValueError('导出包含不安全路径')
+            archive.extractall(str(folder))
+        manifest = eda.read_json(folder/'SHA256SUMS.json')
+        for rel, digest in manifest.items():
+            target = (folder/rel).resolve()
+            if folder not in target.parents or file_hash(target) != digest:
+                raise ValueError('导出文件校验失败: '+rel)
+        summary = 'summary.json' if (folder/'summary.json').is_file() else 'inspection.json'
+        if summary not in manifest or (expected is None and 'run_bmc.sby' not in manifest):
+            raise ValueError('请选择 Studio 导出的 Formal 验证包')
+        key = identifier(eda.read_json(folder/summary)['id']) if summary == 'summary.json' else expected
+        if expected is not None and key != expected:
+            raise ValueError('验证包编号不一致')
+        destination = EXPORTS/key
+        if destination.exists():
+            if (destination/'SHA256SUMS.json').read_bytes() != (folder/'SHA256SUMS.json').read_bytes():
+                raise ValueError('同一导出编号已有其他版本的验证包')
+            return key
+        shutil.copyfile(str(path), str(folder/'package.zip'))
+        try:
+            folder.rename(destination)
+        except OSError:
+            if (not destination.is_dir() or
+                    (destination/'SHA256SUMS.json').read_bytes() != (folder/'SHA256SUMS.json').read_bytes()):
+                raise
+        return key
 
 
 def artifact(key,name):
@@ -159,6 +188,19 @@ def artifact(key,name):
     path=EXPORTS/identifier(key)/name
     if not path.is_file():raise ValueError('导出文件不存在')
     return path
+
+
+def latest_proof(key):
+    root = eda.OUT/'formal_runs'/identifier(key)
+    records = []
+    manifest = EXPORTS/key/'SHA256SUMS.json'
+    checksum = file_hash(manifest) if manifest.is_file() else None
+    paths = root.glob('*/proof.json')
+    for path in paths:
+        record = eda.read_json(path)
+        if record['status'] != 'RUNNING' and record.get('package_manifest_sha256') == checksum:
+            records.append((path.parent, record))
+    return max(records, key=lambda item: item[1].get('started_at', 0)) if records else (None, None)
 
 
 def import_file(path, progress=lambda text: None):

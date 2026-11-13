@@ -87,7 +87,7 @@ class Studio:
         footer = ttk.Frame(body, padding=(22, 9)); footer.pack(side='bottom', fill='x', before=self.content)
         ttk.Label(footer, textvariable=self.status, style='Muted.TLabel', width=69).pack(side='left', fill='x', expand=True)
         self.progress = ttk.Progressbar(footer, length=150); self.progress.pack(side='left', padx=12)
-        self.cancel_coverage_button = ttk.Button(footer, text='取消任务', command=self.jobs.cancel_coverage)
+        self.cancel_job_button = ttk.Button(footer, text='取消任务', command=self.jobs.cancel_current)
         self.stop_regression_button = ttk.Button(footer, text='停止回归',
                                                  command=lambda: self.guard(self.jobs.stop_regression))
         ttk.Button(footer, text='任务日志', command=self.show_log).pack(side='right')
@@ -752,7 +752,7 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
         identifier = Path(path).parent.name
         return CoverageWindow(self.root, path, self.choose_coverage_batches,
                               lambda: self.launch('coverage', dict(analysis=identifier)), self.guard, self.status,
-                              self.coverage_busy, self.jobs.cancel_coverage,
+                              self.coverage_busy, self.jobs.cancel_current,
                               lambda: self.launch('coverage_formal', dict(analysis=identifier,
                                                                           max_edges=int(self.max_edges.get()),
                                                                           format=self.selected_formal_format())),
@@ -786,11 +786,25 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
         self.exports_combo = ttk.Combobox(row, textvariable=self.export_var, state='readonly', width=30); self.exports_combo.pack(side='left', padx=(0, 10))
         self.exports_combo.bind('<<ComboboxSelected>>', lambda e: self.guard(self.choose_export))
         combo = ttk.Combobox(row, textvariable=self.preview_var, state='readonly', width=24,
-                             values=['trace_properties.sv', 'formal_top.sv', 'samples.csv', 'transactions.json', 'integration.json', 'run_bmc.sby', 'run_cover.sby', 'summary.json'])
+                             values=['trace_properties.sv', 'sby_properties.sv', 'formal_top.sv', 'samples.csv',
+                                     'transactions.json', 'integration.json', 'run_bmc.sby', 'run_cover.sby', 'summary.json'])
         combo.pack(side='left', padx=(0, 10)); combo.bind('<<ComboboxSelected>>', lambda e: self.guard(self.formal_preview))
+        self.button(row, '导入验证包…', self.import_formal)
         self.button(row, '导出验证包…', self.save_export, True)
         self.formal_note = tk.StringVar(value='导入 FSDB 或从“结果与波形”加入回归用例。')
-        ttk.Label(page, textvariable=self.formal_note, style='Muted.TLabel', wraplength=1050).pack(anchor='w', pady=(0, 10))
+        ttk.Label(page, textvariable=self.formal_note, style='Muted.TLabel', wraplength=1010).pack(anchor='w', pady=(0, 8))
+        row = self.bar(page)
+        self.button(row, '检查内置工具', lambda: self.launch('formal_doctor'))
+        ttk.Label(row, text='单项超时（秒）').pack(side='left', padx=(4, 5))
+        self.formal_timeout = tk.StringVar(value='600')
+        ttk.Entry(row, textvariable=self.formal_timeout, width=6).pack(side='left', padx=(0, 8))
+        self.formal_run_button = self.button(row, '运行证明', self.prove_formal, True)
+        self.formal_detail_button = self.button(row, '证明详情', self.show_formal_proof)
+        self.formal_counterexample_button = self.button(row, '反例波形', self.show_formal_counterexample)
+        for button in (self.formal_run_button, self.formal_detail_button, self.formal_counterexample_button):
+            button.configure(state='disabled')
+        self.proof_note = tk.StringVar(value='选择验证包后可运行 BMC 和终点 Cover。超时填 0 可不限时。')
+        ttk.Label(page, textvariable=self.proof_note, style='Muted.TLabel', wraplength=1010).pack(anchor='w', pady=(0, 8))
         self.formal_code = CodeEditor(page, self.mono, readonly=True, height=10); self.formal_code.pack(fill='both', expand=True)
 
     def restore_formal(self):
@@ -924,8 +938,57 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
         style = formal_model.FORMAT_LABELS.get(summary.get('format', 'cycle'), summary.get('format', ''))
         counts = '%d patterns  ·  %d cycles  ·  %d assume  ·  %d assert  ·  %d cover' % (
             c['patterns'], c['cycles'], c['input_assumptions'], c['output_assertions'], c['terminal_covers'])
-        self.formal_note.set(origin + style + '  ·  ' + counts + '  |  验证包已生成 · Formal 证明待运行')
+        self.formal_note.set(origin + style + '  ·  ' + counts)
+        self.refresh_formal_proof()
         self.formal_preview()
+
+    def prove_formal(self):
+        timeout = self.formal_timeout.get().strip()
+        if timeout and any(ch not in '0123456789' for ch in timeout):
+            raise ValueError('超时须为非负整数秒，0 表示不限时')
+        job = self.launch('formal_prove', dict(export_id=self.formal_export, timeout=timeout))
+        self.proof_note.set('正在运行证明 · '+job['id'])
+
+    def import_formal(self):
+        self.idle()
+        path = filedialog.askopenfilename(title='选择 Studio 导出的 Formal 验证包',
+                                          filetypes=[('Formal ZIP', '*.zip')], parent=self.root)
+        if path:
+            self.launch('import_formal', dict(path=path))
+
+    def refresh_formal_proof(self):
+        self.formal_run_button.configure(state='normal')
+        _, record = formal_model.latest_proof(self.formal_export)
+        self.formal_detail_button.configure(state='normal' if record else 'disabled')
+        vcds = record and record['bmc'].get('vcds')
+        self.formal_counterexample_button.configure(state='normal' if vcds else 'disabled')
+        if not record:
+            self.proof_note.set('待运行 · BMC 检查输出断言，Cover 检查各 pattern 的复位后终点。')
+            return
+        covered = len(record.get('terminal_covers', []))-len(record.get('unreached_covers', []))
+        self.proof_note.set('%s  ·  BMC %s  ·  Cover %s  ·  终点 %d / %d  ·  %s' %
+                            (record['status'], record['bmc']['status'], record['cover']['status'],
+                             covered, len(record.get('terminal_covers', [])), record['id']))
+
+    def show_formal_proof(self):
+        folder, record = formal_model.latest_proof(self.formal_export)
+        if record:
+            text = str(folder)+'\n\n'+json.dumps(record, ensure_ascii=False, indent=2)
+            for mode in ('bmc', 'cover'):
+                log = folder/(mode+'.log')
+                if log.is_file():
+                    with log.open('rb') as stream:
+                        stream.seek(max(0, log.stat().st_size-10000))
+                        text += '\n\n'+log.name+'\n'+stream.read().decode('utf-8', errors='replace')
+            self.preview('开源 Formal 证明详情', text)
+
+    def show_formal_counterexample(self):
+        folder, record = formal_model.latest_proof(self.formal_export)
+        if record and record['bmc'].get('vcds'):
+            wave = (folder/record['bmc']['vcds'][0]).resolve()
+            if folder.resolve() not in wave.parents:
+                raise ValueError('反例文件路径无效')
+            self.launch('wave_index', dict(path=str(wave)))
 
     def formal_preview(self):
         if not self.formal_export: return
@@ -1022,6 +1085,7 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
     def poll(self):
         job = self.jobs.snapshot()
         analyzing = bool(job and job['state'] == 'RUNNING' and job['kind'] in backend.COVERAGE_JOBS)
+        cancellable = bool(job and job['state'] == 'RUNNING' and job['kind'] in backend.CANCELLABLE_JOBS)
         regressing = bool(job and job['state'] == 'RUNNING' and job['kind'] == 'regress'
                           and not job.get('finalizing'))
         if regressing:
@@ -1032,10 +1096,12 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
             self.stop_regression_button.pack_forget()
         if self.coverage_busy.get() != analyzing:
             self.coverage_busy.set(analyzing)
-        if analyzing and not self.cancel_coverage_button.winfo_manager():
-            self.cancel_coverage_button.pack(side='right', padx=6)
-        elif not analyzing and self.cancel_coverage_button.winfo_manager():
-            self.cancel_coverage_button.pack_forget()
+        if cancellable:
+            if not self.cancel_job_button.winfo_manager():
+                self.cancel_job_button.pack(side='right', padx=6)
+            self.cancel_job_button.configure(state='disabled' if job.get('cancel_requested') else 'normal')
+        elif self.cancel_job_button.winfo_manager():
+            self.cancel_job_button.pack_forget()
         if job:
             total, completed = job.get('total', 0), job.get('completed', 0)
             if job['state'] == 'RUNNING':
@@ -1053,7 +1119,9 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
                 else:
                     self.progress.configure(mode='determinate', maximum=1, value=1 if job['state'] == 'DONE' else 0)
                 finished = {'coverage_details': '覆盖率明细已就绪', 'coverage_minimize': '用例集覆盖率验证完成',
-                            'coverage_formal': '选集 Formal 验证包已生成'}
+                            'coverage_formal': '选集 Formal 验证包已生成',
+                            'formal_doctor': '开源 Formal 工具链自检通过',
+                            'formal_prove': 'Formal 证明结果 · '+job.get('verdict', '未知')}
                 self.status.set(job.get('error') or (job['stage'] if job['state'] == 'CANCELLED'
                                                    else finished.get(job['kind'], '已完成：'+job['kind'])))
                 self.on_finished(job)
@@ -1076,6 +1144,8 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
     def on_finished(self, job):
         if job.get('batch'):
             self.guard(lambda: self.finish_regression_view(job['batch']))
+        if job['kind'] == 'formal_prove' and self.formal_export:
+            self.guard(self.refresh_formal_proof)
         if job['state'] == 'CANCELLED':
             return
         if job['state'] != 'DONE':
@@ -1095,7 +1165,7 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
         elif kind == 'fsdb_inspect':
             info = eda.read_json(formal_model.artifact(job['formal_id'], 'inspection.json'))
             self.preview('NPI 层级与信号', json.dumps(info, ensure_ascii=False, indent=2))
-        elif kind in ('fsdb_formal', 'coverage_formal'):
+        elif kind in ('fsdb_formal', 'coverage_formal', 'import_formal'):
             self.refresh_exports(job['formal_id']); self.show('formal')
             self.root.lift()
 

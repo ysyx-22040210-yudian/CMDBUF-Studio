@@ -18,3 +18,4 @@ verification/closure/evidence/
 /eda.local.json
 /eda.local.json.tmp
 /dist/
+/formal_runtime/

@@ -1,14 +1,17 @@
-"""Create a clean, offline application distribution; never ship device settings or tools."""
+"""Build Studio source bundles and Linux bundles with the pinned Formal runtime."""
+import argparse
 import datetime
 import hashlib
 import io
 import json
 import os
+from pathlib import PurePosixPath
 from pathlib import Path
 import sys
 import tarfile
 import zipfile
 import eda
+from fsdb_formal.toolchain import ASSETS, RELEASE
 
 ROOT=eda.ROOT
 
@@ -16,7 +19,7 @@ ROOT=eda.ROOT
 def selected_files():
     paths=set(eda.sources())
     paths.update(ROOT/p for p in ('CMDBUF Studio.cmd','CMDBUF Studio.sh','eda.example.json','AGENTS.md'))
-    for number in range(32, 48):
+    for number in range(32, 49):
         for extension in ('pdf', 'docx'):
             paths.update((ROOT/'documents').glob(str(number)+'_*.'+extension))
     for p in list(paths):
@@ -28,14 +31,16 @@ def selected_files():
 
 QUICKSTART='''# CMDBUF Studio — native Tk / local Linux
 
-On the Linux EDA workstation, load your site's tool/license environment, then:
-    python3 -c "import tkinter; print(tkinter.TkVersion)"
+The architecture-specific Linux archive ships a Python/Tk and open-source Formal runtime.
+From the extracted cmdbuf-studio directory, launch the native desktop with make gui.
+Source bundles use the workstation's Python >= 3.6 and Tk >= 8.5.
+For VCS and Verdi operations, load your site's tool/license environment, then:
     make doctor
     make smoke
     make gui
 
-Requires Python >= 3.6, Tk >= 8.5, a Linux graphical session, GNU Make,
-compatible C/C++ tools, and licensed VCS / Verdi with FSDB PLI and NPI.
+Requires a Linux graphical session for Tk and GNU Make for the standard commands.
+Simulation and FSDB extraction use the site's VCS / Verdi and compatible C/C++ tools.
 No browser, Node.js, HTTP service, SSH connection, or pip packages are required.
 Tk installation if missing: Debian/Ubuntu python3-tk; RHEL/CentOS python3-tkinter.
 
@@ -133,50 +138,164 @@ fixed waits in old main_phase templates are migrated in the compiled copy.
 See documents/47_* for edge alignment and waveform examples.
 TC guide: documents/32_* (its older multi-cycle reset examples are superseded).
 FSDB semantics: documents/34_*. Guides 33/35 describe the previous web/SSH UI.
-Verify the archive: python3 simulation/vcs/portable.py --verify
-No EDA binaries, licenses, credentials, machine settings, or prior results are shipped.
+
+Open-source Formal in the architecture-specific Linux bundle:
+    make formal-doctor
+    make formal-prove FORMAL_ID=<export-id>
+Or use make formal-prove FORMAL_PACKAGE="/path/to/extracted export".
+Tk provides Check Bundled Tools, Run Proof, proof details and counterexample VCD.
+No installation, license or download is needed to run the bundled proof tools.
+The proof uses the export's DUT snapshot and recorded assumptions. See documents/48_*.
+
+Verify the archive: /bin/sh simulation/vcs/fsdb_formal/run_python.sh simulation/vcs/portable.py --verify
+Machine credentials, commercial tools and previous results are omitted.
 '''
 
 
+def stream_digest(stream):
+    checksum = hashlib.sha256()
+    for block in iter(lambda: stream.read(4*1024*1024), b''):
+        checksum.update(block)
+    return checksum.hexdigest()
+
+
+def checksum(path):
+    with path.open('rb') as stream:
+        return stream_digest(stream)
+
+
 def verify():
-    manifest=json.loads((ROOT/'PORTABLE_MANIFEST.json').read_text(encoding='utf-8'))
-    for rel,expected in manifest['files'].items():
-        p=(ROOT/rel).resolve()
-        if ROOT not in p.parents or hashlib.sha256(p.read_bytes()).hexdigest()!=expected:
+    manifest = json.loads((ROOT/'PORTABLE_MANIFEST.json').read_text(encoding='utf-8'))
+    for rel, expected in manifest['files'].items():
+        p = (ROOT/rel).resolve()
+        if ROOT not in p.parents or checksum(p) != expected:
             raise ValueError('Package verification failed: '+rel)
-    print('PACKAGE PASS: '+str(len(manifest['files']))+' files')
+    links = manifest.get('links', {})
+    for rel, expected in links.items():
+        path = ROOT/rel
+        if ROOT not in path.parent.resolve().parents or not path.is_symlink() or os.readlink(str(path)) != expected:
+            raise ValueError('Package link verification failed: '+rel)
+    print('PACKAGE PASS: %d files, %d links' % (len(manifest['files']), len(links)))
     return 0
 
 
-def main(args=None):
-    args=sys.argv[1:] if args is None else args
-    if args==['--verify']:return verify()
-    if args:raise ValueError('Use make dist, or portable.py --verify inside an extracted package')
-    payload={p.relative_to(ROOT).as_posix():p.read_bytes() for p in selected_files()}
-    # Shell launchers work after extraction even when authored on Windows.
-    for name in payload:
-        if name.endswith('.sh'):payload[name]=payload[name].replace(b'\r\n',b'\n')
-    payload['README.md']=QUICKSTART.encode('utf-8')
-    manifest=dict(format=1,product='CMDBUF Studio',built_at=datetime.datetime.utcnow().isoformat()+'Z',
-                  files={k:hashlib.sha256(v).hexdigest() for k,v in sorted(payload.items())})
-    payload['PORTABLE_MANIFEST.json']=(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n').encode('utf-8')
-    out=ROOT/'dist';out.mkdir(exist_ok=True)
-    name='cmdbuf-studio-portable';prefix='cmdbuf-studio/'
-    zip_path=out/(name+'.zip');tar_path=out/(name+'.tar.gz')
+def json_bytes(data):
+    return (json.dumps(data, ensure_ascii=False, indent=2)+'\n').encode('utf-8')
+
+
+def add_bytes(archive, rel, data):
+    item = tarfile.TarInfo('cmdbuf-studio/'+rel)
+    item.size = len(data)
+    item.mtime = 1700000000
+    item.mode = 0o755 if rel.endswith('.sh') else 0o644
+    archive.addfile(item, io.BytesIO(data))
+
+
+def source_archives(out, payload, manifest):
+    zip_path = out/'cmdbuf-studio-portable.zip'
+    tar_path = out/'cmdbuf-studio-portable.tar.gz'
+    payload = dict(payload, **{'PORTABLE_MANIFEST.json': json_bytes(manifest)})
     with zipfile.ZipFile(str(zip_path),'w',zipfile.ZIP_DEFLATED) as archive:
         for rel,data in sorted(payload.items()):
-            item=zipfile.ZipInfo(prefix+rel);item.create_system=3
+            item=zipfile.ZipInfo('cmdbuf-studio/'+rel);item.create_system=3
             item.external_attr=((0o100755 if rel.endswith('.sh') else 0o100644)<<16)
             archive.writestr(item,data,compress_type=zipfile.ZIP_DEFLATED)
     with tarfile.open(str(tar_path),'w:gz') as archive:
         for rel,data in sorted(payload.items()):
-            item=tarfile.TarInfo(prefix+rel);item.size=len(data);item.mtime=1700000000
-            item.mode=0o755 if rel.endswith('.sh') else 0o644
-            archive.addfile(item,io.BytesIO(data))
-    receipt=dict(files=len(manifest['files']),archives={p.name:dict(bytes=p.stat().st_size,
-                 sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in (zip_path,tar_path)})
-    (out/'SHA256SUMS.json').write_text(json.dumps(receipt,indent=2)+'\n',encoding='utf-8')
-    print(json.dumps(receipt,indent=2));return 0
+            add_bytes(archive, rel, data)
+    return zip_path, tar_path
+
+
+class HashingReader:
+    def __init__(self, stream):
+        self.stream = stream
+        self.checksum = hashlib.sha256()
+
+    def read(self, size):
+        data = self.stream.read(size)
+        self.checksum.update(data)
+        return data
+
+
+def linux_archive(out, payload, manifest, arch, suite):
+    suffix, expected = ASSETS[arch]
+    if checksum(suite) != expected:
+        raise ValueError('OSS CAD Suite SHA256 mismatch for linux-'+suffix)
+    path = out/('cmdbuf-studio-linux-'+suffix+'.tar.gz')
+    temp = path.with_suffix('.gz.partial')
+    manifest = dict(manifest, files=dict(manifest['files']), links={},
+                    formal_runtime=dict(platform='linux-'+suffix, release=RELEASE, upstream_sha256=expected))
+    runtime = 'formal_runtime/linux-'+suffix+'/'
+    try:
+        with tarfile.open(str(temp), 'w:gz', compresslevel=3) as archive, tarfile.open(str(suite), 'r:gz') as source:
+            for rel, data in sorted(payload.items()):
+                add_bytes(archive, rel, data)
+            for item in source:
+                name = PurePosixPath(item.name)
+                if not name.parts or name.parts[0] != 'oss-cad-suite' or '..' in name.parts:
+                    raise ValueError('Unexpected OSS CAD Suite member: '+item.name)
+                # Python can regenerate these for the new extraction path.
+                if '__pycache__' in name.parts:
+                    continue
+                rel = runtime+name.as_posix()
+                if item.isfile():
+                    with source.extractfile(item) as stream:
+                        item.name = 'cmdbuf-studio/'+rel
+                        reader = HashingReader(stream)
+                        archive.addfile(item, reader)
+                        manifest['files'][rel] = reader.checksum.hexdigest()
+                    continue
+                item.name = 'cmdbuf-studio/'+rel
+                if item.issym():
+                    archive.addfile(item)
+                    manifest['links'][rel] = item.linkname
+                elif item.islnk():
+                    item.linkname = 'cmdbuf-studio/'+runtime+item.linkname
+                    archive.addfile(item)
+                    manifest['files'][rel] = manifest['files'][item.linkname[len('cmdbuf-studio/'):]]
+                elif item.isdir():
+                    archive.addfile(item)
+                else:
+                    raise ValueError('Unexpected OSS CAD Suite member type: '+str(name))
+            add_bytes(archive, 'PORTABLE_MANIFEST.json', json_bytes(manifest))
+        temp.replace(path)
+    finally:
+        if temp.exists():
+            temp.unlink()
+    return path
+
+
+def main(args=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--verify', action='store_true')
+    parser.add_argument('--suite-x64', type=Path, help='Pinned official Linux x86-64 .tgz')
+    parser.add_argument('--suite-arm64', type=Path, help='Pinned official Linux AArch64 .tgz')
+    args = parser.parse_args(args)
+    if args.verify:
+        return verify()
+    payload = {p.relative_to(ROOT).as_posix(): p.read_bytes() for p in selected_files()}
+    for name, data in payload.items():
+        if name.endswith('.sh'):
+            payload[name] = data.replace(b'\r\n', b'\n')
+    payload['README.md'] = QUICKSTART.encode('utf-8')
+    manifest = dict(format=1, product='CMDBUF Studio', built_at=datetime.datetime.utcnow().isoformat()+'Z',
+                    files={k: hashlib.sha256(v).hexdigest() for k, v in sorted(payload.items())})
+    out = ROOT/'dist'
+    out.mkdir(exist_ok=True)
+    paths = []
+    if args.suite_x64 or args.suite_arm64:
+        for arch, suite in [('x86_64', args.suite_x64), ('aarch64', args.suite_arm64)]:
+            if suite:
+                paths.append(linux_archive(out, payload, manifest, arch, suite))
+        sums = out/'LINUX-SHA256SUMS.json'
+    else:
+        paths.extend(source_archives(out, payload, manifest))
+        sums = out/'SHA256SUMS.json'
+    receipt = dict(files=len(manifest['files']), archives={
+        p.name: dict(bytes=p.stat().st_size, sha256=checksum(p)) for p in paths})
+    sums.write_bytes(json_bytes(receipt))
+    print(json.dumps(receipt, indent=2))
+    return 0
 
 
 if __name__=='__main__':

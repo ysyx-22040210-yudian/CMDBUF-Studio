@@ -149,7 +149,16 @@ def sby_configs(directory, traces, names, includes, cfg, style='cycle'):
     for mode,engine in [('bmc','abc bmc3'),('cover','smtbmc yices')]:
         text = '[options]\nmode %s\ndepth %d\ntimeout 600\n\n[engines]\n%s\n\n[script]\n%s\n[files]\nrtl_snapshot\nsby_properties.sv\nformal_top.sv\nslang.f\n' % (mode,depth,engine,script)
         (directory/('run_'+mode+'.sby')).write_text(text,encoding='utf-8')
-    (directory/'Makefile').write_text('.PHONY: bmc cover\nSBY ?= sby\nbmc:\n\t$(SBY) -f run_bmc.sby\ncover:\n\t$(SBY) -f run_cover.sby\n',encoding='utf-8')
+    for name in ('proof.py', 'toolchain.py', 'run_python.sh'):
+        data = (HERE/name).read_bytes()
+        (directory/name).write_bytes(data.replace(b'\r\n', b'\n') if name.endswith('.sh') else data)
+    (directory/'Makefile').write_text(
+        '.DEFAULT_GOAL := prove\n.PHONY: prove doctor bmc cover\n'
+        'PYTHON ?= /bin/sh ./run_python.sh\nFORMAL_TIMEOUT ?=\n'
+        'export PYTHONIOENCODING := utf-8\n'
+        'prove:\n\t$(PYTHON) proof.py $(if $(strip $(FORMAL_TIMEOUT)),--timeout "$(FORMAL_TIMEOUT)")\n'
+        'doctor:\n\t$(PYTHON) toolchain.py\n'
+        'bmc cover:\n\t$(PYTHON) toolchain.py --run-sby run_$@.sby\n', encoding='utf-8')
     return depth
 
 
@@ -194,7 +203,8 @@ def run(request, action, archived_dut=None):
             output_validity='Control outputs compared every cycle. arb_addr compared when recorded req!=0; R payloads compared when recorded rvalid!=0. All raw values retained.',
             unknowns='Reject X/Z inputs or compared outputs; do not silently coerce or wildcard them.',
             native_usage='Load files.f; select cmdbuf_fsdb_formal_top; configure clock/reset initialization; verify assertions and all terminal covers.',
-            sby_usage=['make bmc','make cover'],
+            sby_usage=['In the Studio Linux portable directory: make formal-prove FORMAL_ID=<export-id>',
+                       'With the export extracted under the portable directory: make prove'],
             sby_requirements='Yosys with read_slang, SBY, ABC and Yices. SBY performs an explicit real-reset initialization; no reset-sequence assume or zinit.',
             depth=depth,scope='Recorded finite traces only; not an unbounded proof of the interface protocol.',
             dut=cfg)
@@ -204,7 +214,8 @@ def run(request, action, archived_dut=None):
                            cycles=sum(s['cycles'] for s in t['segments']),
                            segments=[{k:v for k,v in s.items() if k!='rows'} for s in t['segments']]) for t in traces],
             files=['trace_properties.sv','formal_top.sv','files.f','samples.csv','transactions.json','trace.json',
-                   'integration.json','Makefile','run_bmc.sby','run_cover.sby','slang.f','sby_properties.sv','sby_adaptation.json'])
+                   'integration.json','Makefile','run_bmc.sby','run_cover.sby','slang.f','sby_properties.sv','sby_adaptation.json',
+                   'proof.py','toolchain.py','run_python.sh'])
         if archived_dut is not None:
             summary['coverage_set'] = integration['coverage_set'] = request['coverage_set']
             integration['rtl_source'] = 'Verified archived DUT sources and instance wiring'
