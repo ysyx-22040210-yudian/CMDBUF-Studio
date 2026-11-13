@@ -8,9 +8,10 @@ from tkinter import filedialog, ttk
 from code_coverage.engine import json_lines
 from code_coverage.set_cover import popcount
 import model
+import formal_model
 from coverage_data import (METRICS, COVERED, PARTIAL, MISSED, EXCLUDED, UNREACHABLE, ILLEGAL,
                            CoverageData, item_state, line_coverage, urg_scores)
-from widgets import ACCENT, INK, MUTED, CodeEditor, style, tree
+from widgets import ACCENT, INK, MUTED, CodeEditor, style, tree, formal_format_field
 
 
 PAGE_SIZE = 200
@@ -89,11 +90,13 @@ class CoverageSource(CodeEditor):
 
 
 class CoverageWindow(tk.Toplevel):
-    def __init__(self, parent, record_path, minimize, open_verdi, guard, progress, busy, cancel, generate_formal):
+    def __init__(self, parent, record_path, minimize, open_verdi, guard, progress, busy, cancel,
+                 generate_formal, formal_format_var=None):
         super().__init__(parent)
         self.record = model.eda.read_json(record_path)
         self.guard = guard
         self.generate_formal = generate_formal
+        self.formal_format_var = formal_format_var
         self.title('CMDBUF Studio · 代码覆盖率')
         self.geometry('{}x{}'.format(min(1460, self.winfo_screenwidth()-40),
                                       min(930, self.winfo_screenheight()-65)))
@@ -590,7 +593,9 @@ class CoverageWindow(tk.Toplevel):
             selected.insert('', 'end', values=(pattern, row['batch'], row['id'], row['seed']))
         bar = ttk.Frame(tab)
         bar.pack(fill='x')
-        ttk.Button(bar, text='另存用例清单 CSV', command=lambda: self.guard(self.save_csv)).pack(side='left')
+        ttk.Button(bar, text='另存用例清单 CSV', command=lambda: self.guard(self.save_csv)).pack(side='left', padx=(0, 16))
+        if self.formal_format_var is not None:
+            formal_format_field(bar, self.formal_format_var, formal_model.FORMAT_LABELS)
         ttk.Button(bar, text='生成选集 Formal', style='Primary.TButton',
                    state='normal' if self.record['selected'] else 'disabled',
                    command=lambda: self.guard(self.generate_formal)).pack(side='right')

@@ -2,14 +2,15 @@
 import json
 from pathlib import Path
 import re
-import sys
 import zipfile
 import shutil
 import model
 
 from model import eda, dut_config, ROOT, STATE
-sys.path.insert(0,str(eda.HERE/'fsdb_formal'))
-import core
+from fsdb_formal import core
+from fsdb_formal.engine import regression_wave
+
+FORMAT_LABELS = core.FORMAT_LABELS
 
 IMPORTS=STATE/'fsdb_imports'
 EXPORTS=STATE/'formal_exports'
@@ -75,6 +76,22 @@ def state():
     return dict(imports=imports,exports=exports[:100],signals=core.SIGNALS,selection=saved,dut_name=dut_config.load()['name'])
 
 
+def regression_source(item):
+    source = dict(item)
+    wave = regression_wave(source)
+    source['archive'] = str(wave.parents[2].resolve())
+    return source
+
+
+def source_path(source):
+    if source['kind'] == 'regression':
+        return regression_wave(source)
+    path = IMPORTS/identifier(source['id'])/'wave.fsdb'
+    if not path.is_file():
+        raise ValueError('找不到已导入的 FSDB: ' + str(path))
+    return path
+
+
 def selections(payload):
     sources=payload.get('sources',[])
     if not isinstance(sources,list) or not 1<=len(sources)<=100:
@@ -91,16 +108,16 @@ def selections(payload):
         if source['kind']=='import':
             source['id']=identifier(item['id']);meta=eda.read_json(IMPORTS/source['id']/'metadata.json')
             if not meta['ready']:raise ValueError('FSDB 尚未完整上传')
+            source_path(source)
         elif source['kind']=='regression':
             source.update(batch=identifier(item['batch']),run=identifier(item['run']))
-            folder=model.results_root()/source['batch']
-            rows=eda.read_json(folder/'summary.json')['results']
-            row=next((r for r in rows if r['id']==source['run']),None)
-            if row is None or row.get('waves_enabled',True) is False:
-                raise ValueError('所选运行没有 FSDB 波形')
+            if 'archive' in item:
+                source['archive'] = item['archive']
+            source = regression_source(source)
         else:raise ValueError('请选择导入波形或已知回归结果')
         normalized.append(source)
-    return dict(sources=normalized,max_edges=core.number(payload.get('max_edges',100000),'采样沿上限',1,1000000))
+    return dict(sources=normalized,max_edges=core.number(payload.get('max_edges',100000),'采样沿上限',1,1000000),
+                format=core.formal_format(payload.get('format', 'cycle')))
 
 
 def stage(payload, settings, job_id, progress):

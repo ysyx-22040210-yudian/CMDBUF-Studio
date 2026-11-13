@@ -125,7 +125,7 @@ def default_plan():
 def check_plan(plan):
     regression_plan.expand(plan)
     plan.update(check_policy.plan_options(plan))
-    plan['jobs'] = regression_plan.number(plan.get('jobs'), '并行数', 1, 32)
+    plan['jobs'] = regression_plan.number(plan.get('jobs'), '并行数', 1)
     plan['timeout'] = regression_plan.number(plan.get('timeout'), '仿真执行超时秒数（0 不限时）', 0, 36000)
     if not isinstance(plan.get('waves'), bool):
         raise ValueError('波形开关必须为布尔值')

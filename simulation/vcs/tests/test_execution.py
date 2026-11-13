@@ -98,6 +98,31 @@ raise SystemExit(rc)
         jobs.process_status(job,dict(key='a',state='FINISHED',phase='simulation'))
         self.assertIn('仿真运行 1',job['stage']);self.assertIn('启动 0',job['stage'])
 
+    def test_stop_request_interrupts_license_wait_and_allows_coverage(self):
+        with tempfile.TemporaryDirectory() as folder, concurrent.futures.ThreadPoolExecutor(1) as pool:
+            root = Path(folder)
+            stop = root/'regression.stop'
+            log = root/'sim.log'
+            source = "import time; print('waiting for license', flush=True); time.sleep(20)"
+            future = pool.submit(execution.run, [sys.executable, '-c', source],
+                                 root, log, os.environ, .1, wait_for_start=True,
+                                 phase='simulation', stop_file=stop)
+            try:
+                deadline = time.monotonic()+5
+                while time.monotonic()<deadline and not (log.is_file() and log.stat().st_size):
+                    time.sleep(.02)
+                self.assertIn('waiting for license', log.read_text())
+            finally:
+                stop.touch()
+            with self.assertRaises(execution.RegressionStopped):
+                future.result(timeout=8)
+            state = json.loads((root/'sim.process.json').read_text())
+            self.assertEqual(state['state'], 'INTERRUPTED')
+            self.assertIsNone(state['execution_seconds'])
+            rc, _ = execution.run([sys.executable, '-c', 'pass'], root, root/'urg.log',
+                                  os.environ, None, phase='coverage')
+            self.assertEqual(rc, 0)
+
     @unittest.skipUnless(sys.platform=='linux','Linux process groups')
     def test_interrupt_stops_parallel_license_waiters(self):
         with tempfile.TemporaryDirectory() as folder:

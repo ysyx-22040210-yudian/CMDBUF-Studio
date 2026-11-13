@@ -52,18 +52,35 @@ def reader(env):
     return executable
 
 
+def regression_wave(source):
+    batch, run = safe_id(source['batch']), safe_id(source['run'])
+    folder = eda.OUT/'regressions'/batch
+    saved = source.get('archive')
+    if saved is not None:
+        if not isinstance(saved, str) or not Path(saved).is_absolute() or Path(saved).name != batch:
+            raise ValueError('回归波形的归档路径无效: ' + batch + '/' + run)
+        folder = Path(saved)
+    report = folder/'summary.json'
+    if not report.is_file():
+        raise ValueError('找不到回归归档 {} / {}，请从“结果与波形”重新加入，或导入原 FSDB。\n{}'.format(
+            batch, run, saved or report))
+    summary = eda.read_json(report)
+    row = next((r for r in summary['results'] if r['id'] == run), None)
+    if summary.get('id') != batch or row is None:
+        raise ValueError('回归归档中没有用例 {} / {}'.format(batch, run))
+    path = folder/'cases'/run/'waves.fsdb'
+    if not row.get('waves_enabled', True) or not path.is_file():
+        raise ValueError('回归用例没有可读取的 FSDB: ' + str(path))
+    return path
+
+
 def fsdb_path(source):
     if source['kind'] == 'regression':
-        batch, run = safe_id(source['batch']), safe_id(source['run'])
-        folder = eda.OUT/'regressions'/batch
-        summary = eda.read_json(folder/'summary.json')
-        if not any(r['id'] == run for r in summary['results']):
-            raise ValueError('Run is not in selected regression')
-        path = folder/'cases'/run/'waves.fsdb'
+        return regression_wave(source)
     elif source['kind'] == 'import':
         path = eda.OUT/'fsdb_imports'/safe_id(source['id'])/'wave.fsdb'
     elif source['kind'] == 'file':
-        # CLI-only source selection; the GUI constructs import/regression records.
+        # Absolute path supplied explicitly by a local request or coverage export.
         path = Path(source['path']).resolve()
     else:
         raise ValueError('Unknown FSDB source')
@@ -106,30 +123,16 @@ def package_rtl(directory, cfg, archived_sources=None):
     return names, includes
 
 
-def sby_configs(directory, traces, names, includes, cfg):
-    native = (directory/'trace_properties.sv').read_text(encoding='utf-8')
-    # Single-sample overlapping implication is exactly (!antecedent || consequent).
-    # Preserve native source and explicitly record this frontend adaptation.
-    lowered, count = re.subn(r'(\([^\n]+\)) \|-> (\$stable\([^\n]+\)|\([\s\S]*?\))\);',
-                            lambda m:'(!'+m.group(1)+' || '+m.group(2)+'));', native)
-    expected = sum(len(s['rows'])*2 for t in traces for s in t['segments']) + 2
-    if count != expected or '|->' in lowered:
-        raise ValueError('Native SVA lowering count mismatch')
-    # The installed Slang frontend lacks $stable. Its operands here are sampled
-    # on the same posedge; explicit previous-sample registers are equivalent.
-    if lowered.count('$stable(')!=2:raise ValueError('Unexpected selector stability properties')
-    lowered=lowered.replace('$stable(pattern)','(pattern == trace_prev_pattern)')
-    lowered=lowered.replace('$stable(reset_segment)','(reset_segment == trace_prev_segment)')
-    capture=('    // Explicit sampled-value expansion for the SBY frontend only.\n'
-             '    reg [31:0] trace_prev_pattern, trace_prev_segment;\n'
-             '    always @(posedge clk) begin\n'
-             '        trace_prev_pattern <= pattern;\n'
-             '        trace_prev_segment <= reset_segment;\n'
-             '    end\n')
-    lowered=lowered.replace("    reg [31:0] trace_cycle = 32'd0;",capture+"    reg [31:0] trace_cycle = 32'd0;")
+def sby_configs(directory, traces, names, includes, cfg, style='cycle'):
+    # Derive both files from the same samples. The SBY form targets a two-state
+    # engine and does not depend on parsing the syntax of the native style.
+    sby_style = 'table' if style in ('rom', 'generate') else style
+    lowered = core.native_sva(traces, sby_style, lowered=True)
     (directory/'sby_properties.sv').write_text(lowered,encoding='utf-8')
+    properties = lowered.count(': assume property') + lowered.count(': assert property') - 1
     eda.write_json(directory/'sby_adaptation.json',dict(source='trace_properties.sv',executed='sby_properties.sv',
-                   properties=count,rule='Single-sample A |-> B becomes (!A || B); clock and disable iff preserved.',
+                   properties=properties, format=style, executed_format=sby_style,
+                   rule='Generated from the same trace. The two-state backend uses (!A || B) for guarded comparisons.',
                    sampled_value_expansion='Two $stable selectors replaced by comparisons against explicit previous-posedge registers. First-cycle guards preserved.',
                    source_sha256=eda.digest(directory/'trace_properties.sv'),executed_sha256=eda.digest(directory/'sby_properties.sv')))
     depth = max(s['cycles'] for t in traces for s in t['segments']) + 2
@@ -152,9 +155,10 @@ def sby_configs(directory, traces, names, includes, cfg):
 
 def run(request, action, archived_dut=None):
     identifier = safe_id(request['id'])
+    style = core.formal_format(request.get('format', 'cycle'))
     directory = eda.OUT/'fsdb_formal'/identifier
     directory.mkdir(parents=True,exist_ok=False)
-    eda.write_json(directory/'request.json',request)
+    eda.write_json(directory/'request.json', dict(request, format=style) if action == 'export' else request)
     env = eda.platform_config.tool_env(required=('verdi',));binary = reader(env)
     if action == 'inspect':
         inspection(directory,binary,request['sources'][0],env)
@@ -179,10 +183,11 @@ def run(request, action, archived_dut=None):
             traces.append(trace)
             print('NPI_PROGRESS %d/%d pattern=%d' % (i+1,len(sources),source['pattern']),flush=True)
         cfg, archived_sources = archived_dut if archived_dut is not None else (dut_config.load(), None)
-        counts=core.export_data(directory,traces,cfg['instance'])
+        counts=core.export_data(directory,traces,cfg['instance'],style)
         names,includes=package_rtl(directory,cfg,archived_sources)
-        depth=sby_configs(directory,traces,names,includes,cfg)
+        depth=sby_configs(directory,traces,names,includes,cfg,style)
         integration=dict(top='cmdbuf_fsdb_formal_top',native_checker='trace_properties.sv',filelist='files.f',
+            format=style,
             selectors=['pattern','reset_segment'],sampling='posedge preponed; FSDB time T-1 tick',
             clock='clk',active_low_reset='rst_n',reset_initialization='Initialize DUT with its real reset in the formal tool. disable iff alone does not initialize the DUT.',
             reset_segments='Every complete reset-to-reset interval is independent; all intervals retained. Keep pattern and reset_segment stable within the interval.',
@@ -193,7 +198,7 @@ def run(request, action, archived_dut=None):
             sby_requirements='Yosys with read_slang, SBY, ABC and Yices. SBY performs an explicit real-reset initialization; no reset-sequence assume or zinit.',
             depth=depth,scope='Recorded finite traces only; not an unbounded proof of the interface protocol.',
             dut=cfg)
-        summary=dict(status='GENERATED',id=identifier,counts=counts,formal_status='NOT_RUN',dut_name=cfg['name'],
+        summary=dict(status='GENERATED',id=identifier,counts=counts,format=style,formal_status='NOT_RUN',dut_name=cfg['name'],
             sampling='posedge 前一个 FSDB 时间刻度',
             patterns=[dict(pattern=t['pattern'],name=t['name'],fsdb_sha256=t['fsdb_sha256'],
                            cycles=sum(s['cycles'] for s in t['segments']),
@@ -218,7 +223,12 @@ def run(request, action, archived_dut=None):
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('--request',required=True);parser.add_argument('--action',choices=['inspect','export'],required=True)
+    parser.add_argument('--format', choices=core.FORMATS)
     args=parser.parse_args()
-    try:sys.exit(run(eda.read_json(args.request),args.action))
+    try:
+        request = eda.read_json(args.request)
+        if args.format:
+            request['format'] = args.format
+        sys.exit(run(request,args.action))
     except Exception as exc:
         print('FSDB_FORMAL_ERROR: '+str(exc),file=sys.stderr);sys.exit(2)

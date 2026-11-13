@@ -30,20 +30,54 @@ def batch_path(batch):
 
 def result_path(batch, run):
     folder = batch_path(batch)
-    if not any(r['id'] == run for r in eda.read_json(folder/'summary.json')['results']):
-        raise ValueError('该用例不属于所选回归')
-    return folder/'cases'/identifier(run)
+    path = folder/'cases'/identifier(run)
+    summary = folder/'summary.json'
+    if (path/'result.json').is_file() or (summary.is_file() and any(
+            r['id'] == run for r in eda.read_json(summary)['results'])):
+        return path
+    raise ValueError('所选回归中没有该用例的完整结果')
 
 
-def history():
+def progress_row(batch):
+    progress = eda.read_json(batch_path(batch)/'progress.json')
+    return dict(id=batch, status=progress['state'], total=progress['total'],
+                completed=progress['completed'], passed=progress.get('passed', 0),
+                dut=progress.get('dut', ''), waves=progress.get('waves_enabled', True), partial=True)
+
+
+def completed_runs(batch, offset, count):
+    # progress.json commits the count only after the journal has been flushed.
+    with (batch_path(batch)/'completed_runs.jsonl').open('rb') as stream:
+        stream.seek(offset)
+        rows = [json.loads(stream.readline().decode('utf-8')) for _ in range(count)]
+        return rows, stream.tell()
+
+
+def summary_row(summary):
+    results = summary['results']
+    coverage = summary.get('coverage', {})
+    return dict(id=summary['id'], status=summary['status'], total=summary.get('total', len(results)),
+                completed=len(results), passed=summary['passed'], partial=False,
+                coverage=coverage.get('metrics_percent', {}) if coverage.get('status') == 'PASS' else {},
+                waves=summary.get('waves_enabled', True), dut=summary.get('dut', {}).get('name', ''),
+                created=summary.get('created_at', ''), seconds=sum(r.get('seconds', 0) for r in results))
+
+
+def history(include_interrupted=False):
     rows = []
-    for path in sorted(model.results_root().glob('*/summary.json'), reverse=True)[:100]:
+    root = model.results_root()
+    folders = {path.parent for path in root.glob('*/summary.json')}
+    if include_interrupted:
+        folders.update(path.parent for path in root.glob('*/progress.json'))
+    for folder in sorted(folders, reverse=True)[:100]:
         try:
-            s = eda.read_json(path)
-            rows.append(dict(id=s['id'], status=s['status'], total=len(s['results']), passed=s['passed'],
-                             coverage=s.get('coverage', {}).get('metrics_percent', {}),
-                             waves=s.get('waves_enabled', True), dut=s.get('dut', {}).get('name', ''),
-                             created=s.get('created_at', ''), seconds=sum(r.get('seconds', 0) for r in s['results'])))
+            path = folder/'summary.json'
+            if path.is_file():
+                rows.append(summary_row(eda.read_json(path)))
+            elif include_interrupted:
+                row = progress_row(folder.name)
+                if row['status'] == 'ERROR' and (folder/'completed_runs.jsonl').is_file():
+                    rows.append(row)
         except (OSError, ValueError, KeyError):
             continue
     return rows
@@ -111,7 +145,14 @@ class Jobs:
     def require_idle(self):
         with self.lock:
             if self.current and self.current['state'] == 'RUNNING':
-                raise ValueError('当前任务仍在运行，请等待完成后再修改工程或启动下一任务')
+                raise ValueError('当前任务仍在运行，结束后可启动下一任务')
+
+    def require_editable_sources(self):
+        with self.lock:
+            job = self.current
+            if (job and job['state'] == 'RUNNING' and job['kind'] in ('compile', 'regress')
+                    and not job.get('sources_ready')):
+                raise ValueError('正在固定本次编译的源码，请稍后保存或导入')
 
     def update(self, job, **values):
         with self.lock:
@@ -127,9 +168,13 @@ class Jobs:
         cmd = make_command(arguments)
         env = os.environ.copy()
         env.update(PYTHONIOENCODING='utf-8', PYTHONUNBUFFERED='1', EDA_NO_OPEN='1', EDA_MODE='local')
+        if eda.platform_config.simple_path(eda.OUT):
+            env['EDA_RESULT_ROOT'] = str(eda.OUT)
         # Old GUI environments must never influence the execution host.
         for key in ('EDA_VM_HOST', 'EDA_VM_ROOT', 'EDA_SKIP_SYNC'):
             env.pop(key, None)
+        if job['kind'] == 'regress':
+            env['CMDBUF_STUDIO_REGRESSION_STOP'] = str(self.regression_stop_file(job))
         self.log(job, '$ make '+' '.join(arguments)+'\n')
         coverage_task = job['kind'] in COVERAGE_JOBS
         process = subprocess.Popen(cmd, cwd=str(ROOT), env=env, stdout=subprocess.PIPE,
@@ -142,6 +187,13 @@ class Jobs:
                     self.stop_coverage_process()
         for line in process.stdout:
             self.log(job, line)
+            notice = line.strip()
+            if notice == 'EDA_SOURCES_READY':
+                self.update(job, sources_ready=True)
+            elif notice == 'REGRESSION_FINALIZING':
+                self.update(job, finalizing=True, stage='正在汇总用例 / 合并覆盖率')
+            elif notice == 'REGRESSION_STOPPED_BEFORE_SIMULATION':
+                self.update(job, stopped_before_simulation=True)
             if line.startswith('COVERAGE_STAGE '):
                 self.update(job, stage=line[len('COVERAGE_STAGE '):].strip(), total=0, completed=0)
             if line.startswith('COVERAGE_RESULT '):
@@ -153,7 +205,7 @@ class Jobs:
             progress = re.search(r'PROGRESS .*? (\d+)/(\d+)', line)
             npi = re.search(r'(?:NPI|COVERAGE)_PROGRESS (\d+)/(\d+)', line)
             if batch:
-                self.update(job, batch=batch.group(1), total=int(batch.group(2)))
+                self.update(job, batch=batch.group(1), total=int(batch.group(2)), sources_ready=True)
             if progress or npi:
                 match = progress or npi
                 self.update(job, completed=int(match.group(1)), total=int(match.group(2)))
@@ -181,6 +233,18 @@ class Jobs:
             job.update(cancel_requested=True, stage='正在取消覆盖率分析')
             self.stop_coverage_process()
 
+    def regression_stop_file(self, job):
+        return (STATE/'jobs'/(job['id']+'.stop')).resolve()
+
+    def stop_regression(self):
+        with self.lock:
+            job = self.current
+            if (not job or job['kind'] != 'regress' or job['state'] != 'RUNNING'
+                    or job.get('finalizing') or job.get('stop_requested')):
+                return
+            self.regression_stop_file(job).touch()
+            job.update(stop_requested=True, stage='正在停止回归，保留已完成用例')
+
     def process_status(self,job,event):
         with self.lock:
             active=job.setdefault('processes',{})
@@ -189,8 +253,11 @@ class Jobs:
                 active.pop(key,None)
             else:active[key]=event
             rows=list(active.values())
-            if any(r['phase']=='compile' for r in rows):stage='VCS 编译 / 等待 License（不限时）'
+            if job.get('stop_requested') and not job.get('finalizing'):
+                stage='正在停止回归，保留已完成用例'
+            elif any(r['phase']=='compile' for r in rows):stage='VCS 编译 / 等待 License（不限时）'
             elif any(r['phase']=='coverage' for r in rows):stage='合并覆盖率 / 等待 License（不限时）'
+            elif job.get('finalizing'):stage='正在汇总用例 / 合并覆盖率'
             elif any(r['phase']=='legacy_simulation' for r in rows):stage='旧归档重放 / 等待 License（全程不限时）'
             elif job.get('kind') not in COVERAGE_JOBS or any(r['phase']=='simulation' for r in rows):
                 waiting=sum(r['state']=='WAITING_FOR_START' for r in rows)
@@ -249,14 +316,34 @@ class Jobs:
             elif kind == 'regress':
                 plan = payload['plan']
                 path = STATE/'plans'/(job['id']+'.json'); eda.write_json(path, plan)
-                progress('运行回归 / 合并覆盖率')
+                if not job.get('stop_requested'):
+                    progress('运行回归 / 合并覆盖率')
                 rc = self.invoke(job, ['regress', 'PLAN='+str(path), 'JOBS='+str(plan['jobs']),
                                       'TIMEOUT='+str(plan['timeout']), 'WAVES='+str(int(plan['waves'])),
                                       'CHECK_MODE='+plan['check_mode'],
                                       'ASSERT_FATAL='+str(int(plan['assert_fatal'])),
                                       'ENV_FATAL='+str(int(plan['env_fatal']))], check=False)
                 if job.get('batch'):
-                    self.update(job, verdict=eda.read_json(batch_path(job['batch'])/'summary.json')['status'])
+                    summary = batch_path(job['batch'])/'summary.json'
+                    if summary.is_file():
+                        result = eda.read_json(summary)
+                        self.update(job, verdict=result['status'])
+                        if result['status'] == 'CANCELLED':
+                            coverage = result['coverage']['status']
+                            stage = {'PASS': '回归已停止 · 已合并通过用例的覆盖率',
+                                     'NO_PASSING_CASES': '回归已停止 · 暂无通过用例可统计覆盖率'}.get(
+                                         coverage, '回归已停止 · 覆盖率合并失败，详见日志')
+                            self.update(job, state='CANCELLED', stage=stage)
+                            return
+                    else:
+                        path = summary.with_name('progress.json')
+                        progress = eda.read_json(path)
+                        if progress['state'] != 'ERROR':
+                            eda.write_json(path, dict(progress, state='ERROR'))
+                        raise RuntimeError('回归中断，已完成的用例保留在结果窗口，详见任务日志')
+                elif job.get('stopped_before_simulation'):
+                    self.update(job, state='CANCELLED', stage='回归已停止 · 仿真尚未开始')
+                    return
                 if rc:
                     raise RuntimeError('回归包含失败、未完成验证的用例或工具错误，请查看检查范围和日志')
             elif kind in ('wave', 'coverage'):
@@ -280,8 +367,9 @@ class Jobs:
             elif kind == 'coverage_formal':
                 analysis = identifier(payload['analysis'])
                 limit = formal_model.core.number(payload['max_edges'], '采样沿上限', 1, 1000000)
+                style = formal_model.core.formal_format(payload.get('format', 'cycle'))
                 self.invoke(job, ['coverage-formal', 'COVERAGE_SET='+analysis, 'FORMAL_ID='+job['id'],
-                                  'MAX_EDGES='+str(limit)])
+                                  'MAX_EDGES='+str(limit), 'FORMAL_FORMAT='+style])
                 progress('校验选集 Formal 生成包')
                 self.update(job, formal_id=formal_model.fetch(model.state_read(), job['id']))
             elif kind == 'wave_file':
@@ -327,6 +415,11 @@ class Jobs:
                 self.log(job, '\n'+str(exc)+'\n')
                 self.update(job, state='ERROR', stage='执行失败', error=str(exc))
         finally:
+            if job['kind'] == 'regress':
+                try:
+                    self.regression_stop_file(job).unlink()
+                except OSError:
+                    pass
             self.update(job, ended=time.time())
             with self.lock:
                 receipt = copy.deepcopy(job)

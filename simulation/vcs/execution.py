@@ -12,6 +12,15 @@ _cancelled=threading.Event()
 _events=threading.Lock()
 
 
+class RegressionStopped(InterruptedError):
+    """The regression requested a stop before coverage finalization."""
+
+
+def check_stop(stop_file):
+    if stop_file is not None and stop_file.is_file():
+        raise RegressionStopped('Regression stop requested')
+
+
 def install_signal_handlers():
     """CLI only: interrupt queued workers as well as their child process groups."""
     def cancel(signum, frame):
@@ -41,8 +50,9 @@ def stop(process):
         process.wait()
 
 
-def run(cmd,cwd,log,env,timeout,wait_for_start=False,phase='tool'):
+def run(cmd,cwd,log,env,timeout,wait_for_start=False,phase='tool',stop_file=None):
     if _cancelled.is_set():raise InterruptedError('EDA job cancelled')
+    check_stop(stop_file)
     log=Path(log);log.parent.mkdir(parents=True,exist_ok=True)
     limit=None if timeout is None or timeout==0 else timeout
     if limit is not None and limit<0:raise ValueError('Execution timeout must be nonnegative')
@@ -68,7 +78,7 @@ def run(cmd,cwd,log,env,timeout,wait_for_start=False,phase='tool'):
 
     emit(state['state'])
     with log.open('w',encoding='utf-8') as output:
-        process=None;rc=None
+        process=None;rc=None;failure_state=None
         try:
             # Batch jobs must not inherit the GUI/terminal's live stdin. A DUT
             # $stop may enter UCLI; EOF ends that interrupted run instead of
@@ -84,17 +94,24 @@ def run(cmd,cwd,log,env,timeout,wait_for_start=False,phase='tool'):
                     emit('RUNNING')
                 rc=process.poll()
                 if rc is not None:break
+                check_stop(stop_file)
                 if active is not None and limit is not None and now-active>=limit:
                     stop(process);output.write('\nEDA_RUNNER_TIMEOUT\n');rc=124;break
                 # A missing start callback never spends the execution timeout.
                 time.sleep(.05)
         except BaseException:
-            if process is not None:stop(process)
-            emit('INTERRUPTED' if process is not None else 'LAUNCH_ERROR');raise
+            if process is not None:
+                stop(process)
+                rc=process.returncode
+                failure_state='INTERRUPTED'
+            else:
+                failure_state='LAUNCH_ERROR'
+            raise
         finally:
             end=time.monotonic()
             state.update(seconds=round(end-start,3),returncode=rc,
                          execution_seconds=round(end-active,3) if active is not None else None)
             if wait_for_start and active is None:state['startup_wait_seconds']=round(end-start,3)
-            if rc is not None:emit('TIMEOUT' if rc==124 else 'FINISHED')
+            if failure_state:emit(failure_state)
+            elif rc is not None:emit('TIMEOUT' if rc==124 else 'FINISHED')
     return rc,round(time.monotonic()-start,3)

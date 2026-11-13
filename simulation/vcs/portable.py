@@ -58,7 +58,8 @@ Compile / simulate / open waves and coverage all use Make:
     make coverage REGRESSION=latest
     make coverage-details REGRESSION=latest
     make coverage-minimize REGRESSION=latest
-    make coverage-formal COVERAGE_SET=analysis_id
+    make fsdb-formal REQUEST=request.json FORMAL_FORMAT=signal
+    make coverage-formal COVERAGE_SET=analysis_id FORMAL_FORMAT=table
     make wave-file FSDB=/absolute/path/to/input.fsdb
 
 Verdi wave commands automatically add every dumped signal directly under the DUT

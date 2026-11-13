@@ -22,11 +22,14 @@ def align_template_delays(code):
     return code
 
 
-def load(path):
+def load(path, expected_sha256=None):
     path = Path(path)
     if not re.fullmatch(r'[A-Za-z][A-Za-z0-9_]*', path.stem):
         raise ValueError('SV TC filename must be an identifier')
-    code = path.read_text(encoding='utf-8')
+    raw = path.read_bytes()
+    if expected_sha256 is not None and hashlib.sha256(raw).hexdigest() != expected_sha256:
+        raise RuntimeError('TC source changed while preparing the build: ' + str(path))
+    code = raw.decode('utf-8').replace('\r\n', '\n').replace('\r', '\n')
     if not re.search(r'\bclass\s+' + re.escape(path.stem) + r'\s+extends\s+cmdbuf_main_tc\s*;', code):
         raise ValueError('SV TC must declare class {} extends cmdbuf_main_tc;'.format(path.stem))
     return {'format':'sv_main_phase', 'name':path.stem, 'source':code,
@@ -40,13 +43,22 @@ def program(cfg, seed, cycles=None):
     return 'MAIN_PHASE_V1 {} {} {}\n'.format(cfg['name'], seed, cycles or 0)
 
 
-def generate_factory(destination):
+def generate_factory(destination, source_hashes=None):
     """Compile all local TC classes once; run-time selection does not rebuild RTL."""
     directory = Path(destination)
     archive = directory / 'tc_sources'
     archive.mkdir(exist_ok=True)
-    paths=sorted(TC_DIR.glob('*.sv')) + sorted((HERE/'tests'/'main_phase').glob('*.sv'))
-    entries = [load(p) for p in paths]
+    folders = (TC_DIR, HERE/'tests'/'main_phase')
+    paths = [path for folder in folders for path in sorted(folder.glob('*.sv'))]
+    if source_hashes is None:
+        entries = [load(path) for path in paths]
+    else:
+        root = HERE.parents[1]
+        expected = {root/name: sha for name, sha in source_hashes.items()
+                    if (root/name).parent in folders and name.endswith('.sv')}
+        if set(paths) != set(expected):
+            raise RuntimeError('TC file list changed while preparing the build')
+        entries = [load(path, expected[path]) for path in paths]
     if len({c['name'] for c in entries})!=len(entries):
         raise ValueError('Duplicate SV TC class name in cases and test fixtures')
     lines = []
