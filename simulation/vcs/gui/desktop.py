@@ -20,8 +20,7 @@ import backend
 import model
 import formal_model
 from coverage_view import CoverageWindow
-from widgets import (BG, INK, MUTED, ACCENT, DARK, CodeEditor, WaveWindow, ScrollPage,
-                     style, tree, multiline, formal_format_field)
+from widgets import BG, INK, MUTED, ACCENT, DARK, CodeEditor, WaveWindow, ScrollPage, style, tree, multiline
 
 eda, ROOT, STATE = model.eda, model.ROOT, model.STATE
 
@@ -35,10 +34,7 @@ class Studio:
         root.configure(background=BG); root.protocol('WM_DELETE_WINDOW', self.close)
         self.sva_window = None
         self.jobs = backend.Jobs(); self.last_finished = None; self.job_window = None; self.job_log = None
-        self.rtl_import = None
-        self.current_tc = None; self.current_batch = None; self.formal_export = None
-        self.batch_rows = {}; self.final_results = None
-        self.run_offset = 0; self.displayed_runs = 0
+        self.current_tc = None; self.current_batch = None; self.summary = None; self.formal_export = None
         self.dirty = False; self.dut_baseline = None; self.plan_rows = []; self.formal_items = []
         self.status = tk.StringVar(value='就绪 · 当前设备本机执行')
         self.coverage_busy = tk.BooleanVar(value=False)
@@ -48,8 +44,8 @@ class Studio:
             ('home', '验证工作台', '本机运行 · VCS 仿真 · Verdi 调试 · FSDB 转 Formal', self.build_home),
             ('dut', 'DUT 集成', '导入其他 CMDBUF RTL，维护编译顺序与 dut 实例端口连接', self.build_dut),
             ('cases', '用例编辑', '只编辑 main_phase；在每次时钟上升沿后，用过程赋值与 if / else 实现激励约束', self.build_cases),
-            ('regression', '回归计划', '按用例设置次数、起始种子与周期数。仿真期间保存的工程和计划修改用于后续回归。', self.build_regression),
-            ('results', '结果与波形', '用例结束后自动显示结果与运行记录，可在本机 Verdi 中打开波形和覆盖率', self.build_results),
+            ('regression', '回归计划', '按用例设置次数、起始种子与周期数；同一配置可重复运行', self.build_regression),
+            ('results', '结果与波形', '逐用例查看结果、日志和波形；在本机 Verdi 中打开波形与覆盖率', self.build_results),
             ('formal', 'FSDB → Formal', 'Verdi NPI 直接逐拍提取；一份 FSDB 对应一个 pattern', self.build_formal),
             ('settings', '本机工具', '自动识别当前设备、工程目录、EDA 命令和图形会话', self.build_settings)]:
             shell = ScrollPage(self.content); shell.grid(row=0, column=0, sticky='nsew')
@@ -88,8 +84,6 @@ class Studio:
         ttk.Label(footer, textvariable=self.status, style='Muted.TLabel', width=69).pack(side='left', fill='x', expand=True)
         self.progress = ttk.Progressbar(footer, length=150); self.progress.pack(side='left', padx=12)
         self.cancel_coverage_button = ttk.Button(footer, text='取消任务', command=self.jobs.cancel_coverage)
-        self.stop_regression_button = ttk.Button(footer, text='停止回归',
-                                                 command=lambda: self.guard(self.jobs.stop_regression))
         ttk.Button(footer, text='任务日志', command=self.show_log).pack(side='right')
 
     def button(self, parent, text, action, primary=False, side='left'):
@@ -111,11 +105,6 @@ class Studio:
 
     def idle(self):
         self.jobs.require_idle()
-        self.require_rtl_import_idle()
-
-    def require_rtl_import_idle(self):
-        if self.rtl_import is not None:
-            raise ValueError('RTL 文件正在导入，请等待导入完成')
 
     def show(self, key):
         self.page = key; self.page_shells[key].tkraise()
@@ -196,16 +185,17 @@ class Studio:
         return cfg
 
     def reload_dut(self):
+        self.idle()
         if self.dut_value() != self.dut_baseline and not messagebox.askyesno('重新加载', '放弃尚未保存的 DUT 修改？', parent=self.root):
             return
         self.load_dut()
 
     def save_dut(self):
-        self.jobs.require_editable_sources()
-        cfg = self.dut_value(); self.dut_version = backend.save_dut(cfg, self.dut_version)
+        self.idle(); cfg = self.dut_value(); self.dut_version = backend.save_dut(cfg, self.dut_version)
         self.dut_baseline = copy.deepcopy(cfg); self.status.set('DUT 配置已保存；下一次编译将使用新配置')
 
     def edit_sva(self):
+        self.idle()
         if self.sva_window and self.sva_window.winfo_exists():
             self.sva_window.lift()
             return
@@ -239,7 +229,7 @@ class Studio:
                     self.sva_editor.get() != self.sva_snapshot['source'])
 
     def save_sva(self):
-        self.jobs.require_editable_sources()
+        self.idle()
         self.sva_snapshot = model.save_sva(self.sva_editor.get(), self.sva_snapshot['version'])
         self.sva_note.set('已保存 · '+self.sva_snapshot['version'][:12])
         self.status.set('端口 SVA 已保存，下次编译使用此版本')
@@ -258,11 +248,10 @@ class Studio:
         return True
 
     def compile_dut(self):
-        self.idle()
         self.save_dut(); self.launch('compile')
 
     def import_rtl(self, directory):
-        self.require_rtl_import_idle()
+        self.idle()
         if directory:
             base = filedialog.askdirectory(title='选择 RTL 目录', parent=self.root)
             if not base: return
@@ -270,11 +259,7 @@ class Studio:
         else:
             paths = list(filedialog.askopenfilenames(title='选择 RTL 与头文件', filetypes=[('RTL', '*.sv *.v *.svh *.vh *.f')], parent=self.root)); base = None
         if paths:
-            self.jobs.require_editable_sources()
-            task = backend.Jobs()
-            task.start('import_rtl', dict(paths=paths, base=base))
-            self.rtl_import = task
-            self.status.set('正在导入 RTL 文件')
+            self.launch('import_rtl', dict(paths=paths, base=base))
 
     def ports_help(self):
         text = '\n'.join('%-18s %-7s %s'%p for p in model.dut_config.PORTS)
@@ -335,12 +320,13 @@ class Studio:
             self.load_case(self.current_tc['name'])
 
     def save_case(self):
-        self.jobs.require_editable_sources()
+        self.idle()
         if not self.current_tc: raise ValueError('请先选择用例')
         self.current_tc = model.save_case(dict(name=self.current_tc['name'], version=self.current_tc['version'], phase=self.case_editor.get()))
         self.dirty = False; self.case_note.set(self.current_tc['name']+'  ·  已保存'); self.status.set('main_phase 已保存，文件其余部分保持原样')
 
     def new_case(self):
+        self.idle()
         if not self.allow_case_change(): return
         dialog = tk.Toplevel(self.root); dialog.title('从模板创建 SV 用例'); dialog.geometry('470x245'); dialog.transient(self.root)
         f = ttk.Frame(dialog, padding=24); f.pack(fill='both', expand=True)
@@ -348,8 +334,7 @@ class Studio:
         for title, widget in [('用例名称', ttk.Entry(f, textvariable=name)), ('模板', ttk.Combobox(f, textvariable=template, values=[c['name'] for c in model.cases()], state='readonly'))]:
             ttk.Label(f, text=title).pack(anchor='w'); widget.pack(fill='x', pady=(5, 12))
         def create():
-            self.jobs.require_editable_sources()
-            source = model.case(template.get())
+            self.idle(); source = model.case(template.get())
             created = model.save_case(dict(name=name.get().strip(), phase=source['phase'], create=True, template=template.get()))
             self.refresh_cases(created['name']); self.reconcile_plan(); dialog.destroy()
         ttk.Button(f, text='创建并编辑 main_phase', style='Primary.TButton', command=lambda: self.guard(create)).pack(anchor='e')
@@ -457,7 +442,7 @@ class Studio:
             row = next(r for r in self.plan_rows if r['case'] == names[0]); row['enabled'] = not row.get('enabled', True); self.draw_plan()
 
     def apply_plan_row(self):
-        names = self.plan_tree.selection()
+        self.idle(); names = self.plan_tree.selection()
         if not names: raise ValueError('请先选择用例')
         new = dict(case=names[0], enabled=self.row_enabled.get(), **{k:int(v.get()) for k, v in self.row_fields.items()})
         # Validate values even when the row is disabled.
@@ -504,16 +489,15 @@ environment_errors.jsonl 保存环境错误，environment_runtime.json 记录是
 make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 开关。通用模式通过不代表完整时序或 Formal 证明通过。''')
 
     def save_plan(self):
+        self.idle()
         if self.plan_tree.selection(): self.apply_plan_row()
         backend.save_plan(self.plan_value()); self.status.set('回归计划已保存')
 
     def run_regression(self):
-        self.idle()
         if self.dirty or self.dut_value() != self.dut_baseline:
             raise ValueError('请先保存用例编辑器或 DUT 窗口中的修改，再开始回归')
         if self.plan_tree.selection(): self.apply_plan_row()
         self.launch('regress', dict(plan=self.plan_value()))
-        self.show('results')
 
     def build_results(self, page):
         bar = self.bar(page)
@@ -524,9 +508,8 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
         self.button(bar, '覆盖率明细', self.open_coverage_details)
         self.button(bar, '导入 VCD / FSDB', self.open_wave_file)
         self.button(bar, '加入 Formal', self.add_run_formal)
-        f, self.batch_tree = tree(page, [('id', '回归批次', 275), ('dut', 'DUT', 230), ('status', '状态', 80), ('runs', '通过 / 完成 / 总数', 150), ('wave', '波形', 70)], height=4)
+        f, self.batch_tree = tree(page, [('id', '回归批次', 275), ('dut', 'DUT', 230), ('status', '状态', 80), ('runs', '通过 / 总数', 110), ('wave', '波形', 70)], height=4)
         f.pack(fill='x'); self.batch_tree.bind('<<TreeviewSelect>>', lambda e: self.guard(self.select_batch))
-        self.batch_tree.tag_configure('RUNNING', foreground=ACCENT)
         coverage_bar = ttk.Frame(page)
         coverage_bar.pack(fill='x', pady=7)
         self.coverage_note = tk.StringVar(value='选择批次查看代码覆盖率与用例')
@@ -545,123 +528,28 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
         self.result_code = CodeEditor(page, self.mono, readonly=True, height=8); self.result_code.pack(fill='both', expand=True)
 
     def refresh_results(self, preferred=None):
-        rows = backend.history(include_interrupted=True)
-        job = self.jobs.snapshot()
-        if job and job.get('batch') and job['state'] == 'RUNNING':
-            active = backend.progress_row(job['batch'])
-            rows = [active] + [r for r in rows if r['id'] != active['id']]
-        self.batch_tree.delete(*self.batch_tree.get_children())
-        self.batch_rows.clear()
-        for row in reversed(rows):
-            self.draw_batch_row(row)
+        rows = backend.history(); self.batch_tree.delete(*self.batch_tree.get_children())
+        for r in rows:
+            self.batch_tree.insert('', 'end', iid=r['id'], values=(r['id'], r['dut'], r['status'], '%d / %d'%(r['passed'], r['total']), '有' if r['waves'] else '无'), tags=(r['status'],))
         self.home_metrics[1].set(str(len(rows))); self.home_metrics[2].set(rows[0]['status'] if rows else '未运行')
-        if rows:
-            pick = next(batch for batch in (preferred, self.current_batch, rows[0]['id']) if batch in self.batch_rows)
-            self.batch_tree.selection_set(pick)
-            self.batch_tree.see(pick)
-            self.select_batch()
-        else:
-            self.clear_result_runs(None)
-            self.coverage_note.set('选择批次查看代码覆盖率与用例')
-
-    def draw_batch_row(self, row):
-        batch, status = row['id'], row['status']
-        label = {'RUNNING': '运行中', 'FINALIZING': '汇总中', 'STOPPING': '停止中',
-                 'CANCELLED': '已中断', 'ERROR': '已中断'}.get(status, status)
-        counts = '%d / %d / %d' % (row['passed'], row['completed'], row['total'])
-        values = (batch, row['dut'], label, counts, '有' if row['waves'] else '无')
-        tags = ({'ERROR': 'FAIL', 'CANCELLED': 'INCOMPLETE', 'STOPPING': 'INCOMPLETE',
-                 'FINALIZING': 'RUNNING'}.get(status, status),)
-        if self.batch_tree.exists(batch):
-            self.batch_tree.item(batch, values=values, tags=tags)
-        else:
-            self.batch_tree.insert('', 0, iid=batch, values=values, tags=tags)
-        self.batch_rows[batch] = row
-
-    def refresh_live_results(self, job):
-        batch = job['batch']
-        previous = self.batch_rows.get(batch)
-        if (previous and previous['completed'] >= job['completed']
-                and (not job.get('finalizing') or previous['status'] != 'RUNNING')):
-            return
-        self.draw_batch_row(backend.progress_row(batch))
-        if previous is None:
-            self.batch_tree.selection_set(batch)
-            self.batch_tree.see(batch)
-            self.select_batch()
-        elif self.current_batch == batch:
-            self.select_batch()
-
-    def clear_result_runs(self, batch):
-        self.current_batch = batch
-        self.final_results = None
-        self.run_offset = 0; self.displayed_runs = 0
-        self.run_tree.delete(*self.run_tree.get_children())
-        self.scope_note.set('选择用例查看检查结果')
-        self.result_code.set('')
-
-    def append_run_row(self, row):
-        self.run_tree.insert('', 'end', iid=row['id'], tags=(row['status'],),
-                             values=(row['id'], row['status'], row['cycles'], row['seconds'], '有' if row['waves'] else '无'))
-
-    def show_completed_runs(self, row):
-        count = row['completed'] - self.displayed_runs
-        if count:
-            runs, self.run_offset = backend.completed_runs(row['id'], self.run_offset, count)
-            for run in runs:
-                self.append_run_row(run)
-            self.displayed_runs = row['completed']
-        if row['status'] == 'ERROR':
-            coverage_state = '回归已中断 · 保留已完成用例'
-        elif row['status'] == 'STOPPING':
-            coverage_state = '正在合并已通过用例的覆盖率'
-        elif row['status'] == 'FINALIZING' or row['completed'] == row['total']:
-            coverage_state = '正在汇总结果与代码覆盖率'
-        else:
-            coverage_state = '代码覆盖率待合并'
-        self.coverage_note.set('已完成 %d / %d   ·   %s' % (row['completed'], row['total'], coverage_state))
-        if not row['completed']:
-            self.scope_note.set('暂无已完成用例' if row['status'] == 'ERROR' else '等待首条用例完成')
+        pick = preferred or self.current_batch or (rows[0]['id'] if rows else None)
+        if pick and self.batch_tree.exists(pick):
+            self.batch_tree.selection_set(pick); self.select_batch()
 
     def select_batch(self):
         selected = self.batch_tree.selection()
-        if not selected:
-            return
-        batch = selected[0]
-        if batch not in self.batch_rows:
-            return
-        if self.current_batch != batch:
-            self.clear_result_runs(batch)
-        row = self.batch_rows[batch]
-        if row['partial']:
-            self.show_completed_runs(row)
-        elif self.final_results is None:
-            self.show_final_results(eda.read_json(backend.batch_path(batch)/'summary.json'))
-        if not self.run_tree.selection():
-            first = self.run_tree.get_children()[:1]
-            if first:
-                self.run_tree.selection_set(first)
-
-    def show_final_results(self, summary):
-        self.final_results = {result['id']: result for result in summary['results']}
-        for result in summary['results']:
-            if not self.run_tree.exists(result['id']):
-                self.append_run_row(dict(id=result['id'], status=result['status'], seconds=result.get('seconds', '—'),
-                                         cycles=result.get('metrics', {}).get('tc_body_cycles', '—'),
-                                         waves=bool(result.get('wave_artifacts', result.get('waves_enabled', True)))))
-        coverage = summary.get('coverage', {})
+        if not selected: return
+        self.current_batch = selected[0]; self.summary = eda.read_json(backend.batch_path(self.current_batch)/'summary.json')
+        self.run_tree.delete(*self.run_tree.get_children())
+        for r in self.summary['results']:
+            self.run_tree.insert('', 'end', iid=r['id'], values=(r['id'], r['status'], r.get('metrics', {}).get('tc_body_cycles', '—'), r.get('seconds', '—'), '有' if r.get('waves_enabled', True) else '无'), tags=(r['status'],))
+        coverage = self.summary.get('coverage', {})
         metrics = coverage.get('metrics_percent', {})
         detail = '  ·  '.join(title+' '+str(metrics[key])+('%' if metrics[key] != '--' else '')
                               for key, title in [('LINE', '行'), ('COND', '条件'), ('TOGGLE', '翻转'), ('BRANCH', '分支'), ('FSM', '状态机')] if key in metrics)
-        status = coverage.get('status', '—')
-        if status == 'NO_PASSING_CASES':
-            self.coverage_note.set('暂无通过用例可统计覆盖率')
-        elif summary['status'] == 'CANCELLED' and status == 'PASS':
-            self.coverage_note.set('已合并 %d 条 PASS 用例   ·   %s' % (len(coverage['included']), detail))
-        else:
-            self.coverage_note.set('覆盖率 '+status+'   '+detail)
-        if not self.final_results:
-            self.scope_note.set('暂无已完成用例')
+        self.coverage_note.set('覆盖率 '+coverage.get('status', '—')+'   '+detail)
+        if self.summary['results']: self.run_tree.selection_set(self.summary['results'][0]['id'])
+        self.read_artifact()
 
     def selected_run(self):
         selected = self.run_tree.selection()
@@ -670,10 +558,8 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
 
     def read_artifact(self):
         if not self.run_tree.selection(): return
-        batch, run = self.selected_run()
-        folder = backend.batch_path(batch)/'cases'/backend.identifier(run)
-        result = eda.read_json(folder/'result.json') if self.final_results is None else self.final_results[run]
-        path = folder/self.artifact_var.get()
+        batch, run = self.selected_run(); path = backend.result_path(batch, run)/self.artifact_var.get()
+        result = next(r for r in self.summary['results'] if r['id']==run)
         checks = result.get('checks', {})
         if checks:
             labels = {'PASS':'通过', 'FAIL':'失败', 'INCOMPLETE':'未完成', 'NOT_CHECKED':'未检查'}
@@ -726,11 +612,11 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
         ttk.Label(box, text='选择历史回归', style='Heading.TLabel').pack(anchor='w')
         ttk.Label(box, text='可多选同一覆盖率配置的批次，以合并覆盖率为目标。', style='Muted.TLabel').pack(anchor='w', pady=(5, 9))
         frame, batches = tree(box, [('batch', '回归批次', 300), ('dut', 'DUT', 160),
-                                     ('count', '通过 / 完成 / 总数', 155)], height=7, selectmode='extended')
+                                     ('count', '通过 / 总数', 110)], height=7, selectmode='extended')
         frame.pack(fill='both', expand=True)
         for row in history:
             batches.insert('', 'end', iid=row['id'],
-                           values=(row['id'], row['dut'], '{}/{}/{}'.format(row['passed'], row['completed'], row['total'])))
+                           values=(row['id'], row['dut'], '{}/{}'.format(row['passed'], row['total'])))
         for identifier in selected:
             if batches.exists(identifier):
                 batches.selection_add(identifier)
@@ -754,9 +640,7 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
                               lambda: self.launch('coverage', dict(analysis=identifier)), self.guard, self.status,
                               self.coverage_busy, self.jobs.cancel_coverage,
                               lambda: self.launch('coverage_formal', dict(analysis=identifier,
-                                                                          max_edges=int(self.max_edges.get()),
-                                                                          format=self.selected_formal_format())),
-                              self.formal_format_var)
+                                                                          max_edges=int(self.max_edges.get()))))
 
     def open_wave_file(self):
         path = filedialog.askopenfilename(title='在内置查看器打开波形', filetypes=[('波形', '*.vcd *.fsdb')], parent=self.root)
@@ -777,10 +661,7 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
             ttk.Label(row, text=label).pack(side='left', padx=(0, 5)); ttk.Entry(row, textvariable=var, width=width).pack(side='left', padx=(0, 10))
         self.button(row, '应用', self.apply_formal); self.button(row, '移除', self.remove_formal)
         self.button(row, 'Verdi', self.formal_verdi); self.button(row, '内置波形', self.formal_wave)
-        row = self.bar(page)
-        self.formal_format_var = tk.StringVar(value=formal_model.FORMAT_LABELS['cycle'])
-        formal_format_field(row, self.formal_format_var, formal_model.FORMAT_LABELS)
-        ttk.Label(row, text='采样沿上限').pack(side='left', padx=(0, 8)); ttk.Entry(row, textvariable=self.max_edges, width=12).pack(side='left')
+        row = self.bar(page); ttk.Label(row, text='采样沿上限').pack(side='left', padx=(0, 8)); ttk.Entry(row, textvariable=self.max_edges, width=12).pack(side='left')
         ttk.Label(row, text='   复位释放后逐上升沿提取；保留空拍、背压与多次复位区间', style='Muted.TLabel').pack(side='left')
         row = self.bar(page); self.export_var = tk.StringVar(); self.preview_var = tk.StringVar(value='trace_properties.sv')
         self.exports_combo = ttk.Combobox(row, textvariable=self.export_var, state='readonly', width=30); self.exports_combo.pack(side='left', padx=(0, 10))
@@ -796,15 +677,7 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
     def restore_formal(self):
         state = formal_model.state(); saved = state.get('selection') or {}
         self.formal_items = [dict(s, enabled=s.get('enabled', True)) for s in saved.get('sources', [])]
-        for source in self.formal_items:
-            if source['kind'] == 'regression':
-                try:
-                    source.update(formal_model.regression_source(source))
-                except (OSError, ValueError):
-                    # Keep unavailable selections so the user can remove or recover them.
-                    pass
         self.max_edges.set(str(saved.get('max_edges', 100000)))
-        self.formal_format_var.set(formal_model.FORMAT_LABELS.get(saved.get('format'), formal_model.FORMAT_LABELS['cycle']))
         for meta in state['imports']:
             if not any(s.get('id') == meta['id'] for s in self.formal_items):
                 self.add_formal_source(dict(kind='import', id=meta['id'], name=meta['name']), enabled=False)
@@ -812,25 +685,17 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
 
     def add_formal_source(self, value, enabled=True):
         key = lambda s: (s['kind'], s.get('id'), s.get('batch'), s.get('run'))
-        existing = next((s for s in self.formal_items if key(s) == key(value)), None)
-        if existing is not None:
-            if 'archive' in value:
-                existing['archive'] = value['archive']
-                existing['enabled'] = enabled
-            return
+        if any(key(s) == key(value) for s in self.formal_items): return
         pattern = max([s['pattern'] for s in self.formal_items]+[-1])+1
         self.formal_items.append(dict(value, enabled=enabled, pattern=pattern, scope='tb_cmdbuf_rd.dut', mapping={}))
 
     def add_run_formal(self):
         if not self.current_batch or not self.run_tree.selection(): raise ValueError('请选择带波形的回归用例')
-        if self.batch_rows[self.current_batch]['partial']:
-            raise ValueError('回归汇总生成后可将用例加入 Formal')
-        sources = []
         for run in self.run_tree.selection():
-            source = dict(kind='regression', batch=self.current_batch, run=run, name=run)
-            sources.append(formal_model.regression_source(source))
-        for source in sources:
-            self.add_formal_source(source)
+            if not (backend.result_path(self.current_batch, run)/'waves.fsdb').is_file():
+                raise ValueError(run+' 没有 FSDB')
+        for run in self.run_tree.selection():
+            self.add_formal_source(dict(kind='regression', batch=self.current_batch, run=run, name=run))
         self.draw_formal(); self.show('formal')
 
     def draw_formal(self):
@@ -868,15 +733,11 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
 
     def generate_formal(self):
         if self.formal_tree.selection(): self.apply_formal()
-        self.launch('fsdb_formal', dict(sources=[s for s in self.formal_items if s.get('enabled', True)],
-                                        max_edges=int(self.max_edges.get()), format=self.selected_formal_format()))
-
-    def selected_formal_format(self):
-        return next((key for key, label in formal_model.FORMAT_LABELS.items()
-                     if label == self.formal_format_var.get()), 'cycle')
+        self.launch('fsdb_formal', dict(sources=[s for s in self.formal_items if s.get('enabled', True)], max_edges=int(self.max_edges.get())))
 
     def formal_source_path(self):
-        return formal_model.source_path(self.formal_selected())
+        s = self.formal_selected()
+        return formal_model.IMPORTS/s['id']/'wave.fsdb' if s['kind'] == 'import' else backend.result_path(s['batch'], s['run'])/'waves.fsdb'
 
     def formal_verdi(self):
         self.apply_formal()
@@ -921,10 +782,9 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
         self.formal_export = self.export_var.get()
         summary = eda.read_json(formal_model.artifact(self.formal_export, 'summary.json')); c = summary['counts']
         origin = '选集 ' + summary['coverage_set'] + '  ·  ' if summary.get('coverage_set') else ''
-        style = formal_model.FORMAT_LABELS.get(summary.get('format', 'cycle'), summary.get('format', ''))
         counts = '%d patterns  ·  %d cycles  ·  %d assume  ·  %d assert  ·  %d cover' % (
             c['patterns'], c['cycles'], c['input_assumptions'], c['output_assertions'], c['terminal_covers'])
-        self.formal_note.set(origin + style + '  ·  ' + counts + '  |  验证包已生成 · Formal 证明待运行')
+        self.formal_note.set(origin + counts + '  |  验证包已生成 · Formal 证明待运行')
         self.formal_preview()
 
     def formal_preview(self):
@@ -1012,8 +872,6 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
         self.launch('doctor')
 
     def launch(self, kind, payload=None):
-        if kind in ('compile', 'regress'):
-            self.require_rtl_import_idle()
         if kind in ('compile', 'regress') and self.sva_dirty():
             raise ValueError('请先保存端口 SVA 编辑器中的修改')
         job = self.jobs.start(kind, payload); self.status.set('任务启动：'+kind); self.progress.start(12)
@@ -1022,14 +880,6 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
     def poll(self):
         job = self.jobs.snapshot()
         analyzing = bool(job and job['state'] == 'RUNNING' and job['kind'] in backend.COVERAGE_JOBS)
-        regressing = bool(job and job['state'] == 'RUNNING' and job['kind'] == 'regress'
-                          and not job.get('finalizing'))
-        if regressing:
-            if not self.stop_regression_button.winfo_manager():
-                self.stop_regression_button.pack(side='right', padx=6)
-            self.stop_regression_button.configure(state='disabled' if job.get('stop_requested') else 'normal')
-        elif self.stop_regression_button.winfo_manager():
-            self.stop_regression_button.pack_forget()
         if self.coverage_busy.get() != analyzing:
             self.coverage_busy.set(analyzing)
         if analyzing and not self.cancel_coverage_button.winfo_manager():
@@ -1039,19 +889,13 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
         if job:
             total, completed = job.get('total', 0), job.get('completed', 0)
             if job['state'] == 'RUNNING':
-                if job.get('batch'):
-                    self.guard(lambda: self.refresh_live_results(job))
                 self.status.set(job['stage']+('  ·  %d / %d'%(completed, total) if total else '')+'  ·  %ds'%int(time.time()-job['started']))
                 if total:
                     self.progress.stop(); self.progress.configure(mode='determinate', maximum=total, value=completed)
                 else:
                     if str(self.progress['mode']) != 'indeterminate': self.progress.configure(mode='indeterminate'); self.progress.start(12)
             elif job['id'] != self.last_finished:
-                self.last_finished = job['id']; self.progress.stop()
-                if job['kind'] == 'regress' and job['state'] == 'CANCELLED' and total:
-                    self.progress.configure(mode='determinate', maximum=total, value=completed)
-                else:
-                    self.progress.configure(mode='determinate', maximum=1, value=1 if job['state'] == 'DONE' else 0)
+                self.last_finished = job['id']; self.progress.stop(); self.progress.configure(mode='determinate', maximum=1, value=1 if job['state'] == 'DONE' else 0)
                 finished = {'coverage_details': '覆盖率明细已就绪', 'coverage_minimize': '用例集覆盖率验证完成',
                             'coverage_formal': '选集 Formal 验证包已生成'}
                 self.status.set(job.get('error') or (job['stage'] if job['state'] == 'CANCELLED'
@@ -1060,28 +904,15 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
             if self.job_window and self.job_window.winfo_exists():
                 if self.job_log.get() != job['log']:
                     self.job_log.set(job['log']); self.job_log.text.see('end')
-        if self.rtl_import is not None:
-            imported = self.rtl_import.snapshot()
-            if imported and imported['state'] != 'RUNNING':
-                self.rtl_import = None
-                if imported['state'] == 'DONE':
-                    data = imported['imported']
-                    self.text_set(self.dut_files, '\n'.join(data['files']))
-                    self.text_set(self.dut_includes, '\n'.join(data['include_dirs']))
-                    self.status.set('RTL 已导入，请检查编译顺序、例化代码并保存 DUT')
-                else:
-                    self.error(imported['error'])
         self.poll_id = self.root.after(250, self.poll)
 
     def on_finished(self, job):
         if job.get('batch'):
-            self.guard(lambda: self.finish_regression_view(job['batch']))
+            self.refresh_results(job['batch']); self.show('results')
         if job['state'] == 'CANCELLED':
             return
         if job['state'] != 'DONE':
-            if job['kind'] != 'regress' or self.page == 'results':
-                self.show_log()
-            return
+            self.show_log(); return
         kind = job['kind']
         if kind == 'detect':
             self.show_detected(job['detected'])
@@ -1089,6 +920,9 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
             WaveWindow(self.root, job['database'], job['wave_name'])
         elif kind in ('coverage_details', 'coverage_minimize'):
             self.guard(lambda: self.show_coverage_record(job['coverage_record']))
+        elif kind == 'import_rtl':
+            data = job['imported']; self.text_set(self.dut_files, '\n'.join(data['files'])); self.text_set(self.dut_includes, '\n'.join(data['include_dirs']))
+            self.status.set('RTL 已导入，请检查编译顺序、例化代码并保存 DUT')
         elif kind == 'import_fsdb':
             for meta in job['imported']: self.add_formal_source(dict(kind='import', id=meta['id'], name=meta['name']))
             self.draw_formal(); self.show('formal')
@@ -1098,24 +932,6 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
         elif kind in ('fsdb_formal', 'coverage_formal'):
             self.refresh_exports(job['formal_id']); self.show('formal')
             self.root.lift()
-
-    def finish_regression_view(self, batch):
-        if batch not in self.batch_rows:
-            self.refresh_results(batch)
-        else:
-            path = backend.batch_path(batch)/'summary.json'
-            if path.is_file():
-                summary = eda.read_json(path)
-                self.draw_batch_row(backend.summary_row(summary))
-                if self.current_batch == batch:
-                    self.show_final_results(summary)
-                    self.select_batch()
-            else:
-                self.draw_batch_row(backend.progress_row(batch))
-                if self.current_batch == batch:
-                    self.select_batch()
-            self.home_metrics[1].set(str(len(self.batch_rows)))
-            self.home_metrics[2].set(self.batch_rows[batch]['status'])
 
     def show_log(self):
         if self.job_window and self.job_window.winfo_exists(): self.job_window.lift(); return
@@ -1142,8 +958,7 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
             # Preserve a draft even if no cases are enabled. Validation occurs on run.
             try: eda.write_json(STATE/'settings.json', dict(plan=self.plan_value()))
             except ValueError: pass
-            eda.write_json(STATE/'formal_selection.json', dict(sources=self.formal_items, max_edges=int(self.max_edges.get()),
-                                                              format=self.selected_formal_format()))
+            eda.write_json(STATE/'formal_selection.json', dict(sources=self.formal_items, max_edges=int(self.max_edges.get())))
             self.root.after_cancel(self.poll_id); self.root.after_cancel(self.detect_timer); self.root.destroy()
         except (ValueError, RuntimeError) as exc:
             self.error(str(exc))

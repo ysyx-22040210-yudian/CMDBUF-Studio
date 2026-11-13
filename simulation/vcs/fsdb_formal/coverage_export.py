@@ -70,13 +70,12 @@ def archived_dut(cases):
     return cfg, sources
 
 
-def export(analysis, identifier, max_edges, timeout, style='cycle'):
-    style = core.formal_format(style)
+def export(analysis, identifier, max_edges, timeout):
     record = eda.read_json(result_file(analysis))
     cases = selected_cases(record)
     rtl = archived_dut(cases)
     scope = eda.PROJECT['top']
-    request = dict(id=identifier, coverage_set=analysis, max_edges=max_edges, format=style, sources=[])
+    request = dict(id=identifier, coverage_set=analysis, max_edges=max_edges, sources=[])
     wave_root = eda.OUT / 'coverage_formal_waves' / identifier
     env = None
     # A regression dumps the canonical interface at the testbench boundary,
@@ -107,7 +106,6 @@ def main(argv=None):
     parser.add_argument('--id')
     parser.add_argument('--max-edges', type=int, default=100000)
     parser.add_argument('--timeout', type=int, default=120)
-    parser.add_argument('--format', choices=core.FORMATS, default='cycle')
     args = parser.parse_args(argv)
     execution.install_signal_handlers()
     try:
@@ -115,7 +113,7 @@ def main(argv=None):
         core.number(args.max_edges, '采样沿上限', 1, 1000000)
         if args.timeout < 0:
             raise ValueError('仿真执行超时须为非负数')
-        return export(args.coverage_set, identifier, args.max_edges, args.timeout, args.format)
+        return export(args.coverage_set, identifier, args.max_edges, args.timeout)
     except KeyboardInterrupt:
         print('选集 Formal 生成已取消', file=sys.stderr)
         return 130

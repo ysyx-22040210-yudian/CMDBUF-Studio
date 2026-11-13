@@ -2,7 +2,6 @@
 import copy
 import json
 from pathlib import Path
-import re
 import sys
 import tempfile
 import unittest
@@ -83,55 +82,6 @@ class FsdbFormalTests(unittest.TestCase):
         self.assertEqual(lowered.count('assume property'),5)
         self.assertIn('sim -clock clk -resetn rst_n',(folder/'run_bmc.sby').read_text())
         self.assertNotIn('-zinit',(folder/'run_bmc.sby').read_text())
-
-    def test_all_writing_styles_preserve_samples_and_output_validity(self):
-        self.records[3]['values'].update(rdata='x'*128, arb_addr='z'*12)
-        self.records[4]['values'].update(rvalid='001', req='00000001', rdata='1'*128, arb_addr='1'*12)
-        trace = self.parse()
-        folder = Path(self.tmp.name)/'styles'
-        common = None
-        self.assertEqual(len(core.FORMATS), 10)
-        for style in core.FORMATS:
-            with self.subTest(style=style):
-                export = folder/style
-                counts = core.export_data(export, [trace], 'cmdbuf_rd dut (.*);', style)
-                native = (export/'trace_properties.sv').read_text()
-                artifacts = [(export/name).read_bytes() for name in ('samples.csv', 'trace.json', 'transactions.json')]
-                if common is None:
-                    common = artifacts
-                self.assertEqual(artifacts, common)
-                self.assertIn("pattern == 32'd42 && reset_segment == 32'd0", native)
-                self.assertEqual(counts['terminal_covers'], 1)
-                engine.sby_configs(export, [trace], [], [], {'defines': []}, style)
-                lowered = (export/'sby_properties.sv').read_text()
-                self.assertNotIn('|->', lowered)
-                lowered_count = 1 if style == 'generate' else counts['output_assertions']
-                self.assertEqual(lowered.count(': assert property'), lowered_count)
-                lowered_count = 1 if style == 'generate' else counts['input_assumptions']
-                self.assertEqual(lowered.count(': assume property'), lowered_count+3)
-                if style == 'signal':
-                    self.assertNotIn('A_P42_S0_C00000_rdata:', native)
-                    self.assertIn('A_P42_S0_C00001_rdata:', native)
-                    self.assertIn('M_P42_S0_C00001_rd_mem_status_7:', native)
-                    self.assertEqual(counts['input_assumptions'], len(core.INPUTS)*2)
-                if style == 'table':
-                    self.assertEqual(counts['output_assertions'], 1)
-                    output_signals = [s['name'] for s in core.OUTPUTS]
-                    masks = re.findall(r"output_mask_P42_S0 = \d+'h([0-9A-F]+);", native)
-                    for row, packed in zip(trace['segments'][0]['rows'], masks):
-                        expected = ''.join(('1' if s['name'] in row['compared_outputs'] else '0')*s['width']
-                                           for s in core.OUTPUTS)
-                        self.assertEqual(int(packed, 16), int(expected, 2))
-                    self.assertEqual(len(masks), 2)
-                    self.assertIn('trace_outputs = {'+', '.join(output_signals)+'}', native)
-                    self.assertIn("trace_cycle < 32'd2", native)
-                if style == 'range':
-                    self.assertIn("trace_cycle >= 32'd0 && trace_cycle < 32'd2", native)
-                    self.assertNotIn('A_P42_S0_rdata_C00000:', native)
-                    self.assertIn('A_P42_S0_rdata_C00001:', native)
-                if style == 'property':
-                    self.assertIn('property trace_equals(', native)
-                    self.assertNotIn('trace_equals(', lowered)
 
 
 if __name__=='__main__':unittest.main()

@@ -36,7 +36,6 @@ COVERAGE_SET ?=
 SOLVE_SECONDS ?= 0
 FORMAL_ID ?=
 MAX_EDGES ?= 100000
-FORMAL_FORMAT ?=
 EDA_RUN_CASE = $(if $(strip $(CASE)),$(CASE),tc_directed)
 EDA_SELECT = $(if $(strip $(RUN_ID)),--case "$(RUN_ID)",$(if $(strip $(CASE)),--case "$(CASE)_seed_$(SEED)"))
 EDA_CYCLES = $(if $(strip $(CYCLES)),--cycles "$(CYCLES)")
@@ -47,7 +46,6 @@ EDA_WAVE_SCOPE = $(if $(strip $(DUT_SCOPE)),--dut-scope "$(DUT_SCOPE)")
 EDA_COVERAGE = $(PYTHON) "$(EDA_HERE)code_coverage/engine.py"
 EDA_COVERAGE_BATCHES = $(EDA_REGRESSION) $(if $(strip $(REGRESSIONS)),--regressions "$(REGRESSIONS)")
 EDA_COVERAGE_SET = $(if $(strip $(COVERAGE_SET)),--coverage-set "$(COVERAGE_SET)")
-EDA_FORMAL_FORMAT = $(if $(strip $(FORMAL_FORMAT)),--format "$(FORMAL_FORMAT)")
 
 help:
 	@echo 'CMDBUF Studio: native Tk desktop and local Linux EDA'
@@ -56,7 +54,6 @@ help:
 	@echo '  make gui                             Open CMDBUF Studio on this computer'
 	@echo '  make fsdb-inspect REQUEST=request.json  Inspect FSDB through NPI'
 	@echo '  make fsdb-formal REQUEST=request.json   Extract FSDB and generate pattern-selected SVA'
-	@echo '       FORMAL_FORMAT=cycle|signal|table|packed|property|boolean|channel|range|rom|generate'
 	@echo '  make doctor                          Check VCS / Verdi / URG'
 	@echo '  make compile                         Compile, or reuse identical build'
 	@echo '  make run CASE=tc_directed SEED=17           Compile if needed, simulate, merge coverage'
@@ -125,7 +122,7 @@ smoke:
 
 fsdb-inspect fsdb-formal:
 	@test -n "$(REQUEST)" || { echo 'Specify REQUEST=path/to/request.json'; exit 2; }
-	$(PYTHON) "$(EDA_HERE)fsdb_formal/engine.py" --action $(if $(filter fsdb-inspect,$@),inspect,export) --request "$(REQUEST)" $(EDA_FORMAL_FORMAT)
+	$(PYTHON) "$(EDA_HERE)fsdb_formal/engine.py" --action $(if $(filter fsdb-inspect,$@),inspect,export) --request "$(REQUEST)"
 
 doctor selftest list:
 	$(EDA) $@ $(if $(filter selftest,$@),--jobs "$(JOBS)" --timeout "$(TIMEOUT)" $(EDA_CHECKS))
@@ -172,7 +169,7 @@ coverage-minimize:
 
 coverage-formal:
 	@test -n "$(COVERAGE_SET)" || { echo 'Specify COVERAGE_SET=analysis_id'; exit 2; }
-	$(PYTHON) "$(EDA_HERE)fsdb_formal/coverage_export.py" --coverage-set "$(COVERAGE_SET)" --max-edges "$(MAX_EDGES)" --timeout "$(TIMEOUT)" $(if $(strip $(FORMAL_ID)),--id "$(FORMAL_ID)") $(EDA_FORMAL_FORMAT)
+	$(PYTHON) "$(EDA_HERE)fsdb_formal/coverage_export.py" --coverage-set "$(COVERAGE_SET)" --max-edges "$(MAX_EDGES)" --timeout "$(TIMEOUT)" $(if $(strip $(FORMAL_ID)),--id "$(FORMAL_ID)")
 
 report open-report:
 	$(EDA) $@ $(EDA_REGRESSION)

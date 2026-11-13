@@ -70,35 +70,43 @@ def stamp():
     return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8))).strftime('%Y%m%d_%H%M%S')
 
 
-def sources(rtl_sources=None):
+def sources():
     import dut_config
     files = [ROOT / PROJECT['rtl_filelist']]
     for line in files[0].read_text(encoding='utf-8').splitlines():
         if line.strip() and not line.lstrip().startswith('#'):
             files.append(ROOT / line.strip())
     files.extend(ROOT / p for p in [PROJECT['checker']] + PROJECT['checker_includes'])
-    files.extend(dut_config.source_files() if rtl_sources is None else rtl_sources)
+    files.extend(dut_config.source_files())
     files.extend(ROOT / p for p in ('Makefile', 'make.cmd'))
     files.extend(ROOT / p for p in ('docs/timing/protocol_corrections_20261021.json', contracts.SUPPLEMENT,
                                    contracts.PENDING_SPEC, contracts.RESPONSE_SPEC))
     files.extend(p for p in HERE.rglob('*') if p.is_file() and
-                 '__pycache__' not in p.parts and p.suffix not in ('.pyc', '.log', '.tmp'))
+                 '__pycache__' not in p.parts and p.suffix not in ('.pyc', '.log'))
     return sorted(set(files))
 
 
-def manifest(rtl_sources=None):
-    return {p.relative_to(ROOT).as_posix(): digest(p) for p in sources(rtl_sources)}
+def manifest():
+    return {p.relative_to(ROOT).as_posix(): digest(p) for p in sources()}
+
+
+def build_manifest():
+    # GUI assets and per-run plans are transported/archived, but do not change
+    # the compiled HDL. Changing seed counts must reuse an identical simulator.
+    return {p: h for p, h in manifest().items()
+            if not p.startswith(('simulation/vcs/gui/', 'simulation/vcs/plans/'))
+            and p != 'simulation/vcs/regression.json'}
 
 
 def tool_env():
     return platform_config.tool_env()
 
 
-def execute(cmd, cwd, log, env, timeout, wait_for_start=False, phase='tool', stop_file=None):
-    return execution.run(cmd,cwd,log,env,timeout,wait_for_start,phase,stop_file)
+def execute(cmd, cwd, log, env, timeout, wait_for_start=False, phase='tool'):
+    return execution.run(cmd,cwd,log,env,timeout,wait_for_start,phase)
 
 
-def vcs_options(target,env,stop_file=None):
+def vcs_options(target,env):
     """Shared flags for all VCS compilation paths, including acceptance fixtures."""
     target=Path(target)
     library=target/'execution_start.so'
@@ -106,7 +114,7 @@ def vcs_options(target,env,stop_file=None):
     shutil.copyfile(str(HERE/'execution_start.c'),str(source))
     include=Path(env['VCS_HOME'])/'include'
     cmd=[env.get('CXX','g++'),'-shared','-fPIC','-O2','-I'+str(include),str(source),'-o',str(library)]
-    rc,_=execute(cmd,target,target/'execution_start_compile.log',env,120,phase='start_hook',stop_file=stop_file)
+    rc,_=execute(cmd,target,target/'execution_start_compile.log',env,120,phase='start_hook')
     if rc:raise RuntimeError('Cannot build VCS start callback: '+str(target/'execution_start_compile.log'))
     return ['vcs','-full64','-lca','-licqueue','+vcs+lic+wait',
             '-load',platform_config.tool_path(str(library))+':cmdbuf_studio_register']
@@ -139,32 +147,12 @@ def instrument_checker(destination, source_hashes=None):
 
 
 def build(env):
-    return build_workspace(env)[0]
-
-
-def build_workspace(env, stop_file=None):
-    import dut_config
-
-    execution.check_stop(stop_file)
     inventory = contracts.audit()
-    dut_path = HERE / 'dut.json'
-    dut_sha = digest(dut_path)
-    dut = dut_config.load()
-    rtl_sources = dut_config.source_files(dut)
-    workspace_sources = manifest(rtl_sources)
-    # Verify the exact RTL/header set later, including files a compiler may find
-    # via the include directories while waiting for a license.
-    rtl_names = [path.relative_to(ROOT).as_posix() for path in rtl_sources]
-    rtl_hashes = {name: workspace_sources[name] for name in rtl_names}
-    if workspace_sources.get(dut_path.relative_to(ROOT).as_posix()) != dut_sha:
-        raise RuntimeError('DUT configuration changed while preparing the build')
-    # A different plan or GUI layout does not require compiling a new simulator.
-    source_hashes = {p: h for p, h in workspace_sources.items()
-                     if not p.startswith(('simulation/vcs/gui/', 'simulation/vcs/plans/'))
-                     and p != 'simulation/vcs/regression.json'}
+    source_hashes = build_manifest()
     if any(source_hashes.get(name) != sha for name, sha in inventory['sources'].items()):
         raise RuntimeError('Contract source changed while preparing the build. Re-run compile.')
-    identity = {'sources': source_hashes, 'root': str(ROOT), 'dut': dut,
+    import dut_config
+    identity = {'sources': source_hashes, 'root': str(ROOT), 'dut': dut_config.load(),
                 'vcs_home': env.get('VCS_HOME'), 'verdi_home': env.get('VERDI_HOME'),
                 'coverage': PROJECT['coverage'], 'contract_revision': contracts.REVISION,
                 'checker': inventory['checker']}
@@ -174,20 +162,11 @@ def build_workspace(env, stop_file=None):
     # Independent CLI invocations may request the same source snapshot.
     import fcntl
     with (target / '.build.lock').open('w') as lock:
-        if stop_file is None:
-            fcntl.flock(lock, fcntl.LOCK_EX)
-        else:
-            while True:
-                execution.check_stop(stop_file)
-                try:
-                    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-                    break
-                except BlockingIOError:
-                    time.sleep(.1)
-        return build_at(target, identity, inventory, rtl_hashes, env, stop_file), workspace_sources
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        return build_at(target, identity, inventory, env)
 
 
-def build_at(target, identity, inventory, rtl_hashes, env, stop_file=None):
+def build_at(target, identity, inventory, env):
     key = target.name
     receipt = target / 'build.json'
     if receipt.exists() and (target / 'simv').exists():
@@ -196,7 +175,6 @@ def build_at(target, identity, inventory, rtl_hashes, env, stop_file=None):
             library=target/'execution_start.so'
             if not library.is_file() or digest(library)!=saved.get('execution_start_sha256'):
                 raise RuntimeError('Saved VCS start callback is missing or changed')
-        print('EDA_SOURCES_READY', flush=True)
         return target
     target.mkdir(parents=True, exist_ok=True)
     generated = target / 'checker'
@@ -206,7 +184,7 @@ def build_at(target, identity, inventory, rtl_hashes, env, stop_file=None):
     checker = dict(inventory['checker'],
                    user_properties=sorted({p['label'] for p in properties if p['label'] not in built_in}),
                    authored_actions=sorted({p['label'] for p in properties if p['action'] != 'studio'}))
-    sv_cases.generate_factory(generated, identity['sources'])
+    sv_cases.generate_factory(generated)
     import dut_config
     dut = identity['dut']
     (generated / 'dut_instance.svh').write_text(dut['instance'], encoding='utf-8')
@@ -215,9 +193,7 @@ def build_at(target, identity, inventory, rtl_hashes, env, stop_file=None):
     filelist = target / 'files.f'
     filelist.write_text('\n'.join('"' + platform_config.tool_path(p) + '"' for p in rtl + [str(generated / Path(PROJECT['checker']).name),
                            str(HERE / 'tb/cmdbuf_check_monitor.sv'), str(ROOT / PROJECT['testbench'])]) + '\n', encoding='utf-8')
-    # The editable TC, SVA and DUT instance are now in the build directory.
-    print('EDA_SOURCES_READY', flush=True)
-    cmd = vcs_options(target,env,stop_file)+['-sverilog', '-timescale=1ns/1ps', '-debug_access+all', '-kdb',
+    cmd = vcs_options(target,env)+['-sverilog', '-timescale=1ns/1ps', '-debug_access+all', '-kdb',
            '+v2k', '-top', PROJECT['top'], '+incdir+' + str(generated), '+incdir+' + str(HERE / 'tb'),
            '-P', str(pli / 'novas.tab'), str(pli / 'pli.a'),
            '-cm', PROJECT['coverage'], '-cm_tgl', 'mda', '-cm_hier', str(HERE / 'coverage.hier'),
@@ -225,15 +201,14 @@ def build_at(target, identity, inventory, rtl_hashes, env, stop_file=None):
     cmd += ['+incdir+' + str(dut_config.project_path(d, True)) for d in dut['include_dirs']]
     cmd += ['+define+' + d for d in dut['defines']]
     cmd = [platform_config.tool_path(arg) for arg in cmd]
-    rc, elapsed = execute(cmd, target, target / 'compile.log', env, None, phase='compile', stop_file=stop_file)
+    rc, elapsed = execute(cmd, target, target / 'compile.log', env, None, phase='compile')
     if rc or not (target / 'simv').is_file():
         raise RuntimeError('VCS compile failed ({}): {}'.format(rc, target / 'compile.log'))
     # Keep the source used by this build available to historical coverage views.
-    if {source.relative_to(ROOT).as_posix() for source in dut_config.source_files(dut)} != set(rtl_hashes):
-        raise RuntimeError('DUT source list changed during compilation')
-    for relative, expected in rtl_hashes.items():
-        data = (ROOT / relative).read_bytes()
-        if hashlib.sha256(data).hexdigest() != expected:
+    for source in dut_config.source_files(dut):
+        relative = source.relative_to(ROOT).as_posix()
+        data = source.read_bytes()
+        if hashlib.sha256(data).hexdigest() != identity['sources'].get(relative):
             raise RuntimeError('DUT source changed during compilation: ' + relative)
         archived = target / 'rtl_sources' / relative
         archived.parent.mkdir(parents=True, exist_ok=True)
@@ -266,15 +241,10 @@ def case_path(name):
 
 def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection='', replay_program=None,
              saved_config=None, waves=True, check_mode='strict', assert_fatal=True, env_fatal=True,
-             convert_vcd=True, prepared_case=None, stop_file=None):
-    execution.check_stop(stop_file)
-    if prepared_case is not None:
-        case_name, cfg = prepared_case
-    elif saved_config:
-        case_name, cfg = name, read_json(saved_config)
-    else:
-        path = case_path(name)
-        case_name, cfg = path.stem, load_input(path)
+             convert_vcd=True):
+    path = Path(saved_config) if saved_config else case_path(name)
+    cfg = read_json(path) if saved_config else load_input(path)
+    case_name = name if saved_config else path.stem
     identifier = '{}_seed_{}{}'.format(case_name, seed, '_' + injection if injection else '')
     run = regression / 'cases' / identifier
     run.mkdir(parents=True)  # Never overwrite an earlier seed's evidence.
@@ -345,15 +315,14 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
         # start callback, so a wall deadline could kill a legitimate license wait.
         print('LEGACY_LICENSE_WAIT: archived binary has no start callback; execution timeout disabled', flush=True)
     rc, elapsed = execute(cmd, run, run / 'sim.log', env, timeout if start_hook else None,
-                          wait_for_start=start_hook, phase='simulation' if start_hook else 'legacy_simulation',
-                          stop_file=stop_file)
+                          wait_for_start=start_hook, phase='simulation' if start_hook else 'legacy_simulation')
     conversion = None
     if waves and convert_vcd and (run / 'waves.fsdb').is_file():
         # Verdi's converter preserves unpacked arrays, which VCS $dumpvars
         # omits. Both viewers therefore consume the same captured FSDB data.
         conversion_rc, conversion_time = execute(
             ['fsdb2vcd', str(run / 'waves.fsdb'), '-o', str(run / 'waves.vcd'), '-sv', '-keep_last_time'],
-            run, run / 'wave_conversion.log', env, max(120, timeout), stop_file=stop_file)
+            run, run / 'wave_conversion.log', env, max(120, timeout))
         conversion = dict(exit_code=conversion_rc, seconds=conversion_time, source='waves.fsdb', output='waves.vcd')
     log = (run / 'sim.log').read_text(encoding='utf-8', errors='replace')
     metrics = read_json(run / 'metrics.json') if (run / 'metrics.json').exists() else {}
@@ -440,7 +409,7 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
 def merge_coverage(regression, results, env):
     # Preserve every failing case's VDB separately. Only valid passing simulations
     # contribute to the accepted regression coverage database.
-    accepted = [r for r in results if r['status'] == 'PASS' and r.get('completed', True) and not r['injection']]
+    accepted = [r for r in results if r['status'] == 'PASS' and not r['injection']]
     if not accepted:
         return {'status': 'NO_PASSING_CASES', 'included': [], 'excluded': [r['id'] for r in results]}
     included = [r['id'] for r in accepted]
@@ -498,21 +467,17 @@ def write_report(regression, summary):
                     'REGRESSION={} RUN_ID={}</code></td></tr>').format(
                         e(r['id']), e(shown_status), r['metrics'].get('accepted', 0),
                         e('; '.join(r['failures']) + (' | '+scope if scope else '')), e(r['id']), e(r['id']), e(summary['id']), e(r['id'])))
-    coverage = summary['coverage']
-    coverage_link = ('<a href="coverage/urgReport/dashboard.html">URG 代码覆盖率</a>'
-                     if coverage.get('status') == 'PASS' else '覆盖率 ' + html.escape(coverage.get('status', '—')))
-    completed = len(summary['results'])
     body = '''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>CMDBUF RD VCS 回归</title>
 <style>body{font:16px system-ui;margin:36px;color:#182c40}table{border-collapse:collapse;width:100%%}
 td,th{border:1px solid #bbc7d0;padding:10px;text-align:left}code{font-size:13px}h1{font-size:26px}</style>
-<h1>CMDBUF RD VCS 回归</h1><p>批次 %s　状态 %s　通过 / 完成 / 总数 %d / %d / %d</p>
-<p>%s · <a href="summary.json">机器可读结果</a></p>
+<h1>CMDBUF RD VCS 回归</h1><p>批次 %s　状态 %s　通过 %d / %d</p>
+<p><a href="coverage/urgReport/dashboard.html">URG 代码覆盖率</a> · <a href="summary.json">机器可读结果</a></p>
 <p>在 Linux 工程目录运行下表 Make 命令。
 FSDB 与 VDB 保存在当前设备。覆盖率使用 <code>make coverage REGRESSION=%s</code>。
 覆盖率仅合并通过的用例。失败用例的原始数据库和波形单独保留。</p>
 <table><tr><th>用例与种子</th><th>状态</th><th>接收数</th><th>原因</th><th>证据</th><th>Verdi 命令</th></tr>%s</table>
-</html>''' % (html.escape(summary['id']), summary['status'], sum(r.get('acceptance_pass',r['status']=='PASS') for r in summary['results']),
-             completed, summary.get('total', completed), coverage_link, html.escape(summary['id']), ''.join(rows))
+</html>''' % (html.escape(summary['id']), summary['status'], sum(r.get('acceptance_pass',r['status']=='PASS') for r in summary['results']), len(summary['results']),
+             html.escape(summary['id']), ''.join(rows))
     (regression / 'index.html').write_text(body, encoding='utf-8')
 
 
@@ -528,8 +493,6 @@ def select_regression(name):
 
 
 def regress(args, env):
-    stop_name = os.environ.get('CMDBUF_STUDIO_REGRESSION_STOP') if args.command == 'regress' else None
-    stop_file = Path(stop_name) if stop_name else None
     plan = read_json(ROOT / args.plan) if getattr(args, 'plan', None) else None
     policy = check_policy.plan_options(plan) if plan else check_policy.normalize(
         'strict' if args.command == 'selftest' else 'transaction')
@@ -554,118 +517,64 @@ def regress(args, env):
         directed = args.cases.split(',') if args.cases else suite['directed']
         jobs = [] if args.random_only else [(name, 1, None, '') for name in directed]
         jobs += [(args.random_case or suite['random_case'], seed, args.cycles if args.cycles is not None else suite['cycles'], '') for seed in seeds]
-    cases = {}
     for name, seed, cycles, _ in jobs:
-        execution.check_stop(stop_file)
         if not 1 <= seed <= 2147483647:
             raise ValueError('Seed must be 1..2147483647')
-        if name not in cases:
-            path = case_path(name)
-            cases[name] = (path.stem, load_input(path))
-        input_program(cases[name][1], seed, cycles)  # Validate before compilation.
+        input_program(load_input(case_path(name)), seed, cycles)  # Validate before compilation.
     if len({(n, s, i) for n, s, c, i in jobs}) != len(jobs):
         raise ValueError('Duplicate case/seed combinations')
-    build_dir, workspace_sources = build_workspace(env, stop_file)
-    execution.check_stop(stop_file)
-    build_receipt = read_json(build_dir / 'build.json')
-    for case_name, cfg in cases.values():
-        if cfg.get('format') == 'sv_main_phase':
-            compiled = build_dir / 'checker' / 'tc_sources' / (case_name + '.sv')
-            if not compiled.is_file() or sv_cases.load(compiled)['source_sha256'] != cfg['source_sha256']:
-                raise RuntimeError('TC source changed while preparing the regression: ' + case_name)
+    build_dir = build(env)
     rid = stamp() + '_' + args.command + '_' + uuid.uuid4().hex[:6]
     regression = OUT / 'regressions' / rid
     regression.mkdir(parents=True)
     waves = getattr(args, 'waves', 1) == 1
     if getattr(args, 'plan', None):
         write_json(regression / 'plan.json', plan)
-    dut = build_receipt.get('dut', {})
-    write_json(regression / 'dut.json', dut)
+    write_json(regression / 'dut.json', read_json(build_dir / 'build.json').get('dut', {}))
     write_json(regression / 'check_policy.json', policy)
-    progress_path = regression / 'progress.json'
-    progress = dict(id=rid, total=len(jobs), completed=0, passed=0, state='RUNNING',
-                    waves_enabled=waves, dut=dut.get('name', ''))
-    stopped = False
-    try:
-        with (regression / 'completed_runs.jsonl').open('w', encoding='utf-8') as completed_runs, \
-                concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs) as pool:
-            write_json(progress_path, progress)
-            print('BATCH {} TOTAL {}'.format(rid, len(jobs)), flush=True)
-            futures = []
-            for name, seed, cycles, injection in jobs:
-                if stop_file is not None and stop_file.is_file():
-                    stopped = True
-                    break
-                futures.append(pool.submit(run_case, build_dir, regression, name, seed, cycles, env,
-                                           args.timeout, injection, waves=waves, prepared_case=cases[name],
-                                           stop_file=stop_file, **policy))
-            completed = {}
-            worker_error = None
-            for future in concurrent.futures.as_completed(futures):
-                error = future.exception()
-                if error is not None:
-                    if isinstance(error, execution.RegressionStopped):
-                        stopped = True
-                    elif worker_error is None:
-                        worker_error = error
-                    continue
-                result = future.result()
-                completed[future] = result
-                # Publish the completed result.json before advancing the visible count.
-                row = dict(id=result['id'], status=result['status'], seconds=result['seconds'],
-                           cycles=result['metrics'].get('tc_body_cycles', '—'),
-                           waves=bool(result['wave_artifacts']))
-                completed_runs.write(json.dumps(row) + '\n')
-                completed_runs.flush()
-                progress['completed'] += 1
-                progress['passed'] += int(result['status'] == 'PASS')
-                write_json(progress_path, progress)
-                print('PROGRESS {} {}/{}'.format(rid, progress['completed'], len(jobs)), flush=True)
-            if worker_error is not None and not stopped:
-                raise worker_error
-            results = [completed[f] for f in futures if f in completed]
-        progress['state'] = 'STOPPING' if stopped else 'FINALIZING'
-        write_json(progress_path, progress)
-        print('REGRESSION_FINALIZING', flush=True)
-        if args.command == 'selftest':
-            # A compile/license/environment crash is not counted as fault detection.
-            markers = {'rid': 'SVA_FAIL A_COMPARE_RID' if policy['check_mode']=='strict' else 'SVA_FAIL T_R_ID_ORDER',
-                       'src': 'SVA_FAIL E03_SRC', 'busy': 'SVA_FAIL E06_SUCCESS_BUSY'}
-            for r in results:
-                log = (Path(r['directory']) / 'sim.log').read_text(errors='replace')
-                r['detected_as_expected'] = (r['status'] == 'FAIL' and markers[r['injection']] in log)
-            ok = all(r['detected_as_expected'] for r in results)
-            cov = {'status': 'NOT_MERGED_NEGATIVE_SELFTEST'}
-        else:
-            cov = merge_coverage(regression, results, env)
-            ok = all(r['status'] == 'PASS' for r in results) and cov['status'] == 'PASS'
-        verdict = ('CANCELLED' if stopped else 'PASS' if ok else
-                   'INCOMPLETE' if any(r['status'] == 'INCOMPLETE' for r in results)
-                   and all(r['status'] in ('PASS', 'INCOMPLETE') for r in results)
-                   and cov['status'] in ('PASS', 'NO_PASSING_CASES') else 'FAIL')
-        summary = {'id': rid, 'status': verdict, 'created_at': stamp(),
-                   'check_policy': policy,
-                   'timezone': 'Asia/Shanghai', 'project': PROJECT['name'], 'build': str(build_dir),
-                   'passed': progress['passed'], 'total': len(jobs), 'results': results, 'coverage': cov,
-                   'waves_enabled': waves, 'dut': dut,
-                   'contract_revision': build_receipt.get('contract_revision', contracts.REVISION),
-                   'execution_sources': workspace_sources}
-        write_report(regression, summary)
-    except (Exception, KeyboardInterrupt):
-        try:
-            write_json(progress_path, dict(progress, state='ERROR'))
-        except OSError:
-            pass
-        raise
-    write_json(progress_path, dict(progress, state=verdict))
-    # Negative tests must not replace the user's latest regression.
+    print('BATCH {} TOTAL {}'.format(rid, len(jobs)), flush=True)
+    write_json(regression / 'progress.json', {'id': rid, 'total': len(jobs), 'completed': 0, 'state': 'RUNNING'})
+    with concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs) as pool:
+        futures = [pool.submit(run_case, build_dir, regression, name, seed, cycles, env,
+                               args.timeout, injection, waves=waves, **policy) for name, seed, cycles, injection in jobs]
+        completed = 0
+        for future in concurrent.futures.as_completed(futures):
+            future.result()
+            completed += 1
+            write_json(regression / 'progress.json', {'id': rid, 'total': len(jobs), 'completed': completed, 'state': 'RUNNING'})
+            print('PROGRESS {} {}/{}'.format(rid, completed, len(jobs)), flush=True)
+        results = [f.result() for f in futures]
+    if args.command == 'selftest':
+        # A compile/license/environment crash is not counted as fault detection.
+        markers = {'rid': 'SVA_FAIL A_COMPARE_RID' if policy['check_mode']=='strict' else 'SVA_FAIL T_R_ID_ORDER',
+                   'src': 'SVA_FAIL E03_SRC', 'busy': 'SVA_FAIL E06_SUCCESS_BUSY'}
+        for r in results:
+            log = (Path(r['directory']) / 'sim.log').read_text(errors='replace')
+            r['detected_as_expected'] = (r['status'] == 'FAIL' and markers[r['injection']] in log)
+        ok = all(r['detected_as_expected'] for r in results)
+        cov = {'status': 'NOT_MERGED_NEGATIVE_SELFTEST'}
+    else:
+        cov = merge_coverage(regression, results, env)
+        ok = all(r['status'] == 'PASS' for r in results) and cov['status'] == 'PASS'
+    verdict = 'PASS' if ok else ('INCOMPLETE' if any(r['status']=='INCOMPLETE' for r in results)
+                                and all(r['status'] in ('PASS','INCOMPLETE') for r in results)
+                                and cov['status'] in ('PASS','NO_PASSING_CASES') else 'FAIL')
+    summary = {'id': rid, 'status': verdict, 'created_at': stamp(),
+               'check_policy': policy,
+               'timezone': 'Asia/Shanghai', 'project': PROJECT['name'], 'build': str(build_dir),
+               'passed': sum(r['status'] == 'PASS' for r in results), 'results': results, 'coverage': cov,
+               'waves_enabled': waves, 'dut': read_json(build_dir / 'build.json').get('dut', {}),
+               'contract_revision': contracts.REVISION, 'execution_sources': manifest()}
+    write_report(regression, summary)
+    write_json(regression / 'progress.json', {'id': rid, 'total': len(jobs), 'completed': len(jobs), 'state': summary['status']})
+    # Negative tests must not replace the user's latest valid regression.
     if args.command != 'selftest':
         write_json(OUT / 'latest.json', {'id': rid})
     write_json(OUT / 'last_command.json', {'id': rid})
     if os.environ.get('EDA_REQUEST_ID'):
         write_json(OUT / 'requests' / (os.environ['EDA_REQUEST_ID'] + '.json'), {'id': rid})
     print('REPORT ' + str(regression / 'index.html'), flush=True)
-    return 130 if stopped else 0 if ok else 1
+    return 0 if ok else 1
 
 
 def replay_case(chosen, old, destination, env, timeout, waves=None, convert_vcd=True):
@@ -750,8 +659,6 @@ def launch_verdi(args, env):
             raise ValueError('No merged VDB exists for this regression')
         cmd = ['verdi', '-full64', '-cov', '-covdir', platform_config.tool_path(database)]
     else:
-        if not summary['results']:
-            raise ValueError('Regression has no completed cases: ' + summary['id'])
         result = next((r for r in summary['results'] if args.case and r['id'] == args.case), None)
         if args.case and result is None:
             raise ValueError('Case not in regression: ' + args.case)
@@ -933,10 +840,7 @@ def main(argv=None):
             raise ValueError('trace limit must be positive')
         regression = select_regression(args.regression)
         summary = read_json(regression / 'summary.json')
-        results = summary['results']
-        if not results:
-            raise ValueError('Regression has no completed cases: ' + summary['id'])
-        result = next((r for r in results if r['id'] == args.case), None) if args.case else results[0]
+        result = next((r for r in summary['results'] if r['id'] == args.case), None) if args.case else summary['results'][0]
         if result is None:
             raise ValueError('Case not in regression: ' + args.case)
         print('{} {} {}'.format(summary['id'], result['id'], result['status']))
@@ -952,8 +856,7 @@ def main(argv=None):
     if args.command == 'report':
         regression = select_regression(args.regression)
         summary = read_json(regression / 'summary.json')
-        print('{} {} {}/{}'.format(summary['id'], summary['status'], summary['passed'],
-                                  summary.get('total', len(summary['results']))))
+        print('{} {} {}/{}'.format(summary['id'], summary['status'], summary['passed'], len(summary['results'])))
         for result in summary['results']:
             print('{} {} {}'.format(result['status'], result['id'], '; '.join(result['failures'])))
         print(str(regression / 'index.html')); return 0
@@ -983,9 +886,6 @@ if __name__ == '__main__':
         sys.exit(main())
     except KeyboardInterrupt:
         print('EDA interrupted; active child processes stopped', file=sys.stderr)
-        sys.exit(130)
-    except execution.RegressionStopped:
-        print('REGRESSION_STOPPED_BEFORE_SIMULATION', flush=True)
         sys.exit(130)
     except (ValueError, RuntimeError, OSError, subprocess.SubprocessError) as exc:
         print('EDA ERROR: ' + str(exc), file=sys.stderr)

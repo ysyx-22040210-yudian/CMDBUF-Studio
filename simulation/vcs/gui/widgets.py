@@ -62,14 +62,6 @@ def tree(parent, columns, height=7, selectmode='browse'):
     return frame, widget
 
 
-def formal_format_field(parent, value, labels):
-    ttk.Label(parent, text='Formal 写法').pack(side='left', padx=(0, 8))
-    picker = ttk.Combobox(parent, textvariable=value, values=list(labels.values()), state='readonly',
-                          width=21, height=len(labels))
-    picker.pack(side='left', padx=(0, 16))
-    return picker
-
-
 def multiline(parent, mono, height):
     frame = ttk.Frame(parent)
     text = tk.Text(frame, width=34, height=height, wrap='none', font=(mono, 10), relief='flat', padx=10, pady=8, undo=True)

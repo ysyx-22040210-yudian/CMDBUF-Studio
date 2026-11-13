@@ -2,13 +2,11 @@
 import re
 
 
-def number(value, label, low, high=None):
+def number(value, label, low, high):
     if isinstance(value, bool) or not re.fullmatch(r'[0-9]+', str(value)):
         raise ValueError(label + ' 必须是整数')
     n = int(value)
-    if n < low or (high is not None and n > high):
-        if high is None:
-            raise ValueError('{} 必须大于等于 {}'.format(label, low))
+    if not low <= n <= high:
         raise ValueError('{} 必须在 {}..{} 范围'.format(label, low, high))
     return n
 
