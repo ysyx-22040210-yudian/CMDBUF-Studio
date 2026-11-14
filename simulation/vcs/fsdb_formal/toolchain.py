@@ -1,14 +1,18 @@
 """Locate the shipped OSS CAD Suite and check its formal engines."""
 import argparse
 from contextlib import contextmanager
+from importlib import import_module
 import os
 from pathlib import Path
 import platform
+import runpy
+import shlex
 import shutil
 import signal
 import subprocess
 import sys
 import tempfile
+from types import SimpleNamespace
 
 
 RELEASE = '2026-07-27'
@@ -18,6 +22,12 @@ ASSETS = {
     'aarch64': ('arm64', 'dbdcbfec4b0d642e2f3ebf6ce1d9e6068a0d7732b45b798325b50ca396a101b5'),
 }
 TOOLS = ('yosys', 'sby', 'yosys-abc', 'yosys-smtbmc', 'yosys-witness', 'yices-smt2')
+SMTBMC_STDERR = '--smtbmc-with-stderr'
+VERSION_PROBES = (
+    ('yosys', '-V', 'Yosys '),
+    ('sby', '--version', 'SBY '),
+    ('yices-smt2', '--version', 'Yices '),
+)
 
 
 def architecture():
@@ -55,6 +65,26 @@ def suite_path(suite):
         for name in TOOLS + ('tabbypy3',):
             shutil.copy2(str(suite/'bin'/name), str(alias/'bin'/name))
         yield alias
+
+
+def smtbmc_with_stderr(entry, args):
+    """Run the bundled SMTBMC with SMT replies and solver diagnostics on separate streams."""
+    entry = Path(entry).resolve()
+    sys.path.insert(0, str(entry.parent.parent/'share/yosys/python3'))
+    smtio = import_module('smtio')
+
+    def popen(*positional, **keywords):
+        # Yosys merges solver stderr into its SMT-LIB input pipe. Inherit the
+        # engine's stderr instead, which SBY already captures in the job log.
+        if keywords.get('stderr') == subprocess.STDOUT:
+            keywords['stderr'] = None
+        return subprocess.Popen(*positional, **keywords)
+
+    smtio.subprocess = SimpleNamespace(
+        Popen=popen, PIPE=subprocess.PIPE, STDOUT=subprocess.STDOUT,
+        check_output=subprocess.check_output)
+    sys.argv = [str(entry)] + args
+    runpy.run_path(str(entry), run_name='__main__')
 
 
 def require_linux():
@@ -101,6 +131,11 @@ def environment():
         with suite_path(suite) as active:
             env['PATH'] = str(active/'bin')+os.pathsep+search
             env['CMDBUF_FORMAL_TOOLCHAIN'] = str(suite)
+            smtbmc = active/'libexec/yosys-smtbmc'
+            if smtbmc.is_file() and (active/'share/yosys/python3/smtio.py').is_file():
+                # SBY expands SMTBMC in a shell command, so quote each path.
+                env['SMTBMC'] = ' '.join(shlex.quote(str(arg)) for arg in (
+                    active/'bin/tabbypy3', Path(__file__).resolve(), SMTBMC_STDERR, smtbmc))
             yield env
         return
     missing = [name for name in TOOLS if not shutil.which(name, path=search)]
@@ -113,12 +148,16 @@ def environment():
 
 def versions(env):
     result = {}
-    for name, flag in (('yosys', '-V'), ('sby', '--version'), ('yices-smt2', '--version')):
-        proc = subprocess.run([name, flag], env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+    for name, flag, prefix in VERSION_PROBES:
+        proc = subprocess.run([name, flag], env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                               encoding='utf-8', errors='replace', timeout=30)
-        if proc.returncode or not proc.stdout.strip():
-            raise RuntimeError('%s 无法启动\n%s' % (name, proc.stdout.strip()))
-        result[name] = dict(version=proc.stdout.strip().splitlines()[0],
+        version = next((line for line in proc.stdout.splitlines() if line.startswith(prefix)), '')
+        if proc.returncode or not version:
+            detail = (proc.stdout + proc.stderr).strip()
+            raise RuntimeError('%s 无法读取版本（退出码 %d）\n%s' % (name, proc.returncode, detail))
+        for line in dict.fromkeys(proc.stderr.splitlines()):
+            print(line, file=sys.stderr, flush=True)
+        result[name] = dict(version=version,
                             path=shutil.which(name, path=env['PATH']))
         if env.get('CMDBUF_FORMAL_TOOLCHAIN'):
             result[name]['path'] = str(Path(env['CMDBUF_FORMAL_TOOLCHAIN'])/'bin'/name)
@@ -154,11 +193,14 @@ def doctor(env):
                                   encoding='utf-8', errors='replace')
             status = work/'status'
             if proc.returncode or not status.is_file() or status.read_text().split()[:1] != ['PASS']:
-                raise RuntimeError('工具链 %s 自检失败\n%s' % (mode, proc.stdout[-6000:]))
+                raise RuntimeError('工具链 %s 自检失败（SBY 退出码 %d）\n%s' % (mode, proc.returncode, proc.stdout[-6000:]))
             print('工具链 %s 自检 PASS' % mode, flush=True)
 
 
 def main():
+    # Invoked by the bundled Python from SBY. Keep its CLI and exit code.
+    if sys.argv[1:2] == [SMTBMC_STDERR]:
+        return smtbmc_with_stderr(sys.argv[2], sys.argv[3:])
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--run-sby', choices=('run_bmc.sby', 'run_cover.sby'))
     args = parser.parse_args()

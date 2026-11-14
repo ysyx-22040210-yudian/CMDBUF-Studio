@@ -4,6 +4,7 @@ import hashlib
 from io import StringIO
 import json
 from pathlib import Path
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -11,6 +12,45 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'fsdb_formal'))
 import proof
+
+
+class FormalToolchainTests(unittest.TestCase):
+    def test_version_probes_keep_loader_warning_separate(self):
+        warning = ("ERROR: ld.so: object 'libachk.so' from /etc/ld.so.preload cannot be "
+                   "preloaded (wrong ELF class: ELFCLASS32): ignored.\n")
+        versions = ['Yosys 0.67', 'SBY v0.67', 'Yices 2.7.0']
+        runs = [subprocess.CompletedProcess([], 0, version + '\n', warning) for version in versions]
+        with patch.object(proof.toolchain.subprocess, 'run', side_effect=runs), \
+             redirect_stderr(StringIO()) as log:
+            info = proof.toolchain.versions({'PATH': ''})
+        self.assertEqual([info[name]['version'] for name in ('yosys', 'sby', 'yices-smt2')], versions)
+        self.assertIn(warning, log.getvalue())
+
+    def test_smtbmc_reads_solver_replies_only_and_preserves_exit_code(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            modules = root/'share/yosys/python3'
+            modules.mkdir(parents=True)
+            (modules/'smtio.py').write_text('import subprocess\n', encoding='utf-8')
+            entry = root/'libexec/yosys-smtbmc'
+            entry.parent.mkdir()
+            entry.write_text(
+                'import sys, smtio\n'
+                'child = smtio.subprocess.Popen([sys.executable, "-c", sys.argv[1]],\n'
+                '    stdout=smtio.subprocess.PIPE, stderr=smtio.subprocess.STDOUT)\n'
+                'reply, _ = child.communicate()\n'
+                'if reply.splitlines() != [b"sat"]:\n'
+                '    raise SystemExit(99)\n'
+                'print(reply.decode().strip())\n'
+                'raise SystemExit(child.returncode)\n', encoding='utf-8')
+            command = ('import sys; print("loader diagnostic", file=sys.stderr); '
+                       'print("sat"); raise SystemExit(7)')
+            run = subprocess.run(
+                [sys.executable, proof.toolchain.__file__, '--smtbmc-with-stderr', str(entry), command],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=10)
+        self.assertEqual(run.returncode, 7, run.stderr)
+        self.assertEqual(run.stdout.splitlines(), [b'sat'])
+        self.assertEqual(run.stderr.splitlines(), [b'loader diagnostic'])
 
 
 class FormalProofTests(unittest.TestCase):
