@@ -2,7 +2,7 @@
 
 - 此目录是独立的 CMDBUF Studio 仓库。运行、打包、测试不得依赖同级其他仓库或旧设备的固定目录；设备配置只写入已忽略的 `eda.local.json` 或环境变量。
 - 编译、运行、Verdi 波形、Verdi 覆盖率和 NPI 任务保持 Make 入口。产品使用原生 Tk 窗口，直接在 Linux 目标设备执行 Make，不依赖浏览器或 SSH/VM 连接；VM 仅用于开发调试。不得把许可证、设备凭据、EDA 安装或 build/ 缓存提交到 Git。
-- 用户要求通过 GitHub Desktop 提交和上传。发布后核对远端提交与文件。
+- 用户要求通过 GitHub Desktop 提交和上传。GitHub Release 的 Linux 完整包只发布 x86_64，SHA-256 清单仅列该包。发布后核对远端提交、附件与清单。
 - 用户说明文档使用 PDF 或 Word。新增和修订说明交付 `documents/`，优先同时提供可编辑 Word 与 PDF；README 可作为导航和快速入口。截图必须来自真实运行，导出文档后检查排版。
 - 当前用例使用普通 SV task `main_phase`。在 `@(posedge clk)` 的同一时间点先完成 DUT 采样和更新，再通过 `begin_cycle()`、`drive_control()`、`sample_context()`、`drive_inputs()` 按模板驱动下一拍输入。保留过程赋值和 `if/else`，模板的两处旧 `#1` 等待在编译副本中迁移。GUI 用例编辑器仅显示 main_phase，端口 SVA 使用单独编辑窗口。不得将用户写法擅自改回 WaveDrom、rand/constraint 或 UVM。
 - 当前 SV 用例的启动时序固定为 clk 初始 1、rst_n 在 t=0 拉低并于 #1（1 ns）释放，之后保持 1。默认首个正常上升沿为 10 ns；TC 保持 rst_n=1，不能重新拉低。clock_reset.csv 记录实际跳变；旧归档重放保留旧二进制及原时序。

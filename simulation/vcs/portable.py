@@ -32,10 +32,9 @@ def selected_files():
 QUICKSTART='''# CMDBUF Studio — native Tk / local Linux
 
 Linux downloads: {downloads}
-Choose `cmdbuf-studio-linux-x64.tar.gz` for `x86_64` or
-`cmdbuf-studio-linux-arm64.tar.gz` for `aarch64`. Both ship Python/Tk and
-the open-source Formal runtime. Extract with `tar -xzf`, enter `cmdbuf-studio`,
-and run `make formal-doctor` and `make gui`.
+The GitHub Release includes `cmdbuf-studio-linux-x64.tar.gz` for `x86_64`.
+It ships Python/Tk and the open-source Formal runtime. Extract with
+`tar -xzf`, enter `cmdbuf-studio`, and run `make formal-doctor` and `make gui`.
 
 Archives named `cmdbuf-studio-source` and GitHub's generated source downloads
 contain project sources only. They use the workstation's Python >= 3.6 and Tk >= 8.5.

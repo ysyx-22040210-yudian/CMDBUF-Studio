@@ -8,16 +8,11 @@ GUI 不依赖浏览器、HTTP 服务、Node.js 或 SSH。所有 EDA 操作经本
 
 ## 下载 Linux 免安装版（含开源 Formal）
 
-在目标机运行 `uname -m`，然后从 [最新版 Release](https://github.com/ysyx-22040210-yudian/CMDBUF-Studio/releases/latest) 下载对应的完整包。
+GitHub Release 提供 `x86_64`（Intel / AMD）Linux 免安装完整包。[下载最新版完整包](https://github.com/ysyx-22040210-yudian/CMDBUF-Studio/releases/latest/download/cmdbuf-studio-linux-x64.tar.gz)
 
-| Linux 架构 | 完整包 |
-| --- | --- |
-| `x86_64`（Intel / AMD） | [cmdbuf-studio-linux-x64.tar.gz](https://github.com/ysyx-22040210-yudian/CMDBUF-Studio/releases/latest/download/cmdbuf-studio-linux-x64.tar.gz) |
-| `aarch64`（ARM64） | [cmdbuf-studio-linux-arm64.tar.gz](https://github.com/ysyx-22040210-yudian/CMDBUF-Studio/releases/latest/download/cmdbuf-studio-linux-arm64.tar.gz) |
+GitHub 的 **Code → Download ZIP**、Release 的 **Source code** 和 `packages/` 中的源码包均不含 Formal 运行时。Linux 完整包包含 Python、Tk、Yosys、SymbiYosys、ABC 和 Yices，证明可离线执行。[SHA256 校验清单](https://github.com/ysyx-22040210-yudian/CMDBUF-Studio/releases/latest/download/LINUX-SHA256SUMS.json)
 
-GitHub 的 **Code → Download ZIP**、Release 的 **Source code** 和 `packages/` 中的源码包均不含 Formal 运行时。上表的 Linux 完整包包含 Python、Tk、Yosys、SymbiYosys、ABC 和 Yices，证明可离线执行。[SHA256 校验清单](https://github.com/ysyx-22040210-yudian/CMDBUF-Studio/releases/latest/download/LINUX-SHA256SUMS.json)
-
-以下是 `x86_64` 的启动命令。ARM64 使用对应文件名解压。
+在 `x86_64` Linux 上解压并启动。
 
 ```bash
 tar -xzf cmdbuf-studio-linux-x64.tar.gz
@@ -93,7 +88,7 @@ make formal-prove FORMAL_PACKAGE="/path/to/extracted export"
 
 证明使用导出包中的 DUT 快照。旧导出包也可使用 `FORMAL_PACKAGE` 指向其解压目录。新导出的验证包解压在便携版目录树下时，可在包内运行 `make prove`。操作与结果判读见[开源 Formal 说明](documents/48_cmdbuf_open_formal_20261114.pdf)。
 
-源码包维护者可用 `make dist SUITE_X64=/path/to/official-x64.tgz SUITE_ARM64=/path/to/official-arm64.tgz` 生成两个带运行时的 Linux 包，固定发行版和摘要见 `simulation/vcs/fsdb_formal/toolchain.py`。Linux 完整包及其 SHA256 输出到 `dist/`。
+发布时使用 `make dist SUITE_X64=/path/to/official-x64.tgz` 生成 x64 完整包及 SHA-256 清单，输出到 `dist/`。固定的运行时发行版和摘要见 `simulation/vcs/fsdb_formal/toolchain.py`。
 
 ### 功能覆盖率与 Formal 找用例
 
