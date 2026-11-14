@@ -157,7 +157,7 @@ class CodeEditor(ttk.Frame):
         code = self.get()
         for tag in ('keyword', 'number', 'comment', 'string'):
             self.text.tag_remove(tag, '1.0', 'end')
-        patterns = [('keyword', r'\b(?:virtual|task|endtask|for|int|unsigned|begin|end|if|else|logic|case|endcase|posedge|negedge|assert|assume|property|disable|iff|module|endmodule|input|output|wire|always_ff)\b'),
+        patterns = [('keyword', r'\b(?:virtual|task|endtask|for|int|unsigned|begin|end|if|else|logic|case|endcase|posedge|negedge|assert|assume|cover|property|disable|iff|module|endmodule|input|output|wire|always_ff)\b'),
                     ('number', r"\b\d+(?:'[sS]?[bBdDhHoO][0-9a-fA-F_xXzZ]+)?\b"),
                     ('string', r'"(?:\\.|[^"\\])*"'), ('comment', r'//[^\n]*|/\*[\s\S]*?\*/')]
         for tag, pattern in patterns:
@@ -177,11 +177,15 @@ class CodeEditor(ttk.Frame):
 
 
 class WaveWindow(tk.Toplevel):
-    def __init__(self, parent, database, name):
+    def __init__(self, parent, database, name, formal_step=None):
         tk.Toplevel.__init__(self, parent)
         self.title(name+' · CMDBUF 波形'); self.geometry('1340x820'); self.minsize(950, 600)
         self.database = database; self.meta = vcd.describe(database); self.start = 0; self.end = max(1, self.meta['end'])
         self.ids = []; self.cursor = 0; self.cursor_b = None
+        if formal_step is not None:
+            timestamp = vcd.formal_step_time(database, formal_step)
+            if timestamp is not None:
+                self.cursor = timestamp
         self.configure(background=BG)
         bar = ttk.Frame(self, padding=16); bar.pack(fill='x')
         ttk.Label(bar, text='波形查看器', style='Heading.TLabel').pack(side='left')
@@ -221,8 +225,12 @@ class WaveWindow(tk.Toplevel):
         ttk.Label(self, textvariable=self.note, style='Muted.TLabel', padding=16).pack(fill='x')
         self.populate()
         wanted = {'clk', 'rst_n', 'arvalid', 'arready', 'araddr', 'src', 'rvalid', 'rready', 'rdata', 'req', 'arb_addr', 'pending_cnt', 'mem_rdata'}
+        if formal_step is not None:
+            wanted.update(('arid', 'rid', 'rresp', 'pc_err'))
         preferred = [s for s in self.meta['signals'] if '.dut.' in s['name'] and '.' not in s['name'].split('.dut.', 1)[1]]
         self.ids = [s['id'] for s in (preferred or self.meta['signals']) if s['name'].split('.')[-1].split('[')[0] in wanted][:20]
+        if formal_step is not None:
+            self.ids = [s['id'] for s in self.meta['signals'] if s['name'] in ('smt_step', 'smt_clock')] + self.ids
         if not self.ids:
             self.ids = [s['id'] for s in self.meta['signals'][:10]]
         self.after_idle(self.draw)

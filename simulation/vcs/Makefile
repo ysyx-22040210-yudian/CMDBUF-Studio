@@ -39,6 +39,8 @@ FORMAL_PACKAGE ?=
 FORMAL_RUN_ID ?=
 FORMAL_TIMEOUT ?=
 CAMPAIGN ?=
+TARGETS ?=
+TRACES ?=
 FORMAL_DEPTH ?= 48
 COVER_TIMEOUT ?= 600
 SUITE_X64 ?=
@@ -72,6 +74,7 @@ help:
 	@echo '  make formal-bmc FORMAL_DEPTH=48      Check built-in and user assertions under assumptions'
 	@echo '       COVER_TIMEOUT=600 limits the solver in seconds; 0 means unlimited.'
 	@echo '  make formal-replay CAMPAIGN=id        Replay generated cases in VCS and collect coverage'
+	@echo '       TARGETS=C_label1,C_label2 (formal-cover) and TRACES=trace0,trace1 (formal-replay) are optional.'
 	@echo '       FORMAL_PACKAGE=/path/to/extracted/export is an alternative to FORMAL_ID.'
 	@echo '       FORMAL_TIMEOUT=seconds per check (default from export); 0 means unlimited.'
 	@echo '  make doctor                          Check VCS / Verdi / URG'
@@ -154,11 +157,11 @@ formal-prove:
 
 .PHONY: formal-cover formal-bmc formal-replay
 formal-cover formal-bmc:
-	$(PYTHON) "$(EDA_HERE)functional_cover.py" --action $(patsubst formal-%,%,$@) --id "$(CAMPAIGN)" --depth "$(FORMAL_DEPTH)" --timeout "$(COVER_TIMEOUT)"
+	$(PYTHON) "$(EDA_HERE)functional_cover.py" --action $(patsubst formal-%,%,$@) --id "$(CAMPAIGN)" --depth "$(FORMAL_DEPTH)" --timeout "$(COVER_TIMEOUT)" $(if $(strip $(TARGETS)),--targets "$(TARGETS)")
 
 formal-replay:
 	@test -n "$(CAMPAIGN)" || { echo 'Specify CAMPAIGN=cover_task_id'; exit 2; }
-	$(EDA) formal-replay --campaign "$(CAMPAIGN)" --jobs "$(JOBS)" --timeout "$(TIMEOUT)" --waves "$(WAVES)" $(EDA_CHECKS)
+	$(EDA) formal-replay --campaign "$(CAMPAIGN)" --jobs "$(JOBS)" --timeout "$(TIMEOUT)" --waves "$(WAVES)" $(if $(strip $(TRACES)),--traces "$(TRACES)") $(EDA_CHECKS)
 
 doctor selftest list:
 	$(EDA) $@ $(if $(filter selftest,$@),--jobs "$(JOBS)" --timeout "$(TIMEOUT)" $(EDA_CHECKS))

@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import re
 import sys
+import time
 
 import eda
 import dut_config
@@ -16,6 +17,9 @@ from fsdb_formal import toolchain
 
 ENGINE = Path(__file__).relative_to(eda.ROOT).as_posix()
 TRACE_PATH = re.compile(r'solver/engine_0/(trace[0-9]+)\.vcd')
+REPLAY_VERSION = 1
+# r3 used the same pin encoding, reset, memory calendar and replay drain.
+REPLAY_ENGINE_R3 = '3fbad048cf0f1c02f2966007a46c4df16dc28009215bd7ac90da0fa256f2ddbd'
 
 
 def safe_id(identifier):
@@ -42,7 +46,7 @@ def ports():
             yield 'wire {}{};'.format('' if width == 1 else '[{}:0] '.format(width - 1), name)
 
 
-def formal_top(dut, builtin, user, action):
+def formal_top(dut, builtin, user, action, targets=()):
     properties = builtin + user
     lines = ['`default_nettype none',
              'module {} (input wire clk, input wire [{}:0] fc_stimulus);'.format(props.TOP, props.WIDTH - 1)]
@@ -79,7 +83,7 @@ def formal_top(dut, builtin, user, action):
         name, kind, expr = p['name'], p['kind'], p['predicate']
         user_name = 'FC_C_' if kind == 'cover' else 'FC_USER_'
         label = name if index < len(builtin) else user_name + name
-        if kind == 'cover' and action == 'bmc':
+        if kind == 'cover' and (action == 'bmc' or targets and name not in targets):
             continue
         if label == 'E06_SUCCESS_BUSY':
             lines += ['for (genvar bank_env=0; bank_env<8; bank_env=bank_env+1) begin : env_bank',
@@ -99,7 +103,7 @@ def formal_top(dut, builtin, user, action):
     return '\n'.join(lines) + '\n'
 
 
-def snapshot(directory, action, depth, timeout):
+def snapshot(directory, action, depth, timeout, targets=()):
     inventory = eda.contracts.audit()
     dut_path = eda.HERE / 'dut.json'
     dut_sha = eda.digest(dut_path)
@@ -108,8 +112,12 @@ def snapshot(directory, action, depth, timeout):
            for path in dut_config.source_files(dut)}
     authored = props.USER_FILE.read_bytes()
     functional = props.manifest(authored)
-    if action == 'cover' and not props.cover_names(functional):
+    names = props.cover_names(functional)
+    if action == 'cover' and not names:
         raise ValueError('请先加入至少一条带名称的 cover property')
+    unknown = set(targets).difference(names)
+    if unknown or len(set(targets)) != len(targets) or targets and action != 'cover':
+        raise ValueError('搜索目标必须为不重复的已保存 cover 标签' + (' · ' + '、'.join(sorted(unknown)) if unknown else ''))
     checker = eda.ROOT / eda.PROJECT['checker']
     builtin_bytes = checker.read_bytes()
     if eda.digest(dut_path) != dut_sha or digest(builtin_bytes) != inventory['checker']['sha256']:
@@ -124,7 +132,7 @@ def snapshot(directory, action, depth, timeout):
     for relative, data in rtl.items():
         if digest((eda.ROOT/relative).read_bytes()) != digest(data):
             raise RuntimeError('RTL 在取快照期间改变 ' + relative)
-    (directory/'formal_top.sv').write_text(formal_top(dut, builtin, functional['properties'], action), encoding='utf-8')
+    (directory/'formal_top.sv').write_text(formal_top(dut, builtin, functional['properties'], action, targets), encoding='utf-8')
     (directory/'user_properties.sv').write_bytes(authored)
     (directory/'port_contract.sv').write_bytes(builtin_bytes)
     opts = ['-D', 'SYNTHESIS']
@@ -146,7 +154,8 @@ def snapshot(directory, action, depth, timeout):
     (directory/'run.sby').write_text(
         '[options]\n' + '\n'.join(options) + '\n\n[engines]\nsmtbmc yices\n\n[script]\n'
         + script + '\n[files]\nrtl_snapshot\nformal_top.sv\nslang.f\n', encoding='utf-8')
-    return dict(version=1, id=directory.name, action=action, max_body_cycles=depth, timeout=timeout,
+    return dict(version=1, replay_version=REPLAY_VERSION, id=directory.name, action=action, max_body_cycles=depth, timeout=timeout,
+                targets=list(targets), engine='smtbmc yices',
                 dut=dut, functional=functional, contract_revision=inventory['revision'],
                 builtin=[dict(name=p['name'], kind=p['kind']) for p in builtin],
                 sources={name: digest(data) for name, data in rtl.items()},
@@ -154,17 +163,22 @@ def snapshot(directory, action, depth, timeout):
                 engine_sha256=eda.digest(Path(__file__)), adapter_sha256=eda.digest(Path(props.__file__)))
 
 
-def trace_frames(path, end_step):
+def trace_frames(path, end_step, goal_steps=None):
     """Read top-level inputs at SMT state indices, independent of VCD time units."""
     scope, codes, frames = [], {}, {}
     values = {}
+    flag_names = {'fc_seen_'+name: name for name in (goal_steps or {})}
+    hits = {}
 
     def save_step():
         if 'smt_step' in values:
             index = int(values['smt_step'], 2)
             if index in frames:  # The VCD also contains falling-edge clock changes.
                 return
-            frames[index] = dict(values)
+            frames[index] = {name: value for name, value in values.items() if name not in flag_names}
+            for flag, name in flag_names.items():
+                if values.get(flag) == '1' and index > 0:
+                    hits.setdefault(name, index-1)  # The sticky bit is sampled one step after the match.
 
     with path.open(encoding='utf-8') as stream:
         for line in stream:
@@ -178,7 +192,8 @@ def trace_frames(path, end_step):
             elif words[0] == '$var':
                 code, name = words[3:5]
                 if (scope == [] and name == 'smt_step' or
-                        scope == [props.TOP] and name in ('fc_stimulus', 'rst_n', 'fc_active')):
+                            scope == [props.TOP] and
+                            (name in ('fc_stimulus', 'rst_n', 'fc_active') or name in flag_names)):
                     codes[code] = name
             elif words[0] == '$enddefinitions':
                 break
@@ -202,6 +217,8 @@ def trace_frames(path, end_step):
     stimulus = [frames[index]['fc_stimulus'] for index in range(2, end_step + 1)]
     if any(len(frame) != props.WIDTH or set(frame) - {'0', '1'} for frame in stimulus):
         raise ValueError('求解轨迹含未知或宽度不符的输入')
+    if goal_steps is not None:
+        goal_steps.update({name: step for name, step in hits.items() if step <= goal_steps[name]})
     return [int(frame, 2) for frame in stimulus]
 
 
@@ -221,7 +238,8 @@ def extract_traces(directory, statuses, names):
     by_input = {}
     for item in traces.values():
         try:
-            frames = trace_frames(directory/item['path'], max(item['goals'].values()))
+            hit_steps = dict(item['goals'])
+            frames = trace_frames(directory/item['path'], max(item['goals'].values()), hit_steps)
         except (ValueError, KeyError, OSError) as exc:
             item['failures'].append(str(exc))
             continue
@@ -230,13 +248,16 @@ def extract_traces(directory, statuses, names):
             continue
         key = tuple(frames)
         if key in by_input:
+            # The other trace's hit steps describe its own waveform and
+            # cannot move the cursor in the canonical replay trace.
             item['duplicate_of'] = by_input[key]['trace']
             by_input[key]['goals'].update(item['goals'])
             continue
         by_input[key] = item
         artifact = directory / (item['trace']+'.json')
         eda.write_json(artifact, dict(frames=['{:x}'.format(frame) for frame in frames]))
-        item.update(frames=artifact.name, frames_sha256=eda.digest(artifact), body_cycles=len(frames))
+        item.update(frames=artifact.name, frames_sha256=eda.digest(artifact), body_cycles=len(frames),
+                    hit_steps=hit_steps)
     return list(traces.values())
 
 
@@ -263,12 +284,14 @@ def collect(directory, result, env):
     candidates = extract_traces(directory, statuses, names)
     reached = {name for item in candidates if 'frames' in item for name in item['goals']}
     rejected = {name for item in candidates if item['failures'] for name in item['goals']}
-    goals = {name: ('WITNESS' if name in reached else 'REPLAY_REJECTED' if name in rejected
+    targeted = set(result.get('targets') or names)
+    goals = {name: ('NOT_SELECTED' if name not in targeted else
+                    'WITNESS' if name in reached else 'REPLAY_REJECTED' if name in rejected
                     else 'TIMEOUT' if solver_status == 'TIMEOUT'
                     else 'UNKNOWN' if solver_status == 'UNKNOWN' else 'NOT_FOUND_WITHIN_DEPTH') for name in names}
-    if solver_status == 'PASS' and reached != set(names):
+    if solver_status == 'PASS' and reached != targeted:
         print('FUNCTIONAL_WARNING SBY 命中目标中有轨迹无法提取，请查看任务结果', flush=True)
-    status = ('COMPLETE' if reached == set(names) else 'TIMEOUT' if solver_status == 'TIMEOUT'
+    status = ('COMPLETE' if reached == targeted else 'TIMEOUT' if solver_status == 'TIMEOUT'
               else 'PARTIAL' if reached else 'NO_WITNESSES')
     result.update(status=status, solver_status=solver_status, goals=goals, candidates=candidates)
 
@@ -280,11 +303,11 @@ def load_campaign(identifier):
     return result
 
 
-def cases_for(result):
+def cases_for(result, traces=()):
     root = folder(result['id'])
     cases = {}
     for entry in result.get('candidates', []):
-        if not entry.get('frames'):
+        if not entry.get('frames') or traces and entry['trace'] not in traces:
             continue
         trace = safe_id(entry['trace'])
         path = root / (trace+'.json')
@@ -296,6 +319,8 @@ def cases_for(result):
                                  frames=eda.read_json(path)['frames']))
     if not cases:
         raise ValueError('该 Formal 任务没有可回放的用例')
+    if traces and (len(cases) != len(traces) or {entry[1]['trace'] for entry in cases.values()} != set(traces)):
+        raise ValueError('选中的回放轨迹不存在、重复或未生成激励')
     return cases
 
 
@@ -310,13 +335,16 @@ def program(case, seed):
 def check_replay_build(campaign, build):
     hashes = build['sources']
     checked = dict(campaign['sources'])
-    checked.update({ENGINE: campaign['engine_sha256'], props.SOURCE: campaign['adapter_sha256'],
+    checked.update({ENGINE: eda.digest(Path(__file__)), props.SOURCE: campaign['adapter_sha256'],
                     eda.PROJECT['checker']: campaign['checker_sha256']})
+    compatible_generator = campaign.get('replay_version') == REPLAY_VERSION or (
+        campaign.get('replay_version') is None and campaign['engine_sha256'] == REPLAY_ENGINE_R3)
     same_rtl = set(campaign['sources']) == {
         name for name in hashes if name in campaign['dut']['files'] or
         (name.endswith(('.v', '.sv', '.vh', '.svh')) and
          name.startswith(tuple(path.rstrip('/')+'/' for path in campaign['dut']['include_dirs'])))}
-    if (not same_rtl or campaign['dut'] != build['dut'] or campaign['functional'] != build.get('functional') or
+    if (not compatible_generator or not same_rtl or campaign['dut'] != build['dut'] or
+            campaign['functional'] != build.get('functional') or
             campaign['contract_revision'] != build['contract_revision'] or
             any(hashes.get(name) != sha for name, sha in checked.items())):
         raise ValueError('Formal 找用例与 VCS 的 RTL、属性或约束版本不同。请使用当前工程重新找用例。')
@@ -328,30 +356,49 @@ def main(argv=None):
     parser.add_argument('--id', default='')
     parser.add_argument('--depth', type=int, default=48)
     parser.add_argument('--timeout', type=int, default=600)
+    parser.add_argument('--targets', default='', help='comma-separated declared cover labels')
     args = parser.parse_args(argv)
     if not 1 <= args.depth <= 1000000 or args.timeout < 0:
         parser.error('深度须为 1–1000000，超时须非负，0 表示不限时')
     execution.install_signal_handlers()
+    directory = result = None
+    exit_code = 2
     try:
         identifier = args.id or eda.stamp()+'_'+eda.uuid.uuid4().hex[:8]
-        directory = folder(identifier)
-        directory.mkdir(parents=True)
-        result = snapshot(directory, args.action, args.depth, args.timeout)
+        target_dir = folder(identifier)
+        target_dir.mkdir(parents=True)
+        directory = target_dir
+        started = time.time()
+        print('FUNCTIONAL_STAGE 保存 DUT 和属性快照', flush=True)
+        result = snapshot(directory, args.action, args.depth, args.timeout, args.targets.split(',') if args.targets else ())
+        result.update(status='RUNNING', started_at=started)
+        eda.write_json(directory/'result.json', result)
         print('FUNCTIONAL_STAGE ' + ('寻找 cover 轨迹' if args.action == 'cover' else '有界检查 assert'), flush=True)
         with toolchain.environment() as env:
-            eda.execute(['sby', '-d', 'solver', 'run.sby'], directory, directory/'sby.log', env, None,
-                        phase='functional_'+args.action)
+            if 'CMDBUF_STUDIO_FORMAL_LIVE' in env:
+                result['tools'] = toolchain.versions(env)
+            execution.run(['sby', '-d', 'solver', 'run.sby'], directory, directory/'sby.log', env, None,
+                          phase='functional_'+args.action,
+                          on_output=(lambda line: print(line, end='', flush=True))
+                          if 'CMDBUF_STUDIO_FORMAL_LIVE' in env else None)
+            print('FUNCTIONAL_STAGE 归档逐属性结果与轨迹', flush=True)
             collect(directory, result, env)
+        exit_code = 0 if args.action == 'cover' or result['status'] == 'PASS' else 1
+    except KeyboardInterrupt:
+        if result is not None:
+            result['status'] = 'CANCELLED'
+        exit_code = 130
+    except (ValueError, RuntimeError, OSError, KeyError) as exc:
+        if result is not None:
+            result.update(status='ERROR', error=str(exc))
+        print('FUNCTIONAL: ' + str(exc), file=sys.stderr, flush=True)
+    if result is not None:
+        result['finished_at'] = time.time()
         path = directory/'result.json'
         eda.write_json(path, result)
         print('FUNCTIONAL_RESULT ' + str(path), flush=True)
         print('{} {}'.format(args.action, result['status']), flush=True)
-        return 0 if args.action == 'cover' or result['status'] == 'PASS' else 1
-    except KeyboardInterrupt:
-        return 130
-    except (ValueError, RuntimeError, OSError, KeyError) as exc:
-        print('FUNCTIONAL: ' + str(exc), file=sys.stderr)
-        return 2
+    return exit_code
 
 
 if __name__ == '__main__':

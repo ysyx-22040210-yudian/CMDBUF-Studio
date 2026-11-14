@@ -97,7 +97,7 @@ make formal-prove FORMAL_PACKAGE="/path/to/extracted export"
 
 ### 功能覆盖率与 Formal 找用例
 
-在 Tk 的「功能覆盖率」编写并保存带标签的 SV `assert property`、`assume property`、`cover property`。命令行可编辑 `simulation/vcs/functional_coverage.sv`。点击「Formal 找用例」，再点「VCS 回放」以核对逐拍输入、事务和覆盖命中。常规回归也采集同一组功能覆盖点。选择这两类已完成的批次运行「联合最小集」，保留代码覆盖和功能覆盖中的每个已命中项。
+在 Tk 的「开源 Formal → 属性与任务」编写带标签的 SV `assert property`、`assume property`、`cover property`，也可编辑 `simulation/vcs/functional_coverage.sv`。可以搜索全部或选中的 Cover，并在任务栏查看求解进度。在「搜索与回放结果」查看逐属性结论、波形和逐拍输入，按需选择轨迹进行 VCS 回放。常规回归也采集同一组功能覆盖点。选择两类已完成的批次运行「联合最小集」，保留每个已命中项。「验证包证明」可运行 FSDB 导出的包，查看历次有界检查及各 pattern 的终点。
 
 ```bash
 make formal-cover CAMPAIGN=cover_demo FORMAL_DEPTH=48 COVER_TIMEOUT=600
@@ -105,6 +105,8 @@ make formal-replay CAMPAIGN=cover_demo JOBS=4 WAVES=0
 make formal-bmc FORMAL_DEPTH=16 COVER_TIMEOUT=600
 make coverage-minimize-joint REGRESSIONS=normal_batch,formal_replay_batch
 ```
+
+命令行可用 `TARGETS=C_XAU0_AR,C_PARITY_R` 搜索指定 Cover，用 `TRACES=trace0` 回放指定轨迹。
 
 求解使用随 Linux 完整包提供的 SBY、Yosys-Slang 和 Yices。搜索深度含八拍无未完成事务的收尾。VCS 实际回放通过才计入功能覆盖和代码覆盖。跨批次需使用相同的 DUT、覆盖率配置及属性版本。属性示例、支持语法和状态判读见[功能覆盖率与联合选集 PDF](documents/49_cmdbuf_functional_coverage.pdf) / [Word](documents/49_cmdbuf_functional_coverage.docx)。
 

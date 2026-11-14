@@ -183,24 +183,31 @@ def unpack_export(path, expected=None):
 
 def artifact(key,name):
     allowed={'package.zip','summary.json','inspection.json','trace_properties.sv','formal_top.sv','files.f',
-             'samples.csv','transactions.json','trace.json','integration.json','run_bmc.sby','run_cover.sby','sby_adaptation.json'}
+             'samples.csv','transactions.json','trace.json','integration.json','run_bmc.sby','run_cover.sby','sby_adaptation.json',
+             'sby_properties.sv'}
     if name not in allowed:raise ValueError('不能打开此导出文件')
     path=EXPORTS/identifier(key)/name
     if not path.is_file():raise ValueError('导出文件不存在')
     return path
 
 
-def latest_proof(key):
+def proof_history(key):
     root = eda.OUT/'formal_runs'/identifier(key)
-    records = []
     manifest = EXPORTS/key/'SHA256SUMS.json'
     checksum = file_hash(manifest) if manifest.is_file() else None
-    paths = root.glob('*/proof.json')
-    for path in paths:
-        record = eda.read_json(path)
-        if record['status'] != 'RUNNING' and record.get('package_manifest_sha256') == checksum:
-            records.append((path.parent, record))
-    return max(records, key=lambda item: item[1].get('started_at', 0)) if records else (None, None)
+    records = []
+    for path in root.glob('*/proof.json'):
+        try:
+            record = eda.read_json(path)
+            if record.get('id') == path.parent.name and record.get('package_manifest_sha256') == checksum:
+                records.append((path.parent, record))
+        except (ValueError, OSError, AttributeError):
+            continue
+    return sorted(records, key=lambda item: item[1].get('started_at', 0), reverse=True)
+
+
+def latest_proof(key):
+    return next((item for item in proof_history(key) if item[1]['status'] != 'RUNNING'), (None, None))
 
 
 def import_file(path, progress=lambda text: None):

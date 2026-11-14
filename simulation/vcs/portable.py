@@ -96,9 +96,11 @@ An archived FSDB is used when available. Missing selected waves are reproduced
 with the saved simulator and inputs and checked against the original run. One
 pattern per case and the matching archived DUT are included. See documents/45_*.
 
-In Functional Coverage, edit labeled SV properties, run Formal cover search,
-then replay the generated cases in VCS. Joint minimum set analysis retains each
-hit code bin and user cover from passing runs. See documents/49_*.
+Open the Formal workspace in Tk to edit labeled SV properties, search selected
+or all Covers, inspect witnesses and replay selected traces in VCS. The package
+proof tab shows BMC and endpoint Cover history for FSDB exports. Joint minimum
+set analysis retains each hit code bin and user cover from passing runs.
+See documents/49_*.
 
 VCS compilation includes -lca -licqueue +vcs+lic+wait. Simulation uses
 +vcs+lic+wait; coverage merging uses +urg+lic+wait. License waiting has no

@@ -588,7 +588,7 @@ def regress(args, env):
     if args.command == 'formal-replay':
         from functional_cover import load_campaign, cases_for
         campaign_record = load_campaign(campaign)
-        cases = cases_for(campaign_record)
+        cases = cases_for(campaign_record, args.traces.split(',') if args.traces else ())
         jobs = [(name, 1, None, '') for name in cases]
     elif args.command == 'run':
         jobs = [(args.case, args.seed, args.cycles, '')]
@@ -897,6 +897,7 @@ def parser():
         s.add_argument('--env-fatal', type=int, choices=[0, 1], help='0: collect recoverable environment/assertion errors and finish the testcase')
         if name == 'formal-replay':
             s.add_argument('--campaign', required=True)
+            s.add_argument('--traces', default='')
         elif name == 'run':
             s.add_argument('--case', default='tc_directed'); s.add_argument('--seed', type=int, default=1)
             s.add_argument('--cycles', type=int)

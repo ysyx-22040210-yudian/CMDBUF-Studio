@@ -1,5 +1,6 @@
 """Process timing: unlimited license/startup wait, optional post-start deadline."""
 import json
+from contextlib import ExitStack
 import os
 from pathlib import Path
 import signal
@@ -50,7 +51,7 @@ def stop(process):
         process.wait()
 
 
-def run(cmd,cwd,log,env,timeout,wait_for_start=False,phase='tool',stop_file=None):
+def run(cmd,cwd,log,env,timeout,wait_for_start=False,phase='tool',stop_file=None,on_output=None):
     if _cancelled.is_set():raise InterruptedError('EDA job cancelled')
     check_stop(stop_file)
     log=Path(log);log.parent.mkdir(parents=True,exist_ok=True)
@@ -70,6 +71,8 @@ def run(cmd,cwd,log,env,timeout,wait_for_start=False,phase='tool',stop_file=None
                timeout_scope=scope,execution_timeout_seconds=limit,license_wait_limit_seconds=None,
                startup_wait_seconds=None,execution_seconds=None)
     key=str(log.resolve())
+    # Only interactive callers need a live copy. Keep the normal capture file
+    # and process lifecycle identical for long-running tools.
 
     def emit(status):
         state['state']=status
@@ -77,8 +80,24 @@ def run(cmd,cwd,log,env,timeout,wait_for_start=False,phase='tool',stop_file=None
         with _events:print('EDA_PROCESS '+json.dumps(dict(key=key,**state),ensure_ascii=False),flush=True)
 
     emit(state['state'])
-    with log.open('w',encoding='utf-8') as output:
+    with ExitStack() as resources:
+        output=resources.enter_context(log.open('w',encoding='utf-8'))
+        follow=resources.enter_context(log.open('rb')) if on_output is not None else None
         process=None;rc=None;failure_state=None
+        partial=b''
+
+        def publish_output(final=False):
+            nonlocal partial
+            if follow is None:
+                return
+            data=partial+follow.read()
+            lines=data.split(b'\n')
+            partial=lines.pop()
+            for line in lines:
+                on_output(line.decode('utf-8',errors='replace')+'\n')
+            if final and partial:
+                on_output(partial.decode('utf-8',errors='replace')+'\n')
+
         try:
             # Batch jobs must not inherit the GUI/terminal's live stdin. A DUT
             # $stop may enter UCLI; EOF ends that interrupted run instead of
@@ -88,6 +107,7 @@ def run(cmd,cwd,log,env,timeout,wait_for_start=False,phase='tool',stop_file=None
             while True:
                 if _cancelled.is_set():raise InterruptedError('EDA job cancelled')
                 now=time.monotonic()
+                publish_output()
                 if wait_for_start and active is None and marker.is_file() and marker.stat().st_size:
                     active=now
                     state['startup_wait_seconds']=round(now-start,3)
@@ -108,6 +128,7 @@ def run(cmd,cwd,log,env,timeout,wait_for_start=False,phase='tool',stop_file=None
                 failure_state='LAUNCH_ERROR'
             raise
         finally:
+            publish_output(final=True)
             end=time.monotonic()
             state.update(seconds=round(end-start,3),returncode=rc,
                          execution_seconds=round(end-active,3) if active is not None else None)

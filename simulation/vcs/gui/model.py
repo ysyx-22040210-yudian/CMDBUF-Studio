@@ -135,15 +135,17 @@ def check_plan(plan):
     return plan
 
 
-def state_read():
+def preferences():
     path = STATE / 'settings.json'
     default = dict(plan=default_plan())
     if path.exists():
         saved = eda.read_json(path)
-        if 'plan' in saved:
-            default['plan'] = saved['plan']
-    default.update(eda.platform_config.load())
+        default.update({key: saved[key] for key in ('plan', 'open_formal') if key in saved})
     return default
+
+
+def state_read():
+    return dict(preferences(), **eda.platform_config.load())
 
 
 def settings_save(value):

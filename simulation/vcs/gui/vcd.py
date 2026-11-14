@@ -88,6 +88,18 @@ def describe(database):
         return result
 
 
+def formal_step_time(database, step):
+    """Find the actual SMT state timestamp, independent of VCD time units."""
+    with closing(sqlite3.connect(str(database))) as db:
+        signal = db.execute("SELECT code,width FROM signals WHERE name='smt_step'").fetchone()
+        if signal:
+            code, width = signal
+            row = db.execute('SELECT min(t) FROM changes WHERE code=? AND v=?',
+                             (code, format(step, '0{}b'.format(width)))).fetchone()
+            return row[0]
+    return None
+
+
 def window(database, ids, start, end):
     if not 0 <= start < end or not 1 <= len(ids) <= 64:
         raise ValueError('选择 1..64 个信号以及有效时间范围')

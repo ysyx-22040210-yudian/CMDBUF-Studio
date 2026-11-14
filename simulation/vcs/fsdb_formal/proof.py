@@ -68,6 +68,39 @@ def terminal_covers(summary, source):
     return expected
 
 
+def property_status(source, mode, config, env):
+    directory = source.parent
+    work = '../'+mode
+    if not (directory/mode/'status.sqlite').is_file():
+        return []
+    try:
+        result = subprocess.run(['sby', '--status', '--statusfmt', 'jsonl', '-d', work, config.name],
+                                cwd=str(source), env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                encoding='utf-8', errors='replace', timeout=60)
+    except (OSError, subprocess.SubprocessError) as exc:
+        print('FORMAL_WARNING '+str(exc), flush=True)
+        return []
+    (directory/(mode+'_properties.jsonl')).write_text(result.stdout, encoding='utf-8')
+    if result.returncode:
+        return []
+    kind = 'ASSERT' if mode == 'bmc' else 'COVER'
+    properties = []
+    for line in result.stdout.splitlines():
+        if not line.startswith('{'):
+            continue
+        try:
+            row = json.loads(line)
+        except ValueError:
+            continue
+        if row.get('kind') != kind or not row.get('name') or not row.get('status'):
+            continue
+        if row.get('trace'):
+            trace = (source/row['trace']).resolve()
+            row['trace'] = trace.relative_to(directory).as_posix() if directory in trace.parents else None
+        properties.append(row)
+    return properties
+
+
 def execute(source, mode, env, timeout):
     directory = source.parent
     config = source/('run_'+mode+'.sby')
@@ -117,7 +150,9 @@ def execute(source, mode, env, timeout):
         status = 'ERROR'
     if status == 'PASS' and rc:
         status = 'ERROR'
-    return dict(status=status, returncode=rc, seconds=round(time.monotonic()-start, 3), log=name,
+    elapsed = round(time.monotonic()-start, 3)
+    properties = property_status(source, mode, config, env)
+    return dict(status=status, returncode=rc, seconds=elapsed, log=name, properties=properties,
                 reached=sorted(reached), failed_assertions=failed,
                 vcds=sorted(p.relative_to(directory).as_posix() for p in (directory/mode).glob('engine_*/trace*.vcd')))
 

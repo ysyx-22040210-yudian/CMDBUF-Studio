@@ -21,6 +21,22 @@ REGRESSION_JOBS = ('regress', 'formal_replay')
 CANCELLABLE_JOBS = COVERAGE_JOBS + FORMAL_JOBS
 
 
+def formal_progress(line):
+    """Use solver-reported activity. A depth is a limit, rather than an ETA."""
+    match = re.search(r'\bChecking (cover reachability|assertions|assumptions) in step (\d+)\b', line)
+    if match:
+        phase = {'cover reachability': '搜索 Cover', 'assertions': '检查 Assert',
+                 'assumptions': '检查 Assume 可满足性'}[match[1]]
+        return dict(phase=phase, step=int(match[2]))
+    match = re.search(r'\bReached cover statement in step (\d+) at .*?:\s*(\S+)', line)
+    if match:
+        return dict(phase='命中 Cover', step=int(match[1]), goal=match[2].split('.')[-1])
+    match = re.search(r'\bengine_\d+:\s+(\d+)\s+\+\s*:', line)
+    if match:
+        return dict(phase='ABC 有界检查', step=int(match[1]))
+    return None
+
+
 def identifier(value):
     if not isinstance(value, str) or not re.fullmatch(r'[A-Za-z0-9_-]+', value):
         raise ValueError('无效的结果编号')
@@ -91,7 +107,7 @@ def history(include_interrupted=False):
 def save_plan(plan):
     plan = model.check_plan(copy.deepcopy(plan))
     # Device settings are kept exclusively in ignored eda.local.json.
-    eda.write_json(STATE/'settings.json', dict(plan=plan))
+    eda.write_json(STATE/'settings.json', dict(model.preferences(), plan=plan))
     return plan
 
 
@@ -157,6 +173,10 @@ class Jobs:
             if self.current and self.current['state'] == 'RUNNING':
                 raise ValueError('当前任务仍在运行，结束后可启动下一任务')
 
+    def busy(self):
+        with self.lock:
+            return bool(self.current and self.current['state'] == 'RUNNING')
+
     def require_editable_sources(self):
         with self.lock:
             job = self.current
@@ -185,6 +205,8 @@ class Jobs:
             env.pop(key, None)
         if job['kind'] in REGRESSION_JOBS:
             env['CMDBUF_STUDIO_REGRESSION_STOP'] = str(self.regression_stop_file(job))
+        if job['kind'] in FORMAL_JOBS:
+            env['CMDBUF_STUDIO_FORMAL_LIVE'] = '1'
         self.log(job, '$ make '+' '.join(arguments)+'\n')
         cancellable = job['kind'] in CANCELLABLE_JOBS
         process = subprocess.Popen(cmd, cwd=str(ROOT), env=env, stdout=subprocess.PIPE,
@@ -209,11 +231,18 @@ class Jobs:
             if line.startswith('COVERAGE_RESULT '):
                 self.update(job, coverage_record=line[len('COVERAGE_RESULT '):].strip())
             if line.startswith('FORMAL_STAGE '):
-                self.update(job, stage=line[len('FORMAL_STAGE '):].strip())
+                self.update(job, stage=line[len('FORMAL_STAGE '):].strip(), formal_activity={})
             if line.startswith('FUNCTIONAL_STAGE '):
-                self.update(job, stage=line[len('FUNCTIONAL_STAGE '):].strip())
+                self.update(job, stage=line[len('FUNCTIONAL_STAGE '):].strip(), formal_activity={})
             if line.startswith('FUNCTIONAL_RESULT '):
                 self.update(job, functional_record=line[len('FUNCTIONAL_RESULT '):].strip())
+            if job['kind'] in FORMAL_JOBS:
+                activity = formal_progress(line)
+                if activity:
+                    with self.lock:
+                        if activity.get('goal') and activity['goal'] not in job.setdefault('formal_hits', []):
+                            job['formal_hits'].append(activity['goal'])
+                        job['formal_activity'] = activity
             if line.startswith('EDA_PROCESS '):
                 try:self.process_status(job,json.loads(line[len('EDA_PROCESS '):]))
                 except (ValueError,KeyError,TypeError):pass
@@ -313,6 +342,8 @@ class Jobs:
                     raise ValueError('该用例未生成 FSDB；请开启波形后重新回归')
             job = dict(id=eda.stamp()+'_'+eda.uuid.uuid4().hex[:8], kind=kind, state='RUNNING',
                        started=time.time(), completed=0, total=0, stage='准备', log='', commands=[])
+            if kind in FORMAL_JOBS + ('formal_replay',):
+                job['formal_request'] = copy.deepcopy(payload)
             (STATE/'jobs').mkdir(parents=True, exist_ok=True)
             self.current = job
             threading.Thread(target=self.work, args=(job, payload), daemon=True).start()
@@ -354,14 +385,25 @@ class Jobs:
                     return
             elif kind in ('formal_cover', 'formal_bmc'):
                 task = kind.replace('_', '-')
-                rc = self.invoke(job, [task, 'CAMPAIGN='+job['id'], 'FORMAL_DEPTH='+str(payload['depth']),
-                                      'COVER_TIMEOUT='+str(payload['timeout'])], check=False)
+                args = [task, 'CAMPAIGN='+job['id'], 'FORMAL_DEPTH='+str(payload['depth']),
+                        'COVER_TIMEOUT='+str(payload['timeout'])]
+                targets = payload.get('targets', ())
+                if targets:
+                    args.append('TARGETS='+','.join(identifier(name) for name in targets))
+                rc = self.invoke(job, args, check=False)
                 if not job.get('functional_record'):
-                    raise RuntimeError('开源 Formal 任务未生成结果，请查看任务日志')
+                    detail = next((line.partition('FUNCTIONAL: ')[2] for line in reversed(job['log'].splitlines())
+                                   if line.startswith('FUNCTIONAL: ')), '')
+                    raise RuntimeError(detail or '开源 Formal 任务未生成结果，请查看任务日志')
                 result = eda.read_json(job['functional_record'])
-                if rc not in (0, 2):
-                    raise RuntimeError('开源 Formal 运行失败，请查看任务日志')
                 self.update(job, verdict=result['status'])
+                if result['status'] == 'CANCELLED':
+                    self.update(job, state='CANCELLED', stage='已取消 Formal 任务')
+                    return
+                if result['status'] in ('ERROR', 'RUNNING') or rc not in (0, 2):
+                    if result.get('error'):
+                        raise RuntimeError(result['error'])
+                    raise RuntimeError('开源 Formal 运行失败，请查看任务日志')
             elif kind in REGRESSION_JOBS:
                 if kind == 'regress':
                     plan = payload['plan']
@@ -370,6 +412,8 @@ class Jobs:
                 else:
                     plan = payload['policy']
                     arguments = ['formal-replay', 'CAMPAIGN='+identifier(payload['campaign'])]
+                    if payload.get('traces'):
+                        arguments.append('TRACES='+','.join(identifier(trace) for trace in payload['traces']))
                 if not job.get('stop_requested'):
                     progress('运行回归 / 合并覆盖率')
                 rc = self.invoke(job, arguments + ['JOBS='+str(plan['jobs']),
@@ -463,7 +507,8 @@ class Jobs:
                     raise ValueError('请选择 .vcd 或 .fsdb 波形')
                 progress('建立四态波形索引')
                 database = vcd.index(path, STATE/'vcd_index')
-                self.update(job, database=str(database), wave_name=Path(payload['path']).name)
+                self.update(job, database=str(database), wave_name=payload.get('name') or Path(payload['path']).name,
+                            formal_step=payload.get('formal_step'))
             self.update(job, state='DONE', stage='已完成')
         except Exception as exc:
             if job.get('cancel_requested'):
