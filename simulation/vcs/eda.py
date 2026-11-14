@@ -36,6 +36,7 @@ import sva_source
 from wavedrom_adapter import PROTOCOL_PROGRAM_PREFIXES
 import execution
 import verdi_wave
+import functional_properties
 
 
 def load_input(path):
@@ -43,7 +44,12 @@ def load_input(path):
 
 
 def input_program(cfg, seed, cycles=None):
-    return sv_cases.program(cfg, seed, cycles) if cfg.get('format') == 'sv_main_phase' else make_program(cfg, seed, cycles)
+    if cfg.get('format') == 'sv_main_phase':
+        return sv_cases.program(cfg, seed, cycles)
+    if cfg.get('format') == 'formal_cover':
+        from functional_cover import program
+        return program(cfg, seed)
+    return make_program(cfg, seed, cycles)
 
 PROJECT = json.loads((HERE / 'project.json').read_text(encoding='utf-8'))
 OUT = platform_config.result_root()
@@ -201,10 +207,22 @@ def build_at(target, identity, inventory, rtl_hashes, env, stop_file=None):
     target.mkdir(parents=True, exist_ok=True)
     generated = target / 'checker'
     instrumentation = instrument_checker(generated, identity['sources'])
+    authored = functional_properties.USER_FILE.read_bytes()
+    functional = functional_properties.manifest(authored)
+    if (functional['sha256'] != identity['sources'].get(functional_properties.USER_FILE.relative_to(ROOT).as_posix()) or
+            functional['adapter_sha256'] != identity['sources'].get(functional_properties.SOURCE)):
+        raise RuntimeError('Functional coverage properties changed during compilation')
+    (generated / 'original' / functional_properties.USER_FILE.name).write_bytes(authored)
+    (generated / 'functional_properties.svh').write_text(
+        functional_properties.simulation(functional['properties']), encoding='utf-8')
+    (generated / 'functional_stimulus.svh').write_text(functional_properties.stimulus_assignment(), encoding='utf-8')
+    (generated / 'functional_width.svh').write_text(
+        'localparam int FORMAL_PIN_BITS = {};\n'.format(functional_properties.WIDTH), encoding='utf-8')
     built_in = check_policy.COMMON.union(check_policy.catalog()['strict_native'])
     properties = [p for file in instrumentation for p in file['properties']]
+    user_labels = {'FC_USER_'+p['name'] for p in functional['properties'] if p['kind'] != 'cover'}
     checker = dict(inventory['checker'],
-                   user_properties=sorted({p['label'] for p in properties if p['label'] not in built_in}),
+                   user_properties=sorted(user_labels.union(p['label'] for p in properties if p['label'] not in built_in)),
                    authored_actions=sorted({p['label'] for p in properties if p['action'] != 'studio'}))
     sv_cases.generate_factory(generated, identity['sources'])
     import dut_config
@@ -242,6 +260,7 @@ def build_at(target, identity, inventory, rtl_hashes, env, stop_file=None):
     write_json(contract_path, dict(inventory, checker=checker))
     write_json(receipt, dict(identity, build_id=key, argv=cmd, seconds=elapsed,
                              checker=checker, contracts_sha256=digest(contract_path),
+                             functional=functional,
                              execution_start_hook='vpi_cbStartOfSimulation',
                              execution_start_sha256=digest(target/'execution_start.so'),
                              simv_sha256=digest(target / 'simv'),
@@ -290,8 +309,9 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
                else input_program(cfg, seed, cycles))
     (run / 'stimulus.txt').write_text(program, encoding='utf-8')
     write_json(run / 'case.json', cfg)
-    sv_case = cfg.get('format') in ('sv_tc','sv_main_phase')
-    if sv_case:
+    formal_case = cfg.get('format') == 'formal_cover'
+    sv_case = cfg.get('format') in ('sv_tc','sv_main_phase','formal_cover')
+    if sv_case and not formal_case:
         archived = build_dir / 'checker' / 'tc_sources' / (cfg['name']+'.sv')
         if not archived.is_file() or digest(archived) != cfg['source_sha256']:
             raise RuntimeError('TC source differs from compiled archive: '+cfg['name'])
@@ -366,6 +386,21 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
     incomplete = bool(check_report['runtime'].get('incomplete'))
     failures = []
     failures.extend(check_report['integrity_errors'])
+    functional = None
+    if build_receipt.get('functional'):
+        authored_properties = build_dir / 'checker' / 'original' / functional_properties.USER_FILE.name
+        if not authored_properties.is_file() or digest(authored_properties) != build_receipt['functional']['sha256']:
+            raise RuntimeError('Saved functional properties are missing or changed')
+        shutil.copyfile(str(authored_properties), str(run / authored_properties.name))
+        try:
+            functional = functional_properties.collect_hits(
+                log, build_receipt['functional'], bool(check_report['environment']['completed']))
+        except ValueError as error:
+            failures.append(str(error))
+    if formal_case and functional and functional['complete']:
+        missing = sorted(set(cfg['goals']) - set(functional['hits']))
+        if missing:
+            failures.append('Formal targets did not hit in VCS: ' + ', '.join(missing))
     if check_report['environment']['failures']:
         failures.append('{} environment errors; see environment_errors.jsonl'.format(len(check_report['environment']['failures'])))
     if check_report['failures']:
@@ -390,7 +425,7 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
             failures.append('missing ' + artifact)
     drive_audit = None
     if sv_case:
-        if cfg.get('format') == 'sv_main_phase':
+        if cfg.get('format') in ('sv_main_phase','formal_cover'):
             from main_phase_audit import verify_execution as verify_sv
             drive_audit = verify_sv(run, program, current_contract=current_contract,
                                     contract_revision=contract_revision)
@@ -432,6 +467,12 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
               'wave_artifacts': [n for n in ('waves.fsdb', 'waves.vcd') if (run / n).is_file()]}
     result['format'] = cfg['format'] if sv_case else 'protocol' if protocol_case else ('wavedrom' if wave_case else 'constrained_random' if strict_random else 'sequence')
     result['drive_audit'] = drive_audit
+    if functional is not None:
+        result['functional'] = functional
+        write_json(run / 'functional_hits.json', functional)
+        result['functional_receipt_sha256'] = digest(run / 'functional_hits.json')
+    if formal_case:
+        result['formal_origin'] = {key: cfg[key] for key in ('campaign', 'trace', 'goals')}
     write_json(run / 'result.json', result)
     print('{} {} ({:.2f}s)'.format(status, identifier, elapsed), flush=True)
     return result
@@ -489,7 +530,7 @@ def write_report(regression, summary):
         e = html.escape
         shown_status='PASS (expected violation)' if r.get('expected_failure') and r.get('acceptance_pass') else r['status']
         extra=''
-        for name,label in [('sim.process.json','等待与执行计时'),('check_scope.json','检查范围'),('cmdbuf_rd_port_sva.sv','编译 SVA 源码'),('assertions.jsonl','断言失败'),('environment_errors.jsonl','环境错误'),('environment_runtime.json','用例完成状态'),('check_frames.csv','完整采样'),('clock_reset.csv','时钟与复位'),('case.sv','SV TC 源码'),('assigned.csv','TC 赋值'),('sv_solutions.csv','VCS 求解值'),('samples.csv','实际输入'),('actual_vs_plan.html','计划与实际'),('drive_audit.json','输入审计'),('constraint_failure.json','约束冲突')]:
+        for name,label in [('sim.process.json','等待与执行计时'),('check_scope.json','检查范围'),('cmdbuf_rd_port_sva.sv','编译 SVA 源码'),('assertions.jsonl','断言失败'),('environment_errors.jsonl','环境错误'),('environment_runtime.json','用例完成状态'),('check_frames.csv','完整采样'),('clock_reset.csv','时钟与复位'),('case.sv','SV TC 源码'),('assigned.csv','TC 赋值'),('sv_solutions.csv','VCS 求解值'),('samples.csv','实际输入'),('actual_vs_plan.html','计划与实际'),('drive_audit.json','输入审计'),('constraint_failure.json','约束冲突'),('functional_hits.json','功能覆盖命中')]:
             if (regression/'cases'/r['id']/name).exists():
                 extra+=' <a href="cases/{}/{}">{}</a>'.format(e(r['id']),name,label)
         scope = ' / '.join(g['title']+': '+g['status'] for g in r.get('checks', {}).get('groups', []))
@@ -501,6 +542,9 @@ def write_report(regression, summary):
     coverage = summary['coverage']
     coverage_link = ('<a href="coverage/urgReport/dashboard.html">URG 代码覆盖率</a>'
                      if coverage.get('status') == 'PASS' else '覆盖率 ' + html.escape(coverage.get('status', '—')))
+    if 'functional' in summary:
+        functional = summary['functional']
+        coverage_link += ' · 功能覆盖 {}/{}'.format(functional['covered'], functional['total'])
     completed = len(summary['results'])
     body = '''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>CMDBUF RD VCS 回归</title>
 <style>body{font:16px system-ui;margin:36px;color:#182c40}table{border-collapse:collapse;width:100%%}
@@ -528,7 +572,7 @@ def select_regression(name):
 
 
 def regress(args, env):
-    stop_name = os.environ.get('CMDBUF_STUDIO_REGRESSION_STOP') if args.command == 'regress' else None
+    stop_name = os.environ.get('CMDBUF_STUDIO_REGRESSION_STOP') if args.command in ('regress', 'formal-replay') else None
     stop_file = Path(stop_name) if stop_name else None
     plan = read_json(ROOT / args.plan) if getattr(args, 'plan', None) else None
     policy = check_policy.plan_options(plan) if plan else check_policy.normalize(
@@ -539,7 +583,14 @@ def regress(args, env):
         policy['assert_fatal'] = args.assert_fatal == 1
     if getattr(args, 'env_fatal', None) is not None:
         policy['env_fatal'] = args.env_fatal == 1
-    if args.command == 'run':
+    campaign = getattr(args, 'campaign', None)
+    cases = {}
+    if args.command == 'formal-replay':
+        from functional_cover import load_campaign, cases_for
+        campaign_record = load_campaign(campaign)
+        cases = cases_for(campaign_record)
+        jobs = [(name, 1, None, '') for name in cases]
+    elif args.command == 'run':
         jobs = [(args.case, args.seed, args.cycles, '')]
     elif args.command == 'selftest':
         jobs = [('smoke', 1, None, mode) for mode in ('rid', 'src', 'busy')]
@@ -554,7 +605,6 @@ def regress(args, env):
         directed = args.cases.split(',') if args.cases else suite['directed']
         jobs = [] if args.random_only else [(name, 1, None, '') for name in directed]
         jobs += [(args.random_case or suite['random_case'], seed, args.cycles if args.cycles is not None else suite['cycles'], '') for seed in seeds]
-    cases = {}
     for name, seed, cycles, _ in jobs:
         execution.check_stop(stop_file)
         if not 1 <= seed <= 2147483647:
@@ -568,6 +618,9 @@ def regress(args, env):
     build_dir, workspace_sources = build_workspace(env, stop_file)
     execution.check_stop(stop_file)
     build_receipt = read_json(build_dir / 'build.json')
+    if campaign:
+        from functional_cover import check_replay_build
+        check_replay_build(campaign_record, build_receipt)
     for case_name, cfg in cases.values():
         if cfg.get('format') == 'sv_main_phase':
             compiled = build_dir / 'checker' / 'tc_sources' / (case_name + '.sv')
@@ -650,6 +703,10 @@ def regress(args, env):
                    'waves_enabled': waves, 'dut': dut,
                    'contract_revision': build_receipt.get('contract_revision', contracts.REVISION),
                    'execution_sources': workspace_sources}
+        if build_receipt.get('functional'):
+            summary['functional'] = functional_properties.summary(build_receipt['functional'], results)
+        if campaign:
+            summary['formal_campaign'] = campaign
         write_report(regression, summary)
     except (Exception, KeyboardInterrupt):
         try:
@@ -676,7 +733,10 @@ def replay_case(chosen, old, destination, env, timeout, waves=None, convert_vcd=
     receipt = read_json(build_dir / 'build.json')
     if receipt.get('simv_sha256') and digest(build_dir / 'simv') != receipt['simv_sha256']:
         raise RuntimeError('Saved simulator hash mismatch')
-    for name, key in [('stimulus.txt', 'stimulus_sha256'), ('case.json', 'case_sha256')]:
+    inputs = [('stimulus.txt', 'stimulus_sha256'), ('case.json', 'case_sha256')]
+    if chosen.get('functional_receipt_sha256'):
+        inputs.append(('functional_hits.json', 'functional_receipt_sha256'))
+    for name, key in inputs:
         if digest(old / name) != chosen[key]:
             raise RuntimeError('Saved input hash mismatch: ' + name)
     result = run_case(build_dir, destination, chosen['case'], chosen['seed'], None, env,
@@ -688,13 +748,19 @@ def replay_case(chosen, old, destination, env, timeout, waves=None, convert_vcd=
     original_events = digest(old / 'events.csv')
     result['events_match_original'] = original_events == chosen.get('events_sha256', original_events) == result['events_sha256']
     ok = result['status'] == 'PASS' and result['events_match_original']
-    if chosen.get('format') in ('sv_tc','sv_main_phase'):
-        assignment='assigned.csv' if chosen.get('format')=='sv_main_phase' else 'sv_solutions.csv'
+    if chosen.get('format') in ('sv_tc','sv_main_phase','formal_cover'):
+        assignment='sv_solutions.csv' if chosen.get('format')=='sv_tc' else 'assigned.csv'
+        artifacts = [assignment,'samples.csv','tc_config.json']
+        if chosen.get('format') != 'formal_cover':
+            artifacts.append('case.sv')
         result['exact_replay']={name:digest(Path(result['directory'])/name)==digest(old/name)
-            for name in ['case.sv',assignment,'samples.csv','tc_config.json']}
+            for name in artifacts}
         if (old/'clock_reset.csv').exists():
             result['exact_replay']['clock_reset.csv']=digest(Path(result['directory'])/'clock_reset.csv')==digest(old/'clock_reset.csv')
         ok=ok and all(result['exact_replay'].values())
+    if chosen.get('functional'):
+        result['functional_match_original'] = result.get('functional') == chosen['functional']
+        ok=ok and result['functional_match_original']
     write_json(Path(result['directory']) / 'result.json', result)
     return result, ok
 
@@ -821,7 +887,7 @@ def parser():
     sub.add_parser('constraints')
     s = sub.add_parser('constraint-test'); s.add_argument('--jobs',type=int,default=2); s.add_argument('--timeout',type=int,default=120)
     s = sub.add_parser('tc-test'); s.add_argument('--jobs',type=int,default=2); s.add_argument('--timeout',type=int,default=120)
-    for name in ('run', 'regress', 'selftest'):
+    for name in ('run', 'regress', 'selftest', 'formal-replay'):
         s = sub.add_parser(name)
         s.add_argument('--jobs', type=int, default=1)
         s.add_argument('--timeout', type=int, default=120)
@@ -829,7 +895,9 @@ def parser():
         s.add_argument('--check-mode', choices=check_policy.MODES)
         s.add_argument('--assert-fatal', type=int, choices=[0, 1])
         s.add_argument('--env-fatal', type=int, choices=[0, 1], help='0: collect recoverable environment/assertion errors and finish the testcase')
-        if name == 'run':
+        if name == 'formal-replay':
+            s.add_argument('--campaign', required=True)
+        elif name == 'run':
             s.add_argument('--case', default='tc_directed'); s.add_argument('--seed', type=int, default=1)
             s.add_argument('--cycles', type=int)
         elif name == 'regress':
@@ -968,7 +1036,7 @@ def main(argv=None):
         return platform_config.doctor(env,OUT)
     if args.command == 'build':
         build(env); return 0
-    if args.command in ('run', 'regress', 'selftest'):
+    if args.command in ('run', 'regress', 'selftest', 'formal-replay'):
         return regress(args, env)
     if args.command == 'replay':
         return replay(args, env)

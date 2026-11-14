@@ -97,7 +97,7 @@ class CoverageWindow(tk.Toplevel):
         self.guard = guard
         self.generate_formal = generate_formal
         self.formal_format_var = formal_format_var
-        self.title('CMDBUF Studio · 代码覆盖率')
+        self.title('CMDBUF Studio · 代码与功能覆盖率' if self.record.get('functional') else 'CMDBUF Studio · 代码覆盖率')
         self.geometry('{}x{}'.format(min(1460, self.winfo_screenwidth()-40),
                                       min(930, self.winfo_screenheight()-65)))
         self.minsize(1040, 680)
@@ -121,9 +121,11 @@ class CoverageWindow(tk.Toplevel):
         box.pack(fill='both', expand=True)
         head = ttk.Frame(box)
         head.pack(fill='x')
-        ttk.Label(head, text='代码覆盖率', font=(self.ui, 20, 'bold')).pack(side='left')
+        title = '代码与功能覆盖率' if self.record.get('functional') else '代码覆盖率'
+        ttk.Label(head, text=title, font=(self.ui, 20, 'bold')).pack(side='left')
         ttk.Button(head, text='计算最小用例集', style='Primary.TButton',
-                   command=lambda: guard(lambda: minimize(self.record['batches']))).pack(side='right')
+                   command=lambda: guard(lambda: minimize(
+                       self.record['batches'], joint=bool(self.record.get('functional'))))).pack(side='right')
         ttk.Button(head, text='Verdi 查看选集' if self.record.get('verified') else 'Verdi 查看基准',
                    command=lambda: guard(open_verdi)).pack(side='right', padx=8)
         header = '{} 个历史批次 · {:,} 个有效用例 · 分析 {}'.format(
@@ -578,19 +580,34 @@ class CoverageWindow(tk.Toplevel):
                  '已验证候选 · 最优值介于 {} 与 {}'.format(solver['lower_bound'], solver['upper_bound']))
         ttk.Label(tab, text=title+'   {:,} → {:,} 个用例'.format(self.record['case_count'], solver['upper_bound']),
                   style='Heading.TLabel').pack(anchor='w', pady=(0, 4))
-        ttk.Label(tab, text='URG 重新合并已通过 · {:,} 个命中覆盖项一致'.format(self.record['covered']),
+        functional = self.record.get('functional')
+        caption = 'URG 重新合并已通过 · {:,} 个代码覆盖项一致'.format(self.record['covered'])
+        if functional:
+            caption += ' · 保留全部 {} 个已命中功能覆盖点'.format(functional['covered'])
+        ttk.Label(tab, text=caption,
                   style='Muted.TLabel').pack(anchor='w', pady=(0, 8))
-        frame, report = tree(tab, [('metric','覆盖率指标',200), ('before','历史基准',160), ('after','选集重新合并',180)], height=5)
+        frame, report = tree(tab, [('metric','覆盖率指标',200), ('before','历史基准',160), ('after','选集重新合并',180)],
+                             height=6 if functional else 5)
         frame.pack(fill='x')
         for metric, name in METRICS:
             if metric in self.record['baseline']['metrics_percent']:
                 report.insert('', 'end', values=(name+' '+metric, score(self.record['baseline']['metrics_percent'][metric]),
                                                   score(self.record['selected_coverage']['metrics_percent'].get(metric))))
+        if functional:
+            total = '{}/{}'.format(functional['covered'], functional['total'])
+            report.insert('', 'end', values=('功能覆盖（命中 / 定义）', total, total))
+            functional_tab = self.page('功能覆盖点')
+            points_frame, points = tree(functional_tab, [('name', '覆盖点', 340),
+                                          ('baseline', '历史命中用例数', 180), ('selected', '选集中命中用例数', 180)], height=10)
+            points_frame.pack(fill='both', expand=True)
+            for point in functional['points']:
+                points.insert('', 'end', values=(point['name'], point['baseline_hits'], point['selected_hits']))
         frame, selected = tree(tab, [('pattern','pattern',80), ('batch','回归批次',270),
-                                     ('id','选中用例',245), ('seed','种子',95)], height=6)
+                                     ('id','选中用例',245), ('seed','种子',65), ('origin','来源',100)], height=6)
         frame.pack(fill='both', expand=True, pady=8)
         for pattern, row in enumerate(self.record['selected']):
-            selected.insert('', 'end', values=(pattern, row['batch'], row['id'], row['seed']))
+            selected.insert('', 'end', values=(pattern, row['batch'], row['id'], row['seed'],
+                                                'Formal 回放' if row.get('formal_origin') else '用例回归'))
         bar = ttk.Frame(tab)
         bar.pack(fill='x')
         ttk.Button(bar, text='另存用例清单 CSV', command=lambda: self.guard(self.save_csv)).pack(side='left', padx=(0, 16))

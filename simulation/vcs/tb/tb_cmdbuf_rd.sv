@@ -57,6 +57,7 @@ module tb_cmdbuf_rd;
     // selects common/full scope and sends sampled failures to the monitor.
     cmdbuf_rd_port_sva checks (.rid(checked_rid), .rvalid(checked_rvalid), .rresp(checked_rresp),
                                .pending_cnt(checked_pending), .*);
+    `include "functional_properties.svh"
 
     integer cycle = 0, seed = 1, accepted = 0, issued = 0, retired = 0;
     integer captured = 0, issue_failed = 0, ar_rejected = 0, ar_gated = 0;
@@ -266,6 +267,8 @@ module tb_cmdbuf_rd;
         end
         if (strict_random_mode) begin $fclose(random_samples); $fclose(random_solutions); end
         end
+        // Let the final sampled property actions finish before closing evidence.
+        #1ps;
         monitor.finish_checks();
         metrics = $fopen("metrics.json", "w");
         if (!metrics) env_fail("ENV_ARCHIVE_OPEN","metrics.json",1);
@@ -286,6 +289,7 @@ module tb_cmdbuf_rd;
         $fclose(metrics); $fclose(events);
         env_finished=1; env_write_summary();
         $display("ENV_RUN_COMPLETE failures=%0d",env_failures);
+        $display("FUNCTIONAL_COMPLETE");
         if (env_failures) $display("TEST_FAIL seed=%0d environment_errors=%0d assertions=%0d",seed,env_failures,monitor.failures);
         else if (monitor.failures) $display("TEST_FAIL seed=%0d assertions=%0d", seed, monitor.failures);
         else if (monitor.incomplete) $display("TEST_INCOMPLETE seed=%0d reasons=%0d", seed, monitor.incomplete);

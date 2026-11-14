@@ -15,8 +15,9 @@ import formal_model
 import vcd
 
 eda, ROOT, STATE = model.eda, model.ROOT, model.STATE
-COVERAGE_JOBS = ('coverage_details', 'coverage_minimize', 'coverage_formal')
-FORMAL_JOBS = ('formal_doctor', 'formal_prove')
+COVERAGE_JOBS = ('coverage_details', 'coverage_minimize', 'coverage_minimize_joint', 'coverage_formal')
+FORMAL_JOBS = ('formal_doctor', 'formal_prove', 'formal_cover', 'formal_bmc')
+REGRESSION_JOBS = ('regress', 'formal_replay')
 CANCELLABLE_JOBS = COVERAGE_JOBS + FORMAL_JOBS
 
 
@@ -62,7 +63,9 @@ def summary_row(summary):
                 completed=len(results), passed=summary['passed'], partial=False,
                 coverage=coverage.get('metrics_percent', {}) if coverage.get('status') == 'PASS' else {},
                 waves=summary.get('waves_enabled', True), dut=summary.get('dut', {}).get('name', ''),
-                created=summary.get('created_at', ''), seconds=sum(r.get('seconds', 0) for r in results))
+                created=summary.get('created_at', ''), seconds=sum(r.get('seconds', 0) for r in results),
+                functional_sha256=summary.get('functional', {}).get('manifest', {}).get('sha256'),
+                formal_campaign=summary.get('formal_campaign'))
 
 
 def history(include_interrupted=False):
@@ -157,7 +160,7 @@ class Jobs:
     def require_editable_sources(self):
         with self.lock:
             job = self.current
-            if (job and job['state'] == 'RUNNING' and job['kind'] in ('compile', 'regress')
+            if (job and job['state'] == 'RUNNING' and job['kind'] in ('compile',) + REGRESSION_JOBS
                     and not job.get('sources_ready')):
                 raise ValueError('正在固定本次编译的源码，请稍后保存或导入')
 
@@ -180,7 +183,7 @@ class Jobs:
         # Old GUI environments must never influence the execution host.
         for key in ('EDA_VM_HOST', 'EDA_VM_ROOT', 'EDA_SKIP_SYNC'):
             env.pop(key, None)
-        if job['kind'] == 'regress':
+        if job['kind'] in REGRESSION_JOBS:
             env['CMDBUF_STUDIO_REGRESSION_STOP'] = str(self.regression_stop_file(job))
         self.log(job, '$ make '+' '.join(arguments)+'\n')
         cancellable = job['kind'] in CANCELLABLE_JOBS
@@ -207,6 +210,10 @@ class Jobs:
                 self.update(job, coverage_record=line[len('COVERAGE_RESULT '):].strip())
             if line.startswith('FORMAL_STAGE '):
                 self.update(job, stage=line[len('FORMAL_STAGE '):].strip())
+            if line.startswith('FUNCTIONAL_STAGE '):
+                self.update(job, stage=line[len('FUNCTIONAL_STAGE '):].strip())
+            if line.startswith('FUNCTIONAL_RESULT '):
+                self.update(job, functional_record=line[len('FUNCTIONAL_RESULT '):].strip())
             if line.startswith('EDA_PROCESS '):
                 try:self.process_status(job,json.loads(line[len('EDA_PROCESS '):]))
                 except (ValueError,KeyError,TypeError):pass
@@ -249,7 +256,7 @@ class Jobs:
     def stop_regression(self):
         with self.lock:
             job = self.current
-            if (not job or job['kind'] != 'regress' or job['state'] != 'RUNNING'
+            if (not job or job['kind'] not in REGRESSION_JOBS or job['state'] != 'RUNNING'
                     or job.get('finalizing') or job.get('stop_requested')):
                 return
             self.regression_stop_file(job).touch()
@@ -269,6 +276,8 @@ class Jobs:
             elif any(r['phase']=='coverage' for r in rows):stage='合并覆盖率 / 等待 License（不限时）'
             elif job.get('finalizing'):stage='正在汇总用例 / 合并覆盖率'
             elif any(r['phase']=='legacy_simulation' for r in rows):stage='旧归档重放 / 等待 License（全程不限时）'
+            elif job.get('kind') in ('formal_cover', 'formal_bmc'):
+                return
             elif job.get('kind') not in COVERAGE_JOBS or any(r['phase']=='simulation' for r in rows):
                 waiting=sum(r['state']=='WAITING_FOR_START' for r in rows)
                 running=sum(r['phase']=='simulation' and r['state']=='RUNNING' for r in rows)
@@ -283,7 +292,8 @@ class Jobs:
         with self.lock:
             self.require_idle()
             allowed = ('detect', 'compile', 'doctor', 'regress', 'coverage', 'wave', 'wave_file', 'wave_index',
-                       'fsdb_inspect', 'fsdb_formal', 'import_fsdb', 'import_formal', 'import_rtl') + CANCELLABLE_JOBS
+                       'fsdb_inspect', 'fsdb_formal', 'import_fsdb', 'import_formal', 'import_rtl',
+                       'formal_replay') + CANCELLABLE_JOBS
             if kind not in allowed:
                 raise ValueError('未知任务')
             if kind not in ('detect', 'import_fsdb', 'import_formal', 'import_rtl', 'wave_index'):
@@ -342,16 +352,31 @@ class Jobs:
                 if result['status'] == 'CANCELLED':
                     self.update(job, state='CANCELLED', stage='已取消 Formal 证明')
                     return
-            elif kind == 'regress':
-                plan = payload['plan']
-                path = STATE/'plans'/(job['id']+'.json'); eda.write_json(path, plan)
+            elif kind in ('formal_cover', 'formal_bmc'):
+                task = kind.replace('_', '-')
+                rc = self.invoke(job, [task, 'CAMPAIGN='+job['id'], 'FORMAL_DEPTH='+str(payload['depth']),
+                                      'COVER_TIMEOUT='+str(payload['timeout'])], check=False)
+                if not job.get('functional_record'):
+                    raise RuntimeError('开源 Formal 任务未生成结果，请查看任务日志')
+                result = eda.read_json(job['functional_record'])
+                if rc not in (0, 2):
+                    raise RuntimeError('开源 Formal 运行失败，请查看任务日志')
+                self.update(job, verdict=result['status'])
+            elif kind in REGRESSION_JOBS:
+                if kind == 'regress':
+                    plan = payload['plan']
+                    path = STATE/'plans'/(job['id']+'.json'); eda.write_json(path, plan)
+                    arguments = ['regress', 'PLAN='+str(path)]
+                else:
+                    plan = payload['policy']
+                    arguments = ['formal-replay', 'CAMPAIGN='+identifier(payload['campaign'])]
                 if not job.get('stop_requested'):
                     progress('运行回归 / 合并覆盖率')
-                rc = self.invoke(job, ['regress', 'PLAN='+str(path), 'JOBS='+str(plan['jobs']),
-                                      'TIMEOUT='+str(plan['timeout']), 'WAVES='+str(int(plan['waves'])),
-                                      'CHECK_MODE='+plan['check_mode'],
-                                      'ASSERT_FATAL='+str(int(plan['assert_fatal'])),
-                                      'ENV_FATAL='+str(int(plan['env_fatal']))], check=False)
+                rc = self.invoke(job, arguments + ['JOBS='+str(plan['jobs']),
+                                 'TIMEOUT='+str(plan['timeout']), 'WAVES='+str(int(plan['waves'])),
+                                 'CHECK_MODE='+plan['check_mode'],
+                                 'ASSERT_FATAL='+str(int(plan['assert_fatal'])),
+                                 'ENV_FATAL='+str(int(plan['env_fatal']))], check=False)
                 if job.get('batch'):
                     summary = batch_path(job['batch'])/'summary.json'
                     if summary.is_file():
@@ -382,13 +407,13 @@ class Jobs:
                 if kind == 'wave':
                     arguments.append('RUN_ID='+payload['run'])
                 self.invoke(job, arguments)
-            elif kind in ('coverage_details', 'coverage_minimize'):
+            elif kind in ('coverage_details', 'coverage_minimize', 'coverage_minimize_joint'):
                 batches = [identifier(batch) for batch in payload['batches']]
                 if not batches or any(not (batch_path(batch) / 'summary.json').is_file() for batch in batches):
                     raise ValueError('找不到所选历史回归')
-                arguments = ['coverage-details' if kind == 'coverage_details' else 'coverage-minimize',
+                arguments = [kind.replace('_', '-'),
                              'REGRESSIONS='+','.join(batches)]
-                if kind == 'coverage_minimize':
+                if kind != 'coverage_details':
                     arguments.append('SOLVE_SECONDS='+str(payload.get('seconds', 0)))
                 self.invoke(job, arguments)
                 if not job.get('coverage_record'):
@@ -447,7 +472,7 @@ class Jobs:
                 self.log(job, '\n'+str(exc)+'\n')
                 self.update(job, state='ERROR', stage='执行失败', error=str(exc))
         finally:
-            if job['kind'] == 'regress':
+            if job['kind'] in REGRESSION_JOBS:
                 try:
                     self.regression_stop_file(job).unlink()
                 except OSError:

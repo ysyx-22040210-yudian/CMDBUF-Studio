@@ -13,7 +13,8 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
 import eda
 import execution
-from code_coverage.set_cover import minimum_cover, popcount, union
+from code_coverage.set_cover import bits, minimum_cover, popcount, union
+from functional_properties import cover_names
 
 
 VDBS_PER_READER = 100
@@ -104,7 +105,46 @@ def case_inputs(batch, summary, require_vdb):
         if require_vdb and not database.is_dir():
             raise ValueError('缺少逐用例 VDB: {} / {}。已有合并库仍可查看明细。'.format(batch.name, identifier))
         yield dict(key=batch.name+'/'+identifier, batch=batch.name, id=identifier, case=row['case'],
-                   seed=row['seed'], seconds=row.get('seconds'), database=str(database))
+                   seed=row['seed'], seconds=row.get('seconds'), database=str(database),
+                   **({'formal_origin': row['formal_origin']} if 'formal_origin' in row else {}))
+
+
+def functional_coverage(batches, summaries, cases):
+    """Match functional definitions and assemble one bitmap per admitted VDB."""
+    reference = summaries[0].get('functional', {}).get('manifest')
+    if reference is None or any(s.get('functional', {}).get('manifest') != reference for s in summaries):
+        raise ValueError('联合选集需要相同版本的功能属性。旧批次或属性已修改的用例请重新回归。')
+    contract_paths = [eda.PROJECT['checker']] + eda.PROJECT['checker_includes']
+
+    def contract(summary):
+        sources = summary.get('execution_sources', {})
+        return [summary.get('contract_revision')] + [sources.get(name) for name in contract_paths]
+
+    contracts = [contract(summary) for summary in summaries]
+    if not all(contracts[0]) or any(value != contracts[0] for value in contracts[1:]):
+        raise ValueError('联合选集需要同一版本的端口约束和检查器')
+    names = cover_names(reference)
+    bits = {name: 1 << index for index, name in enumerate(names)}
+    by_key = {batch.name+'/'+row['id']: row for batch, summary in zip(batches, summaries)
+              for row in summary['results'] if row['status'] == 'PASS' and not row.get('injection')}
+    counts = dict.fromkeys(names, 0)
+    masks = []
+    for case in cases:
+        result = by_key[case['key']]
+        row = result.get('functional', {})
+        receipt = Path(case['database']).with_name('functional_hits.json')
+        hits = row.get('hits')
+        if (row.get('sha256') != reference['sha256'] or row.get('version') != reference['version'] or
+                row.get('adapter_sha256') != reference['adapter_sha256'] or
+                not row.get('complete') or not isinstance(hits, list) or
+                len(hits) != len(set(hits)) or any(name not in bits for name in hits) or
+                not receipt.is_file() or eda.digest(receipt) != result.get('functional_receipt_sha256') or
+                eda.read_json(receipt) != row):
+            raise ValueError('功能覆盖采集版本不符或缺少完整记录 ' + case['key'])
+        masks.append(sum(bits[name] for name in hits))
+        for name in hits:
+            counts[name] += 1
+    return reference, counts, masks
 
 
 def reader(env):
@@ -192,10 +232,11 @@ def export_selected(directory, selected):
     path = directory / 'selected_tests.csv'
     with path.open('w', encoding='utf-8-sig', newline='') as stream:
         writer = csv.writer(stream)
-        writer.writerow(('batch', 'run_id', 'case', 'seed', 'seconds', 'replay'))
+        writer.writerow(('batch', 'run_id', 'case', 'seed', 'seconds', 'replay', 'formal_campaign'))
         for row in selected:
             writer.writerow((row['batch'], row['id'], row['case'], row['seed'], row['seconds'],
-                             'make replay REGRESSION={} RUN_ID={}'.format(row['batch'], row['id'])))
+                             'make replay REGRESSION={} RUN_ID={}'.format(row['batch'], row['id']),
+                             row.get('formal_origin', {}).get('campaign', '')))
     return path
 
 
@@ -218,6 +259,7 @@ def analyze(args, env):
             raise ValueError('所选批次的 DUT 源码、例化或覆盖率配置不同，请分别分析')
     cases = [case for batch, summary in zip(batches, summaries)
              for case in case_inputs(batch, summary, args.action == 'minimize' or len(batches) > 1)]
+    functional = functional_coverage(batches, summaries, cases) if getattr(args, 'joint', False) else None
     identifier = eda.stamp() + '_' + eda.uuid.uuid4().hex[:8]
     directory = eda.OUT / 'coverage_analysis' / identifier
     directory.mkdir(parents=True)
@@ -249,8 +291,14 @@ def analyze(args, env):
     if args.action == 'minimize':
         if union(hits[1:]) != hits[0]:
             raise ValueError('逐用例 VDB 的命中并集与历史合并库不同。请检查用例 VDB 是否被替换或使用了不同合并规则。')
-        stage('证明最小用例集')
-        solver = minimum_cover(hits[1:], args.seconds,
+        search = hits[1:]
+        if functional is not None:
+            _, _, func_masks = functional
+            # VDB IDs need not be consecutive. Allocate above every eligible ID.
+            shift = eligible.bit_length()
+            search = [code | (coverage << shift) for code, coverage in zip(search, func_masks)]
+        stage('证明代码与功能覆盖的联合最小用例集' if functional is not None else '证明最小用例集')
+        solver = minimum_cover(search, args.seconds,
                                lambda nodes, low, high: stage('精确搜索 · 已检查 {} 个节点 · {} ≤ 最优值 ≤ {}'.format(nodes, low, high)))
         selected = [cases[index] for index in solver['selected']]
         stage('用 URG 重新合并并核对逐项覆盖率')
@@ -264,6 +312,20 @@ def analyze(args, env):
             [('baseline', '', baseline), ('selected', '', merged['database'])], details=False)
         if scores != [hits[0], hits[0]] or counts != eligible or merged['metrics_percent'] != reference['metrics_percent']:
             raise RuntimeError('重新合并的 VDB 与原覆盖项或 URG 分数不一致，验证失败')
+        if functional is not None:
+            manifest, func_counts, func_masks = functional
+            selected_mask = union(func_masks[index] for index in solver['selected'])
+            if selected_mask != union(func_masks):
+                raise RuntimeError('选集遗漏原回归已命中的功能覆盖点')
+            names = list(func_counts)
+            selected_counts = dict.fromkeys(func_counts, 0)
+            for index in solver['selected']:
+                for bit in bits(func_masks[index]):
+                    selected_counts[names[bit.bit_length()-1]] += 1
+            points = [dict(name=name, baseline_hits=count, selected_hits=selected_counts[name])
+                      for name, count in func_counts.items()]
+            record['functional'] = dict(manifest=manifest, points=points, total=len(points),
+                                        covered=popcount(selected_mask), verified=True)
         record.update(verified=True, solver=solver, selected=selected, selected_coverage=merged,
                       selected_csv=str(export_selected(directory, selected)), verification=str(verification))
     path = directory / 'result.json'
@@ -277,10 +339,13 @@ def main(argv=None):
     parser.add_argument('--regression', default='latest')
     parser.add_argument('--regressions')
     parser.add_argument('--seconds', type=int, default=0)
+    parser.add_argument('--joint', action='store_true')
     parser.add_argument('--existing')
     args = parser.parse_args(argv)
     if args.seconds < 0:
         parser.error('求解时间必须为非负整数，0 表示不限时')
+    if args.joint and args.action != 'minimize':
+        parser.error('--joint 适用于最小用例集')
     execution.install_signal_handlers()
     try:
         env = None

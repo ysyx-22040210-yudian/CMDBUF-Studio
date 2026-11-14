@@ -2,6 +2,8 @@
 // A separate posedge observer records the inputs consumed by the DUT.
 `include "main_phase_base.svh"
 `include "sv_tc_factory.svh"
+`include "functional_width.svh"
+`include "formal_cover_driver.svh"
 reg sv_tc_mode=0, main_clock_start=0, main_clock_stop=0, main_have_inputs=0;
 integer sv_frames=0, sv_body_slots=0, sv_active=0;
 integer main_samples, main_assignments, main_clock_trace=0, main_stage=0;
@@ -212,14 +214,24 @@ endtask
 task automatic run_sv_tc;
     string magic;
     integer override_cycles, header_seed, config_fd;
+    cmdbuf_formal_cover_tc formal_tc;
     process rng;
     begin
         if ($fscanf(fd,"%s %s %d %d\n",magic,main_name,header_seed,override_cycles)!=4 ||
-            magic!="MAIN_PHASE_V1" || header_seed!=seed) env_fail("MAIN_BAD_PROGRAM","invalid TC header or seed",1);
+            !(magic inside {"MAIN_PHASE_V1","FORMAL_COVER_V1"}) || header_seed!=seed)
+            env_fail("MAIN_BAD_PROGRAM","invalid TC header or seed",1);
+        if (magic=="FORMAL_COVER_V1") begin
+            if (override_cycles<1 || override_cycles>1000000)
+                env_fail("FORMAL_BAD_FRAME_COUNT","invalid number of samples",1);
+            formal_tc=new(override_cycles);
+            formal_tc.load_frames(fd);
+            main_tc=formal_tc;
+        end else begin
+            main_tc=create_sv_tc(main_name);
+            if (main_tc==null) env_fail("MAIN_UNKNOWN_NAME",main_name,1);
+            if (override_cycles!=0) main_tc.num_cycles=override_cycles;
+        end
         $fclose(fd);
-        main_tc=create_sv_tc(main_name);
-        if (main_tc==null) env_fail("MAIN_UNKNOWN_NAME",main_name,1);
-        if (override_cycles!=0) main_tc.num_cycles=override_cycles;
         if (main_tc.num_cycles<1 || main_tc.num_cycles>1000000) main_fail("MAIN_CYCLES_INVALID",1);
         rng=process::self(); rng.srandom(seed);
         config_fd=$fopen("tc_config.json","w");
@@ -244,7 +256,7 @@ task automatic run_sv_tc;
         if (sv_body_slots!=main_tc.num_cycles) main_fail("MAIN_BODY_COUNT");
         // Consume the final body assignment before examining the drain condition.
         @(main_edge_cb);
-        for (integer k=0;k<drain_limit &&
+        for (integer k=0;formal_tc==null && k<drain_limit &&
              (accepted!=retired+wave_aborted || due_data.num()!=0 || req!=0 || (monitor.strict_mode && pending_cnt!=0));k++) begin
             main_tail(1);
             @(main_edge_cb);
@@ -252,7 +264,7 @@ task automatic run_sv_tc;
         if (accepted!=retired+wave_aborted || accepted!=issued+wave_aborted_unissued ||
             issued!=captured+wave_aborted_mem || captured!=retired+wave_aborted_response ||
             due_data.num()!=0 || req!=0 || (monitor.strict_mode && pending_cnt!=0)) drain_failure("MAIN_DRAIN_FAILED");
-        repeat (8) begin
+        if (formal_tc==null) repeat (8) begin
             main_tail(2);
             @(main_edge_cb);
         end

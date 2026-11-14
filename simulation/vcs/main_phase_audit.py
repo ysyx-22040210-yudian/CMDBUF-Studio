@@ -14,13 +14,14 @@ def verify_execution(directory, program, current_contract=True, contract_revisio
          'T_MEM4':0,'T_ASSOCIATION':0,'P_KNOWN':0,'assignment_equal_pins':0,
          'paused_intervals':0,'reset_assertions':1,'cancelled':0}
     phases={'body':0,'drain':0,'quiet':0}; hist={}
+    formal_replay = program.startswith('FORMAL_COVER_V1 ')
     try:
         with (root/'samples.csv').open() as f: samples=list(csv.DictReader(f))
         with (root/'assigned.csv').open() as f: solutions=list(csv.DictReader(f))
         config=json.loads((root/'tc_config.json').read_text())
         if not samples or len(samples)!=len(solutions): raise ValueError('MAIN_ARCHIVE_COUNT')
         tokens=program.split()
-        if tokens[:1]!=['MAIN_PHASE_V1'] or config['name']!=tokens[1] or config['seed']!=int(tokens[2]):
+        if not tokens or tokens[0] not in ('MAIN_PHASE_V1','FORMAL_COVER_V1') or config['name']!=tokens[1] or config['seed']!=int(tokens[2]):
             raise ValueError('MAIN_CONFIG_ARCHIVE')
         if int(tokens[3]) and config['num_cycles']!=int(tokens[3]): raise ValueError('MAIN_CYCLES_OVERRIDE')
         fixed_startup='startup' in config
@@ -46,6 +47,7 @@ def verify_execution(directory, program, current_contract=True, contract_revisio
                 raise ValueError('MAIN_STARTUP_CONFIG')
         # Archived simulators retain their original startup and exact replay.
         live=[];heads=[[],[],[]];due={};edge=1;previous_sample=10000 if fixed_startup else 5000;previous_high=5;old_reset=1 if fixed_startup else 0;last_phase=0
+        quiet=0
         for slot,(s,q) in enumerate(zip(samples,solutions)):
             if None in s or None in q: raise ValueError('MAIN_ARCHIVE_COLUMNS')
             if int(s['cycle'])!=slot or int(q['cycle'])!=slot: raise ValueError('MAIN_CYCLE_GAP')
@@ -82,6 +84,9 @@ def verify_execution(directory, program, current_contract=True, contract_revisio
                 live=[];heads=[[],[],[]];due={}
             old_reset=v['rst_n']
             if v['rst_n']:
+                if formal_replay:
+                    idle = not (live or due or o['req'] or o['rvalid'] or o['pending_cnt'] or v['arvalid'])
+                    quiet = quiet + 1 if idle else 0
                 if v['arvalid']:
                     if v['src']>=3: raise ValueError('E03_SRC')
                     if v['arresp'] not in (0,3): raise ValueError('E04_ARRESP')
@@ -133,7 +138,14 @@ def verify_execution(directory, program, current_contract=True, contract_revisio
                             h=hist.setdefault(name,{});h[str(value)]=h.get(str(value),0)+1
             if v['clk']:edge+=1
         if phases['body']!=config['num_cycles']:raise ValueError('MAIN_BODY_COUNT')
-        if phases['quiet']!=8:raise ValueError('MAIN_QUIET_COUNT')
+        if formal_replay:
+            from functional_properties import INPUTS, packed
+            recorded = [packed({name: int(row[name], 2) for name, _ in INPUTS})
+                        for row in samples if row['phase']=='0']
+            if recorded != [int(value, 16) for value in tokens[4:]]:
+                raise ValueError('FORMAL_WITNESS_PIN_MISMATCH')
+            if quiet < 8: raise ValueError('FORMAL_WITNESS_QUIET_COUNT')
+        elif phases['quiet']!=8:raise ValueError('MAIN_QUIET_COUNT')
         if not incomplete and (live or due or any(heads) or o['req'] or (not generic and o['pending_cnt'])):raise ValueError('MAIN_PENDING')
     except (OSError,ValueError,KeyError,IndexError,TypeError) as exc:
         failures.append('main_phase audit cycle {} edge {}: {}'.format(locals().get('slot','?'),locals().get('edge','?'),exc))
@@ -141,7 +153,11 @@ def verify_execution(directory, program, current_contract=True, contract_revisio
                 startup_policy='clock_high_reset_1ns' if locals().get('fixed_startup') else 'legacy_archived_tc',
                 drive_offset_ps=locals().get('drive_offset_ps'),
                 transaction_association='check_scope.json hypothesis monitor' if generic else 'baseline FIFO audit',
-                body_histograms=hist,method='Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO',
-                distribution='Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim')
+                body_histograms=hist,method=(
+                    'Formal witness compared with exact next-posedge samples; timing, memory calendar, transactions and quiet suffix'
+                    if formal_replay else
+                    'Procedural main_phase if assignments; independent next-posedge pin sampling, timing, calendar and per-XAU FIFO'),
+                distribution='Formal cover search' if formal_replay else
+                'Seeded urandom in legal if branches; no solver or uniform-trace-distribution claim')
     (root/'constraint_coverage.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     return report

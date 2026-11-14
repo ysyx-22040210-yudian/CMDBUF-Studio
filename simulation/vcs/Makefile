@@ -38,6 +38,9 @@ FORMAL_ID ?=
 FORMAL_PACKAGE ?=
 FORMAL_RUN_ID ?=
 FORMAL_TIMEOUT ?=
+CAMPAIGN ?=
+FORMAL_DEPTH ?= 48
+COVER_TIMEOUT ?= 600
 SUITE_X64 ?=
 SUITE_ARM64 ?=
 MAX_EDGES ?= 100000
@@ -65,6 +68,10 @@ help:
 	@echo '       FORMAL_FORMAT=optimized|cycle|signal|table|packed|property|boolean|channel|range|rom|generate'
 	@echo '  make formal-doctor                    Check Yosys, SymbiYosys, ABC and Yices'
 	@echo '  make formal-prove FORMAL_ID=id        Check the exported DUT and all trace endpoints'
+	@echo '  make formal-cover FORMAL_DEPTH=48    Generate cases for the user cover properties'
+	@echo '  make formal-bmc FORMAL_DEPTH=48      Check built-in and user assertions under assumptions'
+	@echo '       COVER_TIMEOUT=600 limits the solver in seconds; 0 means unlimited.'
+	@echo '  make formal-replay CAMPAIGN=id        Replay generated cases in VCS and collect coverage'
 	@echo '       FORMAL_PACKAGE=/path/to/extracted/export is an alternative to FORMAL_ID.'
 	@echo '       FORMAL_TIMEOUT=seconds per check (default from export); 0 means unlimited.'
 	@echo '  make doctor                          Check VCS / Verdi / URG'
@@ -91,6 +98,7 @@ help:
 	@echo '       REGRESSION=latest|batch_id DISPLAY=:0 XAUTHORITY=/path (optional)'
 	@echo '  make coverage-details REGRESSION=latest   Inspect each code coverage item in Tk'
 	@echo '  make coverage-minimize REGRESSION=latest  Prove the smallest set and remerge with URG'
+	@echo '  make coverage-minimize-joint REGRESSIONS=id1,id2  Preserve all hit code and functional items'
 	@echo '  make coverage-formal COVERAGE_SET=id      Generate one Formal pattern per selected case'
 	@echo '       REGRESSIONS=id1,id2 combines compatible histories; SOLVE_SECONDS=0 searches without a limit'
 	@echo '       COVERAGE_SET=id reopens a saved analysis with coverage-details or its verified VDB with coverage'
@@ -144,6 +152,14 @@ formal-doctor:
 formal-prove:
 	$(PYTHON) "$(EDA_HERE)fsdb_formal/proof.py" --project $(if $(strip $(FORMAL_ID)),--export-id "$(FORMAL_ID)") $(if $(strip $(FORMAL_PACKAGE)),--package "$(FORMAL_PACKAGE)") $(if $(strip $(FORMAL_RUN_ID)),--run-id "$(FORMAL_RUN_ID)") $(if $(strip $(FORMAL_TIMEOUT)),--timeout "$(FORMAL_TIMEOUT)")
 
+.PHONY: formal-cover formal-bmc formal-replay
+formal-cover formal-bmc:
+	$(PYTHON) "$(EDA_HERE)functional_cover.py" --action $(patsubst formal-%,%,$@) --id "$(CAMPAIGN)" --depth "$(FORMAL_DEPTH)" --timeout "$(COVER_TIMEOUT)"
+
+formal-replay:
+	@test -n "$(CAMPAIGN)" || { echo 'Specify CAMPAIGN=cover_task_id'; exit 2; }
+	$(EDA) formal-replay --campaign "$(CAMPAIGN)" --jobs "$(JOBS)" --timeout "$(TIMEOUT)" --waves "$(WAVES)" $(EDA_CHECKS)
+
 doctor selftest list:
 	$(EDA) $@ $(if $(filter selftest,$@),--jobs "$(JOBS)" --timeout "$(TIMEOUT)" $(EDA_CHECKS))
 
@@ -180,12 +196,12 @@ wave:
 coverage:
 	$(EDA) coverage $(EDA_REGRESSION) $(EDA_GUI) $(EDA_COVERAGE_SET)
 
-.PHONY: coverage-details coverage-minimize coverage-formal
+.PHONY: coverage-details coverage-minimize coverage-minimize-joint coverage-formal
 coverage-details:
 	$(EDA_COVERAGE) --action details $(EDA_COVERAGE_BATCHES) $(if $(strip $(COVERAGE_SET)),--existing "$(COVERAGE_SET)")
 
-coverage-minimize:
-	$(EDA_COVERAGE) --action minimize $(EDA_COVERAGE_BATCHES) --seconds "$(SOLVE_SECONDS)"
+coverage-minimize coverage-minimize-joint:
+	$(EDA_COVERAGE) --action minimize $(EDA_COVERAGE_BATCHES) --seconds "$(SOLVE_SECONDS)" $(if $(filter coverage-minimize-joint,$@),--joint)
 
 coverage-formal:
 	@test -n "$(COVERAGE_SET)" || { echo 'Specify COVERAGE_SET=analysis_id'; exit 2; }

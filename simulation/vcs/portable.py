@@ -19,7 +19,7 @@ ROOT=eda.ROOT
 def selected_files():
     paths=set(eda.sources())
     paths.update(ROOT/p for p in ('CMDBUF Studio.cmd','CMDBUF Studio.sh','eda.example.json','AGENTS.md'))
-    for number in range(32, 49):
+    for number in range(32, 50):
         for extension in ('pdf', 'docx'):
             paths.update((ROOT/'documents').glob(str(number)+'_*.'+extension))
     for p in list(paths):
@@ -69,6 +69,9 @@ Compile / simulate / open waves and coverage all use Make:
     make coverage REGRESSION=latest
     make coverage-details REGRESSION=latest
     make coverage-minimize REGRESSION=latest
+    make formal-cover CAMPAIGN=demo FORMAL_DEPTH=48
+    make formal-replay CAMPAIGN=demo JOBS=4 WAVES=0
+    make coverage-minimize-joint REGRESSIONS=normal_batch,formal_batch
     make fsdb-formal REQUEST=request.json FORMAL_FORMAT=optimized
     make coverage-formal COVERAGE_SET=analysis_id FORMAL_FORMAT=table
     make wave-file FSDB=/absolute/path/to/input.fsdb
@@ -92,6 +95,10 @@ make coverage COVERAGE_SET=id. The set result can generate Formal code directly.
 An archived FSDB is used when available. Missing selected waves are reproduced
 with the saved simulator and inputs and checked against the original run. One
 pattern per case and the matching archived DUT are included. See documents/45_*.
+
+In Functional Coverage, edit labeled SV properties, run Formal cover search,
+then replay the generated cases in VCS. Joint minimum set analysis retains each
+hit code bin and user cover from passing runs. See documents/49_*.
 
 VCS compilation includes -lca -licqueue +vcs+lic+wait. Simulation uses
 +vcs+lic+wait; coverage merging uses +urg+lic+wait. License waiting has no
