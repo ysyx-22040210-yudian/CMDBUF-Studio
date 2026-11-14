@@ -14,6 +14,7 @@ HERE=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(HERE/'gui'))
 import backend
 import formal_model
+from functional_view import FunctionalPage
 from fsdb_formal.engine import fsdb_path
 
 
@@ -51,6 +52,23 @@ class NativeTests(unittest.TestCase):
         jobs.require_editable_sources()
         with self.assertRaises(ValueError):
             jobs.require_idle()
+
+    def test_replay_wave_uses_the_latest_passing_run_with_a_wave(self):
+        page = FunctionalPage.__new__(FunctionalPage)
+        passing = dict(id='replay', status='PASS', wave_artifacts=['waves.vcd'])
+        failing = dict(passing, status='FAIL')
+        no_wave = dict(passing, wave_artifacts=[])
+        page.replays = {'trace0': [('latest', no_wave), ('failed', failing), ('passing', passing)]}
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            with patch.object(backend, 'batch_path', side_effect=lambda batch: root/batch):
+                for batch in ('failed', 'passing'):
+                    path = root/batch/'cases'/'replay'/'waves.vcd'
+                    path.parent.mkdir(parents=True)
+                    path.touch()
+                self.assertEqual(page.replay_result('trace0'), ('passing', passing, path))
+                path.unlink()
+                self.assertEqual(page.replay_result('trace0'), ('latest', no_wave, None))
 
     def test_queued_cases_keep_their_source_and_report_hashes(self):
         eda = backend.eda

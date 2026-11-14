@@ -17,13 +17,18 @@ SUPPLEMENT = 'docs/timing/interface_constraints_20261112.json'
 PENDING_SPEC = 'docs/timing/pending_register_20261112.json'
 RESPONSE_SPEC = 'docs/timing/parity_response_20261113.json'
 PORT_CHECKER = 'formal/protocol_20261021/cmdbuf_rd_port_sva.sv'
+COVER_NEUTRAL_RTL = {
+    'rtl/cmdbuf_rd.sv': '2543293354d5eba445f2e22e04806bbe06347de0c214075dd9f96c56d89a1c02',
+    'rtl/cmdbuf_rd_cmd.sv': '7654300ed0c4b73de780d24ee8c8f15d3fc42f4104601179be556d872e181c8e',
+    'rtl/cmdbuf_rd_otb.sv': '7d3b2a347ded682f93ca8b24d9350a45f8acbdf08ebad087d19223383e9fac70',
+}
 IMPLEMENTED = {'E03_SRC', 'E04_ARRESP', 'E05_ZERO_READY', 'E06_SUCCESS_BUSY',
                'E07_SRC_READY', 'E08_AR_GRANT_REQ',
                'T_MEM4', 'T_ASSOCIATION', 'T_CLOCK_RESET', 'P_KNOWN', 'P_OWNERSHIP',
                'P_QUEUE', 'DUT_CHECKS'}
 
 
-def audit(root=None, catalog=None):
+def audit(root=None, catalog=None, allow_rtl_covers=False):
     root = Path(root or ROOT)
     catalog = catalog or json.loads((HERE / 'contracts.json').read_text(encoding='utf-8'))
     failures = []
@@ -35,6 +40,7 @@ def audit(root=None, catalog=None):
         failures.append('unmapped/missing rule: ' + repr(sorted(set(ids) ^ IMPLEMENTED)))
     expected_sources = catalog.get('sources', {})
     checker = {}
+    cover_edits = {}
     for name, expected in expected_sources.items():
         path = root / name
         if not path.is_file():
@@ -54,6 +60,11 @@ def audit(root=None, catalog=None):
             if not checker['customized'] and labels != registered:
                 failures.append('baseline SVA assumption mapping mismatch')
         elif actual != expected:
+            if allow_rtl_covers and name in COVER_NEUTRAL_RTL:
+                from rtl_cover import baseline_digest, has_covers
+                if has_covers({name: source}) and baseline_digest(source) == COVER_NEUTRAL_RTL[name]:
+                    cover_edits[name] = actual
+                    continue
             failures.append('source changed; review contract mapping: ' + name)
     required = {'rtl/files.f', 'rtl/cmdbuf_rd.sv', 'rtl/cmdbuf_rd_cmd.sv', 'rtl/cmdbuf_rd_otb.sv',
                 PORT_CHECKER,
@@ -73,6 +84,7 @@ def audit(root=None, catalog=None):
     from check_policy import catalog as check_profiles
     assumptions = [r for r in rules if r['kind'] == 'environment_assumption']
     sources = dict(expected_sources, **{PORT_CHECKER: checker['sha256']})
+    sources.update(cover_edits)
     return {'status': 'PASS', 'version': 1, 'revision': REVISION, 'assumption_families': len(assumptions),
             'simulation_profiles': check_profiles(),
             'assumption_instances': sum(r['instances'] for r in assumptions), 'rules': rules, 'sources': sources,

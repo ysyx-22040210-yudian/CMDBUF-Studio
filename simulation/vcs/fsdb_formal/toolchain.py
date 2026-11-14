@@ -30,6 +30,19 @@ VERSION_PROBES = (
 )
 
 
+def runtime_identity():
+    suite = bundled_suite()
+    override = os.environ.get('CMDBUF_FORMAL_HOME')
+    if suite is None and override:
+        suite = Path(override).expanduser().resolve()
+    if suite:
+        programs = [suite/'libexec'/name for name in ('slang', 'yosys')]
+    else:
+        programs = [Path(path) for path in (shutil.which(name) for name in ('slang', 'yosys')) if path]
+    return tuple((str(path.resolve()), path.stat().st_size, path.stat().st_mtime_ns)
+                 for path in programs if path.is_file())
+
+
 def architecture():
     machine = platform.machine().lower()
     return {'amd64': 'x86_64', 'arm64': 'aarch64'}.get(machine, machine)
@@ -62,7 +75,8 @@ def suite_path(suite):
             if path.name != 'bin':
                 (alias/path.name).symlink_to(path, target_is_directory=path.is_dir())
         (alias/'bin').mkdir()
-        for name in TOOLS + ('tabbypy3',):
+        entries = TOOLS + ('tabbypy3',) + (('slang',) if (suite/'bin'/'slang').is_file() else ())
+        for name in entries:
             shutil.copy2(str(suite/'bin'/name), str(alias/'bin'/name))
         yield alias
 

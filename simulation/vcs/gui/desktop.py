@@ -19,9 +19,11 @@ except ImportError:
 import backend
 import model
 import formal_model
+from code_editor import CodeEditor
 from coverage_view import CoverageWindow
 from functional_view import FunctionalPage
-from widgets import (BG, INK, MUTED, ACCENT, DARK, CodeEditor, WaveWindow, ScrollPage,
+from vim_edit import VimRegister
+from widgets import (BG, INK, MUTED, ACCENT, DARK, WaveWindow, ScrollPage,
                      style, tree, multiline, formal_format_field)
 
 eda, ROOT, STATE = model.eda, model.ROOT, model.STATE
@@ -44,6 +46,8 @@ class Studio:
         self.status = tk.StringVar(value='就绪 · 当前设备本机执行')
         self.coverage_busy = tk.BooleanVar(value=False)
         self.pages = {}; self.page_shells = {}; self.nav = {}; self.settings = model.state_read()
+        self.vim_enabled = tk.BooleanVar(master=root, value=self.settings.get('editor_vim') is True)
+        self.vim_register = VimRegister()
         self.build_shell()
         for key, title, subtitle, method in [
             ('home', '验证工作台', '本机运行 · VCS 仿真 · Verdi 调试 · FSDB 转 Formal', self.build_home),
@@ -125,6 +129,8 @@ class Studio:
         self.page = key; self.page_shells[key].tkraise()
         for name, button in self.nav.items():
             button.configure(bg='#263e64' if key == name else DARK, fg='white' if key == name else '#aabbd3')
+        if key == 'functional':
+            self.functional_page.refresh_properties()
 
     def notice(self, parent, title, text):
         card = tk.Frame(parent, background='#eaf0ff', padx=18, pady=14)
@@ -181,7 +187,8 @@ class Studio:
         f, self.dut_defines = multiline(left, self.mono, 3); f.pack(fill='x')
         ttk.Button(left, text='查看环境接口', command=self.ports_help).pack(fill='x', pady=(12, 0))
         ttk.Label(right, text='DUT 例化 / 端口适配 · 实例名保留 dut').pack(anchor='w', pady=(0, 8))
-        self.dut_code = CodeEditor(right, self.mono); self.dut_code.pack(fill='both', expand=True)
+        self.dut_code = self.code_editor(right, self.save_dut, filename='DUT 例化')
+        self.dut_code.pack(fill='both', expand=True)
         ttk.Label(page, text='导入文件会复制进当前工程；检查依赖顺序后保存。换用同协议 RTL 时，检查器与用例继续复用。', style='Muted.TLabel').pack(anchor='w', pady=(10, 0))
 
     def text_set(self, widget, value):
@@ -209,6 +216,7 @@ class Studio:
         self.jobs.require_editable_sources()
         cfg = self.dut_value(); self.dut_version = backend.save_dut(cfg, self.dut_version)
         self.dut_baseline = copy.deepcopy(cfg); self.status.set('DUT 配置已保存；下一次编译将使用新配置')
+        self.functional_page.refresh_properties()
 
     def edit_sva(self):
         if self.sva_window and self.sva_window.winfo_exists():
@@ -230,7 +238,7 @@ class Studio:
         self.sva_note = tk.StringVar(value='Ctrl + S 保存')
         ttk.Label(toolbar, textvariable=self.sva_note, style='Muted.TLabel').pack(side='right')
         ttk.Label(window, text=self.sva_snapshot['file'], style='Muted.TLabel').pack(anchor='w', padx=16)
-        self.sva_editor = CodeEditor(window, self.mono)
+        self.sva_editor = self.code_editor(window, self.save_sva, filename='cmdbuf_rd_port_sva.sv')
         self.sva_editor.pack(fill='both', expand=True, padx=16, pady=(10, 16))
         self.sva_editor.set(self.sva_snapshot['source'])
         def save_shortcut(event):
@@ -248,6 +256,7 @@ class Studio:
         self.sva_snapshot = model.save_sva(self.sva_editor.get(), self.sva_snapshot['version'])
         self.sva_note.set('已保存 · '+self.sva_snapshot['version'][:12])
         self.status.set('端口 SVA 已保存，下次编译使用此版本')
+        self.functional_page.refresh_properties()
 
     def close_sva(self):
         if not self.sva_window or not self.sva_window.winfo_exists():
@@ -297,7 +306,9 @@ class Studio:
         left = ttk.Frame(pane); right = ttk.Frame(pane); pane.add(left, weight=1); pane.add(right, weight=4)
         f, self.case_tree = tree(left, [('name', 'SystemVerilog 用例', 210)], height=15); f.pack(fill='both', expand=True)
         self.case_tree.bind('<<TreeviewSelect>>', self.select_case)
-        self.case_editor = CodeEditor(right, self.mono, on_change=self.case_changed); self.case_editor.pack(fill='both', expand=True)
+        self.case_editor = self.code_editor(right, self.save_case, filename='main_phase',
+                                           on_change=self.case_changed)
+        self.case_editor.pack(fill='both', expand=True)
         ttk.Label(page, text='Ctrl + S 保存。框架只校验并原样驱动输入；随机分支必须显式满足约束，非法输入会报错。', style='Muted.TLabel').pack(anchor='w', pady=(12, 0))
 
     def refresh_cases(self, selected=None):
@@ -315,7 +326,9 @@ class Studio:
             self.case_note.set(self.current_tc['name']+('  ·  未保存' if self.dirty else '  ·  已保存'))
 
     def load_case(self, name):
-        self.current_tc = model.case(name); self.case_editor.set(self.current_tc['phase']); self.dirty = False
+        self.current_tc = model.case(name)
+        self.case_editor.set(self.current_tc['phase'], filename=name+'.sv')
+        self.dirty = False
         self.case_note.set(name+'  ·  已保存')
 
     def allow_case_change(self):
@@ -550,7 +563,8 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
                                      'clock_reset.csv', 'case.sv', 'case.json', 'assigned.csv', 'samples.csv', 'events.csv',
                                      'functional_coverage.sv', 'functional_hits.json', 'drive_audit.json', 'constraint_failure.json'])
         combo.pack(side='left'); combo.bind('<<ComboboxSelected>>', lambda e: self.guard(self.read_artifact))
-        self.result_code = CodeEditor(page, self.mono, readonly=True, height=8); self.result_code.pack(fill='both', expand=True)
+        self.result_code = CodeEditor(page, self.mono, readonly=True, height=8, language='text')
+        self.result_code.pack(fill='both', expand=True)
 
     def refresh_results(self, preferred=None):
         rows = backend.history(include_interrupted=True)
@@ -606,7 +620,7 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
         self.run_offset = 0; self.displayed_runs = 0
         self.run_tree.delete(*self.run_tree.get_children())
         self.scope_note.set('选择用例查看检查结果')
-        self.result_code.set('')
+        self.result_code.set('', filename='运行记录')
 
     def append_run_row(self, row):
         self.run_tree.insert('', 'end', iid=row['id'], tags=(row['status'],),
@@ -701,7 +715,7 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
             with path.open(encoding='utf-8', errors='replace') as f: text = f.read(120000)
             if path.stat().st_size > 120000: text += '\n\n[预览截断；完整记录位于 '+str(path)+']'
         else: text = '此运行没有 '+path.name
-        self.result_code.set(text)
+        self.result_code.set(text, filename=path.name)
 
     def open_run_wave(self):
         batch, run = self.selected_run(); folder = backend.result_path(batch, run)
@@ -748,17 +762,18 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
         frame.pack(fill='both', expand=True)
         for p in coverage['manifest']['properties']:
             if p['kind'] == 'cover':
-                points.insert('', 'end', values=(p['name'], coverage['hits'][p['name']],
-                                                 ' '.join(p['expression'].split())))
+                source = p.get('expression', p.get('code', ''))
+                points.insert('', 'end', values=(p.get('hierarchy', p['name']), coverage['hits'][p['name']],
+                                                 ' '.join(source.split())))
 
     def choose_coverage_batches(self, selected=None, joint=False):
         self.idle()
         selected = selected or ([self.current_batch] if self.current_batch else [])
         history = [row for row in backend.history() if row['coverage']]
         if joint:
-            version = next((row['functional_sha256'] for row in history if row['id'] in selected), None)
-            history = [row for row in history if row['functional_sha256'] and
-                       (not version or row['functional_sha256'] == version)]
+            version = next((row['functional_version'] for row in history if row['id'] in selected), None)
+            history = [row for row in history if row['functional_version'] and
+                       (not version or row['functional_version'] == version)]
         if not history:
             raise ValueError('请选择已采集功能覆盖并成功合并 VDB 的批次' if joint else '请选择已合并覆盖率的历史回归')
         dialog = tk.Toplevel(self.root)
@@ -768,31 +783,61 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
         box = ttk.Frame(dialog, padding=18)
         box.pack(fill='both', expand=True)
         ttk.Label(box, text='选择历史回归', style='Heading.TLabel').pack(anchor='w')
-        ttk.Label(box, text='多选同一 DUT 和属性版本的普通回归与 Formal 回放；保留全部已命中项。' if joint
-                  else '可多选同一覆盖率配置的批次，以合并覆盖率为目标。', style='Muted.TLabel').pack(anchor='w', pady=(5, 9))
-        frame, batches = tree(box, [('batch', '回归批次', 300), ('dut', 'DUT', 160),
-                                     ('count', '通过 / 完成 / 总数', 138), ('origin', '来源', 103)], height=7, selectmode='extended')
+        ttk.Label(box, text='勾选同一 DUT 和属性版本的普通回归与 Formal 回放，保留全部已命中项。' if joint
+                  else '勾选使用同一覆盖率配置的批次。', style='Muted.TLabel').pack(anchor='w', pady=(5, 9))
+        frame, batches = tree(box, [('checked', '勾选', 60), ('batch', '回归批次', 300), ('dut', 'DUT', 160),
+                                     ('count', '通过 / 完成 / 总数', 138), ('origin', '来源', 103)], height=7,
+                              selectmode='none')
+        batches.column('checked', anchor='center', stretch=False)
         frame.pack(fill='both', expand=True)
+        checked = {row['id'] for row in history if row['id'] in selected}
         for row in history:
             batches.insert('', 'end', iid=row['id'],
-                           values=(row['id'], row['dut'], '{}/{}/{}'.format(row['passed'], row['completed'], row['total']),
+                           values=('☑' if row['id'] in checked else '☐', row['id'], row['dut'],
+                                   '{}/{}/{}'.format(row['passed'], row['completed'], row['total']),
                                    'Formal 回放' if row['formal_campaign'] else '用例回归'))
-        for identifier in selected:
-            if batches.exists(identifier):
-                batches.selection_add(identifier)
         seconds = tk.StringVar(value='0')
         controls = ttk.Frame(box)
         controls.pack(fill='x', pady=(10, 0))
         ttk.Label(controls, text='求解秒数（0 不限时）').pack(side='left')
         ttk.Entry(controls, width=8, textvariable=seconds).pack(side='left', padx=8)
+        count = tk.StringVar()
+        ttk.Label(controls, textvariable=count, style='Muted.TLabel').pack(side='left', padx=12)
+
         def start():
-            ids = list(batches.selection())
-            if not ids or not seconds.get().isdigit():
-                raise ValueError('请选择历史批次，并填写非负整数秒数')
+            if not seconds.get().isdigit():
+                raise ValueError('求解秒数须为非负整数')
+            ids = [identifier for identifier in batches.get_children() if identifier in checked]
             self.launch('coverage_minimize_joint' if joint else 'coverage_minimize',
                         dict(batches=ids, seconds=int(seconds.get())))
             dialog.destroy()
-        self.button(controls, '开始计算', start, primary=True, side='right')
+
+        start_button = self.button(controls, '开始计算', start, primary=True, side='right')
+
+        def update_checked():
+            count.set('已勾选 {} 个批次'.format(len(checked)))
+            start_button.state(['!disabled' if checked else 'disabled'])
+
+        def toggle(identifier):
+            if identifier in checked:
+                checked.remove(identifier)
+            else:
+                checked.add(identifier)
+            batches.set(identifier, 'checked', '☑' if identifier in checked else '☐')
+            update_checked()
+            return 'break'
+
+        def click_checkbox(event):
+            if batches.identify_region(event.x, event.y) == 'cell' and batches.identify_column(event.x) == '#1':
+                identifier = batches.identify_row(event.y)
+                batches.focus_set()
+                batches.focus(identifier)
+                return toggle(identifier)
+
+        update_checked()
+        batches.focus(next((row['id'] for row in history if row['id'] in checked), history[0]['id']))
+        batches.bind('<Button-1>', click_checkbox)
+        batches.bind('<space>', lambda event: toggle(batches.focus()))
         dialog.grab_set()
 
     def show_coverage_record(self, path):
@@ -1008,7 +1053,7 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
         path = formal_model.artifact(self.formal_export, self.preview_var.get())
         with path.open(encoding='utf-8', errors='replace') as f: text = f.read(120000)
         if path.stat().st_size > 120000: text += '\n\n[仅预览前 120 KB；导出包保留完整内容]'
-        self.formal_code.set(text)
+        self.formal_code.set(text, filename=path.name)
 
     def save_export(self):
         if not self.formal_export: raise ValueError('请先生成或选择已有 Formal 验证包')
@@ -1221,8 +1266,13 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
     def show_log(self):
         if self.job_window and self.job_window.winfo_exists(): self.job_window.lift(); return
         self.job_window = tk.Toplevel(self.root); self.job_window.title('Make 任务日志'); self.job_window.geometry('1050x660')
-        self.job_log = CodeEditor(self.job_window, self.mono, readonly=True); self.job_log.pack(fill='both', expand=True, padx=12, pady=12)
+        self.job_log = CodeEditor(self.job_window, self.mono, readonly=True, language='text')
+        self.job_log.pack(fill='both', expand=True, padx=12, pady=12)
         job = self.jobs.snapshot(); self.job_log.set(job['log'] if job else '尚未运行任务。')
+
+    def code_editor(self, parent, save, **options):
+        return CodeEditor(parent, self.mono, on_save=lambda: self.guard(save),
+                          vim_enabled=self.vim_enabled, vim_register=self.vim_register, **options)
 
     def preview(self, title, text):
         window = tk.Toplevel(self.root); window.title(title); window.geometry('1000x720')
@@ -1247,6 +1297,7 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
             # Preserve a draft even if no cases are enabled. Validation occurs on run.
             settings = model.preferences()
             settings['open_formal'] = self.functional_page.settings()
+            settings['editor_vim'] = self.vim_enabled.get()
             try:
                 settings['plan'] = self.plan_value()
             except ValueError:

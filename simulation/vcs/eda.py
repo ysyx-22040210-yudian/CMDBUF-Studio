@@ -37,6 +37,7 @@ from wavedrom_adapter import PROTOCOL_PROGRAM_PREFIXES
 import execution
 import verdi_wave
 import functional_properties
+import rtl_cover
 
 
 def load_input(path):
@@ -104,14 +105,17 @@ def execute(cmd, cwd, log, env, timeout, wait_for_start=False, phase='tool', sto
     return execution.run(cmd,cwd,log,env,timeout,wait_for_start,phase,stop_file)
 
 
-def vcs_options(target,env,stop_file=None):
+def vcs_options(target,env,stop_file=None,rtl_covers=False):
     """Shared flags for all VCS compilation paths, including acceptance fixtures."""
     target=Path(target)
     library=target/'execution_start.so'
     source=target/'execution_start.c'
     shutil.copyfile(str(HERE/'execution_start.c'),str(source))
     include=Path(env['VCS_HOME'])/'include'
-    cmd=[env.get('CXX','g++'),'-shared','-fPIC','-O2','-I'+str(include),str(source),'-o',str(library)]
+    cmd=[env.get('CXX','g++'),'-shared','-fPIC','-O2','-I'+str(include)]
+    if rtl_covers:
+        cmd.append('-DCMDBUF_RTL_COVER')
+    cmd.extend([str(source),'-o',str(library)])
     rc,_=execute(cmd,target,target/'execution_start_compile.log',env,120,phase='start_hook',stop_file=stop_file)
     if rc:raise RuntimeError('Cannot build VCS start callback: '+str(target/'execution_start_compile.log'))
     return ['vcs','-full64','-lca','-licqueue','+vcs+lic+wait',
@@ -152,7 +156,7 @@ def build_workspace(env, stop_file=None):
     import dut_config
 
     execution.check_stop(stop_file)
-    inventory = contracts.audit()
+    inventory = contracts.audit(allow_rtl_covers=True)
     dut_path = HERE / 'dut.json'
     dut_sha = digest(dut_path)
     dut = dut_config.load()
@@ -207,8 +211,18 @@ def build_at(target, identity, inventory, rtl_hashes, env, stop_file=None):
     target.mkdir(parents=True, exist_ok=True)
     generated = target / 'checker'
     instrumentation = instrument_checker(generated, identity['sources'])
+    dut = identity['dut']
+    rtl_sources = {name: (ROOT / name).read_bytes() for name in rtl_hashes}
+    if any(hashlib.sha256(data).hexdigest() != rtl_hashes[name] for name, data in rtl_sources.items()):
+        raise RuntimeError('DUT source changed while preparing the build')
+
+    def discover(command, directory, log, tool_environment):
+        return execute(command, directory, log, tool_environment, None,
+                       phase='dut_cover_inventory', stop_file=stop_file)[0]
+
     authored = functional_properties.USER_FILE.read_bytes()
-    functional = functional_properties.manifest(authored)
+    native_covers = rtl_cover.latest_inventory(dut, rtl_sources, discover)
+    functional = functional_properties.manifest(authored, native_covers)
     if (functional['sha256'] != identity['sources'].get(functional_properties.USER_FILE.relative_to(ROOT).as_posix()) or
             functional['adapter_sha256'] != identity['sources'].get(functional_properties.SOURCE)):
         raise RuntimeError('Functional coverage properties changed during compilation')
@@ -226,7 +240,6 @@ def build_at(target, identity, inventory, rtl_hashes, env, stop_file=None):
                    authored_actions=sorted({p['label'] for p in properties if p['action'] != 'studio'}))
     sv_cases.generate_factory(generated, identity['sources'])
     import dut_config
-    dut = identity['dut']
     (generated / 'dut_instance.svh').write_text(dut['instance'], encoding='utf-8')
     pli = platform_config.pli_directory(env)
     rtl = [str(dut_config.project_path(f)) for f in dut['files']]
@@ -235,7 +248,7 @@ def build_at(target, identity, inventory, rtl_hashes, env, stop_file=None):
                            str(HERE / 'tb/cmdbuf_check_monitor.sv'), str(ROOT / PROJECT['testbench'])]) + '\n', encoding='utf-8')
     # The editable TC, SVA and DUT instance are now in the build directory.
     print('EDA_SOURCES_READY', flush=True)
-    cmd = vcs_options(target,env,stop_file)+['-sverilog', '-timescale=1ns/1ps', '-debug_access+all', '-kdb',
+    cmd = vcs_options(target,env,stop_file,rtl_covers=bool(native_covers))+['-sverilog', '-timescale=1ns/1ps', '-debug_access+all', '-kdb',
            '+v2k', '-top', PROJECT['top'], '+incdir+' + str(generated), '+incdir+' + str(HERE / 'tb'),
            '-P', str(pli / 'novas.tab'), str(pli / 'pli.a'),
            '-cm', PROJECT['coverage'], '-cm_tgl', 'mda', '-cm_hier', str(HERE / 'coverage.hier'),
@@ -364,7 +377,9 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
         # Replaying a sealed binary must preserve its code. Old binaries have no
         # start callback, so a wall deadline could kill a legitimate license wait.
         print('LEGACY_LICENSE_WAIT: archived binary has no start callback; execution timeout disabled', flush=True)
-    rc, elapsed = execute(cmd, run, run / 'sim.log', env, timeout if start_hook else None,
+    simulation_env = dict(env, CMDBUF_STUDIO_RTL_COVER='1' if any(
+        row.get('origin') == 'rtl' for row in (build_receipt.get('functional') or {}).get('properties', [])) else '0')
+    rc, elapsed = execute(cmd, run, run / 'sim.log', simulation_env, timeout if start_hook else None,
                           wait_for_start=start_hook, phase='simulation' if start_hook else 'legacy_simulation',
                           stop_file=stop_file)
     conversion = None
@@ -988,7 +1003,7 @@ def main(argv=None):
     if args.command == 'export':
         export_results(args); return 0
     if args.command == 'constraints':
-        receipt=contracts.audit(); output=OUT / 'contracts' / 'inventory.json'
+        receipt=contracts.audit(allow_rtl_covers=True); output=OUT / 'contracts' / 'inventory.json'
         write_json(output,receipt)
         for rule in receipt['rules']:
             print('{} [{} x{}] {}'.format(rule['id'],rule['kind'],rule['instances'],rule['trigger']))

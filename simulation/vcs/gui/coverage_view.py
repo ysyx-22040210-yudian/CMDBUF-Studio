@@ -11,7 +11,8 @@ import model
 import formal_model
 from coverage_data import (METRICS, COVERED, PARTIAL, MISSED, EXCLUDED, UNREACHABLE, ILLEGAL,
                            CoverageData, item_state, line_coverage, urg_scores)
-from widgets import ACCENT, INK, MUTED, CodeEditor, style, tree, formal_format_field
+from code_editor import CodeEditor
+from widgets import ACCENT, INK, MUTED, style, tree, formal_format_field
 
 
 PAGE_SIZE = 200
@@ -364,7 +365,7 @@ class CoverageWindow(tk.Toplevel):
             else:
                 code = '当前范围没有可定位的源码覆盖项。'
             self.source_lines = code.splitlines() if self.source_valid else []
-            self.source.set(code)
+            self.source.set(code, filename=Path(path).name if path else '源码')
         self.source.set_marks({n: row[2] for (file, n), row in self.lines.items()
                                if file == path and n <= len(self.source_lines)})
         self.current_line = line
@@ -565,11 +566,12 @@ class CoverageWindow(tk.Toplevel):
         selection = tk.StringVar(value='概览')
         combo = ttk.Combobox(tab, textvariable=selection, values=list(REPORTS), state='readonly', width=15)
         combo.pack(anchor='w', pady=(0, 6))
-        editor = CodeEditor(tab, self.mono, readonly=True)
+        editor = CodeEditor(tab, self.mono, readonly=True, language='text')
         editor.pack(fill='both', expand=True)
         def load():
             path = report / REPORTS[selection.get()]
-            editor.set(path.read_text(encoding='utf-8', errors='replace') if path.is_file() else '此批次未生成该 URG 报告。')
+            editor.set(path.read_text(encoding='utf-8', errors='replace') if path.is_file() else
+                       '此批次未生成该 URG 报告。', filename=path.name)
         combo.bind('<<ComboboxSelected>>', lambda event: self.guard(load))
         load()
 
@@ -600,8 +602,11 @@ class CoverageWindow(tk.Toplevel):
             points_frame, points = tree(functional_tab, [('name', '覆盖点', 340),
                                           ('baseline', '历史命中用例数', 180), ('selected', '选集中命中用例数', 180)], height=10)
             points_frame.pack(fill='both', expand=True)
+            by_name = {prop['name']: prop for prop in functional['manifest']['properties']}
             for point in functional['points']:
-                points.insert('', 'end', values=(point['name'], point['baseline_hits'], point['selected_hits']))
+                prop = by_name.get(point['name'], {})
+                points.insert('', 'end', values=(prop.get('hierarchy', point['name']),
+                                                 point['baseline_hits'], point['selected_hits']))
         frame, selected = tree(tab, [('pattern','pattern',80), ('batch','回归批次',270),
                                      ('id','选中用例',245), ('seed','种子',65), ('origin','来源',100)], height=6)
         frame.pack(fill='both', expand=True, pady=8)

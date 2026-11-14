@@ -140,7 +140,7 @@ def preferences():
     default = dict(plan=default_plan())
     if path.exists():
         saved = eda.read_json(path)
-        default.update({key: saved[key] for key in ('plan', 'open_formal') if key in saved})
+        default.update({key: saved[key] for key in ('plan', 'open_formal', 'editor_vim') if key in saved})
     return default
 
 

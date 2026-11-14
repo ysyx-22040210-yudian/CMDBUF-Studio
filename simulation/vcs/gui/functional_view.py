@@ -3,7 +3,10 @@ import csv
 import os
 from pathlib import Path
 import re
+import subprocess
 import sys
+import tempfile
+from concurrent.futures import ThreadPoolExecutor
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 
@@ -12,11 +15,14 @@ import dut_config
 from formal_view import (Activity, PackagePage, TASKS, active, archived_file, preview_text,
                          save_file, source_lines, summary_status, wave)
 import functional_properties as props
-from widgets import CodeEditor, tree
+import property_inventory
+from code_editor import CodeEditor
+from widgets import tree
 
 
 eda = backend.eda
 KINDS = {'assert': 'Assert', 'assume': 'Assume', 'cover': 'Cover'}
+ORIGINS = {'rtl': 'DUT', 'checker': '环境', 'editor': '编辑器'}
 SKELETONS = {'Assert': ('A_PENDING_LIMIT', "pending_cnt <= 4'd9"),
              'Assume': ('E_AR_ID', "arvalid |-> arid != 8'hff"),
              'Cover': ('C_RETRY', '((|req) && !issue_fire) ##1 issue_fire')}
@@ -32,12 +38,77 @@ class FunctionalPage:
         history = self.tab('搜索与回放结果')
         package = self.tab('验证包证明')
         self.result_tab = history
+        self.source_properties = []
+        self.scan_issues = {}
+        self.inventory_pool = ThreadPoolExecutor(max_workers=1)
+        self.inventory_job = None
+        self.inventory_poll = None
+        self.inventory_refresh = False
+        self.studio.root.bind('<Destroy>', self.close_inventory, add='+')
         self.saved = props.USER_FILE.read_bytes()
         self.build_editor(edit)
         self.build_history(history)
         self.package = PackagePage(studio, package)
         self.package_tab = package
+        self.tabs.bind('<<NotebookTabChanged>>', lambda event: self.fit_editor_tab(edit))
+        edit.bind('<Configure>', lambda event: self.fit_editor_tab(edit))
         self.refresh()
+
+    def fit_editor_tab(self, edit):
+        # The history and proof tabs request more space than the editing tab needs.
+        height = edit.winfo_reqheight() if self.tabs.select() == str(edit) else 0
+        if height != int(self.tabs.cget('height')):
+            self.tabs.configure(height=height)
+
+    def close_inventory(self, event):
+        if event.widget is self.studio.root:
+            if self.inventory_poll:
+                self.studio.root.after_cancel(self.inventory_poll)
+            self.inventory_pool.shutdown(wait=False)
+
+    def refresh_properties(self):
+        if self.inventory_job:
+            self.inventory_refresh = True
+            return
+        self.scan_issues = {}
+        self.inventory_job = self.inventory_pool.submit(self.read_source_inventory)
+        self.source_note.set('正在扫描 DUT 和环境属性…')
+        self.set_buttons()
+        self.inventory_poll = self.studio.root.after(50, self.finish_inventory)
+
+    @staticmethod
+    def read_source_inventory():
+        if sys.platform != 'linux':
+            return property_inventory.inventory(eda.ROOT, eda.PROJECT, expand=False)
+        with tempfile.TemporaryDirectory(prefix='cmdbuf-property-list-') as temporary:
+            receipt = Path(temporary) / 'targets.json'
+            command = backend.make_command(['formal-property-list', 'OUTPUT=' + str(receipt)], project_python=True)
+            run = subprocess.run(command, cwd=str(eda.ROOT), stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                 encoding='utf-8', errors='replace')
+            if run.returncode:
+                detail = run.stdout.partition('FUNCTIONAL: ')[2]
+                raise RuntimeError((detail or run.stdout)[-4000:].strip())
+            return eda.read_json(receipt)
+
+    def finish_inventory(self):
+        self.inventory_poll = None
+        if not self.inventory_job.done():
+            self.inventory_poll = self.studio.root.after(50, self.finish_inventory)
+            return
+        job, self.inventory_job = self.inventory_job, None
+        if self.inventory_refresh:
+            self.inventory_refresh = False
+            self.refresh_properties()
+            return
+        try:
+            receipt = job.result()
+            self.source_properties = receipt['properties']
+            self.scan_issues = receipt['issues']
+        except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as exc:
+            self.source_properties = []
+            self.scan_issues = {'scan': str(exc)}
+        self.source_note.set('')
+        self.update_index()
 
     def tab(self, name):
         frame = ttk.Frame(self.tabs, padding=12)
@@ -50,7 +121,7 @@ class FunctionalPage:
         self.search_selected = self.studio.button(bar, '只搜选中 Cover', self.search_selection)
         self.bmc_button = self.studio.button(bar, '检查 Assert', lambda: self.search('formal_bmc'))
         self.studio.button(bar, '保存属性', self.save, side='right')
-        self.studio.button(bar, '重载', self.reload, side='right')
+        self.studio.button(bar, '重载属性', self.reload, side='right')
         controls = ttk.Frame(parent)
         controls.pack(fill='x', pady=(0, 10))
         settings = self.studio.settings.get('open_formal', {})
@@ -67,26 +138,45 @@ class FunctionalPage:
         pane.pack(fill='both', expand=True)
         index = ttk.Frame(pane, padding=(0, 0, 8, 0)); pane.add(index, weight=1)
         editor = ttk.Frame(pane); pane.add(editor, weight=4)
+        header = ttk.Frame(index); header.pack(fill='x', pady=(0, 7))
         self.index_heading = tk.StringVar(value='属性导航')
-        ttk.Label(index, textvariable=self.index_heading, style='Heading.TLabel').pack(anchor='w', pady=(0, 7))
+        ttk.Label(header, textvariable=self.index_heading, style='Heading.TLabel').pack(side='left')
+        self.refresh_inventory = self.studio.button(header, '刷新属性', self.refresh_properties, side='right')
+        self.index_counts = tk.StringVar()
+        ttk.Label(index, textvariable=self.index_counts, style='Muted.TLabel').pack(anchor='w', pady=(0, 5))
+        self.source_note = tk.StringVar()
+        ttk.Label(index, textvariable=self.source_note, style='Muted.TLabel', wraplength=340).pack(
+            fill='x', anchor='w', pady=(0, 5))
         self.filter = tk.StringVar(value='全部')
         combo = ttk.Combobox(index, textvariable=self.filter, state='readonly', width=14,
                              values=('全部', 'Cover', 'Assert', 'Assume'))
         combo.pack(fill='x', pady=(0, 6))
-        combo.bind('<<ComboboxSelected>>', lambda event: self.update_index())
-        frame, self.index = tree(index, [('property', '标签', 170), ('kind', '类型', 70),
-                                         ('line', '行', 54)], height=8, selectmode='extended')
+        combo.bind('<<ComboboxSelected>>', lambda event: self.refresh_filter())
+        frame, self.index = tree(index, [('property', '目标 / 实例', 163), ('kind', '类型', 60),
+                                         ('source', '来源', 65), ('line', '行', 53)], height=8, selectmode='extended')
         frame.pack(fill='both', expand=True)
-        self.index.bind('<<TreeviewSelect>>', lambda event: self.set_buttons())
+        self.index.bind('<<TreeviewSelect>>', self.select_property)
         self.index.bind('<Double-1>', self.jump_to_property)
+        self.index.bind('<Return>', self.jump_to_property)
         bar = ttk.Frame(editor); bar.pack(fill='x', pady=(0, 6))
         self.template = tk.StringVar(value='Cover')
         ttk.Combobox(bar, textvariable=self.template, values=list(SKELETONS), state='readonly',
                      width=10).pack(side='left', padx=(0, 8))
         self.studio.button(bar, '插入模板', self.insert_template)
         self.studio.button(bar, '内置约束', self.show_contract, side='right')
-        self.editor = CodeEditor(editor, self.studio.mono, height=10, on_change=self.update_index)
+        self.source_tabs = ttk.Notebook(editor)
+        self.source_tabs.pack(fill='both', expand=True)
+        self.authored_pane = ttk.Frame(self.source_tabs)
+        self.rtl_pane = ttk.Frame(self.source_tabs)
+        self.source_tabs.add(self.authored_pane, text='属性编辑器')
+        self.source_tabs.add(self.rtl_pane, text='属性源码')
+        self.editor = self.studio.code_editor(self.authored_pane, self.save, filename=props.USER_FILE.name,
+                                              height=10, on_change=self.update_index)
         self.editor.pack(fill='both', expand=True)
+        self.rtl_code = CodeEditor(self.rtl_pane, self.studio.mono, height=10, readonly=True)
+        self.rtl_code.text.configure(wrap='word')
+        self.rtl_code.pack(fill='both', expand=True)
+        self.rtl_code.set('选择 DUT 或环境属性查看原始 SystemVerilog。', filename='属性源码')
         self.parse_status = tk.StringVar()
         ttk.Label(parent, textvariable=self.parse_status, style='Muted.TLabel', wraplength=875).pack(
             anchor='w', fill='x', pady=(7, 0))
@@ -100,33 +190,112 @@ class FunctionalPage:
         return self.saved.decode('utf-8-sig').replace('\r\n', '\n').rstrip('\n')+'\n' != self.contents()
 
     def update_index(self):
-        selected = self.index.selection()
-        self.index.delete(*self.index.get_children())
         try:
             self.authored = {p['name']: p for p in props.user_properties(self.contents())}
         except ValueError as exc:
             self.authored = {}
-            self.parse_status.set(str(exc))
+            status = str(exc)
         else:
-            self.parse_status.set('未保存的修改' if self.dirty() else
-                '双击标签定位源码。属性在 clk 上升沿采样，复位期间禁用。')
-        self.index_heading.set('属性导航  ·  {}'.format(len(self.authored)))
-        for name, item in self.authored.items():
+            status = '未保存的修改' if self.dirty() else '选择属性查看源码。'
+        self.properties = dict(self.authored)
+        for row in self.source_properties:
+            key = row['name']
+            if key in self.properties:
+                key = row['origin'] + ':' + key
+            self.properties[key] = row
+        if self.scan_issues:
+            for origin, detail in self.scan_issues.items():
+                last = next((line.strip() for line in detail.splitlines() if ': error:' in line), detail.strip())
+                status += '\n{}属性展开失败 · {}'.format(ORIGINS.get(origin, ''), last)
+        elif any(row.get('source_only') for row in self.source_properties):
+            status += ' 源码声明可在 Linux 展开实例后复核。'
+        self.parse_status.set(status)
+        self.refresh_filter()
+
+    def refresh_filter(self):
+        selected = self.index.selection()
+        view = self.index.yview()[0]
+        self.index.delete(*self.index.get_children())
+        counts = dict.fromkeys(KINDS, 0)
+        order = {kind: index for index, kind in enumerate(KINDS)}
+        rows = sorted(self.properties.items(), key=lambda item: (
+            item[1].get('origin') == 'checker', order[item[1]['kind']]))
+        for name, item in rows:
             kind = KINDS[item['kind']]
+            counts[item['kind']] += 1
             if self.filter.get() in ('全部', kind):
-                self.index.insert('', 'end', iid=name, values=(name, kind, item['line']))
-        self.index.selection_set([name for name in selected if self.index.exists(name)])
+                origin = item.get('origin', 'editor')
+                caption = item.get('label') or item.get('hierarchy', name)
+                if item.get('label') and '[' in item.get('scope', ''):
+                    selectors = re.findall(r'\[[^\]]+\]', item['scope'])
+                    caption += ' ' + ''.join(selectors)
+                self.index.insert('', 'end', iid=name, values=(
+                    caption, kind, ORIGINS[origin], item['line']))
+        self.index_heading.set('属性导航 · {}'.format(len(self.properties)))
+        self.index_counts.set('Assert {assert}   ·   Assume {assume}   ·   Cover {cover}'.format(**counts))
+        selected = [name for name in selected if self.index.exists(name)]
+        self.index.selection_set(selected)
+        if selected:
+            self.index.yview_moveto(view)
+            self.index.see(selected[0])
+        self.set_buttons()
+
+    def select_property(self, event=None):
+        name = (self.index.selection() or [''])[0]
+        item = self.properties.get(name)
+        if item and item.get('file'):
+            self.open_property(name, False)
+        else:
+            self.source_note.set('{}:{}'.format(props.USER_FILE.name, item['line']) if item else '')
         self.set_buttons()
 
     def jump_to_property(self, event):
-        name = self.index.identify_row(event.y)
-        if name in self.authored:
-            index = '{}.0'.format(self.authored[name]['line'])
+        name = self.index.identify_row(event.y) if event.type == tk.EventType.ButtonPress else self.index.focus()
+        self.open_property(name, True)
+
+    def open_property(self, name, focus):
+        item = self.properties.get(name)
+        if not item:
+            self.source_note.set('')
+            return
+        if item.get('file'):
+            self.source_tabs.select(self.rtl_pane)
+            path = eda.ROOT / item['file']
+            location = '{} · {}:{}'.format(item['hierarchy'], item['file'], item['line'])
+            text = path.read_text(encoding='utf-8-sig', errors='replace') if path.is_file() else ''
+            first, last = item['line'], item['end_line']
+            if '\n'.join(text.splitlines()[first-1:last]) != item['code']:
+                location += '\n源码已改变，请刷新属性。'
+                text = item['code']
+                first, last = 1, len(text.splitlines())
+            if item.get('unsupported'):
+                location += '\n' + item['unsupported']
+            usage = property_inventory.usage(item)
+            if usage:
+                location += '\n' + usage
+            self.source_note.set(location)
+            self.rtl_code.set(text, filename=path.name)
+            index = '{}.0'.format(first)
+            self.rtl_code.text.tag_configure('property_origin', background='#304e79')
+            end = '{}.0 lineend'.format(last)
+            self.rtl_code.text.tag_add('property_origin', index, end)
+            self.rtl_code.text.mark_set('insert', index)
+            self.rtl_code.text.see(index)
+            self.rtl_code.refresh_cursor()
+            if focus:
+                self.rtl_code.text.focus_set()
+        else:
+            self.source_note.set('{}:{}'.format(props.USER_FILE.name, item['line']))
+            self.source_tabs.select(self.authored_pane)
+            index = '{}.0'.format(item['line'])
             self.editor.text.mark_set('insert', index)
             self.editor.text.see(index)
-            self.editor.text.focus_set()
+            self.editor.refresh_cursor()
+            if focus:
+                self.editor.text.focus_set()
 
     def insert_template(self):
+        self.source_tabs.select(self.authored_pane)
         kind = self.template.get()
         base, expression = SKELETONS[kind]
         name = base
@@ -167,13 +336,19 @@ class FunctionalPage:
         self.saved = props.USER_FILE.read_bytes()
         self.editor.set(self.saved.decode('utf-8-sig').replace('\r\n', '\n'))
         self.update_index()
+        self.refresh_properties()
 
     def search_selection(self):
         selected = self.index.selection()
         self.update_index()
-        targets = tuple(name for name in selected if self.authored.get(name, {}).get('kind') == 'cover')
+        targets = tuple(self.properties[name]['name'] for name in selected
+                        if self.searchable(self.properties.get(name, {})))
         if targets:
             self.search('formal_cover', targets)
+
+    @staticmethod
+    def searchable(row):
+        return row.get('kind') == 'cover' and not row.get('source_only')
 
     def search(self, kind, targets=()):
         self.studio.idle()
@@ -215,6 +390,7 @@ class FunctionalPage:
         bar = ttk.Frame(traces); bar.pack(fill='x', pady=(0, 6))
         self.trace_wave = self.studio.button(bar, '打开求解轨迹', self.open_trace_wave)
         self.trace_pins = self.studio.button(bar, '逐拍输入', self.show_inputs)
+        self.studio.button(bar, '刷新回放', self.refresh)
         self.replay_button = self.studio.button(bar, '回放选中', self.replay, True, side='right')
         self.replay_all = self.studio.button(bar, '回放全部', lambda: self.replay(all_traces=True), side='right')
         frame, self.traces = tree(traces, [('trace', '轨迹', 80), ('depth', '拍数', 60), ('goals', '求解命中', 265),
@@ -233,6 +409,8 @@ class FunctionalPage:
         self.studio.button(controls, '读取回归计划设置', self.use_plan, side='right')
         self.detail = tk.StringVar(value='检查模式和 fatal 使用当前回归计划。')
         ttk.Label(traces, textvariable=self.detail, style='Muted.TLabel', wraplength=850).pack(anchor='w', pady=(0, 4))
+        self.replay_note = tk.StringVar()
+        ttk.Label(traces, textvariable=self.replay_note, style='Muted.TLabel', wraplength=850).pack(anchor='w', pady=(0, 4))
         bar = ttk.Frame(traces); bar.pack(fill='x')
         self.run_button = self.studio.button(bar, '查看 VCS 结果', self.open_run)
         self.vcs_wave = self.studio.button(bar, 'VCS 波形', self.open_vcs_wave)
@@ -287,7 +465,10 @@ class FunctionalPage:
                 self.info.set(self.info.get()+'\n'+record['error'])
         else:
             self.info.set('尚无运行记录。可从「属性与任务」开始 Cover 搜索或检查 Assert。')
-        self.detail.set('已关联 {} 个通过覆盖合并的回放批次。检查模式和 fatal 使用当前回归计划。'.format(len(self.batches)))
+        if self.batches:
+            self.detail.set('已有 {} 个回放批次完成覆盖率合并。检查模式和 fatal 使用当前回归计划。'.format(len(self.batches)))
+        else:
+            self.detail.set('勾选「生成波形」并回放轨迹，即可生成 VCS 波形。回放通过后可计算联合最小集。')
         paths = self.files()
         self.file_menu.configure(values=list(paths))
         self.file.set('sby.log' if 'sby.log' in paths else next(iter(paths), ''))
@@ -338,30 +519,35 @@ class FunctionalPage:
                 self.add_goal(name, 'Assert', status, prop, row.get('trace'), row.get('depth'), '—', row.get('location'))
 
     def add_goal(self, name, kind, status, prop, trace, step, hits, location=None, trace_id=None):
+        caption = prop.get('hierarchy', name) if prop else name
         row = self.points.insert('', 'end', tags=(status,), values=(
-            name, kind, summary_status(status), step if step is not None else '—', hits, Path(trace).stem if trace else '—'))
+            caption, kind, summary_status(status), step if step is not None else '—', hits,
+            Path(trace).stem if trace else '—'))
         self.goal_rows[row] = dict(name=name, source=prop, trace=trace, step=step, location=location, trace_id=trace_id)
 
     def show_traces(self, record):
+        names = {row['name']: row.get('hierarchy', row['name']) for row in record['functional']['properties']}
         for entry in record.get('candidates', []):
             name = entry['trace']
             self.trace_rows[name] = entry
-            batch, run = next(iter(self.replays.get(name, [])), ('—', {}))
+            batch, run, _ = self.replay_result(name)
             status = run.get('status', 'NOT_RUN')
             text = ('复用 '+entry['duplicate_of'] if entry.get('duplicate_of') else
                     '提取失败' if entry.get('failures') else summary_status(status))
             self.traces.insert('', 'end', iid=name, tags=(status,), values=(
-                name, entry.get('body_cycles', '—'), '、'.join(entry['goals']), text, batch))
+                name, entry.get('body_cycles', '—'), '、'.join(names.get(goal, goal) for goal in entry['goals']), text, batch or '—'))
 
     def files(self):
         if not self.folder:
             return {}
-        items = ('sby.log', 'result.json', 'properties.jsonl', 'user_properties.sv', 'formal_top.sv', 'run.sby', 'port_contract.sv')
+        items = ('sby.log', 'result.json', 'properties.jsonl', 'user_properties.sv', 'formal_top.sv', 'run.sby',
+                 'port_contract.sv', 'dut_cover_model.log', 'dut_cover_unsupported.log')
         return {name: path for name in items for path in [archived_file(self.folder, name)] if path}
 
     def preview(self):
         path = self.files().get(self.file.get())
-        self.preview_code.set(preview_text(path, tail=path.suffix == '.log') if path else '求解日志和归档模型将在此显示。')
+        self.preview_code.set(preview_text(path, tail=path.suffix == '.log') if path else '求解日志和归档模型将在此显示。',
+                              filename=path.name if path else '运行归档')
 
     def present(self, path):
         self.refresh(Path(path).parent.name)
@@ -404,6 +590,15 @@ class FunctionalPage:
     def open_goal_source(self):
         row = self.goal()
         prop = row.get('source')
+        if prop and prop.get('origin') == 'rtl':
+            path = archived_file(self.folder, 'rtl_snapshot/' + prop['file'])
+            if path:
+                reason = self.record.get('unsupported', {}).get(prop['name'])
+                title = '{} · {}:{}'.format(prop['hierarchy'], prop['file'], prop['line'])
+                if reason:
+                    self.studio.status.set(reason)
+                source_lines(self.studio, path, title, prop['line'], prop['end_line'])
+            return
         if prop:
             path = archived_file(self.folder, 'user_properties.sv')
             line = prop['line']
@@ -427,8 +622,8 @@ class FunctionalPage:
 
     def open_trace_wave(self):
         row = self.trace()
-        wave(self.studio, archived_file(self.folder, row.get('path')), row.get('trace'),
-             max(row['goals'].values()) if row.get('goals') else None)
+        steps = row.get('hit_steps', row.get('goals', {}))
+        wave(self.studio, archived_file(self.folder, row.get('path')), row.get('trace'), max(steps.values(), default=None))
 
     def show_inputs(self):
         entry = self.trace()
@@ -486,8 +681,8 @@ class FunctionalPage:
     def replay(self, all_traces=False):
         self.studio.idle()
         self.save()
-        if not self.record or props.manifest(props.USER_FILE.read_bytes()) != self.record['functional']:
-            raise ValueError('当前属性与求解归档不同，请先搜索新轨迹。')
+        if not self.record:
+            raise ValueError('请先选择一个有轨迹的 Cover 搜索任务。')
         plan = dict(jobs=int(self.jobs.get()), timeout=int(self.sim_timeout.get()), waves=self.waves.get(),
                     check_mode=self.studio.check_modes[self.studio.check_mode_var.get()],
                     env_fatal=self.studio.env_fatal_var.get(), assert_fatal=self.studio.assert_fatal_var.get())
@@ -497,11 +692,23 @@ class FunctionalPage:
         if all_traces or traces:
             self.studio.launch('formal_replay', dict(campaign=self.record['id'], policy=plan, traces=traces))
 
-    def last_replay(self):
-        return next(iter(self.replays.get(self.trace().get('trace'), [])), (None, {}))
+    def replay_result(self, trace):
+        runs = self.replays.get(trace, ())
+        batch, run = next(iter(runs), (None, {}))
+        latest_wave = None
+        for previous_batch, previous_run in runs:
+            if previous_run['status'] != 'PASS' and previous_run is not run:
+                continue
+            folder = backend.batch_path(previous_batch) / 'cases' / previous_run['id']
+            path = next((folder / name for name in ('waves.vcd', 'waves.fsdb') if (folder / name).is_file()), None)
+            if path is not None and previous_run['status'] == 'PASS':
+                return previous_batch, previous_run, path
+            if previous_run is run:
+                latest_wave = path
+        return batch, run, latest_wave
 
     def open_run(self):
-        batch, run = self.last_replay()
+        batch, run, _ = self.replay_result(self.trace().get('trace'))
         if batch:
             self.studio.refresh_results(batch)
             self.studio.show('results')
@@ -509,25 +716,33 @@ class FunctionalPage:
             self.studio.run_tree.see(run['id'])
 
     def open_vcs_wave(self):
-        batch, run = self.last_replay()
-        if batch:
-            folder = backend.result_path(batch, run['id'])
-            path = next((folder/name for name in ('waves.vcd', 'waves.fsdb') if (folder/name).is_file()), None)
-            wave(self.studio, path, run['id'])
+        _, run, path = self.replay_result(self.trace().get('trace'))
+        wave(self.studio, path, run.get('id'))
 
     def joint(self):
-        self.studio.choose_coverage_batches([self.batches[0]], joint=True)
+        self.studio.choose_coverage_batches(self.batches, joint=True)
 
     def set_buttons(self, busy=None):
         busy = self.studio.jobs.busy() if busy is None else busy
         native = not busy and sys.platform == 'linux'
         active(self.bmc_button, native)
-        active(self.search_button, native and any(p['kind'] == 'cover' for p in self.authored.values()))
-        active(self.search_selected, native and any(self.authored.get(name, {}).get('kind') == 'cover' for name in self.index.selection()))
+        active(self.refresh_inventory, not self.inventory_job)
+        active(self.search_button, native and not self.inventory_job and any(self.searchable(p) for p in self.properties.values()))
+        active(self.search_selected, native and not self.inventory_job and any(
+            self.searchable(self.properties.get(name, {})) for name in self.index.selection()))
         if not hasattr(self, 'goal_rows'):
             return
         goal, trace = self.goal(), self.trace()
-        _, run = self.last_replay()
+        batch, run, replay_wave = self.replay_result(trace.get('trace'))
+        if replay_wave:
+            note = '已保存 VCS 波形 · {} · {}'.format(batch, run['id'])
+        elif run:
+            note = '此轨迹无可打开的 VCS 波形。勾选「生成波形」后回放选中轨迹。'
+        elif trace.get('frames'):
+            note = '此轨迹已生成逐拍输入。勾选「生成波形」，再点击「回放选中」。'
+        else:
+            note = ''
+        self.replay_note.set(note)
         active(self.goal_source, bool(goal))
         active(self.goal_wave, not busy and bool(goal.get('trace')))
         active(self.goal_trace, bool(goal.get('trace_id')))
@@ -538,7 +753,7 @@ class FunctionalPage:
         active(self.replay_all, native and any(item.get('frames') for item in self.trace_rows.values()))
         active(self.replay_button, native and any(self.trace_rows[name].get('frames') for name in self.traces.selection()))
         active(self.run_button, bool(run))
-        active(self.vcs_wave, not busy and bool(run.get('wave_artifacts')))
+        active(self.vcs_wave, not busy and replay_wave is not None)
         active(self.joint_button, native and bool(self.batches))
         if hasattr(self, 'package'):
             self.package.set_buttons(busy)

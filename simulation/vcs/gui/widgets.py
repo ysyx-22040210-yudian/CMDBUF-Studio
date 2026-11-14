@@ -1,5 +1,4 @@
 """Native Tk editors and a four-state waveform canvas (no web renderer)."""
-import re
 import tkinter as tk
 from tkinter import ttk
 import tkinter.font as tkfont
@@ -100,80 +99,6 @@ class ScrollPage(ttk.Frame):
         w = self.canvas.winfo_width(); h = max(self.canvas.winfo_height(), self.body.winfo_reqheight())
         self.canvas.itemconfigure(self.window, width=w, height=h)
         self.canvas.configure(scrollregion=(0, 0, w, h))
-
-
-class CodeEditor(ttk.Frame):
-    def __init__(self, parent, mono='TkFixedFont', readonly=False, height=15, on_change=None):
-        ttk.Frame.__init__(self, parent)
-        self.readonly = readonly; self.on_change = on_change; self.pending = None
-        self.gutter = tk.Canvas(self, width=50, background='#17243a', highlightthickness=0)
-        self.text = tk.Text(self, wrap='none', undo=True, maxundo=200, font=(mono, 11), height=height,
-                            background='#101c30', foreground='#dbe5f5', insertbackground='white',
-                            selectbackground='#36507a', relief='flat', padx=12, pady=10,
-                            spacing1=2, spacing3=2, tabs=('4c',))
-        y = ttk.Scrollbar(self, orient='vertical', command=self.text.yview)
-        x = ttk.Scrollbar(self, orient='horizontal', command=self.text.xview)
-        def yscroll(a, b):
-            y.set(a, b); self.redraw_gutter()
-        self.text.configure(yscrollcommand=yscroll, xscrollcommand=x.set)
-        self.gutter.grid(row=0, column=0, sticky='ns'); self.text.grid(row=0, column=1, sticky='nsew')
-        y.grid(row=0, column=2, sticky='ns'); x.grid(row=1, column=1, sticky='ew')
-        self.rowconfigure(0, weight=1); self.columnconfigure(1, weight=1)
-        for tag, color in [('keyword', '#b4a1ff'), ('number', '#f1c57a'), ('comment', '#7695a5'), ('string', '#80d7b7')]:
-            self.text.tag_configure(tag, foreground=color)
-        self.text.bind('<<Modified>>', self.changed)
-        self.text.bind('<Configure>', lambda event: self.redraw_gutter())
-        self.text.bind('<Tab>', self.indent)
-        if readonly:
-            self.text.configure(state='disabled')
-
-    def indent(self, event):
-        if not self.readonly:
-            self.text.insert('insert', '    ')
-        return 'break'
-
-    def get(self):
-        return self.text.get('1.0', 'end-1c')
-
-    def set(self, value):
-        self.text.configure(state='normal'); self.text.delete('1.0', 'end'); self.text.insert('1.0', value)
-        self.text.edit_reset(); self.text.edit_modified(False)
-        if self.readonly:
-            self.text.configure(state='disabled')
-        self.highlight(); self.redraw_gutter()
-
-    def changed(self, event=None):
-        if not self.text.edit_modified():
-            return
-        self.text.edit_modified(False)
-        if self.pending:
-            self.after_cancel(self.pending)
-        self.pending = self.after(250, self.highlight)
-        if self.on_change:
-            self.on_change()
-
-    def highlight(self):
-        self.pending = None
-        code = self.get()
-        for tag in ('keyword', 'number', 'comment', 'string'):
-            self.text.tag_remove(tag, '1.0', 'end')
-        patterns = [('keyword', r'\b(?:virtual|task|endtask|for|int|unsigned|begin|end|if|else|logic|case|endcase|posedge|negedge|assert|assume|cover|property|disable|iff|module|endmodule|input|output|wire|always_ff)\b'),
-                    ('number', r"\b\d+(?:'[sS]?[bBdDhHoO][0-9a-fA-F_xXzZ]+)?\b"),
-                    ('string', r'"(?:\\.|[^"\\])*"'), ('comment', r'//[^\n]*|/\*[\s\S]*?\*/')]
-        for tag, pattern in patterns:
-            for m in re.finditer(pattern, code):
-                self.text.tag_add(tag, '1.0+%dc'%m.start(), '1.0+%dc'%m.end())
-        self.redraw_gutter()
-
-    def redraw_gutter(self):
-        self.gutter.delete('all')
-        index = self.text.index('@0,0')
-        while True:
-            box = self.text.dlineinfo(index)
-            if box is None:
-                break
-            self.gutter.create_text(39, box[1]+2, text=index.split('.')[0], anchor='ne', fill='#778ca8', font=('TkFixedFont', 10))
-            index = self.text.index(index+'+1line')
 
 
 class WaveWindow(tk.Toplevel):

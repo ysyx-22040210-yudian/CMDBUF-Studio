@@ -9,7 +9,8 @@ from tkinter import filedialog, ttk
 
 import backend
 import formal_model
-from widgets import CodeEditor, tree
+from code_editor import CodeEditor
+from widgets import tree
 
 
 eda = backend.eda
@@ -19,6 +20,7 @@ STATUS = {
     'CANCELLED': '已取消', 'INCOMPLETE': '未完成', 'NOT_RUN': '未运行',
     'NO_WITNESSES': '未找到轨迹', 'NOT_FOUND_WITHIN_DEPTH': '深度内未找到',
     'NOT_SELECTED': '未选择', 'WITNESS': '已找到轨迹', 'REPLAY_REJECTED': '轨迹提取失败',
+    'UNSUPPORTED': '当前模型不支持',
 }
 TASKS = {'cover': 'Cover 搜索', 'bmc': 'Assert 有界检查', 'proof': '验证包证明'}
 
@@ -308,7 +310,8 @@ class PackagePage:
 
     def preview(self):
         path = self.selected_file()
-        self.code.set(preview_text(path, tail=path.suffix == '.log') if path else '运行日志和生效的 SBY 配置将在此显示。')
+        self.code.set(preview_text(path, tail=path.suffix == '.log') if path else '运行日志和生效的 SBY 配置将在此显示。',
+                      filename=path.name if path else '运行归档')
 
     def set_buttons(self, busy=None):
         busy = self.studio.jobs.busy() if busy is None else busy
@@ -322,12 +325,12 @@ class PackagePage:
         self.studio.launch('formal_prove', dict(export_id=self.key.get(), timeout=timeout))
 
 
-def source_lines(studio, path, title, line):
+def source_lines(studio, path, title, line, end_line=None):
     if line is None:
         studio.preview(title, preview_text(path, limit=120000))
         return
     from itertools import islice
     start = max(1, line-3)
     with path.open(encoding='utf-8', errors='replace') as stream:
-        lines = list(islice(stream, start-1, line+5))
+        lines = list(islice(stream, start-1, max(line, end_line or line)+5))
     studio.preview(title, ''.join('{:>6}  {}'.format(start+i, value) for i, value in enumerate(lines)))

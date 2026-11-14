@@ -19,7 +19,7 @@ def num(v, width, label):
 
 
 def compile_protocol(cfg):
-    contracts.audit()
+    contracts.audit(allow_rtl_covers=True)
     from wavedrom_adapter import compile_wave
     sim = cfg.get('sim', {})
     permitted = {'mode', 'tick_ps', 'clock_skew_ps', 'finish', 'values', 'drivers',

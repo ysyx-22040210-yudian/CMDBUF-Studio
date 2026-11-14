@@ -64,7 +64,7 @@ def sequence(expression, leading_delay=False):
     return [(offset, boolean(part)) for offset, part in zip(offsets, parts)], offsets[-1]
 
 
-def predicate(kind, source):
+def predicate(kind, source, history_name='fc_history'):
     """Lower fixed delays to past samples, with an explicit reset history guard."""
     parts, ops = split_at_level(ungroup(source), '|')
     if kind == 'cover':
@@ -88,7 +88,7 @@ def predicate(kind, source):
         age = end - offset
         return '$past({}, {})'.format(expr, age) if age else expr
 
-    history = 'fc_history[{}]'.format(end - 1) if end else "1'b1"
+    history = '{}[{}]'.format(history_name, end - 1) if end else "1'b1"
     if kind == 'cover':
         return ' && '.join([history] + [sampled(at, expr) for at, expr in terms]), end
     return '!{} || !{} || {}'.format(history, sampled(*terms[0]), right[-1][1]), end
@@ -131,10 +131,16 @@ def user_properties(text):
     return properties
 
 
-def manifest(raw):
-    properties = user_properties(raw.decode('utf-8-sig'))
-    return dict(version=VERSION, sha256=hashlib.sha256(raw).hexdigest(),
-                adapter_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(), properties=properties)
+def manifest(raw, rtl=()):
+    properties = user_properties(raw.decode('utf-8-sig')) + list(rtl)
+    if len({row['name'] for row in properties}) != len(properties):
+        raise ValueError('属性编辑器标签与 DUT Cover 标识重复，请修改编辑器标签。')
+    result = dict(version=VERSION, sha256=hashlib.sha256(raw).hexdigest(),
+                  adapter_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(), properties=properties)
+    if rtl:
+        import rtl_cover
+        result['rtl_cover_adapter_sha256'] = hashlib.sha256(Path(rtl_cover.__file__).read_bytes()).hexdigest()
+    return result
 
 
 def cover_names(properties):
@@ -208,6 +214,8 @@ def simulation(properties):
     # The single-cycle lowering is needed only by the Slang frontend.
     lines = helpers(1)
     for p in properties:
+        if p.get('origin') == 'rtl':
+            continue
         name, kind, expr = p['name'], p['kind'], p['expression']
         if kind == 'cover':
             lines += ['bit fc_hit_{} = 0;'.format(name),
@@ -222,13 +230,18 @@ def simulation(properties):
 
 
 def collect_hits(log, properties, require_complete):
-    hits = sorted(set(re.findall(r'^FUNCTIONAL_HIT (' + LABEL + r')\s*$', log, re.M)))
+    from rtl_cover import native_hits
+
+    hits = sorted(set(re.findall(r'^FUNCTIONAL_HIT (' + LABEL + r')\s*$', log, re.M)) |
+                  native_hits(log, properties['properties'], require_complete))
     if (set(hits) - set(cover_names(properties)) or
             require_complete and len(re.findall(r'^FUNCTIONAL_COMPLETE\s*$', log, re.M)) != 1):
         raise ValueError('功能覆盖率采集记录不完整或与编译版本不一致')
-    return dict(version=properties['version'], sha256=properties['sha256'], hits=hits,
-                adapter_sha256=properties['adapter_sha256'],
-                complete=bool(require_complete))
+    receipt = dict(version=properties['version'], sha256=properties['sha256'], hits=hits,
+                   adapter_sha256=properties['adapter_sha256'], complete=bool(require_complete))
+    if 'rtl_cover_adapter_sha256' in properties:
+        receipt['rtl_cover_adapter_sha256'] = properties['rtl_cover_adapter_sha256']
+    return receipt
 
 
 def summary(properties, results):

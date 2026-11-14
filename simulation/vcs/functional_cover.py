@@ -11,6 +11,7 @@ import eda
 import dut_config
 import execution
 import functional_properties as props
+import rtl_cover
 from fsdb_formal.engine import package_rtl
 from fsdb_formal import toolchain
 
@@ -36,6 +37,10 @@ def digest(data):
     return hashlib.sha256(data).hexdigest()
 
 
+def discover_properties(command, directory, log, env):
+    return eda.execute(command, directory, log, env, None, phase='property_inventory')[0]
+
+
 def ports():
     for name, _, width in dut_config.PORTS:
         if name == 'rst_n':
@@ -46,7 +51,7 @@ def ports():
             yield 'wire {}{};'.format('' if width == 1 else '[{}:0] '.format(width - 1), name)
 
 
-def formal_top(dut, builtin, user, action, targets=()):
+def formal_top(dut, builtin, user, action, targets=(), native=False):
     properties = builtin + user
     lines = ['`default_nettype none',
              'module {} (input wire clk, input wire [{}:0] fc_stimulus);'.format(props.TOP, props.WIDTH - 1)]
@@ -79,6 +84,8 @@ def formal_top(dut, builtin, user, action, targets=()):
             'end',
             props.statement('FC_REPLAY_CAPACITY', 'assert', "fc_outstanding <= 5'd9 && (!r_fire || fc_outstanding != 0)") + ';',
         ]
+        if native:
+            lines.append(props.statement('FC_CMDBUF_REPLAY_COMPLETE', 'cover', 'fc_quiet[6] && fc_idle') + ';')
     for index, p in enumerate(properties):
         name, kind, expr = p['name'], p['kind'], p['predicate']
         user_name = 'FC_C_' if kind == 'cover' else 'FC_USER_'
@@ -104,20 +111,26 @@ def formal_top(dut, builtin, user, action, targets=()):
 
 
 def snapshot(directory, action, depth, timeout, targets=()):
-    inventory = eda.contracts.audit()
+    inventory = eda.contracts.audit(allow_rtl_covers=True)
     dut_path = eda.HERE / 'dut.json'
     dut_sha = eda.digest(dut_path)
     dut = dut_config.load()
     rtl = {path.relative_to(eda.ROOT).as_posix(): path.read_bytes()
            for path in dut_config.source_files(dut)}
+    if any(digest(rtl[relative]) != inventory['sources'][relative]
+           for relative in rtl.keys() & inventory['sources'].keys()):
+        raise RuntimeError('基准 DUT 在检查契约后改变，请重新运行')
     authored = props.USER_FILE.read_bytes()
-    functional = props.manifest(authored)
+    native = rtl_cover.latest_inventory(dut, rtl, discover_properties)
+    functional = props.manifest(authored, native)
+    targets = tuple(rtl_cover.resolve_targets(functional['properties'], targets))
     names = props.cover_names(functional)
     if action == 'cover' and not names:
-        raise ValueError('请先加入至少一条带名称的 cover property')
+        raise ValueError('未发现可搜索的 Cover，请检查当前 DUT 或属性编辑器。')
     unknown = set(targets).difference(names)
     if unknown or len(set(targets)) != len(targets) or targets and action != 'cover':
-        raise ValueError('搜索目标必须为不重复的已保存 cover 标签' + (' · ' + '、'.join(sorted(unknown)) if unknown else ''))
+        raise ValueError('请选择当前 DUT 或已保存属性中的 Cover 目标，每个目标只选一次。' +
+                         (' 未找到 ' + '、'.join(sorted(unknown)) if unknown else ''))
     checker = eda.ROOT / eda.PROJECT['checker']
     builtin_bytes = checker.read_bytes()
     if eda.digest(dut_path) != dut_sha or digest(builtin_bytes) != inventory['checker']['sha256']:
@@ -132,18 +145,25 @@ def snapshot(directory, action, depth, timeout, targets=()):
     for relative, data in rtl.items():
         if digest((eda.ROOT/relative).read_bytes()) != digest(data):
             raise RuntimeError('RTL 在取快照期间改变 ' + relative)
-    (directory/'formal_top.sv').write_text(formal_top(dut, builtin, functional['properties'], action, targets), encoding='utf-8')
+    if set(rtl) != {path.relative_to(eda.ROOT).as_posix() for path in dut_config.source_files(dut)}:
+        raise RuntimeError('DUT 文件列表在取快照期间改变，请重新运行')
+    user = [row for row in functional['properties'] if row.get('origin') != 'rtl']
+    (directory/'formal_top.sv').write_text(formal_top(dut, builtin, user, action, targets, bool(native)), encoding='utf-8')
     (directory/'user_properties.sv').write_bytes(authored)
     (directory/'port_contract.sv').write_bytes(builtin_bytes)
-    opts = ['-D', 'SYNTHESIS']
-    for inc in includes:
-        opts.extend(['-I', inc])
-    for define in dut['defines']:
-        opts.extend(['-D', define])
-    opts += names + ['formal_top.sv']
+    if native:
+        rtl_cover.write_sources(directory/'rtl_formal', dut, rtl_cover.formal_rewrites(rtl))
+        files = ['rtl_formal/' + path for path in dut['files']]
+        include_dirs = ['rtl_formal/' + path for path in dut['include_dirs']]
+        opts = ['--no-synthesis-define'] + rtl_cover.source_arguments(dut, files + ['formal_top.sv'], include_dirs)
+    else:
+        opts = ['-D', 'SYNTHESIS'] + [flag for inc in includes for flag in ('-I', inc)] + [
+            flag for define in dut['defines'] for flag in ('-D', define)] + names + ['formal_top.sv']
     (directory/'slang.f').write_text('\n'.join(json.dumps(word, ensure_ascii=False) for word in opts)+'\n', encoding='utf-8')
     script = ('read_slang --top {top} --no-implicit-memories -f slang.f\n'
               'prep -top {top}\nasync2sync\ndffunmap\nchformal -lower\n').format(top=props.TOP)
+    if native:
+        script = 'read_json formal_model.json\nprep -top {}\n'.format(props.TOP)
     if action == 'cover':
         # Search only passing prefixes. A separate BMC keeps these as
         # assertions and can expose violations instead of ruling them out.
@@ -151,16 +171,55 @@ def snapshot(directory, action, depth, timeout, targets=()):
     options = ['mode ' + action, 'depth ' + str(depth + 2)]
     if timeout:
         options.append('timeout ' + str(timeout))
+    model = 'formal_model.json\n' if native else 'rtl_snapshot\nformal_top.sv\nslang.f\n'
     (directory/'run.sby').write_text(
         '[options]\n' + '\n'.join(options) + '\n\n[engines]\nsmtbmc yices\n\n[script]\n'
-        + script + '\n[files]\nrtl_snapshot\nformal_top.sv\nslang.f\n', encoding='utf-8')
+        + script + '\n[files]\n' + model, encoding='utf-8')
     return dict(version=1, replay_version=REPLAY_VERSION, id=directory.name, action=action, max_body_cycles=depth, timeout=timeout,
                 targets=list(targets), engine='smtbmc yices',
                 dut=dut, functional=functional, contract_revision=inventory['revision'],
                 builtin=[dict(name=p['name'], kind=p['kind']) for p in builtin],
                 sources={name: digest(data) for name, data in rtl.items()},
                 checker_sha256=digest(builtin_bytes),
-                engine_sha256=eda.digest(Path(__file__)), adapter_sha256=eda.digest(Path(props.__file__)))
+                engine_sha256=eda.digest(Path(__file__)), adapter_sha256=functional['adapter_sha256'])
+
+
+def prepare_native(directory, result, env):
+    rows = [p for p in result['functional']['properties'] if p.get('origin') == 'rtl']
+    if not rows:
+        return
+    print('FUNCTIONAL_STAGE 展开 DUT Cover 并准备回放条件', flush=True)
+    targets = set(result['targets'] or props.cover_names(result['functional'])) if result['action'] == 'cover' else set()
+    script = ('read_slang --top {top} --no-implicit-memories -f slang.f\n'
+              'hierarchy -top {top}\nproc\nopt_expr\nopt_clean\nwrite_json initial_model.json\n'
+              'async2sync\ndffunmap\nchformal -lower\nwrite_json clocked_model.json\n').format(top=props.TOP)
+    (directory/'prepare_native.ys').write_text(script, encoding='utf-8')
+    log = directory/'dut_cover_model.log'
+    result['unsupported'] = {}
+    rc, _ = eda.execute(['yosys', '-m', 'slang', '-s', 'prepare_native.ys'], directory, log, env, None,
+                        phase='functional_model')
+    if rc:
+        rejected = rtl_cover.unsupported_declarations(log.read_text(encoding='utf-8', errors='replace'), directory, result)
+        if rejected:
+            log.replace(directory/'dut_cover_unsupported.log')
+            original = {name: (directory/'rtl_snapshot'/name).read_bytes() for name in result['sources']}
+            overlay = rtl_cover.formal_rewrites(original, rejected)
+            rtl_cover.write_sources(directory/'rtl_formal', result['dut'], overlay)
+            locations = {(file, line) for (file, _), line in rejected.items()}
+            result['unsupported'].update((row['name'], '当前开源 Formal 无法展开此 SVA，请查看原始代码和求解日志。')
+                                         for row in rows if (row['file'], row['line']) in locations)
+            rc, _ = eda.execute(['yosys', '-m', 'slang', '-s', 'prepare_native.ys'], directory, log, env, None,
+                                phase='functional_model')
+    if rc:
+        detail = log.read_text(encoding='utf-8', errors='replace')
+        errors = '\n'.join(row for row in detail.splitlines() if 'error:' in row or row.startswith('ERROR'))
+        raise RuntimeError('无法构建 DUT Cover 的 Formal 模型\n' + (errors or detail[-4000:]) + '\n' + str(log))
+    lowered = rtl_cover.prepare_targets(eda.read_json(directory/'initial_model.json'),
+                                         eda.read_json(directory/'clocked_model.json'), rows, targets,
+                                         'rtl_formal', result['unsupported'])
+    rtl_cover.write_json(directory/'formal_model.json', lowered)
+    for temporary in ('initial_model.json', 'clocked_model.json'):
+        (directory/temporary).unlink()
 
 
 def trace_frames(path, end_step, goal_steps=None):
@@ -280,16 +339,22 @@ def collect(directory, result, env):
         checks = [row for row in statuses if row['kind'] == 'ASSERT']
         result.update(status=solver_status, checks=checks)
         return
+    finalize_cover(directory, result, statuses, solver_status)
+
+
+def finalize_cover(directory, result, statuses, solver_status):
     names = props.cover_names(result['functional'])
-    candidates = extract_traces(directory, statuses, names)
+    targeted = set(result.get('targets') or names)
+    unsupported = set(result.get('unsupported', {}))
+    candidates = extract_traces(directory, statuses, targeted - unsupported)
     reached = {name for item in candidates if 'frames' in item for name in item['goals']}
     rejected = {name for item in candidates if item['failures'] for name in item['goals']}
-    targeted = set(result.get('targets') or names)
     goals = {name: ('NOT_SELECTED' if name not in targeted else
                     'WITNESS' if name in reached else 'REPLAY_REJECTED' if name in rejected
+                    else 'UNSUPPORTED' if name in result.get('unsupported', {})
                     else 'TIMEOUT' if solver_status == 'TIMEOUT'
                     else 'UNKNOWN' if solver_status == 'UNKNOWN' else 'NOT_FOUND_WITHIN_DEPTH') for name in names}
-    if solver_status == 'PASS' and reached != targeted:
+    if solver_status == 'PASS' and reached != targeted - unsupported:
         print('FUNCTIONAL_WARNING SBY 命中目标中有轨迹无法提取，请查看任务结果', flush=True)
     status = ('COMPLETE' if reached == targeted else 'TIMEOUT' if solver_status == 'TIMEOUT'
               else 'PARTIAL' if reached else 'NO_WITNESSES')
@@ -337,6 +402,8 @@ def check_replay_build(campaign, build):
     checked = dict(campaign['sources'])
     checked.update({ENGINE: eda.digest(Path(__file__)), props.SOURCE: campaign['adapter_sha256'],
                     eda.PROJECT['checker']: campaign['checker_sha256']})
+    if campaign['functional'].get('rtl_cover_adapter_sha256'):
+        checked[rtl_cover.SOURCE] = campaign['functional']['rtl_cover_adapter_sha256']
     compatible_generator = campaign.get('replay_version') == REPLAY_VERSION or (
         campaign.get('replay_version') is None and campaign['engine_sha256'] == REPLAY_ENGINE_R3)
     same_rtl = set(campaign['sources']) == {
@@ -352,12 +419,31 @@ def check_replay_build(campaign, build):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--action', required=True, choices=('cover', 'bmc'))
+    parser.add_argument('--action', required=True, choices=('cover', 'bmc', 'list', 'properties'))
+    parser.add_argument('--output', type=Path)
     parser.add_argument('--id', default='')
     parser.add_argument('--depth', type=int, default=48)
     parser.add_argument('--timeout', type=int, default=600)
     parser.add_argument('--targets', default='', help='comma-separated declared cover labels')
     args = parser.parse_args(argv)
+    if args.action in ('list', 'properties'):
+        execution.install_signal_handlers()
+        try:
+            if args.action == 'properties':
+                from property_inventory import inventory
+                rows = inventory(eda.ROOT, eda.PROJECT, run=discover_properties)
+            else:
+                rows = rtl_cover.latest_inventory(run=discover_properties)
+            if args.output:
+                eda.write_json(args.output, rows)
+            else:
+                print(json.dumps(rows, ensure_ascii=False, indent=2))
+            return 0
+        except KeyboardInterrupt:
+            return 130
+        except (ValueError, RuntimeError, OSError) as exc:
+            print('FUNCTIONAL: ' + str(exc), file=sys.stderr, flush=True)
+            return 2
     if not 1 <= args.depth <= 1000000 or args.timeout < 0:
         parser.error('深度须为 1–1000000，超时须非负，0 表示不限时')
     execution.install_signal_handlers()
@@ -373,16 +459,21 @@ def main(argv=None):
         result = snapshot(directory, args.action, args.depth, args.timeout, args.targets.split(',') if args.targets else ())
         result.update(status='RUNNING', started_at=started)
         eda.write_json(directory/'result.json', result)
-        print('FUNCTIONAL_STAGE ' + ('寻找 cover 轨迹' if args.action == 'cover' else '有界检查 assert'), flush=True)
         with toolchain.environment() as env:
             if 'CMDBUF_STUDIO_FORMAL_LIVE' in env:
                 result['tools'] = toolchain.versions(env)
-            execution.run(['sby', '-d', 'solver', 'run.sby'], directory, directory/'sby.log', env, None,
-                          phase='functional_'+args.action,
-                          on_output=(lambda line: print(line, end='', flush=True))
-                          if 'CMDBUF_STUDIO_FORMAL_LIVE' in env else None)
-            print('FUNCTIONAL_STAGE 归档逐属性结果与轨迹', flush=True)
-            collect(directory, result, env)
+            prepare_native(directory, result, env)
+            targets = result['targets'] or props.cover_names(result['functional'])
+            if args.action == 'cover' and set(targets) <= set(result.get('unsupported', {})):
+                finalize_cover(directory, result, [], 'UNKNOWN')
+            else:
+                print('FUNCTIONAL_STAGE ' + ('寻找 cover 轨迹' if args.action == 'cover' else '有界检查 assert'), flush=True)
+                execution.run(['sby', '-d', 'solver', 'run.sby'], directory, directory/'sby.log', env, None,
+                              phase='functional_'+args.action,
+                              on_output=(lambda line: print(line, end='', flush=True))
+                              if 'CMDBUF_STUDIO_FORMAL_LIVE' in env else None)
+                print('FUNCTIONAL_STAGE 归档逐属性结果与轨迹', flush=True)
+                collect(directory, result, env)
         exit_code = 0 if args.action == 'cover' or result['status'] == 'PASS' else 1
     except KeyboardInterrupt:
         if result is not None:

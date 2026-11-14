@@ -137,6 +137,7 @@ def functional_coverage(batches, summaries, cases):
         hits = row.get('hits')
         if (row.get('sha256') != reference['sha256'] or row.get('version') != reference['version'] or
                 row.get('adapter_sha256') != reference['adapter_sha256'] or
+                row.get('rtl_cover_adapter_sha256') != reference.get('rtl_cover_adapter_sha256') or
                 not row.get('complete') or not isinstance(hits, list) or
                 len(hits) != len(set(hits)) or any(name not in bits for name in hits) or
                 not receipt.is_file() or eda.digest(receipt) != result.get('functional_receipt_sha256') or

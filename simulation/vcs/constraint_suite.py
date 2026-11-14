@@ -82,7 +82,7 @@ def random_audit_negative_checks(source):
 
 
 def run_suite(args,env):
-    inventory=contracts.audit()
+    inventory=contracts.audit(allow_rtl_covers=True)
     build=eda.build(env)
     rid=eda.stamp()+'_contracts_'+uuid.uuid4().hex[:6]
     root=eda.OUT/'regressions'/rid; inputs=root/'inputs'; inputs.mkdir(parents=True)

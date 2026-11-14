@@ -75,12 +75,14 @@ def completed_runs(batch, offset, count):
 def summary_row(summary):
     results = summary['results']
     coverage = summary.get('coverage', {})
+    functional = summary.get('functional', {}).get('manifest', {})
     return dict(id=summary['id'], status=summary['status'], total=summary.get('total', len(results)),
                 completed=len(results), passed=summary['passed'], partial=False,
                 coverage=coverage.get('metrics_percent', {}) if coverage.get('status') == 'PASS' else {},
                 waves=summary.get('waves_enabled', True), dut=summary.get('dut', {}).get('name', ''),
                 created=summary.get('created_at', ''), seconds=sum(r.get('seconds', 0) for r in results),
-                functional_sha256=summary.get('functional', {}).get('manifest', {}).get('sha256'),
+                functional_version=(functional['sha256'], functional.get('version'), functional.get('adapter_sha256'),
+                                    functional.get('rtl_cover_adapter_sha256')) if functional.get('sha256') else None,
                 formal_campaign=summary.get('formal_campaign'))
 
 
@@ -140,7 +142,7 @@ def import_rtl(paths, base=None):
                 include_dirs=sorted({p.parent.relative_to(ROOT).as_posix() for p in copied}))
 
 
-def make_command(arguments):
+def make_command(arguments, project_python=False):
     if sys.platform != 'linux':
         if arguments[0].replace('-', '_') in FORMAL_JOBS:
             raise RuntimeError('开源 Formal 任务需要在 Linux 上运行。')
@@ -153,7 +155,7 @@ def make_command(arguments):
         if any(ch in str(arg) for ch in ('$', '`', '"', '\n', '\r', '\0')):
             raise ValueError('Make 参数路径不能含 $、反引号、双引号或换行，请改名后重试')
     cmd = ['make', '--no-print-directory']
-    if os.environ.get('CMDBUF_BUNDLED_PYTHON') != '1':
+    if not project_python and os.environ.get('CMDBUF_BUNDLED_PYTHON') != '1':
         cmd.append('PYTHON='+sys.executable)
     return cmd+list(arguments)
 

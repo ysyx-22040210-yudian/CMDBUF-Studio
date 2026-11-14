@@ -70,7 +70,9 @@ help:
 	@echo '       FORMAL_FORMAT=optimized|cycle|signal|table|packed|property|boolean|channel|range|rom|generate'
 	@echo '  make formal-doctor                    Check Yosys, SymbiYosys, ABC and Yices'
 	@echo '  make formal-prove FORMAL_ID=id        Check the exported DUT and all trace endpoints'
-	@echo '  make formal-cover FORMAL_DEPTH=48    Generate cases for the user cover properties'
+	@echo '  make formal-cover FORMAL_DEPTH=48    Generate cases for DUT and editor cover targets'
+	@echo '  make formal-cover-list               List instantiated DUT cover targets and source locations'
+	@echo '  make formal-property-list            List DUT and environment assertions, assumptions and cover targets'
 	@echo '  make formal-bmc FORMAL_DEPTH=48      Check built-in and user assertions under assumptions'
 	@echo '       COVER_TIMEOUT=600 limits the solver in seconds; 0 means unlimited.'
 	@echo '  make formal-replay CAMPAIGN=id        Replay generated cases in VCS and collect coverage'
@@ -155,7 +157,13 @@ formal-doctor:
 formal-prove:
 	$(PYTHON) "$(EDA_HERE)fsdb_formal/proof.py" --project $(if $(strip $(FORMAL_ID)),--export-id "$(FORMAL_ID)") $(if $(strip $(FORMAL_PACKAGE)),--package "$(FORMAL_PACKAGE)") $(if $(strip $(FORMAL_RUN_ID)),--run-id "$(FORMAL_RUN_ID)") $(if $(strip $(FORMAL_TIMEOUT)),--timeout "$(FORMAL_TIMEOUT)")
 
-.PHONY: formal-cover formal-bmc formal-replay
+.PHONY: formal-cover formal-bmc formal-replay formal-cover-list formal-property-list
+formal-cover-list:
+	$(PYTHON) "$(EDA_HERE)functional_cover.py" --action list $(if $(strip $(OUTPUT)),--output "$(OUTPUT)")
+
+formal-property-list:
+	$(PYTHON) "$(EDA_HERE)functional_cover.py" --action properties $(if $(strip $(OUTPUT)),--output "$(OUTPUT)")
+
 formal-cover formal-bmc:
 	$(PYTHON) "$(EDA_HERE)functional_cover.py" --action $(patsubst formal-%,%,$@) --id "$(CAMPAIGN)" --depth "$(FORMAL_DEPTH)" --timeout "$(COVER_TIMEOUT)" $(if $(strip $(TARGETS)),--targets "$(TARGETS)")
 

@@ -52,6 +52,8 @@ Windows 的 `CMDBUF Studio.cmd` 或 `.\make.cmd gui` 可打开同一原生窗口
 | FSDB 转 Formal | 层级检查、端口映射、pattern 编号、验证包导出、检查内置工具、运行证明、查看反例波形 |
 | 本机工具 | 自动检测本机环境并显示结果，默认无路径输入；特殊站点覆盖收纳在高级选项 |
 
+用例 `main_phase`、DUT 例化、端口 SVA 和开源 Formal 属性使用深色 SV 编辑器，支持行号、语法高亮、括号匹配、`Ctrl+F` 查找、`Ctrl+H` 替换、`Ctrl+G` 跳行、`Ctrl+/` 切换行注释及 `Ctrl+S` 保存。右上角点 **Vim** 开关，编辑区上方会显示当前模式。常用键包括 `i`/`a` 插入、`Esc` 回普通模式、`hjkl`/`w`/`b`/`gg`/`G` 移动、`v`/`V` 选区、`dd`/`yy`/`p` 剪切复制粘贴、`ciw` 改词以及 `u`/`Ctrl+R` 撤销重做。`/` 和 `n` 搜索，`:%s/旧内容/新内容/g` 全文替换，两者匹配字面文本。`:w` 保存当前编辑器。Vim 开关在同一工作台的可编辑窗口间同步，正常关闭时保存。
+
 用例在每次 `@(posedge clk)` 后按模板顺序赋值。`begin_cycle()` 等待 DUT 更新，`drive_control()` 更新 `rready`，`sample_context()` 等待同一时间点内的组合反馈，`drive_inputs()` 检查并驱动供下一上升沿采样的值。约束写成普通 `if / else`，随机数在合法分支内选择。时钟低/高电平与暂停由模板变量控制。新协议需要显式补充约束清单和检查器。
 
 2026-11-12 接口补充契约适用于复位释放后的每个上升沿采样拍。
@@ -92,12 +94,18 @@ make formal-prove FORMAL_PACKAGE="/path/to/extracted export"
 
 在 Tk 的「开源 Formal → 属性与任务」编写带标签的 SV `assert property`、`assume property`、`cover property`，也可编辑 `simulation/vcs/functional_coverage.sv`。可以搜索全部或选中的 Cover，并在任务栏查看求解进度。在「搜索与回放结果」查看逐属性结论、波形和逐拍输入，按需选择轨迹进行 VCS 回放。常规回归也采集同一组功能覆盖点。选择两类已完成的批次运行「联合最小集」，保留每个已命中项。「验证包证明」可运行 FSDB 导出的包，查看历次有界检查及各 pattern 的终点。
 
+「属性导航」显示属性编辑器中的定义、当前 DUT 展开后的 Assert / Assume / Cover，以及环境端口检查器中的 Assert / Assume。用类型菜单筛选，选择目标即可打开 **属性源码** 并高亮原始 SystemVerilog。环境属性会标注是否纳入现有 Formal 流程。保存 DUT 或端口 SVA 后自动刷新，外部修改可点击「刷新属性」。命令行也可执行 `make formal-property-list` 查看 DUT 和环境属性。
+
+同名 DUT Cover 按实例层级区分，命令行可用 `TARGETS=dut.u_cmd.C_QUEUE_FULL` 选择。结果页「查看属性」打开运行时归档的 RTL。DUT Cover 的功能覆盖和联合选集使用 VCS 实际命中，求解深度仍包含八拍收尾。支持同一主时钟下的布尔条件、`##N` 和有限的 `##[N:M]` 时序。存在的目标如超出当前开源前端支持范围，会在求解结果中显示具体原因。
+
 ```bash
 make formal-cover CAMPAIGN=cover_demo FORMAL_DEPTH=48 COVER_TIMEOUT=600
-make formal-replay CAMPAIGN=cover_demo JOBS=4 WAVES=0
+make formal-replay CAMPAIGN=cover_demo JOBS=4 WAVES=1
 make formal-bmc FORMAL_DEPTH=16 COVER_TIMEOUT=600
 make coverage-minimize-joint REGRESSIONS=normal_batch,formal_replay_batch
 ```
+
+打开「轨迹与回放」，勾选「生成波形」并回放有命中轨迹的用例。回放通过后可查看 VCS 波形，并将回放批次与同一属性版本的普通回归加入「联合最小集」。操作见[Cover 回放与联合最小用例集](documents/50_cmdbuf_cover_replay_joint_minimum.pdf)。
 
 命令行可用 `TARGETS=C_XAU0_AR,C_PARITY_R` 搜索指定 Cover，用 `TRACES=trace0` 回放指定轨迹。
 
