@@ -23,7 +23,7 @@ INPUTS = [s for s in SIGNALS if s['direction'] == 'input' and s['name'] != 'clk'
 OUTPUTS = [s for s in SIGNALS if s['direction'] == 'output']
 R_PAYLOAD = {'rdata', 'rid', 'r_port_id', 'raddr', 'rresp'}
 
-FORMAT_LABELS = dict(cycle='逐拍分组', signal='逐拍逐信号', table='按拍查表',
+FORMAT_LABELS = dict(cycle='逐拍分组', optimized='逐拍拆分输出', signal='逐拍逐信号', table='按拍查表',
                      packed='逐拍拼接向量', property='可复用 Property', boolean='逐拍布尔条件',
                      channel='逐拍按接口分组', range='按信号合并相邻拍',
                      rom='常量 ROM 查表', generate='Generate 逐拍展开')
@@ -193,6 +193,56 @@ def signal_label(name):
     return name.replace('[', '_').replace(']', '')
 
 
+def cycle_input_properties(segment, selector, suffix, cycle_width, property_style):
+    """Keep a separate input constraint for each signal so unrelated ports need not share its cone."""
+    length = segment['cycles']
+    guard = f"({selector} && trace_cycle < {cycle_width}'d{length})"
+    for name in INPUT_NAMES:
+        schedule = {}
+        for row in segment['rows']:
+            schedule.setdefault(row['values'][name], []).append(row['cycle'])
+        label = suffix+'_'+signal_label(name)
+        default = max(schedule, key=lambda value: len(schedule[value]))
+        if len(schedule) == 1:
+            expected = literal(default)
+        else:
+            expected = 'expected_'+label
+            yield f'    logic [{PORT_WIDTHS[name]-1}:0] {expected};'
+            yield '    always_comb begin'
+            yield '        case (trace_cycle)'
+            for value, cycles in schedule.items():
+                if value == default:
+                    continue
+                choices = ',\n            '.join(f"{cycle_width}'d{cycle}" for cycle in cycles)
+                yield f'            {choices}: {expected} = {literal(value)};'
+            yield f'            default: {expected} = {literal(default)};'
+            yield '        endcase'
+            yield '    end'
+        yield from property_lines('assume', 'M_'+label, guard, f'{name} == {expected}', property_style)
+
+
+def cycle_assertions(row, guard, suffix, property_style):
+    values = row['values']
+    outputs = row['compared_outputs']
+    controls = [name for name in outputs if name not in R_PAYLOAD and name != 'arb_addr']
+    yield from property_lines('assert', 'A_'+suffix+'_CTRL', guard,
+                              comparisons(controls, values), property_style)
+    if 'arb_addr' in outputs:
+        yield from property_lines('assert', 'A_'+suffix+'_arb_addr', guard,
+                                  comparisons(['arb_addr'], values), property_style)
+    response = [name for name in outputs if name in R_PAYLOAD and name != 'rdata']
+    if response:
+        yield from property_lines('assert', 'A_'+suffix+'_R', guard,
+                                  comparisons(response, values), property_style)
+    if 'rdata' in outputs:
+        width = PORT_WIDTHS['rdata']
+        for low in range(0, width, 32):
+            high = min(low+31, width-1)
+            value = values['rdata'][width-1-high:width-low]
+            yield from property_lines('assert', f'A_{suffix}_rdata_{low}', guard,
+                                      f'rdata[{high}:{low}] == {literal(value)}', property_style)
+
+
 def cycle_properties(row, guard, suffix, style, property_style):
     values = row['values']
     groups = [('assume', 'M', INPUT_NAMES), ('assert', 'A', row['compared_outputs'])]
@@ -212,7 +262,7 @@ def cycle_properties(row, guard, suffix, style, property_style):
             yield from property_lines(kind, label, guard, comparisons(names, values, style == 'packed'), property_style)
 
 
-def range_properties(segment, selector, suffix, property_style):
+def range_properties(segment, selector, suffix, cycle_width, property_style):
     rows = segment['rows']
     groups = [('assume', 'M', INPUT_NAMES), ('assert', 'A', OUTPUT_NAMES)]
     for kind, prefix, names in groups:
@@ -226,9 +276,9 @@ def range_properties(segment, selector, suffix, property_style):
                 if value is None:
                     continue
                 if cycle == first + 1:
-                    window = f"trace_cycle == 32'd{first}"
+                    window = f"trace_cycle == {cycle_width}'d{first}"
                 else:
-                    window = f"trace_cycle >= 32'd{first} && trace_cycle < 32'd{cycle}"
+                    window = f"trace_cycle >= {cycle_width}'d{first} && trace_cycle < {cycle_width}'d{cycle}"
                 label = f'{prefix}_{suffix}_{signal_label(name)}_C{first:05d}'
                 yield from property_lines(kind, label, f'({selector} && {window})',
                                           f'{name} == {literal(value)}', property_style)
@@ -257,19 +307,19 @@ def packed_comparisons(guard, suffix, columns, property_style, indent='    '):
                              property_style, indent))
 
 
-def table_properties(segment, selector, suffix, scale, property_style):
+def table_properties(segment, selector, suffix, scale, cycle_width, property_style):
     columns = [name+'_'+suffix for name in TABLE_FIELDS]
     lines = [f'    logic [{width-1}:0] {column};' for width, column in zip(TABLE_WIDTHS, columns)]
     lines += ['    always_comb begin', '        case (trace_cycle)']
     for row in segment['rows']:
-        lines.append(f"            32'd{row['cycle']}: begin // FSDB posedge {row['time']} {scale}")
+        lines.append(f"            {cycle_width}'d{row['cycle']}: begin // FSDB posedge {row['time']} {scale}")
         for column, value in zip(columns, table_values(row)):
             lines.append(f'                {column} = {value};')
         lines.append('            end')
     lines.append('            default: begin')
     lines.extend(f"                {column} = '0;" for column in columns)
     lines += ['            end', '        endcase', '    end']
-    guard = f"({selector} && trace_cycle < 32'd{segment['cycles']})"
+    guard = f"({selector} && trace_cycle < {cycle_width}'d{segment['cycles']})"
     return lines + packed_comparisons(guard, suffix, columns, property_style)
 
 
@@ -298,6 +348,10 @@ def rom_properties(segment, selector, suffix, elaborated, property_style):
 def native_sva(traces, style='cycle', lowered=False):
     style = formal_format(style)
     maximum = max(s['cycles'] for trace in traces for s in trace['segments'])
+    # Include the saturated value itself, even when the length is a power of two.
+    cycle_width = maximum.bit_length()
+    pattern_width = max(1, max(t['pattern'] for t in traces).bit_length())
+    segment_width = max(1, (max(len(t['segments']) for t in traces)-1).bit_length())
     lines = [
         '// Generated from direct NPI FSDB samples; values are sampled BEFORE posedge.',
         '// A pattern identifies one FSDB. reset_segment selects a complete post-reset interval.',
@@ -307,28 +361,34 @@ def native_sva(traces, style='cycle', lowered=False):
         '`default_nettype none', 'module cmdbuf_fsdb_properties (',
         '    input wire [31:0] pattern,', '    input wire [31:0] reset_segment,',
         ',\n'.join(declarations()), ');',
-        "    reg [31:0] trace_cycle = 32'd0;",
+        f"    reg [{cycle_width-1}:0] trace_cycle = {cycle_width}'d0;",
         '    always @(posedge clk or negedge rst_n)',
-        "        if (!rst_n) trace_cycle <= 32'd0;",
-        f"        else if (trace_cycle < 32'd{maximum}) trace_cycle <= trace_cycle + 32'd1;",
+        f"        if (!rst_n) trace_cycle <= {cycle_width}'d0;",
+        f"        else if (trace_cycle < {cycle_width}'d{maximum}) trace_cycle <= trace_cycle + {cycle_width}'d1;",
         '', '// Selectors are symbolic constants within each reset interval.',
     ]
     property_style = 'sby' if lowered else style
-    if lowered:
-        lines += ['    reg [31:0] trace_prev_pattern, trace_prev_segment;',
-                  '    always @(posedge clk) begin',
-                  '        trace_prev_pattern <= pattern;',
-                  '        trace_prev_segment <= reset_segment;',
-                  '    end']
-        stable_pattern, stable_segment = 'pattern == trace_prev_pattern', 'reset_segment == trace_prev_segment'
-    else:
-        stable_pattern, stable_segment = '$stable(pattern)', '$stable(reset_segment)'
-    for label, condition in [('M_PATTERN_STABLE', stable_pattern), ('M_SEGMENT_STABLE', stable_segment)]:
-        lines.extend(property_lines('assume', label, "(trace_cycle != 32'd0)", condition,
+    selection = ' ||\n        '.join(
+        f"(pattern == 32'd{t['pattern']} && reset_segment < 32'd{len(t['segments'])})" for t in traces)
+    lines += [f'    M_SELECTION: assume property ({SVA_CLOCK}', f'        {selection});', '']
+    # M_SELECTION enforces legal current selectors. Remember whether the high
+    # bits were zero at the previous sample, including while reset was active.
+    for label, name, width in (('M_PATTERN_STABLE', 'pattern', pattern_width),
+                               ('M_SEGMENT_STABLE', 'reset_segment', segment_width)):
+        low = f'{name}[{width-1}:0]'
+        high_zero = f"{name}[31:{width}] == {32-width}'d0"
+        sample = f'trace_{name}_sample'
+        lines.append(f'    wire [{width}:0] {sample} = {{{high_zero}, {low}}};')
+        if lowered:
+            previous = f'trace_prev_{name}'
+            lines += [f'    reg [{width}:0] {previous};',
+                      f'    always @(posedge clk) {previous} <= {sample};']
+            condition = f'{sample} == {previous}'
+        else:
+            condition = f'$stable({sample})'
+        lines.extend(property_lines('assume', label, f"(trace_cycle != {cycle_width}'d0)", condition,
                                     'sby' if lowered else 'cycle'))
-    lines += [f'    M_SELECTION: assume property ({SVA_CLOCK}',
-              '        ' + ' ||\n        '.join(f"(pattern == 32'd{t['pattern']} && reset_segment < 32'd{len(t['segments'])})"
-                                              for t in traces) + ');', '']
+    lines.append('')
     if style == 'property' and not lowered:
         lines += ['    property trace_equals(logic selected, logic expected_ok);',
                   f'        {SVA_CLOCK} selected |-> expected_ok;',
@@ -345,18 +405,26 @@ def native_sva(traces, style='cycle', lowered=False):
             suffix = f'P{pattern}_S{sid}'
             lines.append(f"// pattern {pattern}, reset_segment {sid}; FSDB release tick {segment['reset_released_at']}; {segment['cycles']} cycles.")
             if style == 'table':
-                lines.extend(table_properties(segment, selector, suffix, scale, property_style))
+                lines.extend(table_properties(segment, selector, suffix, scale, cycle_width, property_style))
             elif style in ('rom', 'generate'):
                 lines.extend(rom_properties(segment, selector, suffix, style == 'generate', property_style))
             elif style == 'range':
-                lines.extend(range_properties(segment, selector, suffix, property_style))
+                lines.extend(range_properties(segment, selector, suffix, cycle_width, property_style))
             else:
+                if style == 'optimized':
+                    lines.append('    // Input schedules by port. Each assumption applies only within this reset interval.')
+                    lines.extend(cycle_input_properties(segment, selector, suffix, cycle_width, property_style))
+                    lines.append('    // Check control, address, response metadata and 32-bit data slices independently.')
                 for row in segment['rows']:
-                    guard = f"({selector} && trace_cycle == 32'd{row['cycle']})"
+                    guard = f"({selector} && trace_cycle == {cycle_width}'d{row['cycle']})"
+                    cycle_suffix = f"{suffix}_C{row['cycle']:05d}"
                     lines.append(f"    // FSDB posedge {row['time']} {scale}; snapshot uses the preceding time tick.")
-                    lines.extend(cycle_properties(row, guard, f"{suffix}_C{row['cycle']:05d}", style, property_style))
+                    if style == 'optimized':
+                        lines.extend(cycle_assertions(row, guard, cycle_suffix, property_style))
+                    else:
+                        lines.extend(cycle_properties(row, guard, cycle_suffix, style, property_style))
             lines += [f'    C_END_{suffix}: cover property ({SVA_CLOCK}',
-                      f"        {selector} && trace_cycle == 32'd{segment['cycles']-1});", '']
+                      f"        {selector} && trace_cycle == {cycle_width}'d{segment['cycles']-1});", '']
     return '\n'.join(lines + ['endmodule', '`default_nettype wire', ''])
 
 

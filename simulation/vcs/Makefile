@@ -62,7 +62,7 @@ help:
 	@echo '  make gui                             Open CMDBUF Studio on this computer'
 	@echo '  make fsdb-inspect REQUEST=request.json  Inspect FSDB through NPI'
 	@echo '  make fsdb-formal REQUEST=request.json   Extract FSDB and generate pattern-selected SVA'
-	@echo '       FORMAL_FORMAT=cycle|signal|table|packed|property|boolean|channel|range|rom|generate'
+	@echo '       FORMAL_FORMAT=optimized|cycle|signal|table|packed|property|boolean|channel|range|rom|generate'
 	@echo '  make formal-doctor                    Check Yosys, SymbiYosys, ABC and Yices'
 	@echo '  make formal-prove FORMAL_ID=id        Check the exported DUT and all trace endpoints'
 	@echo '       FORMAL_PACKAGE=/path/to/extracted/export is an alternative to FORMAL_ID.'

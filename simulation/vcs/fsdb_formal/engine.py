@@ -133,7 +133,7 @@ def sby_configs(directory, traces, names, includes, cfg, style='cycle'):
     eda.write_json(directory/'sby_adaptation.json',dict(source='trace_properties.sv',executed='sby_properties.sv',
                    properties=properties, format=style, executed_format=sby_style,
                    rule='Generated from the same trace. The two-state backend uses (!A || B) for guarded comparisons.',
-                   sampled_value_expansion='Two $stable selectors replaced by comparisons against explicit previous-posedge registers. First-cycle guards preserved.',
+                   sampled_value_expansion='Selector stability uses the low bits and a high-bits-zero flag. The SBY form samples them in explicit previous-posedge registers.',
                    source_sha256=eda.digest(directory/'trace_properties.sv'),executed_sha256=eda.digest(directory/'sby_properties.sv')))
     depth = max(s['cycles'] for t in traces for s in t['segments']) + 2
     args = ['-D','SYNTHESIS']

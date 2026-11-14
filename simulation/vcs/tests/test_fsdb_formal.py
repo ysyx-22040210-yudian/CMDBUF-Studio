@@ -34,7 +34,7 @@ class FsdbFormalTests(unittest.TestCase):
         self.assertEqual(trace['segments'][1]['rows'][0]['cycle'],0)
         self.assertEqual(trace['segments'][0]['rows'][1]['time'],15)
         code=core.native_sva([trace])
-        self.assertIn("pattern == 32'd42 && reset_segment == 32'd1 && trace_cycle == 32'd0",code)
+        self.assertIn("pattern == 32'd42 && reset_segment == 32'd1 && trace_cycle == 2'd0",code)
         self.assertEqual(code.count('cover property'),2)
         self.assertNotIn('started',code)
 
@@ -61,7 +61,7 @@ class FsdbFormalTests(unittest.TestCase):
 
     def test_actual_widths_banks_and_pattern_literals(self):
         self.records[3]['values']['rd_mem_status[7]']='10'
-        trace=self.parse();code=core.native_sva([trace])
+        trace=self.parse();code=core.native_sva([trace], 'signal')
         self.assertIn("rd_mem_status[7] == 2'h2",code)
         self.assertIn('input wire [1:0] rd_mem_status [7:0]',code)
         self.assertEqual(core.literal('1'+'0'*127),"128'h80000000000000000000000000000000")
@@ -78,7 +78,8 @@ class FsdbFormalTests(unittest.TestCase):
         lowered=(folder/'sby_properties.sv').read_text()
         self.assertNotIn('|->',lowered)
         self.assertNotIn('$stable(',lowered)
-        self.assertIn('$stable(pattern)',native)
+        self.assertIn("wire [6:0] trace_pattern_sample = {pattern[31:6] == 26'd0, pattern[5:0]};",native)
+        self.assertIn('$stable(trace_pattern_sample)',native)
         self.assertEqual(lowered.count('assert property'),2)
         self.assertEqual(lowered.count('assume property'),5)
         self.assertIn('sim -clock clk -resetn rst_n',(folder/'run_bmc.sby').read_text())
@@ -90,7 +91,7 @@ class FsdbFormalTests(unittest.TestCase):
         trace = self.parse()
         folder = Path(self.tmp.name)/'styles'
         common = None
-        self.assertEqual(len(core.FORMATS), 10)
+        self.assertEqual(len(core.FORMATS), 11)
         for style in core.FORMATS:
             with self.subTest(style=style):
                 export = folder/style
@@ -124,14 +125,33 @@ class FsdbFormalTests(unittest.TestCase):
                         self.assertEqual(int(packed, 16), int(expected, 2))
                     self.assertEqual(len(masks), 2)
                     self.assertIn('trace_outputs = {'+', '.join(output_signals)+'}', native)
-                    self.assertIn("trace_cycle < 32'd2", native)
+                    self.assertIn("trace_cycle < 2'd2", native)
                 if style == 'range':
-                    self.assertIn("trace_cycle >= 32'd0 && trace_cycle < 32'd2", native)
+                    self.assertIn("trace_cycle >= 2'd0 && trace_cycle < 2'd2", native)
                     self.assertNotIn('A_P42_S0_rdata_C00000:', native)
                     self.assertIn('A_P42_S0_rdata_C00001:', native)
                 if style == 'property':
                     self.assertIn('property trace_equals(', native)
                     self.assertNotIn('trace_equals(', lowered)
+
+    def test_cycle_format_keeps_input_schedule_and_all_valid_output_bits(self):
+        self.records[3]['values'].update(rdata='x'*128, arb_addr='z'*12)
+        self.records[4]['values'].update(rvalid='001', req='00000001', arid='11000101',
+                                         rdata=format(0x0123456789ABCDEFFEDCBA9876543210, '0128b'))
+        trace = self.parse()
+        code = core.native_sva([trace], 'optimized')
+        # Two recorded cycles also need room for the saturated, inactive value 2.
+        self.assertIn("reg [1:0] trace_cycle = 2'd0", code)
+        self.assertIn("trace_cycle < 2'd2", code)
+        self.assertIn("2'd1: expected_P42_S0_arid = 8'hC5;", code)
+        self.assertIn("default: expected_P42_S0_arid = 8'h00;", code)
+        self.assertIn("mem_rdata == 128'h00000000000000000000000000000000", code)
+        self.assertNotIn('A_P42_S0_C00000_rdata_', code)
+        self.assertNotIn('A_P42_S0_C00000_arb_addr:', code)
+        self.assertIn('A_P42_S0_C00001_arb_addr:', code)
+        self.assertEqual(re.findall(r"rdata\[(\d+:\d+)\] == 32'h([0-9A-F]+)", code),
+                         [('31:0', '76543210'), ('63:32', 'FEDCBA98'),
+                          ('95:64', '89ABCDEF'), ('127:96', '01234567')])
 
 
 if __name__=='__main__':unittest.main()
