@@ -6,19 +6,31 @@ GUI 不依赖浏览器、HTTP 服务、Node.js 或 SSH。所有 EDA 操作经本
 
 ![Linux 上实际运行的原生 Tk 工作台](documents/CMDBUF_Studio_Tk预览.png)
 
-## 在 Linux 上启动
+## 下载 Linux 免安装版（含开源 Formal）
 
-从 [Linux 免安装版](https://github.com/ysyx-22040210-yudian/CMDBUF-Studio/releases/tag/formal-portable-20261114) 下载对应架构的完整包和 SHA256 校验清单。
+在目标机运行 `uname -m`，然后从 [最新版 Release](https://github.com/ysyx-22040210-yudian/CMDBUF-Studio/releases/latest) 下载对应的完整包。
 
-解压对应 CPU 架构的 `cmdbuf-studio-linux-x64.tar.gz` 或 `cmdbuf-studio-linux-arm64.tar.gz`，进入 `cmdbuf-studio`，在 Linux 图形桌面终端执行 `make gui`。便携版包含 Python、Tk、Yosys、SymbiYosys、ABC 和 Yices。证明阶段可离线执行，无需安装工具链。
+| Linux 架构 | 完整包 |
+| --- | --- |
+| `x86_64`（Intel / AMD） | [cmdbuf-studio-linux-x64.tar.gz](https://github.com/ysyx-22040210-yudian/CMDBUF-Studio/releases/latest/download/cmdbuf-studio-linux-x64.tar.gz) |
+| `aarch64`（ARM64） | [cmdbuf-studio-linux-arm64.tar.gz](https://github.com/ysyx-22040210-yudian/CMDBUF-Studio/releases/latest/download/cmdbuf-studio-linux-arm64.tar.gz) |
+
+GitHub 的 **Code → Download ZIP**、Release 的 **Source code** 和 `packages/` 中的源码包均不含 Formal 运行时。上表的 Linux 完整包包含 Python、Tk、Yosys、SymbiYosys、ABC 和 Yices，证明可离线执行。[SHA256 校验清单](https://github.com/ysyx-22040210-yudian/CMDBUF-Studio/releases/latest/download/LINUX-SHA256SUMS.json)
+
+以下是 `x86_64` 的启动命令。ARM64 使用对应文件名解压。
+
+```bash
+tar -xzf cmdbuf-studio-linux-x64.tar.gz
+cd cmdbuf-studio
+make formal-doctor
+make gui
+```
 
 使用仿真和 FSDB 提取时，加载本站点 EDA 工具和许可证环境后执行以下命令。
 
 ```bash
-python3 -c "import tkinter; print(tkinter.TkVersion)"
 make doctor
 make smoke
-make gui
 ```
 
 Make 命令需要 GNU Make，仿真和 FSDB 提取使用 VCS、Verdi、URG 与兼容的 C/C++ 编译器。直接从源码启动 GUI 使用目标机的 Python ≥ 3.6 和 Tk ≥ 8.5。
@@ -141,12 +153,12 @@ make dist
 - [License 等待与执行超时 PDF](documents/39_cmdbuf_license_wait_20261111.pdf) / [Word](documents/39_cmdbuf_license_wait_20261111.docx)
 - [时钟与复位启动时序 PDF](documents/38_cmdbuf_startup_20261111.pdf) / [Word](documents/38_cmdbuf_startup_20261111.docx)
 - [检查模式与 fatal 操作说明 PDF](documents/37_cmdbuf_check_modes_20261111.pdf) / [Word](documents/37_cmdbuf_check_modes_20261111.docx)
-- [源码 ZIP](packages/cmdbuf-studio-portable.zip) / [源码 tar.gz](packages/cmdbuf-studio-portable.tar.gz) / [SHA256](packages/SHA256SUMS.json)
+- **开发用源码包（不含 Formal 运行时）** · [ZIP](packages/cmdbuf-studio-source.zip) / [tar.gz](packages/cmdbuf-studio-source.tar.gz) / [SHA256](packages/SHA256SUMS.json)
 - **当前 Tk 本机版操作手册**：[PDF](documents/36_cmdbuf_native_tk_20261111.pdf) / [Word](documents/36_cmdbuf_native_tk_20261111.docx)
 - main_phase 详细写法：[PDF](documents/32_cmdbuf_rd_main_phase_tc_20261111.pdf) / [Word](documents/32_cmdbuf_rd_main_phase_tc_20261111.docx)
 - NPI 与 Formal 语义：[PDF](documents/34_cmdbuf_fsdb_formal_20261111.pdf) / [Word](documents/34_cmdbuf_fsdb_formal_20261111.docx)
 
-说明 33 和 35 保留为历史版本，其浏览器界面、SSH 操作流程已由 36 替代。便携包可运行 `python3 simulation/vcs/portable.py --verify` 核对文件，修改工程后通过 `make dist` 重新打包。机器配置、许可证、EDA 二进制、编译缓存和既有结果均不分发。
+说明 33 和 35 保留为历史版本，其浏览器界面、SSH 操作流程已由 36 替代。完整包可运行 `/bin/sh simulation/vcs/fsdb_formal/run_python.sh simulation/vcs/portable.py --verify` 核对文件。`make dist` 默认生成源码包，带 `SUITE_X64` 或 `SUITE_ARM64` 参数时生成相应的 Linux 完整包。机器配置、许可证、商业 EDA 二进制、编译缓存和既有结果均不分发。
 
 20261113 契约按返回事务保存的状态计算 `rresp`。原 `arresp=3` 优先返回 `2'b11`。其余事务在 N+4 捕获到 `pc_err=1` 时返回 `2'b10`，正常返回 `2'b00`。`metrics.json` 的 `resp2` 统计新校验错误响应。新回归通过 `make run` 或 `make regress` 使用新契约。`make replay` 使用原二进制和契约，旧版校验错误仍按 `rresp=1` 核对。[响应码契约](docs/timing/parity_response_20261113.json)
 

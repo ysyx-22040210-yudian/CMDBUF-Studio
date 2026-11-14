@@ -12,6 +12,7 @@ import tempfile
 
 
 RELEASE = '2026-07-27'
+LINUX_DOWNLOADS = 'https://github.com/ysyx-22040210-yudian/CMDBUF-Studio/releases/latest'
 ASSETS = {
     'x86_64': ('x64', 'd5cd8fb0276b51ae6b35945e70e03f222d82a863f2e3523b33b937be0ea416f4'),
     'aarch64': ('arm64', 'dbdcbfec4b0d642e2f3ebf6ce1d9e6068a0d7732b45b798325b50ca396a101b5'),
@@ -99,8 +100,9 @@ def environment():
         return
     missing = [name for name in TOOLS if not shutil.which(name, path=search)]
     if missing:
-        raise RuntimeError('当前目录缺少 %s 的内置 Formal 运行时。请使用对应 CPU 架构的 Linux 便携包。' %
-                           architecture())
+        raise RuntimeError('当前目录缺少 %s 的 Formal 运行时。请从 GitHub Release 的 Assets 下载对应架构的'
+                           ' cmdbuf-studio-linux-*.tar.gz 完整包。源码 ZIP 不含运行时。\n%s' %
+                           (architecture(), LINUX_DOWNLOADS))
     yield env
 
 

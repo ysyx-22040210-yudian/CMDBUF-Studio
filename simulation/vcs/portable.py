@@ -11,7 +11,7 @@ import sys
 import tarfile
 import zipfile
 import eda
-from fsdb_formal.toolchain import ASSETS, RELEASE
+from fsdb_formal.toolchain import ASSETS, LINUX_DOWNLOADS, RELEASE
 
 ROOT=eda.ROOT
 
@@ -31,9 +31,14 @@ def selected_files():
 
 QUICKSTART='''# CMDBUF Studio — native Tk / local Linux
 
-The architecture-specific Linux archive ships a Python/Tk and open-source Formal runtime.
-From the extracted cmdbuf-studio directory, launch the native desktop with make gui.
-Source bundles use the workstation's Python >= 3.6 and Tk >= 8.5.
+Linux downloads: {downloads}
+Choose `cmdbuf-studio-linux-x64.tar.gz` for `x86_64` or
+`cmdbuf-studio-linux-arm64.tar.gz` for `aarch64`. Both ship Python/Tk and
+the open-source Formal runtime. Extract with `tar -xzf`, enter `cmdbuf-studio`,
+and run `make formal-doctor` and `make gui`.
+
+Archives named `cmdbuf-studio-source` and GitHub's generated source downloads
+contain project sources only. They use the workstation's Python >= 3.6 and Tk >= 8.5.
 For VCS and Verdi operations, load your site's tool/license environment, then:
     make doctor
     make smoke
@@ -42,7 +47,8 @@ For VCS and Verdi operations, load your site's tool/license environment, then:
 Requires a Linux graphical session for Tk and GNU Make for the standard commands.
 Simulation and FSDB extraction use the site's VCS / Verdi and compatible C/C++ tools.
 No browser, Node.js, HTTP service, SSH connection, or pip packages are required.
-Tk installation if missing: Debian/Ubuntu python3-tk; RHEL/CentOS python3-tkinter.
+When working from source, Tk packages are python3-tk on Debian/Ubuntu and
+python3-tkinter on RHEL/CentOS.
 
 Optional site configuration:
     export EDA_TOOL_SETUP=/absolute/path/to/site_setup.sh
@@ -63,7 +69,7 @@ Compile / simulate / open waves and coverage all use Make:
     make coverage REGRESSION=latest
     make coverage-details REGRESSION=latest
     make coverage-minimize REGRESSION=latest
-    make fsdb-formal REQUEST=request.json FORMAL_FORMAT=signal
+    make fsdb-formal REQUEST=request.json FORMAL_FORMAT=optimized
     make coverage-formal COVERAGE_SET=analysis_id FORMAL_FORMAT=table
     make wave-file FSDB=/absolute/path/to/input.fsdb
 
@@ -98,7 +104,8 @@ The GUI includes DUT import and instantiation, a main_phase-only SV editor,
 per-case seed sweeps, a native waveform canvas, local Verdi coverage, and direct
 NPI FSDB-to-Formal generation with one pattern per FSDB. FSDB viewing uses local
 fsdb2vcd for the canvas; Formal extraction reads FSDB directly through NPI.
-Generated Formal packages require the site's formal engine; generation is not a proof.
+The Linux bundle runs proofs on exported packages with its bundled engines.
+Use the exported files.f when loading native SVA into an external Formal tool.
 
 Windows: make.cmd gui opens the same native editor and existing VCD viewer.
 EDA commands intentionally require Linux; there is no remote-execution fallback.
@@ -149,7 +156,7 @@ The proof uses the export's DUT snapshot and recorded assumptions. See documents
 
 Verify the archive: /bin/sh simulation/vcs/fsdb_formal/run_python.sh simulation/vcs/portable.py --verify
 Machine credentials, commercial tools and previous results are omitted.
-'''
+'''.format(downloads=LINUX_DOWNLOADS)
 
 
 def stream_digest(stream):
@@ -192,8 +199,8 @@ def add_bytes(archive, rel, data):
 
 
 def source_archives(out, payload, manifest):
-    zip_path = out/'cmdbuf-studio-portable.zip'
-    tar_path = out/'cmdbuf-studio-portable.tar.gz'
+    zip_path = out/'cmdbuf-studio-source.zip'
+    tar_path = out/'cmdbuf-studio-source.tar.gz'
     payload = dict(payload, **{'PORTABLE_MANIFEST.json': json_bytes(manifest)})
     with zipfile.ZipFile(str(zip_path),'w',zipfile.ZIP_DEFLATED) as archive:
         for rel,data in sorted(payload.items()):
