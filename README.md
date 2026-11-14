@@ -6,20 +6,18 @@ GUI 不依赖浏览器、HTTP 服务、Node.js 或 SSH。所有 EDA 操作经本
 
 ![Linux 上实际运行的原生 Tk 工作台](documents/CMDBUF_Studio_Tk预览.png)
 
-## 下载 Linux 免安装版（含开源 Formal）
+## 通过 GitHub Download ZIP 获取 Linux x64 完整版
 
-GitHub Release 提供 `x86_64`（Intel / AMD）Linux 免安装完整包。[下载最新版完整包](https://github.com/ysyx-22040210-yudian/CMDBUF-Studio/releases/latest/download/cmdbuf-studio-linux-x64.tar.gz)
-
-GitHub 的 **Code → Download ZIP**、Release 的 **Source code** 和 `packages/` 中的源码包均不含 Formal 运行时。Linux 完整包包含 Python、Tk、Yosys、SymbiYosys、ABC 和 Yices，证明可离线执行。[SHA256 校验清单](https://github.com/ysyx-22040210-yudian/CMDBUF-Studio/releases/latest/download/LINUX-SHA256SUMS.json)
-
-在 `x86_64` Linux 上解压并启动。
+在 `formal-portable` 分支点击 **Code → Download ZIP**，解压后进入包含 `Makefile` 的目录。ZIP 内包含 Python、Tk、Yosys、SymbiYosys、ABC 和 Yices。第一次运行 Make 命令时会校验并解包内置运行时，之后可以离线使用。[下载完整 ZIP](https://github.com/ysyx-22040210-yudian/CMDBUF-Studio/archive/refs/heads/formal-portable.zip)
 
 ```bash
-tar -xzf cmdbuf-studio-linux-x64.tar.gz
-cd cmdbuf-studio
+unzip CMDBUF-Studio-formal-portable.zip
+cd CMDBUF-Studio-formal-portable
 make formal-doctor
 make gui
 ```
+
+首次解包需要在可写的项目目录中额外预留约 4 GB，并使用 Linux 的 `tar`、`sha256sum` 和 `flock`。也可下载 Release 的 Linux x64 `.tar.gz`，解压后进入 `cmdbuf-studio`，运行相同的 Make 命令。[Release 完整包](https://github.com/ysyx-22040210-yudian/CMDBUF-Studio/releases/latest/download/cmdbuf-studio-linux-x64.tar.gz) · [Release SHA-256 校验清单](https://github.com/ysyx-22040210-yudian/CMDBUF-Studio/releases/latest/download/LINUX-SHA256SUMS.json)
 
 使用仿真和 FSDB 提取时，加载本站点 EDA 工具和许可证环境后执行以下命令。
 
@@ -88,7 +86,7 @@ make formal-prove FORMAL_PACKAGE="/path/to/extracted export"
 
 证明使用导出包中的 DUT 快照。旧导出包也可使用 `FORMAL_PACKAGE` 指向其解压目录。新导出的验证包解压在便携版目录树下时，可在包内运行 `make prove`。操作与结果判读见[开源 Formal 说明](documents/48_cmdbuf_open_formal_20261114.pdf)。
 
-发布时使用 `make dist SUITE_X64=/path/to/official-x64.tgz` 生成 x64 完整包及 SHA-256 清单，输出到 `dist/`。固定的运行时发行版和摘要见 `simulation/vcs/fsdb_formal/toolchain.py`。
+独立 Release 完整包由 `make dist SUITE_X64=/path/to/official-x64.tgz` 生成，压缩包和 SHA-256 清单输出到 `dist/`。分支 ZIP 使用 `runtime_packages/linux-x64/` 中的运行时分卷。固定的版本和上游摘要见 `simulation/vcs/fsdb_formal/toolchain.py`。
 
 ### 功能覆盖率与 Formal 找用例
 

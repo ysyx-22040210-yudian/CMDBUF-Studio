@@ -2,8 +2,10 @@
 import json
 import os
 from pathlib import Path
+import platform
 import subprocess
 import sys
+import tarfile
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -71,6 +73,7 @@ class PortabilityTests(unittest.TestCase):
             self.assertIn(rel,paths)
         self.assertNotIn('eda.local.json',paths)
         self.assertFalse(any(p.startswith(('build/','verification/','dist/')) for p in paths))
+        self.assertFalse(any(p.startswith('runtime_packages/') for p in paths))
         self.assertFalse(any('/plans/' in p for p in paths))
         self.assertFalse(any('/gui/web/' in p or p.endswith(('server.py','vm_make.py')) for p in paths))
         for rel in ('simulation/vcs/project.json','simulation/vcs/toolchain.sh','simulation/vcs/platform_config.py'):
@@ -78,6 +81,53 @@ class PortabilityTests(unittest.TestCase):
             self.assertNotIn('192.168.31.116',source)
             self.assertNotIn('27000@IC_EDA',source)
             self.assertNotIn('/home/synopsys/',source)
+
+    @unittest.skipUnless(sys.platform == 'linux', 'Linux bundle startup')
+    def test_zip_runtime_is_prepared_once_and_rejects_corrupt_parts(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            launcher = root/'simulation/vcs/fsdb_formal/run_python.sh'
+            launcher.parent.mkdir(parents=True)
+            launcher.write_bytes((HERE/'fsdb_formal/run_python.sh').read_bytes())
+            machine = platform.machine().lower()
+            machine = {'amd64': 'x86_64', 'arm64': 'aarch64'}.get(machine, machine)
+            if machine not in portable.ASSETS:
+                self.skipTest('No bundled runtime for this architecture')
+            suffix, _ = portable.ASSETS[machine]
+            loaders = {'x64': 'ld-linux-x86-64.so.2', 'arm64': 'ld-linux-aarch64.so.1'}
+            suite = root/'fixture/oss-cad-suite'
+            (suite/'lib').mkdir(parents=True)
+            (suite/'libexec').mkdir()
+            loader = suite/'lib'/loaders[suffix]
+            loader.write_text('#!/bin/sh\nprintf "%s\\n" "$CMDBUF_BUNDLED_PYTHON"\n', encoding='utf-8')
+            loader.chmod(0o755)
+            (suite/'libexec/python3.11').touch()
+            (suite/'libexec/python3.11').chmod(0o755)
+            archive = root/'oss-cad-suite.tgz'
+            with tarfile.open(str(archive), 'w:gz') as stream:
+                stream.add(str(suite), arcname=suite.name)
+            data = archive.read_bytes()
+            payload = root/'runtime_packages'/('linux-'+suffix)
+            payload.mkdir(parents=True)
+            part = payload/'oss-cad-suite.tgz.part-00'
+            part.write_bytes(data[:100])
+            (payload/'oss-cad-suite.tgz.part-01').write_bytes(data[100:] + b'corrupt')
+            (payload/'SHA256SUMS').write_text(portable.checksum(archive)+'  oss-cad-suite.tgz\n', encoding='ascii')
+            command = ['/bin/sh', str(launcher), '-c', 'pass']
+            corrupt = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=10)
+            self.assertEqual(corrupt.returncode, 2)
+            self.assertIn(b'checksum mismatch', corrupt.stderr)
+            prepared = root/'formal_runtime'/('linux-'+suffix)
+            self.assertFalse((prepared/suite.name).exists())
+            self.assertFalse(list(prepared.glob('.unpack.*')))
+
+            (payload/'oss-cad-suite.tgz.part-01').write_bytes(data[100:])
+            processes = [subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) for _ in range(2)]
+            outcomes = [process.communicate(timeout=10) for process in processes]
+            self.assertEqual([process.returncode for process in processes], [0, 0])
+            self.assertEqual([output.strip() for output, _ in outcomes], [b'1', b'1'])
+            self.assertEqual(sum(b'first launch' in message for _, message in outcomes), 1)
+            self.assertFalse(list(prepared.glob('.unpack.*')))
 
     @unittest.skipIf(os.name=='nt','Tool discovery executes Linux bash')
     def test_site_script_banner_and_path_discovery(self):

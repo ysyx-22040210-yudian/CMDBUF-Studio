@@ -36,8 +36,9 @@ The GitHub Release includes `cmdbuf-studio-linux-x64.tar.gz` for `x86_64`.
 It ships Python/Tk and the open-source Formal runtime. Extract with
 `tar -xzf`, enter `cmdbuf-studio`, and run `make formal-doctor` and `make gui`.
 
-Archives named `cmdbuf-studio-source` and GitHub's generated source downloads
-contain project sources only. They use the workstation's Python >= 3.6 and Tk >= 8.5.
+Archives named `cmdbuf-studio-source` use the workstation's Python >= 3.6
+and Tk >= 8.5. The GitHub Download ZIP for the `formal-portable` branch
+ships the x64 runtime in volumes and prepares it on the first Make run.
 For VCS and Verdi operations, load your site's tool/license environment, then:
     make doctor
     make smoke
