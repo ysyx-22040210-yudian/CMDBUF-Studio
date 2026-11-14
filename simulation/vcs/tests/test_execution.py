@@ -123,6 +123,39 @@ raise SystemExit(rc)
                                   os.environ, None, phase='coverage')
             self.assertEqual(rc, 0)
 
+    @unittest.skipUnless(sys.platform == 'linux', 'Linux process groups')
+    def test_duplicate_signal_does_not_interrupt_cleanup(self):
+        with tempfile.TemporaryDirectory() as folder:
+            source = """import json, os, signal, sys
+from pathlib import Path
+sys.path.insert(0, {module!r})
+import execution
+execution.install_signal_handlers()
+root = Path({folder!r})
+log = root/'solver.log'
+stop = execution.stop
+
+def stop_with_duplicate_signal(process):
+    os.kill(os.getpid(), signal.SIGTERM)
+    stop(process)
+
+def cancel_on_output(line):
+    os.kill(os.getpid(), signal.SIGTERM)
+
+execution.stop = stop_with_duplicate_signal
+try:
+    execution.run([sys.executable, '-c', "import time; print('started', flush=True); time.sleep(30)"],
+                  root, log, os.environ, 5, on_output=cancel_on_output)
+except KeyboardInterrupt:
+    state = json.loads(log.with_suffix('.process.json').read_text())
+    assert state['state'] == 'INTERRUPTED' and state['returncode'] == -signal.SIGTERM, state
+else:
+    raise AssertionError('Expected cancellation')
+""".format(module=str(Path(execution.__file__).parent), folder=folder)
+            result = subprocess.run([sys.executable, '-c', source], stdout=subprocess.PIPE,
+                                    stderr=subprocess.STDOUT, timeout=10)
+            self.assertEqual(result.returncode, 0, result.stdout.decode(errors='replace'))
+
     @unittest.skipUnless(sys.platform=='linux','Linux process groups')
     def test_interrupt_stops_parallel_license_waiters(self):
         with tempfile.TemporaryDirectory() as folder:

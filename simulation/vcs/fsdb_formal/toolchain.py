@@ -64,8 +64,13 @@ def require_linux():
 
 @contextmanager
 def interruptible():
+    cancelled = False
+
     def interrupt(signum, frame):
-        raise KeyboardInterrupt
+        nonlocal cancelled
+        if not cancelled:
+            cancelled = True
+            raise KeyboardInterrupt
 
     previous = signal.signal(signal.SIGTERM, interrupt)
     try:

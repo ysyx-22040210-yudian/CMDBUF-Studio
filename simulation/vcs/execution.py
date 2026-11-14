@@ -9,7 +9,7 @@ import threading
 import time
 import uuid
 
-_cancelled=threading.Event()
+_cancelled=False
 _events=threading.Lock()
 
 
@@ -25,8 +25,12 @@ def check_stop(stop_file):
 def install_signal_handlers():
     """CLI only: interrupt queued workers as well as their child process groups."""
     def cancel(signum, frame):
-        _cancelled.set()
-        raise KeyboardInterrupt
+        global _cancelled
+        # Make can forward the same signal while the first handler is running.
+        # Avoid taking a lock or interrupting the resulting cleanup a second time.
+        if not _cancelled:
+            _cancelled=True
+            raise KeyboardInterrupt
     for signum in (signal.SIGINT,signal.SIGTERM):signal.signal(signum,cancel)
 
 
@@ -52,7 +56,7 @@ def stop(process):
 
 
 def run(cmd,cwd,log,env,timeout,wait_for_start=False,phase='tool',stop_file=None,on_output=None):
-    if _cancelled.is_set():raise InterruptedError('EDA job cancelled')
+    if _cancelled:raise InterruptedError('EDA job cancelled')
     check_stop(stop_file)
     log=Path(log);log.parent.mkdir(parents=True,exist_ok=True)
     limit=None if timeout is None or timeout==0 else timeout
@@ -105,7 +109,7 @@ def run(cmd,cwd,log,env,timeout,wait_for_start=False,phase='tool',stop_file=None
             process=subprocess.Popen(cmd,cwd=str(cwd),env=child_env,stdin=subprocess.DEVNULL,stdout=output,
                                      stderr=subprocess.STDOUT,start_new_session=True)
             while True:
-                if _cancelled.is_set():raise InterruptedError('EDA job cancelled')
+                if _cancelled:raise InterruptedError('EDA job cancelled')
                 now=time.monotonic()
                 publish_output()
                 if wait_for_start and active is None and marker.is_file() and marker.stat().st_size:
