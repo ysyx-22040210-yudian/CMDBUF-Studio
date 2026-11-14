@@ -8,6 +8,7 @@ from pathlib import Path
 import re
 import subprocess
 import sys
+import tempfile
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
@@ -191,12 +192,22 @@ def extract(directory, executable, env, requests, details=True):
     hits, eligible = [], None
     chunk_tests = directory / 'chunk_hits.jsonl'
     request = directory / 'chunk_vdbs.tsv'
-    # Older NPI releases keep allocations even after closing each VDB. Limit
-    # each process and validate every chunk against the same reference database.
-    with tests.open('w', encoding='utf-8') as output:
+    # Older Verdi NPI can crash when opening multiple long VDB paths in one
+    # process. Use private short aliases without copying or modifying the VDBs.
+    # Bound each NPI process and verify every chunk against the same reference.
+    with tempfile.TemporaryDirectory(prefix='cmdbuf-cov-', dir='/tmp') as folder, \
+            tests.open('w', encoding='utf-8') as output:
+        aliases = Path(folder)
         for offset in range(0, max(1, len(candidates)), VDBS_PER_READER):
             chunk = fields[:1] + candidates[offset:offset+VDBS_PER_READER]
-            request.write_text(''.join('\t'.join(row)+'\n' for row in chunk), encoding='utf-8')
+            link_rows = []
+            for index, (key, test, database) in enumerate(chunk):
+                alias = aliases / ('{}.vdb'.format(index))
+                if alias.is_symlink():
+                    alias.unlink()
+                alias.symlink_to(Path(database).absolute(), target_is_directory=True)
+                link_rows.append((key, test, str(alias)))
+            request.write_text(''.join('\t'.join(row)+'\n' for row in link_rows), encoding='utf-8')
             destination = items if offset == 0 else Path(os.devnull)
             log = 'npi_read_{:04d}.log'.format(offset//VDBS_PER_READER+1)
             checked_run([str(executable), str(request), str(destination), str(chunk_tests)], directory, log, env)
