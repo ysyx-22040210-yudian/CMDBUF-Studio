@@ -132,6 +132,7 @@ make wave REGRESSION=latest CASE=tc_random SEED=42
 make coverage REGRESSION=latest
 make coverage-details REGRESSION=latest
 make coverage-minimize REGRESSION=latest
+make coverage-fsdb COVERAGE_SET=analysis_id FSDB_OUT=/path/to/export
 make coverage-formal COVERAGE_SET=analysis_id
 make wave-file FSDB=/absolute/path/to/input.fsdb
 make new-case CASE=my_read TEMPLATE=tc_user_example
@@ -145,6 +146,8 @@ make dist
 点击「最小用例集」可选择一个或多个覆盖定义相同的历史批次。多选以所选批次的合并覆盖率为目标。工具从原来纳入覆盖率的通过用例读取逐例 VDB，以保留每个已命中的代码覆盖项为目标，按用例数求精确最小集。URG 会重新合并所选用例，再核对覆盖项与分数。选集可导出 CSV（批次、用例、seed 与重放命令），也可直接在 Verdi 打开。历史合并库可以单独看明细，筛选需要每个参与合并用例的原始 VDB。
 
 `make coverage-minimize REGRESSIONS=id1,id2 SOLVE_SECONDS=0` 计算多个批次，`0` 表示求解不限时。设定求解时限且未完成证明时，显示已复核候选及最优值上下界。VDB 分块读取并报告进度。终端输出分析编号后，可用 `make coverage-details COVERAGE_SET=编号` 再次打开该分析，或用 `make coverage COVERAGE_SET=编号` 打开对应 VDB。
+
+在最小用例集或联合最小集的结果页，点击「单独导出 FSDB」并选择目录。导出的子目录只包含选中用例的 `.fsdb` 文件，文件名中的 `pattern` 与表格对应。已有波形直接复制，缺失的波形由原仿真器重放并核对原轨迹后补齐。
 
 在选集结果页点「生成选集 Formal」。表中的 `pattern` 从 0 开始，逐个对应原批次、用例与 seed。已有 FSDB 直接使用，缺少 FSDB 的选中用例用原仿真器和归档输入重放，核对原轨迹后读取补出的波形。生成包使用历史构建中可校验的 DUT 源码和接线，包含逐拍输入 `assume`、输出 `assert` 和 pattern 对照。终端可用 `make coverage-formal COVERAGE_SET=编号`。操作见说明 45。
 

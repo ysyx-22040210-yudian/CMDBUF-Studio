@@ -33,6 +33,7 @@ REQUEST ?=
 DUT_SCOPE ?=
 REGRESSIONS ?=
 COVERAGE_SET ?=
+FSDB_OUT ?=
 SOLVE_SECONDS ?= 0
 FORMAL_ID ?=
 FORMAL_PACKAGE ?=
@@ -104,6 +105,7 @@ help:
 	@echo '  make coverage-details REGRESSION=latest   Inspect each code coverage item in Tk'
 	@echo '  make coverage-minimize REGRESSION=latest  Prove the smallest set and remerge with URG'
 	@echo '  make coverage-minimize-joint REGRESSIONS=id1,id2  Preserve all hit code and functional items'
+	@echo '  make coverage-fsdb COVERAGE_SET=id FSDB_OUT=/path  Export the selected FSDB files'
 	@echo '  make coverage-formal COVERAGE_SET=id      Generate one Formal pattern per selected case'
 	@echo '       REGRESSIONS=id1,id2 combines compatible histories; SOLVE_SECONDS=0 searches without a limit'
 	@echo '       COVERAGE_SET=id reopens a saved analysis with coverage-details or its verified VDB with coverage'
@@ -207,12 +209,16 @@ wave:
 coverage:
 	$(EDA) coverage $(EDA_REGRESSION) $(EDA_GUI) $(EDA_COVERAGE_SET)
 
-.PHONY: coverage-details coverage-minimize coverage-minimize-joint coverage-formal
+.PHONY: coverage-details coverage-minimize coverage-minimize-joint coverage-fsdb coverage-formal
 coverage-details:
 	$(EDA_COVERAGE) --action details $(EDA_COVERAGE_BATCHES) $(if $(strip $(COVERAGE_SET)),--existing "$(COVERAGE_SET)")
 
 coverage-minimize coverage-minimize-joint:
 	$(EDA_COVERAGE) --action minimize $(EDA_COVERAGE_BATCHES) --seconds "$(SOLVE_SECONDS)" $(if $(filter coverage-minimize-joint,$@),--joint)
+
+coverage-fsdb:
+	@test -n "$(COVERAGE_SET)" && test -n "$(FSDB_OUT)" || { echo 'Specify COVERAGE_SET=analysis_id FSDB_OUT=/path/to/directory'; exit 2; }
+	$(PYTHON) "$(EDA_HERE)fsdb_formal/coverage_export.py" --coverage-set "$(COVERAGE_SET)" --fsdb-out "$(FSDB_OUT)" --timeout "$(TIMEOUT)"
 
 coverage-formal:
 	@test -n "$(COVERAGE_SET)" || { echo 'Specify COVERAGE_SET=analysis_id'; exit 2; }

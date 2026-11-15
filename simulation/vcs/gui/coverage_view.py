@@ -92,11 +92,12 @@ class CoverageSource(CodeEditor):
 
 class CoverageWindow(tk.Toplevel):
     def __init__(self, parent, record_path, minimize, open_verdi, guard, progress, busy, cancel,
-                 generate_formal, formal_format_var=None):
+                 generate_formal, export_fsdb, formal_format_var=None):
         super().__init__(parent)
         self.record = model.eda.read_json(record_path)
         self.guard = guard
         self.generate_formal = generate_formal
+        self.export_fsdb = export_fsdb
         self.formal_format_var = formal_format_var
         self.title('CMDBUF Studio · 代码与功能覆盖率' if self.record.get('functional') else 'CMDBUF Studio · 代码覆盖率')
         self.geometry('{}x{}'.format(min(1460, self.winfo_screenwidth()-40),
@@ -616,10 +617,13 @@ class CoverageWindow(tk.Toplevel):
         bar = ttk.Frame(tab)
         bar.pack(fill='x')
         ttk.Button(bar, text='另存用例清单 CSV', command=lambda: self.guard(self.save_csv)).pack(side='left', padx=(0, 16))
+        state = 'normal' if self.record['selected'] else 'disabled'
+        ttk.Button(bar, text='单独导出 FSDB', state=state,
+                   command=lambda: self.guard(self.save_fsdb)).pack(side='left', padx=(0, 16))
         if self.formal_format_var is not None:
             formal_format_field(bar, self.formal_format_var, formal_model.FORMAT_LABELS)
         ttk.Button(bar, text='生成选集 Formal', style='Primary.TButton',
-                   state='normal' if self.record['selected'] else 'disabled',
+                   state=state,
                    command=lambda: self.guard(self.generate_formal)).pack(side='right')
         ttk.Label(tab, text='使用存档 FSDB。缺少波形的选中用例会用原仿真器重放。',
                   style='Muted.TLabel').pack(anchor='e', pady=(5, 0))
@@ -630,3 +634,8 @@ class CoverageWindow(tk.Toplevel):
                                             filetypes=[('CSV', '*.csv')])
         if path and Path(path).resolve() != Path(self.record['selected_csv']).resolve():
             shutil.copyfile(self.record['selected_csv'], path)
+
+    def save_fsdb(self):
+        path = filedialog.askdirectory(parent=self, title='选择选集 FSDB 的导出目录', mustexist=True)
+        if path:
+            self.export_fsdb(path)

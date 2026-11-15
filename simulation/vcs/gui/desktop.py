@@ -848,6 +848,8 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
                               lambda: self.launch('coverage_formal', dict(analysis=identifier,
                                                                           max_edges=int(self.max_edges.get()),
                                                                           format=self.selected_formal_format())),
+                              lambda destination: self.launch('coverage_fsdb', dict(analysis=identifier,
+                                                                                     destination=destination)),
                               self.formal_format_var)
 
     def open_wave_file(self):
@@ -1185,6 +1187,7 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
                             'formal_cover': 'Formal 搜索 · '+job.get('verdict', '未知'),
                             'formal_bmc': '有界 Assert 检查 · '+job.get('verdict', '未知'),
                             'coverage_formal': '选集 Formal 验证包已生成',
+                            'coverage_fsdb': '选集 FSDB 已导出',
                             'formal_doctor': '开源 Formal 工具链自检通过',
                             'formal_prove': 'Formal 证明结果 · '+job.get('verdict', '未知')}
                 self.status.set(job.get('error') or (job['stage'] if job['state'] == 'CANCELLED'
@@ -1230,6 +1233,9 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
             WaveWindow(self.root, job['database'], job['wave_name'], job.get('formal_step'))
         elif kind in ('coverage_details', 'coverage_minimize', 'coverage_minimize_joint'):
             self.guard(lambda: self.show_coverage_record(job['coverage_record']))
+        elif kind == 'coverage_fsdb':
+            messagebox.showinfo('选集 FSDB 已导出', '已导出 {} 条波形\n\n{}'.format(
+                job['completed'], job['fsdb_directory']), parent=self.root)
         elif kind == 'import_fsdb':
             for meta in job['imported']: self.add_formal_source(dict(kind='import', id=meta['id'], name=meta['name']))
             self.draw_formal(); self.show('formal')

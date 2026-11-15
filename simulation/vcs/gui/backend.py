@@ -15,7 +15,7 @@ import formal_model
 import vcd
 
 eda, ROOT, STATE = model.eda, model.ROOT, model.STATE
-COVERAGE_JOBS = ('coverage_details', 'coverage_minimize', 'coverage_minimize_joint', 'coverage_formal')
+COVERAGE_JOBS = ('coverage_details', 'coverage_minimize', 'coverage_minimize_joint', 'coverage_formal', 'coverage_fsdb')
 FORMAL_JOBS = ('formal_doctor', 'formal_prove', 'formal_cover', 'formal_bmc')
 REGRESSION_JOBS = ('regress', 'formal_replay')
 CANCELLABLE_JOBS = COVERAGE_JOBS + FORMAL_JOBS
@@ -232,6 +232,8 @@ class Jobs:
                 self.update(job, stage=line[len('COVERAGE_STAGE '):].strip(), total=0, completed=0)
             if line.startswith('COVERAGE_RESULT '):
                 self.update(job, coverage_record=line[len('COVERAGE_RESULT '):].strip())
+            if line.startswith('FSDB_EXPORT_RESULT '):
+                self.update(job, fsdb_directory=line[len('FSDB_EXPORT_RESULT '):].rstrip('\r\n'))
             if line.startswith('FORMAL_STAGE '):
                 self.update(job, stage=line[len('FORMAL_STAGE '):].strip(), formal_activity={})
             if line.startswith('FUNCTIONAL_STAGE '):
@@ -472,6 +474,12 @@ class Jobs:
                                   'MAX_EDGES='+str(limit), 'FORMAL_FORMAT='+style])
                 progress('校验选集 Formal 生成包')
                 self.update(job, formal_id=formal_model.fetch(job['id']))
+            elif kind == 'coverage_fsdb':
+                analysis = identifier(payload['analysis'])
+                destination = Path(payload['destination']).resolve()
+                self.invoke(job, ['coverage-fsdb', 'COVERAGE_SET='+analysis, 'FSDB_OUT='+str(destination)])
+                if not job.get('fsdb_directory') or not Path(job['fsdb_directory']).is_dir():
+                    raise RuntimeError('找不到选集 FSDB 导出目录')
             elif kind == 'wave_file':
                 progress('打开本机 Verdi')
                 arguments = ['wave-file', 'FSDB='+str(Path(payload['path']).resolve())]
