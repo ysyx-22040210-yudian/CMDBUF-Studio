@@ -118,7 +118,7 @@ def vcs_options(target,env,stop_file=None,rtl_covers=False):
     cmd.extend([str(source),'-o',str(library)])
     rc,_=execute(cmd,target,target/'execution_start_compile.log',env,120,phase='start_hook',stop_file=stop_file)
     if rc:raise RuntimeError('Cannot build VCS start callback: '+str(target/'execution_start_compile.log'))
-    return ['vcs','-full64','-lca','-licqueue','+vcs+lic+wait',
+    return ['vcs','-full64','-lca','-licqueue','+vcs+lic+wait','-assert','svaext',
             '-load',platform_config.tool_path(str(library))+':cmdbuf_studio_register']
 
 
@@ -227,8 +227,9 @@ def build_at(target, identity, inventory, rtl_hashes, env, stop_file=None):
             functional['adapter_sha256'] != identity['sources'].get(functional_properties.SOURCE)):
         raise RuntimeError('Functional coverage properties changed during compilation')
     (generated / 'original' / functional_properties.USER_FILE.name).write_bytes(authored)
-    (generated / 'functional_properties.svh').write_text(
-        functional_properties.simulation(functional['properties']), encoding='utf-8')
+    functional_include = generated / 'functional_properties.svh'
+    functional_include.write_text(functional_properties.simulation(
+        functional['properties'], functional.get('declarations', ())), encoding='utf-8')
     (generated / 'functional_stimulus.svh').write_text(functional_properties.stimulus_assignment(), encoding='utf-8')
     (generated / 'functional_width.svh').write_text(
         'localparam int FORMAL_PIN_BITS = {};\n'.format(functional_properties.WIDTH), encoding='utf-8')
@@ -242,21 +243,46 @@ def build_at(target, identity, inventory, rtl_hashes, env, stop_file=None):
     import dut_config
     (generated / 'dut_instance.svh').write_text(dut['instance'], encoding='utf-8')
     pli = platform_config.pli_directory(env)
-    rtl = [str(dut_config.project_path(f)) for f in dut['files']]
     filelist = target / 'files.f'
-    filelist.write_text('\n'.join('"' + platform_config.tool_path(p) + '"' for p in rtl + [str(generated / Path(PROJECT['checker']).name),
-                           str(HERE / 'tb/cmdbuf_check_monitor.sv'), str(ROOT / PROJECT['testbench'])]) + '\n', encoding='utf-8')
+    bench = [generated / Path(PROJECT['checker']).name, HERE / 'tb/cmdbuf_check_monitor.sv', ROOT / PROJECT['testbench']]
     # The editable TC, SVA and DUT instance are now in the build directory.
     print('EDA_SOURCES_READY', flush=True)
-    cmd = vcs_options(target,env,stop_file,rtl_covers=bool(native_covers))+['-sverilog', '-timescale=1ns/1ps', '-debug_access+all', '-kdb',
+    options = vcs_options(target,env,stop_file,rtl_covers=bool(native_covers))+['-sverilog', '-timescale=1ns/1ps', '-debug_access+all', '-kdb',
            '+v2k', '-top', PROJECT['top'], '+incdir+' + str(generated), '+incdir+' + str(HERE / 'tb'),
            '-P', str(pli / 'novas.tab'), str(pli / 'pli.a'),
            '-cm', PROJECT['coverage'], '-cm_tgl', 'mda', '-cm_hier', str(HERE / 'coverage.hier'),
            '-cm_dir', str(target / 'simv.vdb'), '-f', str(filelist), '-o', str(target / 'simv')]
-    cmd += ['+incdir+' + str(dut_config.project_path(d, True)) for d in dut['include_dirs']]
-    cmd += ['+define+' + d for d in dut['defines']]
-    cmd = [platform_config.tool_path(arg) for arg in cmd]
-    rc, elapsed = execute(cmd, target, target / 'compile.log', env, None, phase='compile', stop_file=stop_file)
+    options += ['+define+' + d for d in dut['defines']]
+    log = target / 'compile.log'
+
+    def compile_design(source_root):
+        files = [source_root / name for name in dut['files']] + bench
+        filelist.write_text('\n'.join('"' + platform_config.tool_path(str(p)) + '"' for p in files)+'\n', encoding='utf-8')
+        command = options + ['+incdir+' + str(source_root / name) for name in dut['include_dirs']]
+        command = [platform_config.tool_path(arg) for arg in command]
+        status, seconds = execute(command, target, log, env, None, phase='compile', stop_file=stop_file)
+        return command, status, seconds
+
+    cmd, rc, elapsed = compile_design(ROOT)
+    compat = False
+    if rc and re.search(r"token\s+is\s+'sequence'", log.read_text(encoding='utf-8', errors='replace')):
+        from fsdb_formal import toolchain
+
+        with toolchain.environment() as formal_env:
+            expanded = rtl_cover.expand_formal_macros(dut, rtl_sources, native_covers, formal_env, discover)
+        compatible_rtl = rtl_cover.vcs_cover_sequences(expanded)
+        include = {functional_include.name: functional_include.read_bytes()}
+        compatible_editor = rtl_cover.vcs_cover_sequences(include)
+        if compatible_rtl != expanded or compatible_editor != include:
+            compat = True
+            root = ROOT
+            if compatible_rtl != expanded:
+                root = target / 'rtl_vcs'
+                rtl_cover.write_sources(root, dut, compatible_rtl)
+            functional_include.write_bytes(compatible_editor[functional_include.name])
+            log.replace(target / 'compile_native_cover_sequence.log')
+            cmd, rc, retry_elapsed = compile_design(root)
+            elapsed += retry_elapsed
     if rc or not (target / 'simv').is_file():
         raise RuntimeError('VCS compile failed ({}): {}'.format(rc, target / 'compile.log'))
     # Keep the source used by this build available to historical coverage views.
@@ -277,7 +303,7 @@ def build_at(target, identity, inventory, rtl_hashes, env, stop_file=None):
                              execution_start_hook='vpi_cbStartOfSimulation',
                              execution_start_sha256=digest(target/'execution_start.so'),
                              simv_sha256=digest(target / 'simv'),
-                             simulator=str(target / 'simv'), built_at=stamp()))
+                             simulator=str(target / 'simv'), built_at=stamp(), vcs_cover_sequence_compat=compat))
     print('SVA {} {}'.format('customized' if checker['customized'] else 'baseline', checker['sha256']), flush=True)
     print('BUILD ' + str(target), flush=True)
     return target

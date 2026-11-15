@@ -7,6 +7,10 @@ PROPERTY = re.compile(r'\b(?:(?P<label>[A-Za-z_][\w$]*)\s*:\s*)?'
 DISABLE = re.compile(r'\bdisable\s+iff\s*\(')
 ELSE = re.compile(r'else\b\s*')
 STRICT = 'tb_cmdbuf_rd.monitor.strict_mode'
+NAMED_DECLARATION = re.compile(r'\b(?P<kind>sequence|property)\s+(?P<name>[A-Za-z_][\w$]*)'
+                               r'\s*(?:\(\s*\))?\s*;\s*(?P<body>[^;]+?)\s*;?\s*'
+                               r'\bend(?P=kind)\b(?:[ \t]*:[ \t]*[A-Za-z_][\w$]*)?')
+IDENTIFIER = re.compile(r'(?<![\w$.:\\])[A-Za-z_][\w$]*(?:\s*\(\s*\))?(?![\w$.:])')
 
 
 def mask_sv(code):
@@ -29,6 +33,29 @@ def after_paren(code, opening):
 
 def next_token(code, start):
     return len(code)-len(code[start:].lstrip())
+
+
+def expand_named(source, definitions):
+    """Substitute module-local, zero-argument sequence and property references."""
+    def expand(text, visiting):
+        def replace(match):
+            name = match.group().partition('(')[0].strip()
+            if name not in definitions or text[:match.start()].rstrip().endswith(('.', ':')):
+                return match.group()
+            if match.group() == name and text[match.end():].lstrip().startswith('('):
+                raise ValueError('命名序列或属性 {} 需要零参数引用'.format(name))
+            if name in visiting:
+                raise ValueError('命名序列或属性存在递归引用 ' + name)
+            value = expand(definitions[name].strip(), visiting | {name})
+            if text.strip() == match.group():
+                return value
+            if value.startswith('@'):
+                raise ValueError('组合内的命名属性需与外层共用同一采样事件')
+            return '(' + value + ')'
+
+        return IDENTIFIER.sub(replace, text)
+
+    return expand(source, set())
 
 
 def action_end(code, start):

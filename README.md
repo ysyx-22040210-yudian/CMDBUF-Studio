@@ -96,7 +96,13 @@ make formal-prove FORMAL_PACKAGE="/path/to/extracted export"
 
 「属性导航」显示属性编辑器中的定义、当前 DUT 展开后的 Assert / Assume / Cover，以及环境端口检查器中的 Assert / Assume。用类型菜单筛选，选择目标即可打开 **属性源码** 并高亮原始 SystemVerilog。环境属性会标注是否纳入现有 Formal 流程。保存 DUT 或端口 SVA 后自动刷新，外部修改可点击「刷新属性」。命令行也可执行 `make formal-property-list` 查看 DUT 和环境属性。
 
-同名 DUT Cover 按实例层级区分，命令行可用 `TARGETS=dut.u_cmd.C_QUEUE_FULL` 选择。结果页「查看属性」打开运行时归档的 RTL。DUT Cover 的功能覆盖和联合选集使用 VCS 实际命中，求解深度仍包含八拍收尾。支持同一主时钟下的布尔条件、`##N` 和有限的 `##[N:M]` 时序。存在的目标如超出当前开源前端支持范围，会在求解结果中显示具体原因。
+同名 DUT Cover 按实例层级区分，命令行可用 `TARGETS=dut.u_cmd.C_QUEUE_FULL` 选择。结果页「查看属性」打开运行时归档的 RTL。DUT Cover 的功能覆盖和联合选集使用 VCS 实际命中，求解深度仍包含八拍收尾。DUT Cover 支持同一主时钟下的布尔条件、`##N`、`##[N:M]` 及 `##[N:$]` 时序。属性编辑器也接受 Cover 中的 `##[N:$]`。存在的目标如超出当前开源前端支持范围，会在求解结果中显示具体原因。
+
+同一主时钟下，DUT 和属性编辑器中的 Cover 还可以使用连续、非连续和跳转重复、`first_match`、`throughout`、`within`、`intersect`、序列 `and/or`、参数延时及 `##[*]` / `##[+]`。两处均可使用无参数命名序列和属性、`cover sequence`、仿真动作块及同一采样事件的带门控 `$past`。DUT 还支持空的默认时钟块。编辑器接受 `always @(posedge clk) if (rst_n)` 内带标签的单条即时断言或 Cover。
+
+复测可用 [DUT Cover 压测 RTL](verification/dut_cover_stress_20261115/sva_cover_stress_dut.sv)。在「DUT 集成」把编译文件首行换成 `verification/dut_cover_stress_20261115/sva_cover_stress_dut.sv`，保留另外两行基准 RTL 和原例化。保存 DUT 后，在「开源 Formal」刷新属性。压测 DUT 有 54 条 Cover，深度 48 下预期 44 条命中、10 条负例在深度内未命中。两层嵌套宏从标签 `C_DUT_NESTED_MACRO_READ` 开始。
+
+Open Formal 按任务深度搜索和检查。跨时钟、下降沿及需要无界活性证明的属性仍需独立建模。旧版 VCS 拒绝 `cover sequence` 时，工具在编译副本中使用命名序列保留同一次起点的多次匹配。原始 SVA 随任务归档。VCS 返回不可读的 Cover 计数时，`functional_hits.json` 会记录相应目标；回放目标仍须取得正命中才通过。
 
 ```bash
 make formal-cover CAMPAIGN=cover_demo FORMAL_DEPTH=48 COVER_TIMEOUT=600

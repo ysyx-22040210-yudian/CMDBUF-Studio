@@ -51,7 +51,7 @@ def ports():
             yield 'wire {}{};'.format('' if width == 1 else '[{}:0] '.format(width - 1), name)
 
 
-def formal_top(dut, builtin, user, action, targets=(), native=False):
+def formal_top(dut, builtin, user, action, targets=(), native=False, horizon=48):
     properties = builtin + user
     lines = ['`default_nettype none',
              'module {} (input wire clk, input wire [{}:0] fc_stimulus);'.format(props.TOP, props.WIDTH - 1)]
@@ -92,6 +92,13 @@ def formal_top(dut, builtin, user, action, targets=(), native=False):
         label = name if index < len(builtin) else user_name + name
         if kind == 'cover' and (action == 'bmc' or targets and name not in targets):
             continue
+        lines.extend(p.get('formal_helpers', ()))
+        if p.get('bounded_model'):
+            compiler = props.structured_cover if p['bounded_model'] == 'cover' else props.structured_implication
+            source = p.get('formal_expression', p['expression'])
+            source, reset = (source, '!rst_n') if kind == 'cover' else props.safety_property(source, '!rst_n')
+            expr, model = compiler(source, 'fc_seq_' + name, 'clk', reset, horizon)
+            lines.extend(model)
         if label == 'E06_SUCCESS_BUSY':
             lines += ['for (genvar bank_env=0; bank_env<8; bank_env=bank_env+1) begin : env_bank',
                       '    ' + props.statement(label, kind, expr) + ';', 'end']
@@ -105,7 +112,7 @@ def formal_top(dut, builtin, user, action, targets=(), native=False):
                       '    else if ({}) {} <= 1;'.format(expr, seen),
                       props.statement(label, kind, 'fc_quiet[6] && fc_idle && ({} || ({}))'.format(seen, expr)) + ';']
         else:
-            lines.append(props.statement(label, kind, expr) + ';')
+            lines.append(props.statement(label, kind, expr, reset=p.get('formal_reset', '!rst_n')) + ';')
     lines += ['endmodule', '`default_nettype wire']
     return '\n'.join(lines) + '\n'
 
@@ -148,14 +155,19 @@ def snapshot(directory, action, depth, timeout, targets=()):
     if set(rtl) != {path.relative_to(eda.ROOT).as_posix() for path in dut_config.source_files(dut)}:
         raise RuntimeError('DUT 文件列表在取快照期间改变，请重新运行')
     user = [row for row in functional['properties'] if row.get('origin') != 'rtl']
-    (directory/'formal_top.sv').write_text(formal_top(dut, builtin, user, action, targets, bool(native)), encoding='utf-8')
+    (directory/'formal_top.sv').write_text(
+        formal_top(dut, builtin, user, action, targets, bool(native), depth + 2), encoding='utf-8')
     (directory/'user_properties.sv').write_bytes(authored)
     (directory/'port_contract.sv').write_bytes(builtin_bytes)
-    if native:
-        rtl_cover.write_sources(directory/'rtl_formal', dut, rtl_cover.formal_rewrites(rtl))
+    from_rtl_formal = bool(native) or rtl_cover.has_native_checks(rtl)
+    if from_rtl_formal:
+        if not native:
+            overlay = rtl_cover.formal_rewrites(rtl, horizon=depth + 2)
+            rtl_cover.write_sources(directory/'rtl_formal', dut, overlay)
         files = ['rtl_formal/' + path for path in dut['files']]
         include_dirs = ['rtl_formal/' + path for path in dut['include_dirs']]
-        opts = ['--no-synthesis-define'] + rtl_cover.source_arguments(dut, files + ['formal_top.sv'], include_dirs)
+        opts = ['--no-synthesis-define', '--diag-column-unit', 'byte'] + rtl_cover.source_arguments(
+            dut, files + ['formal_top.sv'], include_dirs)
     else:
         opts = ['-D', 'SYNTHESIS'] + [flag for inc in includes for flag in ('-I', inc)] + [
             flag for define in dut['defines'] for flag in ('-D', define)] + names + ['formal_top.sv']
@@ -171,7 +183,8 @@ def snapshot(directory, action, depth, timeout, targets=()):
     options = ['mode ' + action, 'depth ' + str(depth + 2)]
     if timeout:
         options.append('timeout ' + str(timeout))
-    model = 'formal_model.json\n' if native else 'rtl_snapshot\nformal_top.sv\nslang.f\n'
+    source_folder = 'rtl_formal' if from_rtl_formal else 'rtl_snapshot'
+    model = 'formal_model.json\n' if native else source_folder + '\nformal_top.sv\nslang.f\n'
     (directory/'run.sby').write_text(
         '[options]\n' + '\n'.join(options) + '\n\n[engines]\nsmtbmc yices\n\n[script]\n'
         + script + '\n[files]\n' + model, encoding='utf-8')
@@ -190,24 +203,29 @@ def prepare_native(directory, result, env):
         return
     print('FUNCTIONAL_STAGE 展开 DUT Cover 并准备回放条件', flush=True)
     targets = set(result['targets'] or props.cover_names(result['functional'])) if result['action'] == 'cover' else set()
+    original = {name: (directory/'rtl_snapshot'/name).read_bytes() for name in result['sources']}
+    expanded = rtl_cover.expand_formal_macros(result['dut'], original, rows, env, discover_properties)
+    issues = {}
+    overlay = rtl_cover.formal_rewrites(expanded, issues=issues, horizon=result['max_body_cycles'] + 2)
+    rtl_cover.write_sources(directory/'rtl_formal', result['dut'], overlay)
+    locations = {row['name']: (row['file'], row['line'], row['label']) for row in rows}
+    result['unsupported'] = {name: issues[location] for name, location in locations.items() if location in issues}
     script = ('read_slang --top {top} --no-implicit-memories -f slang.f\n'
               'hierarchy -top {top}\nproc\nopt_expr\nopt_clean\nwrite_json initial_model.json\n'
               'async2sync\ndffunmap\nchformal -lower\nwrite_json clocked_model.json\n').format(top=props.TOP)
     (directory/'prepare_native.ys').write_text(script, encoding='utf-8')
     log = directory/'dut_cover_model.log'
-    result['unsupported'] = {}
     rc, _ = eda.execute(['yosys', '-m', 'slang', '-s', 'prepare_native.ys'], directory, log, env, None,
                         phase='functional_model')
     if rc:
-        rejected = rtl_cover.unsupported_declarations(log.read_text(encoding='utf-8', errors='replace'), directory, result)
+        rejected = rtl_cover.unsupported_declarations(log.read_text(encoding='utf-8', errors='replace'), overlay, rows)
         if rejected:
             log.replace(directory/'dut_cover_unsupported.log')
-            original = {name: (directory/'rtl_snapshot'/name).read_bytes() for name in result['sources']}
-            overlay = rtl_cover.formal_rewrites(original, rejected)
+            overlay = rtl_cover.formal_rewrites(overlay, rejected)
             rtl_cover.write_sources(directory/'rtl_formal', result['dut'], overlay)
-            locations = {(file, line) for (file, _), line in rejected.items()}
-            result['unsupported'].update((row['name'], '当前开源 Formal 无法展开此 SVA，请查看原始代码和求解日志。')
-                                         for row in rows if (row['file'], row['line']) in locations)
+            unsupported = set(rejected.values())
+            result['unsupported'].update((name, '当前开源 Formal 无法展开此 SVA，请查看原始代码和求解日志。')
+                                         for name, location in locations.items() if location in unsupported)
             rc, _ = eda.execute(['yosys', '-m', 'slang', '-s', 'prepare_native.ys'], directory, log, env, None,
                                 phase='functional_model')
     if rc:
