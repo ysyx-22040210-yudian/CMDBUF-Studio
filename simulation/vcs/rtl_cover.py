@@ -32,8 +32,8 @@ COMPILER_DIRECTIVE = re.compile(
     r'include|line|pragma|resetall|'
     r'timescale|(?:no)?unconnected_drive|(?:end)?protect(?:ed)?)(?![\w$])')
 COVER_TRIVIA = re.compile(r'(?P<string>"(?:\\.|[^"\\])*")|//[^\n]*|/\*.*?\*/|[\r\n]+', re.S)
-COVER_HELPERS = re.compile(r'/\*cmdbuf_cover_([0-9a-f]{16})_begin\*/.*?'
-                           r'/\*cmdbuf_cover_\1_end\*/[ \t]*', re.S)
+COVER_HELPERS = re.compile(r'/\*test_mode_cover_([0-9a-f]{16})_begin\*/.*?'
+                           r'/\*test_mode_cover_\1_end\*/[ \t]*', re.S)
 MODULE_SCOPE = re.compile(r'\b(?:module|endmodule)\b')
 DEFAULT_CLOCKING = re.compile(r'\bdefault\s+clocking\s+(?P<name>[A-Za-z_][\w$]*)\s*'
                               r'(?P<event>@\s*\(\s*posedge\s+[A-Za-z_][\w$]*\s*\))\s*;'
@@ -372,7 +372,7 @@ def discover(directory, dut, sources, env, run, folder='rtl_snapshot'):
     source_root = directory / folder
     files, includes = write_sources(source_root, dut, sources)
     source_root.mkdir(exist_ok=True)
-    wrapper = 'cmdbuf_cover_discovery.sv'
+    wrapper = 'test_mode_cover_discovery.sv'
     (source_root / wrapper).write_text('module {} (input wire clk);\n{}\n{}\nendmodule\n'.format(
         TOP, '\n'.join(discovery_ports()), dut['instance']), encoding='utf-8')
     ast = elaborate(source_root, TOP, source_arguments(dut, files + [wrapper], includes), env, run)
@@ -484,7 +484,7 @@ def expand_formal_macros(dut, sources, rows, env, run):
     if not spans:
         return sources
 
-    marker = 'cmdbuf_' + uuid4().hex
+    marker = 'test_mode_' + uuid4().hex
     marked, locations = dict(sources), {}
     for path, ranges in spans.items():
         merged = []
@@ -502,7 +502,7 @@ def expand_formal_macros(dut, sources, rows, env, run):
         marked[path] = text.encode('utf-8')
 
     pattern = re.compile(r'/\*' + marker + r':(\d+):begin\*/(.*?)/\*' + marker + r':\1:end\*/', re.S)
-    with tempfile.TemporaryDirectory(prefix='cmdbuf-cover-macros-') as name:
+    with tempfile.TemporaryDirectory(prefix='test_mode-cover-macros-') as name:
         folder = Path(name).resolve()
         files, includes = write_sources(folder, dut, marked)
         arguments = source_arguments(dut, files, includes)
@@ -570,7 +570,7 @@ def vcs_cover_sequences(sources):
                     continue
             first, last = item['start'], item['close']-1
             digest = hashlib.sha256((path + ':' + str(first)).encode()).hexdigest()[:16]
-            name = 'cmdbuf_vcs_sequence_' + digest
+            name = 'test_mode_vcs_sequence_' + digest
             sequence = COVER_TRIVIA.sub(lambda part: part['string'] or ' ', text[start:last]).strip()
             replacement = 'sequence {}; {}; endsequence '.format(name, sequence)
             replacement += text[first:match.start('form')] + 'property' + text[match.end('form'):start]
@@ -625,7 +625,7 @@ def formal_rewrites(sources, disabled=(), issues=None, horizon=48):
                     (implicit or item['form'] == 'sequence' or temporal(sample[2])) and '`' not in item['expression']):
                 clock, reset, condition = sample
                 token = hashlib.sha256((name + ':' + str(item['start'])).encode()).hexdigest()[:16]
-                history_name = 'cmdbuf_cover_history_' + token
+                history_name = 'test_mode_cover_history_' + token
                 try:
                     if item['kind'] == 'cover':
                         predicate, prefix = formal_condition(condition, history_name, clock, reset, horizon)
@@ -646,7 +646,7 @@ def formal_rewrites(sources, disabled=(), issues=None, horizon=48):
                         issues[name, item['line'], (item['label'] or '').lstrip('\\')] = str(exc)
                     predicate, prefix = "1'b0", ''
                 if prefix:
-                    prefix = '/*cmdbuf_cover_{0}_begin*/ {1}/*cmdbuf_cover_{0}_end*/ '.format(token, prefix)
+                    prefix = '/*test_mode_cover_{0}_begin*/ {1}/*test_mode_cover_{0}_end*/ '.format(token, prefix)
                 label = item['label'] + ': ' if item['label'] else ''
                 disable = ' disable iff ({})'.format(' '.join(reset.split())) if reset else ''
                 statement = '{}{}{} property (@(posedge {}){} ({}))'.format(
@@ -715,7 +715,7 @@ def baseline_digest(raw):
 def native_rows(dut, sources, probe):
     from fsdb_formal import toolchain
 
-    with tempfile.TemporaryDirectory(prefix='cmdbuf-dut-cover-') as temporary, toolchain.environment() as env:
+    with tempfile.TemporaryDirectory(prefix='test_mode-dut-cover-') as temporary, toolchain.environment() as env:
         directory = Path(temporary).resolve()
         return discover(directory, dut, sources, env, probe)
 
@@ -805,7 +805,7 @@ def prepare_targets(initial, lowered, rows, targeted, source_folder, supported):
         return lowered
     cells, matched = match_netlist(initial_module, rows, source_folder)
     netlist = Netlist(lowered_module)
-    complete = netlist.cells.pop('FC_CMDBUF_REPLAY_COMPLETE', None)
+    complete = netlist.cells.pop('FC_test_mode_REPLAY_COMPLETE', None)
     if complete is None:
         raise ValueError('Formal 模型缺少回放收尾条件')
     signals = complete['connections']
@@ -898,7 +898,7 @@ def native_hits(log, properties, require_complete, unavailable=None):
     for row in rows:
         if row.get('ambiguous'):
             continue
-        scope = 'tb_cmdbuf_rd.' + row['scope'] + '.'
+        scope = 'tb_test_mode_rd.' + row['scope'] + '.'
         if row['label']:
             matches = [native[scope + row['label']]] if scope + row['label'] in native else []
         else:

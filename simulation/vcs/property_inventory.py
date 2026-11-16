@@ -11,7 +11,7 @@ import sva_source
 
 
 SCAN_ERRORS = (OSError, ValueError, RuntimeError)
-CHECKER_TOP = 'cmdbuf_rd_port_sva'
+CHECKER_TOP = 'test_mode_rd_port_sva'
 STATEMENT = re.compile(r'(?<![\w$\\])(?:(?P<label>[A-Za-z_$][\w$]*)\s*:\s*)?'
                        r'(?P<kind>assert|assume|cover)\s*(?:property\b|sequence\b|final\b|#\s*0)?\s*\(')
 
@@ -41,7 +41,7 @@ def scan_checker(dut, port_file, sources, run):
     cache = eda.OUT / 'checker_property_inventory' / (key + '.json')
     if cache.is_file():
         return eda.read_json(cache)
-    with toolchain.environment() as env, tempfile.TemporaryDirectory(prefix='cmdbuf-checker-') as name:
+    with toolchain.environment() as env, tempfile.TemporaryDirectory(prefix='test_mode-checker-') as name:
         directory = Path(name).resolve()
         rtl_cover.write_sources(directory, config, sources)
         args = rtl_cover.source_arguments(dut, [port_file], includes)

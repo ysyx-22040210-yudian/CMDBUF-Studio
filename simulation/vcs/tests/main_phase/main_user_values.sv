@@ -1,7 +1,7 @@
 // 过程式合法随机：在每个 if 分支内按当前合法取值范围生成随机数。
 // 用户只需修改 main_phase 的赋值和 if 条件；没有 constraint/randomize。
 // 每次 @(posedge clk) 后执行一组带条件赋值，供下一上升沿采样。
-class main_user_values extends cmdbuf_main_tc;
+class main_user_values extends test_mode_main_tc;
     function new(); num_cycles=2000; endfunction
 
     virtual task main_phase;

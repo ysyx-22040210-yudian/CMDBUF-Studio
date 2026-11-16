@@ -30,8 +30,8 @@ def load(path, expected_sha256=None):
     if expected_sha256 is not None and hashlib.sha256(raw).hexdigest() != expected_sha256:
         raise RuntimeError('TC source changed while preparing the build: ' + str(path))
     code = raw.decode('utf-8').replace('\r\n', '\n').replace('\r', '\n')
-    if not re.search(r'\bclass\s+' + re.escape(path.stem) + r'\s+extends\s+cmdbuf_main_tc\s*;', code):
-        raise ValueError('SV TC must declare class {} extends cmdbuf_main_tc;'.format(path.stem))
+    if not re.search(r'\bclass\s+' + re.escape(path.stem) + r'\s+extends\s+test_mode_main_tc\s*;', code):
+        raise ValueError('SV TC must declare class {} extends test_mode_main_tc;'.format(path.stem))
     return {'format':'sv_main_phase', 'name':path.stem, 'source':code,
             'source_sha256':hashlib.sha256(code.encode('utf-8')).hexdigest(),
             'description':next((s[3:].strip() for s in code.splitlines() if s.startswith('// ')), '')}
@@ -71,7 +71,7 @@ def generate_factory(destination, source_hashes=None):
             compiled = directory / (c['name'] + '.sv')
             compiled.write_text(compiled_source, encoding='utf-8')
         lines.append('`include "{}"'.format(compiled.as_posix()))
-    lines += ['function automatic cmdbuf_main_tc create_sv_tc(input string name);']
+    lines += ['function automatic test_mode_main_tc create_sv_tc(input string name);']
     for c in entries:
         lines.append('    {} obj_{};'.format(c['name'], c['name']))
     lines.append('    case (name)')

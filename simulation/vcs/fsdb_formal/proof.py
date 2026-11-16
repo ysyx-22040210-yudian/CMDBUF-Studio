@@ -1,4 +1,4 @@
-"""Run a CMDBUF Formal export through its generated SymbiYosys checks."""
+"""Run a test_mode Formal export through its generated SymbiYosys checks."""
 import argparse
 import hashlib
 import json
@@ -11,7 +11,10 @@ import sys
 import time
 import uuid
 
-import toolchain
+if __package__:
+    from . import toolchain
+else:
+    import toolchain
 
 
 INPUTS = ('run_bmc.sby', 'run_cover.sby', 'slang.f', 'formal_top.sv', 'sby_properties.sv',
@@ -35,11 +38,11 @@ def write_receipt(directory, record):
     temp.replace(directory/'proof.json')
 
 
-def copy_inputs(package, source, manifest):
+def copy_inputs(package, source, manifest, files=INPUTS):
     rtl = {name for name in manifest if name.startswith('rtl_snapshot/')}
     if not rtl:
         raise ValueError('Formal 包缺少 DUT 快照')
-    files = set(INPUTS)
+    files = set(files)
     files.update(rtl)
     for name in sorted(files):
         original = (package/name).resolve()
@@ -56,10 +59,10 @@ def copy_inputs(package, source, manifest):
             raise ValueError('Formal 包文件校验失败: '+name)
 
 
-def terminal_covers(summary, source):
+def terminal_covers(summary, source, checker='sby_properties.sv'):
     expected = {'C_END_P%d_S%d' % (pattern['pattern'], segment['segment'])
                 for pattern in summary['patterns'] for segment in pattern['segments']}
-    checker = (source/'sby_properties.sv').read_text(encoding='utf-8')
+    checker = (source/checker).read_text(encoding='utf-8')
     declared = re.findall(r'^\s*('+TERMINAL+r'):\s*cover property\b', checker, re.MULTILINE)
     if not expected or sorted(expected) != sorted(declared) or len(expected) != summary['counts']['terminal_covers']:
         raise ValueError('终点 cover 与 pattern 清单不一致')
@@ -251,7 +254,7 @@ def main():
             elif not args.package:
                 raise ValueError('请指定 FORMAL_ID 或 FORMAL_PACKAGE（已解压目录）')
         elif args.export_id:
-            raise ValueError('--export-id 需要在 CMDBUF Studio 工程中运行')
+            raise ValueError('--export-id 需要在 test_mode Studio 工程中运行')
         with toolchain.interruptible():
             return prove(package, output, args.run_id, args.timeout)
     except (OSError, ValueError, RuntimeError, KeyError, TypeError) as exc:

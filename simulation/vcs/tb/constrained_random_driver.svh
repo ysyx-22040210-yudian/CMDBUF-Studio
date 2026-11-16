@@ -1,12 +1,12 @@
 // VCS constraint solver owns the final random pin values. No post-solve fixup.
 // rready is solved first because it changes the DUT's same-cycle arready.
-class cmdbuf_random_ready;
+class test_mode_random_ready;
     rand logic [2:0] value;
     logic drain;
     constraint ready_policy { if (drain) value == 3'b111; }
 endclass
 
-class cmdbuf_random_inputs;
+class test_mode_random_inputs;
     rand logic valid;
     rand logic [1:0] source, response;
     rand logic [17:0] address;
@@ -51,8 +51,8 @@ endclass
 reg strict_random_mode = 0, random_started = 0;
 integer random_phase = 0, random_samples, random_solutions;
 integer random_cycles = 0, random_solves = 0;
-cmdbuf_random_ready random_ready;
-cmdbuf_random_inputs random_inputs;
+test_mode_random_ready random_ready;
+test_mode_random_inputs random_inputs;
 
 task automatic random_open;
     begin

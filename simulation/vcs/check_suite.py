@@ -17,7 +17,7 @@ def pending_wave_check(directory):
     database = vcd.index(root/'waves.vcd', root/'wave_index')
     metadata = vcd.describe(database)
     signal = next(s for s in metadata['signals'] if
-                  s['name'].split('[')[0]=='tb_cmdbuf_rd.dut.pending_cnt')
+                  s['name'].split('[')[0]=='tb_test_mode_rd.dut.pending_cnt')
     series = vcd.window(database, [signal['id']], 0, metadata['end'])['signals'][0]['values']
     actual = [(time, int(value, 2)) for time,value in series]
     expected = [(0, 0)]
@@ -45,7 +45,7 @@ def port_wave_check(directory):
     root = Path(directory)
     database = vcd.index(root/'waves.vcd', root/'wave_index')
     metadata = vcd.describe(database)
-    prefix = 'tb_cmdbuf_rd.dut.'
+    prefix = 'tb_test_mode_rd.dut.'
     names = {name for name, _, _ in PORTS if name != 'rd_mem_status'}
     names.update('rd_mem_status[{}]'.format(bank) for bank in range(8))
     pins = {}
@@ -87,7 +87,7 @@ def main(argv=None):
         checks.append(dict(name=name,passed=bool(condition),detail=detail))
     fixture=root/'fixture';fixture.mkdir()
     rc,_=eda.execute(eda.vcs_options(fixture,env)+['-sverilog','-top','monitor_fixture',
-        str(eda.HERE/'tb/cmdbuf_check_monitor.sv'),str(eda.HERE/'tests/checks/monitor_fixture.sv'),
+        str(eda.HERE/'tb/test_mode_check_monitor.sv'),str(eda.HERE/'tests/checks/monitor_fixture.sv'),
         '-o',str(fixture/'simv')],fixture,fixture/'compile.log',env,None,phase='compile')
     if rc: raise RuntimeError('Fixture compile failed: '+str(fixture/'compile.log'))
     scenarios=[('snapshot',0,0),('late',0,0),('ambiguous',0,0),('ambiguous_bad_data',0,1),

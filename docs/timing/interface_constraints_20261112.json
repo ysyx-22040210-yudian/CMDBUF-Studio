@@ -12,7 +12,7 @@
     },
     {
       "id": "A_R_READY",
-      "owner": "CMDBUF RTL",
+      "owner": "test_mode RTL",
       "rule": "For i in 0..2, rready[i] == 0 implies rvalid[i] == 0.",
       "implementation": "The existing R arbitration selects only completed source heads with rready[i] == 1."
     },

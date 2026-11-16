@@ -2,7 +2,7 @@ param([Parameter(ValueFromRemainingArguments=$true)][string[]]$MakeArguments)
 $ErrorActionPreference = 'Stop'
 $taskRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..'))
 $candidates = @()
-if ($env:CMDBUF_PYTHON) { $candidates += [pscustomobject]@{File=$env:CMDBUF_PYTHON;Prefix=@()} }
+if ($env:test_mode_PYTHON) { $candidates += [pscustomobject]@{File=$env:test_mode_PYTHON;Prefix=@()} }
 $localPython = Join-Path $taskRoot '.venv\Scripts\python.exe'
 if (Test-Path -LiteralPath $localPython) { $candidates += [pscustomobject]@{File=$localPython;Prefix=@()} }
 foreach ($name in @('python','python3','py')) {
@@ -22,7 +22,7 @@ foreach ($candidate in $candidates) {
     } catch {}
 }
 if (-not $selected) {
-    Write-Host 'Python 3.6+ is required. Install Python 3, or set CMDBUF_PYTHON to its python.exe path.'
+    Write-Host 'Python 3.6+ is required. Install Python 3, or set test_mode_PYTHON to its python.exe path.'
     exit 2
 }
 $exe = $selected.File

@@ -14,7 +14,7 @@ class SvAuthoringTests(unittest.TestCase):
             created=sv_cases.new_case('my_read',source)
             cfg=sv_cases.load(created)
             self.assertEqual(cfg['name'],'my_read')
-            self.assertIn('class my_read extends cmdbuf_main_tc;',cfg['source'])
+            self.assertIn('class my_read extends test_mode_main_tc;',cfg['source'])
             with self.assertRaises(FileExistsError):sv_cases.new_case('my_read',source)
 
     def test_archived_source_hash_and_override(self):
@@ -31,7 +31,7 @@ class SvAuthoringTests(unittest.TestCase):
 
     def test_filename_and_class_must_agree(self):
         with tempfile.TemporaryDirectory() as directory:
-            p=Path(directory)/'wrong_name.sv';p.write_text('class some_other_name extends cmdbuf_main_tc; endclass')
+            p=Path(directory)/'wrong_name.sv';p.write_text('class some_other_name extends test_mode_main_tc; endclass')
             with self.assertRaises(ValueError):sv_cases.load(p)
 
     def test_compile_copy_migrates_only_old_template_waits(self):

@@ -99,7 +99,7 @@ class CoverageWindow(tk.Toplevel):
         self.generate_formal = generate_formal
         self.export_fsdb = export_fsdb
         self.formal_format_var = formal_format_var
-        self.title('CMDBUF Studio · 代码与功能覆盖率' if self.record.get('functional') else 'CMDBUF Studio · 代码覆盖率')
+        self.title('test_mode Studio · 代码与功能覆盖率' if self.record.get('functional') else 'test_mode Studio · 代码覆盖率')
         self.geometry('{}x{}'.format(min(1460, self.winfo_screenwidth()-40),
                                       min(930, self.winfo_screenheight()-65)))
         self.minsize(1040, 680)

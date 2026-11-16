@@ -16,7 +16,7 @@ import vcd
 
 eda, ROOT, STATE = model.eda, model.ROOT, model.STATE
 COVERAGE_JOBS = ('coverage_details', 'coverage_minimize', 'coverage_minimize_joint', 'coverage_formal', 'coverage_fsdb')
-FORMAL_JOBS = ('formal_doctor', 'formal_prove', 'formal_cover', 'formal_bmc')
+FORMAL_JOBS = ('formal_doctor', 'formal_prove', 'formal_cover', 'formal_bmc', 'formal_commercial')
 REGRESSION_JOBS = ('regress', 'formal_replay')
 CANCELLABLE_JOBS = COVERAGE_JOBS + FORMAL_JOBS
 
@@ -155,7 +155,7 @@ def make_command(arguments, project_python=False):
         if any(ch in str(arg) for ch in ('$', '`', '"', '\n', '\r', '\0')):
             raise ValueError('Make 参数路径不能含 $、反引号、双引号或换行，请改名后重试')
     cmd = ['make', '--no-print-directory']
-    if not project_python and os.environ.get('CMDBUF_BUNDLED_PYTHON') != '1':
+    if not project_python and os.environ.get('test_mode_BUNDLED_PYTHON') != '1':
         cmd.append('PYTHON='+sys.executable)
     return cmd+list(arguments)
 
@@ -206,9 +206,9 @@ class Jobs:
         for key in ('EDA_VM_HOST', 'EDA_VM_ROOT', 'EDA_SKIP_SYNC'):
             env.pop(key, None)
         if job['kind'] in REGRESSION_JOBS:
-            env['CMDBUF_STUDIO_REGRESSION_STOP'] = str(self.regression_stop_file(job))
+            env['test_mode_STUDIO_REGRESSION_STOP'] = str(self.regression_stop_file(job))
         if job['kind'] in FORMAL_JOBS:
-            env['CMDBUF_STUDIO_FORMAL_LIVE'] = '1'
+            env['test_mode_STUDIO_FORMAL_LIVE'] = '1'
         self.log(job, '$ make '+' '.join(arguments)+'\n')
         cancellable = job['kind'] in CANCELLABLE_JOBS
         process = subprocess.Popen(cmd, cwd=str(ROOT), env=env, stdout=subprocess.PIPE,
@@ -370,6 +370,24 @@ class Jobs:
                 self.invoke(job, [kind])
             elif kind == 'formal_doctor':
                 self.invoke(job, ['formal-doctor'])
+            elif kind == 'formal_commercial':
+                args = ['formal-commercial', 'COMMERCIAL_RUN_ID='+job['id'],
+                        'COMMERCIAL_MODE='+payload['mode'], 'COMMERCIAL_TIMEOUT='+str(payload['timeout']),
+                        'COMMERCIAL_ADAPTER='+payload['adapter'], 'COMMERCIAL_PACKAGE='+payload['package'],
+                        'COMMERCIAL_TARGETS='+payload['targets'], 'COMMERCIAL_DEFINES='+payload['defines'],
+                        'COMMERCIAL_PREPARE='+str(int(payload['prepare'])),
+                        'COMMERCIAL_DEPTH='+str(payload['depth'] or '')]
+                rc = self.invoke(job, args, check=False)
+                receipt = eda.OUT / 'commercial_formal' / job['id'] / 'result.json'
+                if not receipt.is_file():
+                    raise RuntimeError('商业 Formal 未生成结果，请查看任务日志')
+                result = eda.read_json(receipt)
+                self.update(job, commercial_id=job['id'], verdict=result['status'])
+                if result['status'] == 'CANCELLED':
+                    self.update(job, state='CANCELLED', stage='已取消商业 Formal')
+                    return
+                if result['status'] in ('ERROR', 'RUNNING') or rc and result['status'] in ('PASS', 'PREPARED'):
+                    raise RuntimeError(result.get('error', '商业 Formal 执行失败，请查看任务日志'))
             elif kind == 'formal_prove':
                 key = formal_model.identifier(payload['export_id'])
                 package = formal_model.artifact(key, 'summary.json').parent

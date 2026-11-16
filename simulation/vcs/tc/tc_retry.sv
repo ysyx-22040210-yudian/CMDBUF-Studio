@@ -1,7 +1,7 @@
 // 过程式重试：按 cycle 分阶段开放两路 grant。
 // 用户只需修改 main_phase 的赋值和 if 条件；没有 constraint/randomize。
 // 每次 @(posedge clk) 后执行一组带条件赋值，供下一上升沿采样。
-class tc_retry extends cmdbuf_main_tc;
+class tc_retry extends test_mode_main_tc;
     function new(); num_cycles=64; endfunction
 
     virtual task main_phase;

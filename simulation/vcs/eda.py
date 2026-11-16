@@ -101,8 +101,8 @@ def tool_env():
     return platform_config.tool_env()
 
 
-def execute(cmd, cwd, log, env, timeout, wait_for_start=False, phase='tool', stop_file=None):
-    return execution.run(cmd,cwd,log,env,timeout,wait_for_start,phase,stop_file)
+def execute(cmd, cwd, log, env, timeout, wait_for_start=False, phase='tool', stop_file=None, **options):
+    return execution.run(cmd,cwd,log,env,timeout,wait_for_start,phase,stop_file,**options)
 
 
 def vcs_options(target,env,stop_file=None,rtl_covers=False):
@@ -114,12 +114,12 @@ def vcs_options(target,env,stop_file=None,rtl_covers=False):
     include=Path(env['VCS_HOME'])/'include'
     cmd=[env.get('CXX','g++'),'-shared','-fPIC','-O2','-I'+str(include)]
     if rtl_covers:
-        cmd.append('-DCMDBUF_RTL_COVER')
+        cmd.append('-Dtest_mode_RTL_COVER')
     cmd.extend([str(source),'-o',str(library)])
     rc,_=execute(cmd,target,target/'execution_start_compile.log',env,120,phase='start_hook',stop_file=stop_file)
     if rc:raise RuntimeError('Cannot build VCS start callback: '+str(target/'execution_start_compile.log'))
     return ['vcs','-full64','-lca','-licqueue','+vcs+lic+wait','-assert','svaext',
-            '-load',platform_config.tool_path(str(library))+':cmdbuf_studio_register']
+            '-load',platform_config.tool_path(str(library))+':test_mode_studio_register']
 
 
 def instrument_checker(destination, source_hashes=None):
@@ -140,7 +140,7 @@ def instrument_checker(destination, source_hashes=None):
         cover_reset = re.compile(r'(cover\s+property\s*\(\s*@\(posedge clk\)\s*disable iff \()!rst_n\)')
         for match in reversed(list(cover_reset.finditer(sva_source.mask_sv(rewritten)))):
             start = match.end(1)
-            rewritten = rewritten[:start] + '!rst_n || !tb_cmdbuf_rd.monitor.strict_mode)' + rewritten[match.end():]
+            rewritten = rewritten[:start] + '!rst_n || !tb_test_mode_rd.monitor.strict_mode)' + rewritten[match.end():]
         compiled = destination / path.name
         compiled.write_bytes(rewritten.encode('utf-8'))
         changes.append(dict(source=rel, sha256=sha, compiled_sha256=digest(compiled), properties=properties))
@@ -244,7 +244,7 @@ def build_at(target, identity, inventory, rtl_hashes, env, stop_file=None):
     (generated / 'dut_instance.svh').write_text(dut['instance'], encoding='utf-8')
     pli = platform_config.pli_directory(env)
     filelist = target / 'files.f'
-    bench = [generated / Path(PROJECT['checker']).name, HERE / 'tb/cmdbuf_check_monitor.sv', ROOT / PROJECT['testbench']]
+    bench = [generated / Path(PROJECT['checker']).name, HERE / 'tb/test_mode_check_monitor.sv', ROOT / PROJECT['testbench']]
     # The editable TC, SVA and DUT instance are now in the build directory.
     print('EDA_SOURCES_READY', flush=True)
     options = vcs_options(target,env,stop_file,rtl_covers=bool(native_covers))+['-sverilog', '-timescale=1ns/1ps', '-debug_access+all', '-kdb',
@@ -361,7 +361,7 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
     protocol_case = program.startswith(PROTOCOL_PROGRAM_PREFIXES)
     if build_receipt.get('contracts_sha256'):
         saved_contract = build_dir / 'contracts.json'
-        source = build_dir / 'checker' / 'original' / Path(PROJECT['checker']).name
+        source = build_dir / 'checker' / 'original' / Path(checker.get('source', PROJECT['checker'])).name
         if (not saved_contract.is_file() or digest(saved_contract) != build_receipt['contracts_sha256'] or
                 not source.is_file() or digest(source) != checker['sha256']):
             raise RuntimeError('Saved checker source or contract archive is missing or changed')
@@ -403,11 +403,17 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
         # Replaying a sealed binary must preserve its code. Old binaries have no
         # start callback, so a wall deadline could kill a legitimate license wait.
         print('LEGACY_LICENSE_WAIT: archived binary has no start callback; execution timeout disabled', flush=True)
-    simulation_env = dict(env, CMDBUF_STUDIO_RTL_COVER='1' if any(
-        row.get('origin') == 'rtl' for row in (build_receipt.get('functional') or {}).get('properties', [])) else '0')
+    monitor = next((name for name in build_receipt.get('sources', {})
+                    if name.startswith('simulation/vcs/tb/') and name.endswith('_check_monitor.sv')), '')
+    # Keep the callback variable names expected by the archived simv.
+    prefix = Path(monitor).stem[:-len('_check_monitor')] if monitor else 'test_mode'
+    hook_env = ('test_mode' if prefix == 'test_mode' else prefix.upper()) + '_STUDIO_'
+    has_rtl_cover = any(row.get('origin') == 'rtl'
+                        for row in (build_receipt.get('functional') or {}).get('properties', []))
+    simulation_env = dict(env, **{hook_env + 'RTL_COVER': '1' if has_rtl_cover else '0'})
     rc, elapsed = execute(cmd, run, run / 'sim.log', simulation_env, timeout if start_hook else None,
                           wait_for_start=start_hook, phase='simulation' if start_hook else 'legacy_simulation',
-                          stop_file=stop_file)
+                          stop_file=stop_file, start_file_env=hook_env + 'START_FILE')
     conversion = None
     if waves and convert_vcd and (run / 'waves.fsdb').is_file():
         # Verdi's converter preserves unpacked arrays, which VCS $dumpvars
@@ -418,7 +424,7 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
         conversion = dict(exit_code=conversion_rc, seconds=conversion_time, source='waves.fsdb', output='waves.vcd')
     log = (run / 'sim.log').read_text(encoding='utf-8', errors='replace')
     metrics = read_json(run / 'metrics.json') if (run / 'metrics.json').exists() else {}
-    monitor_supported = 'simulation/vcs/tb/cmdbuf_check_monitor.sv' in build_receipt.get('sources', {})
+    monitor_supported = bool(monitor)
     environment_supported = 'simulation/vcs/tb/environment_policy.svh' in build_receipt.get('sources', {})
     check_report = check_policy.report(run, policy, required=monitor_supported,
                                        environment_required=environment_supported, contract_revision=contract_revision,
@@ -571,7 +577,7 @@ def write_report(regression, summary):
         e = html.escape
         shown_status='PASS (expected violation)' if r.get('expected_failure') and r.get('acceptance_pass') else r['status']
         extra=''
-        for name,label in [('sim.process.json','等待与执行计时'),('check_scope.json','检查范围'),('cmdbuf_rd_port_sva.sv','编译 SVA 源码'),('assertions.jsonl','断言失败'),('environment_errors.jsonl','环境错误'),('environment_runtime.json','用例完成状态'),('check_frames.csv','完整采样'),('clock_reset.csv','时钟与复位'),('case.sv','SV TC 源码'),('assigned.csv','TC 赋值'),('sv_solutions.csv','VCS 求解值'),('samples.csv','实际输入'),('actual_vs_plan.html','计划与实际'),('drive_audit.json','输入审计'),('constraint_failure.json','约束冲突'),('functional_hits.json','功能覆盖命中')]:
+        for name,label in [('sim.process.json','等待与执行计时'),('check_scope.json','检查范围'),('test_mode_rd_port_sva.sv','编译 SVA 源码'),('assertions.jsonl','断言失败'),('environment_errors.jsonl','环境错误'),('environment_runtime.json','用例完成状态'),('check_frames.csv','完整采样'),('clock_reset.csv','时钟与复位'),('case.sv','SV TC 源码'),('assigned.csv','TC 赋值'),('sv_solutions.csv','VCS 求解值'),('samples.csv','实际输入'),('actual_vs_plan.html','计划与实际'),('drive_audit.json','输入审计'),('constraint_failure.json','约束冲突'),('functional_hits.json','功能覆盖命中')]:
             if (regression/'cases'/r['id']/name).exists():
                 extra+=' <a href="cases/{}/{}">{}</a>'.format(e(r['id']),name,label)
         scope = ' / '.join(g['title']+': '+g['status'] for g in r.get('checks', {}).get('groups', []))
@@ -587,10 +593,10 @@ def write_report(regression, summary):
         functional = summary['functional']
         coverage_link += ' · 功能覆盖 {}/{}'.format(functional['covered'], functional['total'])
     completed = len(summary['results'])
-    body = '''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>CMDBUF RD VCS 回归</title>
+    body = '''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>test_mode RD VCS 回归</title>
 <style>body{font:16px system-ui;margin:36px;color:#182c40}table{border-collapse:collapse;width:100%%}
 td,th{border:1px solid #bbc7d0;padding:10px;text-align:left}code{font-size:13px}h1{font-size:26px}</style>
-<h1>CMDBUF RD VCS 回归</h1><p>批次 %s　状态 %s　通过 / 完成 / 总数 %d / %d / %d</p>
+<h1>test_mode RD VCS 回归</h1><p>批次 %s　状态 %s　通过 / 完成 / 总数 %d / %d / %d</p>
 <p>%s · <a href="summary.json">机器可读结果</a></p>
 <p>在 Linux 工程目录运行下表 Make 命令。
 FSDB 与 VDB 保存在当前设备。覆盖率使用 <code>make coverage REGRESSION=%s</code>。
@@ -613,7 +619,7 @@ def select_regression(name):
 
 
 def regress(args, env):
-    stop_name = os.environ.get('CMDBUF_STUDIO_REGRESSION_STOP') if args.command in ('regress', 'formal-replay') else None
+    stop_name = os.environ.get('test_mode_STUDIO_REGRESSION_STOP') if args.command in ('regress', 'formal-replay') else None
     stop_file = Path(stop_name) if stop_name else None
     plan = read_json(ROOT / args.plan) if getattr(args, 'plan', None) else None
     policy = check_policy.plan_options(plan) if plan else check_policy.normalize(
@@ -823,7 +829,7 @@ def replay(args, env):
     cov = merge_coverage(regression, [result], env)
     ok = ok and cov['status'] == 'PASS'
     summary = {'id': rid, 'status': 'PASS' if ok else 'FAIL', 'created_at': stamp(),
-               'project': PROJECT['name'], 'build': str(build_dir), 'results': [result],
+               'project': original.get('project', PROJECT['name']), 'build': str(build_dir), 'results': [result],
                'passed': int(result['status'] == 'PASS'), 'coverage': cov, 'timezone': 'Asia/Shanghai',
                'contract_revision': result['contract_revision'],
                'check_policy': dict(check_mode=result['check_mode'], assert_fatal=result['assert_fatal'], env_fatal=result['env_fatal'])}
@@ -833,6 +839,10 @@ def replay(args, env):
         write_json(OUT / 'requests' / (os.environ['EDA_REQUEST_ID'] + '.json'), {'id': rid})
     print('REPLAY events_match_original={} REPORT {}'.format(result['events_match_original'], regression / 'index.html'))
     return 0 if ok else 1
+
+
+def regression_top(summary):
+    return PROJECT['top'].replace(PROJECT['name'], summary.get('project', PROJECT['name']), 1)
 
 
 def launch_verdi(args, env):
@@ -869,7 +879,7 @@ def launch_verdi(args, env):
         if not wave.exists():
             raise ValueError('FSDB is missing: ' + str(wave))
         cmd = ['verdi', '-full64', '-dbdir', str(build_dir / 'simv.daidir'), '-ssf', str(wave)]
-        cmd += verdi_wave.prepare(view_dir, env, args.dut_scope, PROJECT['top'] + '.dut')
+        cmd += verdi_wave.prepare(view_dir, env, args.dut_scope, regression_top(summary) + '.dut')
     if args.display:
         env['DISPLAY'] = args.display
     if args.xauthority:

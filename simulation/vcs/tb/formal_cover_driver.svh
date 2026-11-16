@@ -1,5 +1,5 @@
 // The solver supplies pin values sampled on subsequent rising edges.
-class cmdbuf_formal_cover_tc extends cmdbuf_main_tc;
+class test_mode_formal_cover_tc extends test_mode_main_tc;
     logic [FORMAL_PIN_BITS-1:0] frames[];
 
     function new(input int count);

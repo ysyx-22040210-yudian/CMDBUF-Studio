@@ -85,7 +85,7 @@ def formal_top(dut, builtin, user, action, targets=(), native=False, horizon=48)
             props.statement('FC_REPLAY_CAPACITY', 'assert', "fc_outstanding <= 5'd9 && (!r_fire || fc_outstanding != 0)") + ';',
         ]
         if native:
-            lines.append(props.statement('FC_CMDBUF_REPLAY_COMPLETE', 'cover', 'fc_quiet[6] && fc_idle') + ';')
+            lines.append(props.statement('FC_test_mode_REPLAY_COMPLETE', 'cover', 'fc_quiet[6] && fc_idle') + ';')
     for index, p in enumerate(properties):
         name, kind, expr = p['name'], p['kind'], p['predicate']
         user_name = 'FC_C_' if kind == 'cover' else 'FC_USER_'
@@ -478,7 +478,7 @@ def main(argv=None):
         result.update(status='RUNNING', started_at=started)
         eda.write_json(directory/'result.json', result)
         with toolchain.environment() as env:
-            if 'CMDBUF_STUDIO_FORMAL_LIVE' in env:
+            if 'test_mode_STUDIO_FORMAL_LIVE' in env:
                 result['tools'] = toolchain.versions(env)
             prepare_native(directory, result, env)
             targets = result['targets'] or props.cover_names(result['functional'])
@@ -489,7 +489,7 @@ def main(argv=None):
                 execution.run(['sby', '-d', 'solver', 'run.sby'], directory, directory/'sby.log', env, None,
                               phase='functional_'+args.action,
                               on_output=(lambda line: print(line, end='', flush=True))
-                              if 'CMDBUF_STUDIO_FORMAL_LIVE' in env else None)
+                              if 'test_mode_STUDIO_FORMAL_LIVE' in env else None)
                 print('FUNCTIONAL_STAGE 归档逐属性结果与轨迹', flush=True)
                 collect(directory, result, env)
         exit_code = 0 if args.action == 'cover' or result['status'] == 'PASS' else 1

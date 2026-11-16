@@ -1,5 +1,5 @@
 // Four combinations of saved ARRESP and captured PC_ERR.
-class main_response_codes extends cmdbuf_main_tc;
+class main_response_codes extends test_mode_main_tc;
     function new(); num_cycles=40; endfunction
 
     virtual task main_phase;

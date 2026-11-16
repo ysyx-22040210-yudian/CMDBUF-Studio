@@ -1,7 +1,7 @@
 // 过程式同 ID/地址连续请求：响应仍按独立接收 FIFO 检查。
 // 用户只需修改 main_phase 的赋值和 if 条件；没有 constraint/randomize。
 // 每次 @(posedge clk) 后执行一组带条件赋值，供下一上升沿采样。
-class tc_same_id extends cmdbuf_main_tc;
+class tc_same_id extends test_mode_main_tc;
     function new(); num_cycles=100; endfunction
 
     virtual task main_phase;

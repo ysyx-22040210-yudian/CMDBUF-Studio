@@ -4,13 +4,13 @@ import shutil
 import time
 
 
-def prepare(folder, env, scope='', default_scope='tb_cmdbuf_rd.dut'):
+def prepare(folder, env, scope='', default_scope='tb_test_mode_rd.dut'):
     folder = Path(folder)
     script = folder / 'waves.tcl'
     shutil.copyfile(str(Path(__file__).with_name('waves.tcl')), str(script))
     # Pass scope names as data, never interpolate them into executable Tcl.
-    env['CMDBUF_WAVE_DUT_SCOPE'] = scope or ''
-    env['CMDBUF_WAVE_DEFAULT_SCOPE'] = default_scope
+    env['test_mode_WAVE_DUT_SCOPE'] = scope or ''
+    env['test_mode_WAVE_DEFAULT_SCOPE'] = default_scope
     return ['-play', str(script)]
 
 

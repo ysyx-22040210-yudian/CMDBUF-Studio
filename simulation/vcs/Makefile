@@ -2,6 +2,9 @@
 .PHONY: help gui doctor compile build run regress check-test env-fatal-test wave coverage report open-report list \
         new-case validate explain diagram trace replay selftest export constraints constraint-test tc-test fsdb-inspect fsdb-formal smoke dist configure
 PYTHON ?= /bin/sh "$(EDA_HERE)fsdb_formal/run_python.sh"
+COMMERCIAL_PYTHON ?= python3
+export COMMERCIAL_MODE COMMERCIAL_RUN_ID COMMERCIAL_DEPTH COMMERCIAL_TIMEOUT
+export COMMERCIAL_TARGETS COMMERCIAL_PACKAGE COMMERCIAL_ADAPTER COMMERCIAL_PREPARE COMMERCIAL_DEFINES
 # Keep Chinese diagnostics readable on Linux installations with a C locale.
 export PYTHONIOENCODING := utf-8
 EDA_PROJECT_ROOT ?= $(CURDIR)
@@ -61,15 +64,17 @@ EDA_COVERAGE_SET = $(if $(strip $(COVERAGE_SET)),--coverage-set "$(COVERAGE_SET)
 EDA_FORMAL_FORMAT = $(if $(strip $(FORMAL_FORMAT)),--format "$(FORMAL_FORMAT)")
 
 help:
-	@echo 'CMDBUF Studio: native Tk desktop and local Linux EDA'
+	@echo 'test_mode Studio: native Tk desktop and local Linux EDA'
 	@echo '  make doctor | smoke                 Check tools, then real compile/simulation/coverage'
 	@echo '  make dist                           Build the source ZIP and tar.gz'
 	@echo '       SUITE_X64=/path/to/oss-cad-suite.tgz or SUITE_ARM64=... builds the corresponding self-contained Linux archive'
-	@echo '  make gui                             Open CMDBUF Studio on this computer'
+	@echo '  make gui                             Open test_mode Studio on this computer'
 	@echo '  make fsdb-inspect REQUEST=request.json  Inspect FSDB through NPI'
 	@echo '  make fsdb-formal REQUEST=request.json   Extract FSDB and generate pattern-selected SVA'
 	@echo '       FORMAL_FORMAT=optimized|cycle|signal|table|packed|property|boolean|channel|range|rom|generate'
 	@echo '  make formal-doctor                    Check Yosys, SymbiYosys, ABC and Yices'
+	@echo '  make formal-commercial               Run a local commercial Formal adapter on native RTL/SVA'
+	@echo '       COMMERCIAL_MODE=cover|bmc|prove  Optional COMMERCIAL_PREPARE=1 exports the job without launch'
 	@echo '  make formal-prove FORMAL_ID=id        Check the exported DUT and all trace endpoints'
 	@echo '  make formal-cover FORMAL_DEPTH=48    Generate cases for DUT and editor cover targets'
 	@echo '  make formal-cover-list               List instantiated DUT cover targets and source locations'
@@ -99,7 +104,7 @@ help:
 	@echo '  make wave                            First failure, otherwise first case'
 	@echo '       Automatically add every dumped signal at DUT top (ports + internal signals).'
 	@echo '  make wave-file FSDB=/path/wave.fsdb  Open imported FSDB with the same preset'
-	@echo '       DUT_SCOPE=tb_cmdbuf_rd.dut      Optional explicit instance for imported FSDB'
+	@echo '       DUT_SCOPE=tb_test_mode_rd.dut      Optional explicit instance for imported FSDB'
 	@echo '  make coverage                        Open merged code coverage in Verdi'
 	@echo '       REGRESSION=latest|batch_id DISPLAY=:0 XAUTHORITY=/path (optional)'
 	@echo '  make coverage-details REGRESSION=latest   Inspect each code coverage item in Tk'
@@ -155,6 +160,10 @@ fsdb-inspect fsdb-formal:
 .PHONY: formal-doctor formal-prove
 formal-doctor:
 	$(PYTHON) "$(EDA_HERE)fsdb_formal/toolchain.py"
+
+.PHONY: formal-commercial
+formal-commercial:
+	$(COMMERCIAL_PYTHON) "$(EDA_HERE)commercial_formal.py"
 
 formal-prove:
 	$(PYTHON) "$(EDA_HERE)fsdb_formal/proof.py" --project $(if $(strip $(FORMAL_ID)),--export-id "$(FORMAL_ID)") $(if $(strip $(FORMAL_PACKAGE)),--package "$(FORMAL_PACKAGE)") $(if $(strip $(FORMAL_RUN_ID)),--run-id "$(FORMAL_RUN_ID)") $(if $(strip $(FORMAL_TIMEOUT)),--timeout "$(FORMAL_TIMEOUT)")

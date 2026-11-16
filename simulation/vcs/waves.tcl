@@ -46,12 +46,12 @@ proc studio_write_lines {path lines} {
 if {[catch {
     set wave [wvGetCurrentWindow]
     set requested ""
-    set preferred /tb_cmdbuf_rd/dut
-    if {[info exists ::env(CMDBUF_WAVE_DUT_SCOPE)] && $::env(CMDBUF_WAVE_DUT_SCOPE) ne ""} {
-        set requested [studio_scope_path $::env(CMDBUF_WAVE_DUT_SCOPE)]
+    set preferred /tb_test_mode_rd/dut
+    if {[info exists ::env(test_mode_WAVE_DUT_SCOPE)] && $::env(test_mode_WAVE_DUT_SCOPE) ne ""} {
+        set requested [studio_scope_path $::env(test_mode_WAVE_DUT_SCOPE)]
     }
-    if {[info exists ::env(CMDBUF_WAVE_DEFAULT_SCOPE)]} {
-        set preferred [studio_scope_path $::env(CMDBUF_WAVE_DEFAULT_SCOPE)]
+    if {[info exists ::env(test_mode_WAVE_DEFAULT_SCOPE)]} {
+        set preferred [studio_scope_path $::env(test_mode_WAVE_DEFAULT_SCOPE)]
     }
     set scope [studio_find_dut $wave $requested $preferred]
     set signals [wvGetSignalsByScope -win $wave $scope]

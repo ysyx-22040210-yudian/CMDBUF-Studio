@@ -29,7 +29,7 @@ class ProtocolTests(unittest.TestCase):
         c=json.loads((contracts.HERE/'contracts.json').read_text(encoding='utf-8'))
         for change in ('hash','new','missing','status'):
             x=copy.deepcopy(c)
-            if change=='hash': x['sources']['rtl/cmdbuf_rd.sv']='0'*64
+            if change=='hash': x['sources']['rtl/test_mode_rd.sv']='0'*64
             if change=='new': x['rules'][0]['id']='E99_NEW_RULE'
             if change=='missing': x['rules'].pop()
             if change=='status': x['rules'][0]['status']='unsupported'

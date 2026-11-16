@@ -16,11 +16,11 @@ REVISIONS = tuple(PARITY_RESPONSE_CODES)
 SUPPLEMENT = 'docs/timing/interface_constraints_20261112.json'
 PENDING_SPEC = 'docs/timing/pending_register_20261112.json'
 RESPONSE_SPEC = 'docs/timing/parity_response_20261113.json'
-PORT_CHECKER = 'formal/protocol_20261021/cmdbuf_rd_port_sva.sv'
+PORT_CHECKER = 'formal/protocol_20261021/test_mode_rd_port_sva.sv'
 COVER_NEUTRAL_RTL = {
-    'rtl/cmdbuf_rd.sv': '2543293354d5eba445f2e22e04806bbe06347de0c214075dd9f96c56d89a1c02',
-    'rtl/cmdbuf_rd_cmd.sv': '7654300ed0c4b73de780d24ee8c8f15d3fc42f4104601179be556d872e181c8e',
-    'rtl/cmdbuf_rd_otb.sv': '7d3b2a347ded682f93ca8b24d9350a45f8acbdf08ebad087d19223383e9fac70',
+    'rtl/test_mode_rd.sv': 'eebd351a849f907b520b3402e33279d371d2860f72fb046521ae0439ecdf8ab9',
+    'rtl/test_mode_rd_cmd.sv': 'f6fa2de9321e75bfdcfb36d8477a2f4b5958a9d3cac69c07c2df407b3832ade6',
+    'rtl/test_mode_rd_otb.sv': 'a8917be739640ffc7098a1748db96ffa9ebe0c8ee5c6029e6bec9c7d7e204b50',
 }
 IMPLEMENTED = {'E03_SRC', 'E04_ARRESP', 'E05_ZERO_READY', 'E06_SUCCESS_BUSY',
                'E07_SRC_READY', 'E08_AR_GRANT_REQ',
@@ -66,10 +66,10 @@ def audit(root=None, catalog=None, allow_rtl_covers=False):
                     cover_edits[name] = actual
                     continue
             failures.append('source changed; review contract mapping: ' + name)
-    required = {'rtl/files.f', 'rtl/cmdbuf_rd.sv', 'rtl/cmdbuf_rd_cmd.sv', 'rtl/cmdbuf_rd_otb.sv',
+    required = {'rtl/files.f', 'rtl/test_mode_rd.sv', 'rtl/test_mode_rd_cmd.sv', 'rtl/test_mode_rd_otb.sv',
                 PORT_CHECKER,
-                'formal/protocol_20261021/cmdbuf_rd_reference_model.svh',
-                'formal/protocol_20261021/cmdbuf_rd_xau_order_model.svh',
+                'formal/protocol_20261021/test_mode_rd_reference_model.svh',
+                'formal/protocol_20261021/test_mode_rd_xau_order_model.svh',
                 'docs/timing/protocol_corrections_20261021.json', SUPPLEMENT, PENDING_SPEC, RESPONSE_SPEC}
     if set(expected_sources) != required:
         failures.append('incomplete source inventory')

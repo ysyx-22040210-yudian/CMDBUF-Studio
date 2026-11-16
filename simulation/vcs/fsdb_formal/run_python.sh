@@ -67,7 +67,7 @@ fi
 # Studio starts any site-supplied tools or Make jobs.
 export PYTHONHOME="$suite" PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 PYTHONEXECUTABLE="$here/run_python.sh"
 unset PYTHONPATH
-export CMDBUF_BUNDLED_PYTHON=1
+export test_mode_BUNDLED_PYTHON=1
 exec "$suite/lib/$loader" --inhibit-cache --inhibit-rpath "" --library-path "$suite/lib" "$suite/libexec/python3.11" \
     -c 'import os, runpy, sys
 os.environ.pop("PYTHONHOME", None)

@@ -14,7 +14,7 @@ module monitor_fixture;
     reg pc_err=0;
     string scenario="snapshot";
     integer ticks=0;
-    cmdbuf_check_monitor monitor(.*);
+    test_mode_check_monitor monitor(.*);
     // The consumed R payload is correct. A post-NBA read would see corruption.
     always @(posedge clk)
         if (scenario=="snapshot" && rvalid!=0) begin rid<=8'hff; rdata<='1; end

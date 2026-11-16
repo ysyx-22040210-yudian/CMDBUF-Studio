@@ -65,13 +65,13 @@ class FsdbFormalTests(unittest.TestCase):
         self.assertIn("rd_mem_status[7] == 2'h2",code)
         self.assertIn('input wire [1:0] rd_mem_status [7:0]',code)
         self.assertEqual(core.literal('1'+'0'*127),"128'h80000000000000000000000000000000")
-        self.assertEqual(len(core.mapping('tb.cmdbuf')),31)
-        with self.assertRaises(ValueError):core.mapping('tb.cmdbuf;bad')
-        with self.assertRaises(ValueError):core.mapping('tb.cmdbuf',{'bogus':'x'})
+        self.assertEqual(len(core.mapping('tb.test_mode')),31)
+        with self.assertRaises(ValueError):core.mapping('tb.test_mode;bad')
+        with self.assertRaises(ValueError):core.mapping('tb.test_mode',{'bogus':'x'})
 
     def test_native_and_sby_copies_are_separate(self):
         trace=self.parse();folder=Path(self.tmp.name)/'export'
-        core.export_data(folder,[trace],'cmdbuf_rd dut (.*);')
+        core.export_data(folder,[trace],'test_mode_rd dut (.*);')
         native=(folder/'trace_properties.sv').read_text()
         engine.sby_configs(folder,[trace],[],[],{'defines':[]})
         self.assertEqual((folder/'trace_properties.sv').read_text(),native)
@@ -95,7 +95,7 @@ class FsdbFormalTests(unittest.TestCase):
         for style in core.FORMATS:
             with self.subTest(style=style):
                 export = folder/style
-                counts = core.export_data(export, [trace], 'cmdbuf_rd dut (.*);', style)
+                counts = core.export_data(export, [trace], 'test_mode_rd dut (.*);', style)
                 native = (export/'trace_properties.sv').read_text()
                 artifacts = [(export/name).read_bytes() for name in ('samples.csv', 'trace.json', 'transactions.json')]
                 if common is None:

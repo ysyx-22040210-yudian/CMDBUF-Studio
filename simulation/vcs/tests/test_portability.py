@@ -69,7 +69,7 @@ class PortabilityTests(unittest.TestCase):
     def test_distribution_contains_offline_runtime_and_no_machine_data(self):
         paths={p.relative_to(portable.ROOT).as_posix() for p in portable.selected_files()}
         for rel in ('simulation/vcs/platform_config.py','simulation/vcs/gui/desktop.py','simulation/vcs/gui/widgets.py',
-                    'simulation/vcs/fsdb_formal/npi_reader.cpp','CMDBUF Studio.sh','CMDBUF Studio.cmd','rtl/cmdbuf_rd.sv'):
+                    'simulation/vcs/fsdb_formal/npi_reader.cpp','test_mode Studio.sh','test_mode Studio.cmd','rtl/test_mode_rd.sv'):
             self.assertIn(rel,paths)
         self.assertNotIn('eda.local.json',paths)
         self.assertFalse(any(p.startswith(('build/','verification/','dist/')) for p in paths))
@@ -99,7 +99,7 @@ class PortabilityTests(unittest.TestCase):
             (suite/'lib').mkdir(parents=True)
             (suite/'libexec').mkdir()
             loader = suite/'lib'/loaders[suffix]
-            loader.write_text('#!/bin/sh\nprintf "%s\\n" "$CMDBUF_BUNDLED_PYTHON"\n', encoding='utf-8')
+            loader.write_text('#!/bin/sh\nprintf "%s\\n" "$test_mode_BUNDLED_PYTHON"\n', encoding='utf-8')
             loader.chmod(0o755)
             (suite/'libexec/python3.11').touch()
             (suite/'libexec/python3.11').chmod(0o755)
@@ -131,7 +131,7 @@ class PortabilityTests(unittest.TestCase):
 
     @unittest.skipIf(os.name=='nt','Tool discovery executes Linux bash')
     def test_site_script_banner_and_path_discovery(self):
-        with tempfile.TemporaryDirectory(prefix='cmdbuf discovery ') as tmp:
+        with tempfile.TemporaryDirectory(prefix='test_mode discovery ') as tmp:
             base=Path(tmp)
             for tool in ('vcs','verdi','urg'):
                 home=base/('verdi' if tool=='verdi' else 'vcs')

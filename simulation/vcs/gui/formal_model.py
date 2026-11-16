@@ -104,7 +104,7 @@ def selections(payload):
         patterns.add(pattern)
         name=str(item.get('name','')).strip()
         if not name or len(name)>240:raise ValueError('波形名称为空或过长')
-        source=dict(kind=item['kind'],name=name,pattern=pattern,scope=item.get('scope','tb_cmdbuf_rd.dut'),mapping=item.get('mapping',{}))
+        source=dict(kind=item['kind'],name=name,pattern=pattern,scope=item.get('scope','tb_test_mode_rd.dut'),mapping=item.get('mapping',{}))
         core.mapping(source['scope'],source['mapping'])
         if source['kind']=='import':
             source['id']=identifier(item['id']);meta=eda.read_json(IMPORTS/source['id']/'metadata.json')

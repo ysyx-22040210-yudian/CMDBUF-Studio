@@ -75,7 +75,7 @@ class NativeTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             source = root/'tc.sv'
-            original = 'class tc extends cmdbuf_main_tc; endclass\n'
+            original = 'class tc extends test_mode_main_tc; endclass\n'
             source.write_text(original, encoding='utf-8')
             original_hash = eda.digest(source)
             build = root/'build'
@@ -160,7 +160,7 @@ class NativeTests(unittest.TestCase):
             first = dict(id='tc_seed_1', status='PASS', seconds=0.5, cycles=64, waves=True)
             second = dict(id='tc_seed_2', status='FAIL', seconds=0.6, cycles=64, waves=False)
             progress = dict(id=batch, state='RUNNING', total=3, completed=1, passed=1,
-                            dut='cmdbuf', waves_enabled=True)
+                            dut='test_mode', waves_enabled=True)
             backend.eda.write_json(folder/'progress.json', progress)
             run = folder/'cases'/first['id']
             backend.eda.write_json(run/'result.json', first)

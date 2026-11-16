@@ -116,7 +116,7 @@ def save_sva(source, version):
 
 
 def default_plan():
-    return dict(version=1, name='CMDBUF 功能回归', jobs=2, timeout=120, waves=True,
+    return dict(version=1, name='test_mode 功能回归', jobs=2, timeout=120, waves=True,
                 check_mode='transaction', assert_fatal=True, env_fatal=True,
                 cases=[dict(case=c['name'], enabled=c['name'] != 'tc_user_example', runs=10 if c['name']=='tc_random' else 1,
                             seed=1, cycles=2000 if c['name']=='tc_random' else c['cycles']) for c in cases()])

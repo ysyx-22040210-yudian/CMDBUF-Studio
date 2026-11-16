@@ -32,7 +32,7 @@ VERSION_PROBES = (
 
 def runtime_identity():
     suite = bundled_suite()
-    override = os.environ.get('CMDBUF_FORMAL_HOME')
+    override = os.environ.get('test_mode_FORMAL_HOME')
     if suite is None and override:
         suite = Path(override).expanduser().resolve()
     if suite:
@@ -69,7 +69,7 @@ def suite_path(suite):
     if all(ord(ch) < 128 and (ch.isalnum() or ch in '/-._') for ch in str(suite)):
         yield suite
         return
-    with tempfile.TemporaryDirectory(prefix='cmdbuf-formal-suite-', dir='/tmp') as folder:
+    with tempfile.TemporaryDirectory(prefix='test_mode-formal-suite-', dir='/tmp') as folder:
         alias = Path(folder)
         for path in suite.iterdir():
             if path.name != 'bin':
@@ -127,7 +127,7 @@ def interruptible():
 def environment():
     require_linux()
     suite = bundled_suite()
-    override = os.environ.get('CMDBUF_FORMAL_HOME')
+    override = os.environ.get('test_mode_FORMAL_HOME')
     if suite is None and override:
         suite = Path(override).expanduser().resolve()
     env = os.environ.copy()
@@ -144,7 +144,7 @@ def environment():
             raise RuntimeError('工具目录 %s 缺少 %s' % (suite, ', '.join(missing)))
         with suite_path(suite) as active:
             env['PATH'] = str(active/'bin')+os.pathsep+search
-            env['CMDBUF_FORMAL_TOOLCHAIN'] = str(suite)
+            env['test_mode_FORMAL_TOOLCHAIN'] = str(suite)
             smtbmc = active/'libexec/yosys-smtbmc'
             if smtbmc.is_file() and (active/'share/yosys/python3/smtio.py').is_file():
                 # SBY expands SMTBMC in a shell command, so quote each path.
@@ -155,7 +155,7 @@ def environment():
     missing = [name for name in TOOLS if not shutil.which(name, path=search)]
     if missing:
         raise RuntimeError('当前目录缺少 %s 的 Formal 运行时。请从 GitHub Release 的 Assets 下载对应架构的'
-                           ' cmdbuf-studio-linux-*.tar.gz 完整包。源码 ZIP 不含运行时。\n%s' %
+                           ' test_mode-studio-linux-*.tar.gz 完整包。源码 ZIP 不含运行时。\n%s' %
                            (architecture(), LINUX_DOWNLOADS))
     yield env
 
@@ -173,8 +173,8 @@ def versions(env):
             print(line, file=sys.stderr, flush=True)
         result[name] = dict(version=version,
                             path=shutil.which(name, path=env['PATH']))
-        if env.get('CMDBUF_FORMAL_TOOLCHAIN'):
-            result[name]['path'] = str(Path(env['CMDBUF_FORMAL_TOOLCHAIN'])/'bin'/name)
+        if env.get('test_mode_FORMAL_TOOLCHAIN'):
+            result[name]['path'] = str(Path(env['test_mode_FORMAL_TOOLCHAIN'])/'bin'/name)
     return result
 
 
@@ -182,7 +182,7 @@ def doctor(env):
     for item in versions(env).values():
         print('%s  (%s)' % (item['version'], item['path']), flush=True)
     # Compile and exercise the same frontend and both solver paths as the export.
-    with tempfile.TemporaryDirectory(prefix='cmdbuf-formal-doctor-', dir='/tmp') as folder:
+    with tempfile.TemporaryDirectory(prefix='test_mode-formal-doctor-', dir='/tmp') as folder:
         path = Path(folder)
         (path/'probe.sv').write_text(
             'module probe(input logic clk, input logic fault);\n'

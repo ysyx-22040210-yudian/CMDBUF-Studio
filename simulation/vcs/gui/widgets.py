@@ -104,7 +104,7 @@ class ScrollPage(ttk.Frame):
 class WaveWindow(tk.Toplevel):
     def __init__(self, parent, database, name, formal_step=None):
         tk.Toplevel.__init__(self, parent)
-        self.title(name+' · CMDBUF 波形'); self.geometry('1340x820'); self.minsize(950, 600)
+        self.title(name+' · test_mode 波形'); self.geometry('1340x820'); self.minsize(950, 600)
         self.database = database; self.meta = vcd.describe(database); self.start = 0; self.end = max(1, self.meta['end'])
         self.ids = []; self.cursor = 0; self.cursor_b = None
         if formal_step is not None:

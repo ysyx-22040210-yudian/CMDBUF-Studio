@@ -1,6 +1,6 @@
-# CMDBUF Studio 工程约定
+# test_mode Studio 工程约定
 
-- 此目录是独立的 CMDBUF Studio 仓库。运行、打包、测试不得依赖同级其他仓库或旧设备的固定目录；设备配置只写入已忽略的 `eda.local.json` 或环境变量。
+- 此目录是独立的 test_mode Studio 仓库。运行、打包、测试不得依赖同级其他仓库或旧设备的固定目录；设备配置只写入已忽略的 `eda.local.json` 或环境变量。
 - 编译、运行、Verdi 波形、Verdi 覆盖率和 NPI 任务保持 Make 入口。产品使用原生 Tk 窗口，直接在 Linux 目标设备执行 Make，不依赖浏览器或 SSH/VM 连接；VM 仅用于开发调试。不得把许可证、设备凭据、EDA 安装或 build/ 缓存提交到 Git。
 - 用户要求通过 GitHub Desktop 提交和上传。`formal-portable` 的 Code → Download ZIP 包含 `runtime_packages/linux-x64/` 的运行时分卷。发布后核对远端提交，从 GitHub 下载 ZIP 并离线运行自检。独立 Release 完整包只发布 x86_64，SHA-256 清单仅列该包。
 - 用户说明文档使用 PDF 或 Word。新增和修订说明交付 `documents/`，优先同时提供可编辑 Word 与 PDF；README 可作为导航和快速入口。截图必须来自真实运行，导出文档后检查排版。
@@ -12,8 +12,8 @@
 - 原生 SVA 使用 `@(posedge clk) disable iff (!rst_n)`；不能将 disable iff 当作复位初始化。单 XAU R 响应顺序由独立接收 FIFO 检查；无效 arb_addr 和 R 负载不比较。
 - `docs/timing/parity_response_20261113.json` 定义 20261113 响应码。保存的 `arresp=3` 返回 3，其余事务按 N+4 捕获的 `pc_err` 返回 2 或 0。历史重放由构建归档中的契约版本确定响应码。
 - 仿真检查模式登记于 `simulation/vcs/check_profiles.json`。新运行默认 transaction，旧计划缺少模式字段时保持 strict。通用事务模式按实际握手检查 pending 寄存递推。参考模型的待发数和精确 ready/req/R 调度仅在完整模式检查，报告必须列出 NOT_CHECKED；对应关系超限或事务未结束为 INCOMPLETE。不得将这些结果标为完整时序通过。
-- `T_R_DATA_RESP_OR_EARLY` 的细分诊断仅解释当前候选集，不放宽 N+4 MEM、同源顺序或错误优先级。按日志原始 `edge/time_ps` 定位，不能用 fatal 执行时刻代替采样时刻；数据与响应码必须匹配同一个候选。说明见 `documents/46_cmdbuf_response_diagnostics_20261113.pdf`。
-- 用户可直接修改 `cmdbuf_rd_port_sva.sv` 或使用 Tk 的端口 SVA 编辑器。编译和回归按实际源码哈希构建与归档，自定义 SVA 结果标记所用版本。
+- `T_R_DATA_RESP_OR_EARLY` 的细分诊断仅解释当前候选集，不放宽 N+4 MEM、同源顺序或错误优先级。按日志原始 `edge/time_ps` 定位，不能用 fatal 执行时刻代替采样时刻；数据与响应码必须匹配同一个候选。说明见 `documents/46_test_mode_response_diagnostics_20261113.pdf`。
+- 用户可直接修改 `test_mode_rd_port_sva.sv` 或使用 Tk 的端口 SVA 编辑器。编译和回归按实际源码哈希构建与归档，自定义 SVA 结果标记所用版本。
 - 代码覆盖率明细直接读取已归档的 VDB，分数使用 URG 原报告。最小用例集仅从原来纳入覆盖率的通过用例中求解，要求保留所有已命中的代码覆盖项，重新合并核对逐项命中、分母与分数。跨批次须核对 DUT 和覆盖定义。求解中止或超时未证最优时不得称最小，原回归档案保持不变。
 - 覆盖选集通过 `make coverage-formal` 导出，一条选中记录对应一个 pattern。优先读取存档 FSDB。缺失波形时用原二进制和输入重放，并在单独目录保留重放证据。Formal 包使用可核验的历史 DUT 源码与例化，记录 pattern、原批次、用例和 seed。
 - 观察器保存沿前四态完整快照并显式刷新末帧；原生 SVA 保留自身采样和原表达式。`ENV_FATAL=0` 关闭可恢复环境检查和断言的立即终止，TC 赋值/时序错误记录后继续，仍判 FAIL、排除失败覆盖率；不修补输入、不改变 SVA 采样。`ENV_FATAL=1 ASSERT_FATAL=0` 仅关闭断言立即终止，环境检查仍中止。无效时钟、文件/程序/求解/驱动状态错误、watchdog 仍终止；用户在 TC、DUT 或 SVA 动作中写出的 $fatal/$stop/$finish 按其代码执行。环境错误归档于 environment_errors.jsonl，environment_runtime.json 区分执行完成与验证通过。重放保留原检查模式及两个 fatal 设置，旧计划缺少 env_fatal 时默认开启。

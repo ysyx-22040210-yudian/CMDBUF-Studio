@@ -6,7 +6,7 @@ PROPERTY = re.compile(r'\b(?:(?P<label>[A-Za-z_][\w$]*)\s*:\s*)?'
                       r'(?P<kind>assert|assume)\s+property\s*\(')
 DISABLE = re.compile(r'\bdisable\s+iff\s*\(')
 ELSE = re.compile(r'else\b\s*')
-STRICT = 'tb_cmdbuf_rd.monitor.strict_mode'
+STRICT = 'tb_test_mode_rd.monitor.strict_mode'
 NAMED_DECLARATION = re.compile(r'\b(?P<kind>sequence|property)\s+(?P<name>[A-Za-z_][\w$]*)'
                                r'\s*(?:\(\s*\))?\s*;\s*(?P<body>[^;]+?)\s*;?\s*'
                                r'\bend(?P=kind)\b(?:[ \t]*:[ \t]*[A-Za-z_][\w$]*)?')
@@ -100,7 +100,7 @@ def instrument(code, strict_labels):
             # VCS reports syntax errors against the actual edited source copy.
             continue
         line = clean.count('\n', 0, prop.start())+1
-        label = prop['label'] or 'CMDBUF_SVA_L{}_{}'.format(line, index)
+        label = prop['label'] or 'test_mode_SVA_L{}_{}'.format(line, index)
         strict = label in strict_labels
         tail = next_token(clean, end)
         following = ELSE.match(clean, tail)
@@ -132,7 +132,7 @@ def instrument(code, strict_labels):
                               expression[disable_end-1:])
                 guard = ''
         head = code[prop.start():prop.start('kind')] if prop['label'] else label+': '
-        callback = 'tb_cmdbuf_rd.monitor.native_failure("{}", $realtime/1ps, {}'.format(label, detail)
+        callback = 'tb_test_mode_rd.monitor.native_failure("{}", $realtime/1ps, {}'.format(label, detail)
         if bare:
             action_code = 'else '+guard+callback+');'
             cursor = tail+1

@@ -2,7 +2,7 @@
 `include "sv_tc_base.svh"
 `include "sv_tc_factory.svh"
 reg sv_tc_mode = 0;
-cmdbuf_sv_tc tc;
+test_mode_sv_tc tc;
 integer sv_samples, sv_solutions, sv_frames=0, sv_active=0, sv_body_slots=0, sv_input_solves=0;
 string sv_name;
 

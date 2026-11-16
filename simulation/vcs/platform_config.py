@@ -11,9 +11,10 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[2]
 CONFIG = ROOT / 'eda.local.json'
-FIELDS = ('display', 'xauthority', 'tool_setup', 'vcs_home', 'verdi_home')
+FIELDS = ('display', 'xauthority', 'tool_setup', 'vcs_home', 'verdi_home', 'formal_adapter')
 ENV = dict(display='EDA_DISPLAY',
-           xauthority='EDA_XAUTHORITY', tool_setup='EDA_TOOL_SETUP', vcs_home='VCS_HOME', verdi_home='VERDI_HOME')
+           xauthority='EDA_XAUTHORITY', tool_setup='EDA_TOOL_SETUP', vcs_home='VCS_HOME', verdi_home='VERDI_HOME',
+           formal_adapter='EDA_COMMERCIAL_FORMAL_ADAPTER')
 
 
 def simple_path(path):
@@ -24,7 +25,7 @@ def cache_directory():
     # Old VCS shell wrappers split spaces even in correctly quoted argv. Keep
     # compilation/results in a private ASCII directory while leaving user files in place.
     import hashlib
-    base=Path('/tmp')/('cmdbuf-studio-'+str(os.getuid()))
+    base=Path('/tmp')/('test_mode-studio-'+str(os.getuid()))
     base.mkdir(mode=0o700,exist_ok=True)
     if base.is_symlink() or base.stat().st_uid!=os.getuid():
         raise RuntimeError('Unsafe local tool cache: '+str(base))
@@ -57,7 +58,8 @@ def tool_path(value):
 
 def load():
     value = dict(display=os.environ.get('DISPLAY', ''),
-                 xauthority=os.environ.get('XAUTHORITY', ''), tool_setup='', vcs_home='', verdi_home='', profile='auto')
+                 xauthority=os.environ.get('XAUTHORITY', ''), tool_setup='', vcs_home='', verdi_home='',
+                 formal_adapter='', profile='auto')
     if CONFIG.is_file():
         saved = json.loads(CONFIG.read_text(encoding='utf-8-sig'))
         if saved.get('schema') == 2 and saved.get('profile') == 'manual' and saved.get('machine') == machine_id():
@@ -92,7 +94,7 @@ def validate(value):
         raise ValueError('设备配置不能含换行或空字节')
     if result['display'] and not re.fullmatch(r'[A-Za-z0-9_.-]*:\d+(?:\.\d+)?', result['display']):
         raise ValueError('DISPLAY 例如 :0 或 localhost:10.0；命令行运行可留空')
-    for key in ('tool_setup', 'vcs_home', 'verdi_home', 'xauthority'):
+    for key in ('tool_setup', 'vcs_home', 'verdi_home', 'xauthority', 'formal_adapter'):
         if result[key] and not result[key].startswith('/'):
             raise ValueError(key + ' 须为 EDA 设备上的 Linux 绝对路径')
     profile = value.get('profile', 'auto')
@@ -129,9 +131,9 @@ def tool_env(required=('vcs', 'verdi', 'urg')):
         if value.get(key):
             env[ENV[key]] = value[key]
     # Site scripts may print banners: preserve only the NUL-delimited environment after a marker.
-    marker = b'__CMDBUF_ENV_BEGIN__\0'
-    script = 'source "$1" || exit $?\nprintf "__CMDBUF_ENV_BEGIN__\\0"\nenv -0'
-    result = subprocess.run(['bash', '-c', script, 'cmdbuf', str(ROOT/'simulation/vcs/toolchain.sh')],
+    marker = b'__test_mode_ENV_BEGIN__\0'
+    script = 'source "$1" || exit $?\nprintf "__test_mode_ENV_BEGIN__\\0"\nenv -0'
+    result = subprocess.run(['bash', '-c', script, 'test_mode', str(ROOT/'simulation/vcs/toolchain.sh')],
                             env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=15)
     if result.returncode or marker not in result.stdout:
         raise RuntimeError('EDA 工具环境加载失败: '+result.stderr.decode('utf-8', errors='replace')[-3000:])
@@ -142,7 +144,7 @@ def tool_env(required=('vcs', 'verdi', 'urg')):
     # login environment once, without asking for an environment script path.
     if not value.get('tool_setup') and any(not shutil.which(t, path=env.get('PATH')) for t in ('vcs', 'verdi', 'urg')):
         try:
-            login = subprocess.run(['bash', '-lc', 'printf "__CMDBUF_ENV_BEGIN__\\0"; env -0'], env=env,
+            login = subprocess.run(['bash', '-lc', 'printf "__test_mode_ENV_BEGIN__\\0"; env -0'], env=env,
                                    stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=10)
             if login.returncode == 0 and marker in login.stdout:
                 login_env = dict(item.decode('utf-8', errors='surrogateescape').split('=', 1)

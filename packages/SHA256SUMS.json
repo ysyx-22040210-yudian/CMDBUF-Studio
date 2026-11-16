@@ -1,13 +1,13 @@
 {
-  "files": 205,
+  "files": 230,
   "archives": {
-    "cmdbuf-studio-source.zip": {
-      "bytes": 9169230,
-      "sha256": "ffc65de0b8538cecd9ac075b55c06305c98cdad21662106a300ca816d0a153cd"
+    "test_mode-studio-source.zip": {
+      "bytes": 10806489,
+      "sha256": "2b1eafb5e14dce553d455812fd6cdeeb0a054a28095e983aba2ac79142aad02a"
     },
-    "cmdbuf-studio-source.tar.gz": {
-      "bytes": 9050628,
-      "sha256": "bc23017c20d360a22b3e1c9f8d258920f3df931555a6dcdb754f888878d455ae"
+    "test_mode-studio-source.tar.gz": {
+      "bytes": 10671887,
+      "sha256": "3246cfad6d4707fca3b76bf6dd2c621fda1f3848cedf606aa89036255bd7d1cc"
     }
   }
 }

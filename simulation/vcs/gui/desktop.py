@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""CMDBUF Studio: native Tk/ttk desktop, local Linux EDA, Python stdlib only."""
+"""test_mode Studio: native Tk/ttk desktop, local Linux EDA, Python stdlib only."""
 import argparse
 import copy
 import json
@@ -13,7 +13,7 @@ try:
     import tkinter as tk
     from tkinter import ttk, filedialog, messagebox, simpledialog
 except ImportError:
-    print('CMDBUF Studio 需要 Python Tk。Debian/Ubuntu: sudo apt install python3-tk；RHEL/CentOS: sudo yum install python3-tkinter。', file=sys.stderr)
+    print('test_mode Studio 需要 Python Tk。Debian/Ubuntu: sudo apt install python3-tk；RHEL/CentOS: sudo yum install python3-tkinter。', file=sys.stderr)
     raise SystemExit(2)
 
 import backend
@@ -32,7 +32,7 @@ eda, ROOT, STATE = model.eda, model.ROOT, model.STATE
 class Studio:
     def __init__(self, root):
         self.root = root; self.ui, self.mono = style(root)
-        root.title('CMDBUF Studio · 本机 EDA 工作台')
+        root.title('test_mode Studio · 本机 EDA 工作台')
         root.geometry('%dx%d'%(min(1460, max(1180, root.winfo_screenwidth()-70)), min(950, max(700, root.winfo_screenheight()-85))))
         root.minsize(1180, 700)
         root.configure(background=BG); root.protocol('WM_DELETE_WINDOW', self.close)
@@ -51,12 +51,12 @@ class Studio:
         self.build_shell()
         for key, title, subtitle, method in [
             ('home', '验证工作台', '本机运行 · VCS 仿真 · Verdi 调试 · FSDB 转 Formal', self.build_home),
-            ('dut', 'DUT 集成', '导入其他 CMDBUF RTL，维护编译顺序与 dut 实例端口连接', self.build_dut),
+            ('dut', 'DUT 集成', '导入其他 test_mode RTL，维护编译顺序与 dut 实例端口连接', self.build_dut),
             ('cases', '用例编辑', '只编辑 main_phase；在每次时钟上升沿后，用过程赋值与 if / else 实现激励约束', self.build_cases),
             ('regression', '回归计划', '按用例设置次数、起始种子与周期数。仿真期间保存的工程和计划修改用于后续回归。', self.build_regression),
             ('results', '结果与波形', '用例结束后自动显示结果与运行记录，可在本机 Verdi 中打开波形和覆盖率', self.build_results),
             ('formal', 'FSDB → Formal', 'Verdi NPI 直接逐拍提取；一份 FSDB 对应一个 pattern', self.build_formal),
-            ('functional', '开源 Formal', '搜索 Cover、检查 Assert、回放轨迹和运行 FSDB 验证包', self.build_functional),
+            ('functional', 'Formal 验证', '搜索 Cover、检查 Assert、回放轨迹和运行 FSDB 验证包', self.build_functional),
             ('settings', '本机工具', '自动识别当前设备、工程目录、EDA 命令和图形会话', self.build_settings)]:
             shell = ScrollPage(self.content); shell.grid(row=0, column=0, sticky='nsew')
             self.page_shells[key] = shell; frame = shell.body; self.pages[key] = frame
@@ -73,12 +73,12 @@ class Studio:
     def build_shell(self):
         self.sidebar = tk.Frame(self.root, background=DARK, width=214)
         self.sidebar.pack(side='left', fill='y'); self.sidebar.pack_propagate(False)
-        tk.Label(self.sidebar, text='C / S', bg=DARK, fg='#7da5ff', font=(self.mono, 26, 'bold')).pack(anchor='w', padx=24, pady=(26, 6))
-        tk.Label(self.sidebar, text='CMDBUF\nSTUDIO', bg=DARK, fg='white', justify='left', font=(self.ui, 18, 'bold')).pack(anchor='w', padx=24)
+        tk.Label(self.sidebar, text='T / S', bg=DARK, fg='#7da5ff', font=(self.mono, 26, 'bold')).pack(anchor='w', padx=24, pady=(26, 6))
+        tk.Label(self.sidebar, text='test_mode\nSTUDIO', bg=DARK, fg='white', justify='left', font=(self.ui, 18, 'bold')).pack(anchor='w', padx=24)
         tk.Label(self.sidebar, text='NATIVE EDA WORKSPACE', bg=DARK, fg='#8095b5', font=(self.ui, 8)).pack(anchor='w', padx=24, pady=(9, 28))
         for key, title in [('home', '01   工作台'), ('dut', '02   DUT 集成'), ('cases', '03   用例编辑'), ('regression', '04   回归计划'),
                            ('results', '05   结果与波形'), ('formal', '06   FSDB → Formal'),
-                           ('functional', '07   开源 Formal'), ('settings', '08   本机工具')]:
+                           ('functional', '07   Formal 验证'), ('settings', '08   本机工具')]:
             button = tk.Button(self.sidebar, text=title, anchor='w', padx=20, pady=13, bd=0,
                                background=DARK, foreground='#aabbd3', activebackground='#243b60', activeforeground='white',
                                font=(self.ui, 11), highlightthickness=0, cursor='hand2', command=lambda k=key: self.show(k))
@@ -87,7 +87,7 @@ class Studio:
                  justify='left', font=(self.ui, 9)).pack(side='bottom', anchor='w', padx=24, pady=24)
         body = ttk.Frame(self.root); body.pack(side='left', fill='both', expand=True)
         top = tk.Frame(body, bg='white', height=52); top.pack(fill='x'); top.pack_propagate(False)
-        tk.Label(top, text='CMDBUF  /  Verification workspace', bg='white', fg=MUTED, font=(self.ui, 10)).pack(side='left', padx=26)
+        tk.Label(top, text='test_mode  /  Verification workspace', bg='white', fg=MUTED, font=(self.ui, 10)).pack(side='left', padx=26)
         label = '●  LINUX · LOCAL' if sys.platform == 'linux' else '●  WINDOWS · 工程编辑'
         tk.Label(top, text=label, bg='#edf7f3', fg='#20866f', font=(self.ui, 9, 'bold'), padx=14, pady=5).pack(side='right', padx=24, pady=9)
         self.content = ttk.Frame(body); self.content.pack(fill='both', expand=True)
@@ -109,7 +109,7 @@ class Studio:
 
     def error(self, text):
         self.status.set(text)
-        messagebox.showerror('CMDBUF Studio', text, parent=self.root)
+        messagebox.showerror('test_mode Studio', text, parent=self.root)
 
     def guard(self, action):
         try:
@@ -163,7 +163,7 @@ class Studio:
         bar = self.bar(page)
         self.button(bar, '检查本机工具', lambda: self.launch('doctor'), True)
         self.button(bar, 'VCS 编译', lambda: self.launch('compile'))
-        self.button(bar, '开源 Formal', lambda: self.show('functional'))
+        self.button(bar, 'Formal 验证', lambda: self.show('functional'))
         ttk.Label(page, text='工程目录：'+str(ROOT)+'\n结果目录：'+str(eda.OUT), style='Muted.TLabel', wraplength=1050).pack(anchor='w', pady=8)
 
     def build_dut(self, page):
@@ -225,7 +225,7 @@ class Studio:
         self.sva_snapshot = model.load_sva()
         window = tk.Toplevel(self.root)
         self.sva_window = window
-        window.title('端口检查器 · cmdbuf_rd_port_sva.sv')
+        window.title('端口检查器 · test_mode_rd_port_sva.sv')
         window.geometry('1160x760')
         window.minsize(790, 490)
         window.configure(background=BG)
@@ -238,7 +238,7 @@ class Studio:
         self.sva_note = tk.StringVar(value='Ctrl + S 保存')
         ttk.Label(toolbar, textvariable=self.sva_note, style='Muted.TLabel').pack(side='right')
         ttk.Label(window, text=self.sva_snapshot['file'], style='Muted.TLabel').pack(anchor='w', padx=16)
-        self.sva_editor = self.code_editor(window, self.save_sva, filename='cmdbuf_rd_port_sva.sv')
+        self.sva_editor = self.code_editor(window, self.save_sva, filename='test_mode_rd_port_sva.sv')
         self.sva_editor.pack(fill='both', expand=True, padx=16, pady=(10, 16))
         self.sva_editor.set(self.sva_snapshot['source'])
         def save_shortcut(event):
@@ -292,7 +292,7 @@ class Studio:
 
     def ports_help(self):
         text = '\n'.join('%-18s %-7s %s'%p for p in model.dut_config.PORTS)
-        self.preview('环境端口 · CMDBUF RD', text+'\n\nrd_mem_status 保持四态 input wire [1:0] rd_mem_status [7:0]。\n在例化窗口将环境信号连接至新 DUT；接口语义变化需要同步检查器。')
+        self.preview('环境端口 · test_mode RD', text+'\n\nrd_mem_status 保持四态 input wire [1:0] rd_mem_status [7:0]。\n在例化窗口将环境信号连接至新 DUT；接口语义变化需要同步检查器。')
 
     def build_cases(self, page):
         bar = self.bar(page)
@@ -443,7 +443,7 @@ class Studio:
 
     def load_plan(self):
         plan = self.settings.get('plan', model.default_plan())
-        self.plan_name.set(plan.get('name', 'CMDBUF 功能回归')); self.jobs_var.set(str(plan.get('jobs', 2)))
+        self.plan_name.set(plan.get('name', 'test_mode 功能回归')); self.jobs_var.set(str(plan.get('jobs', 2)))
         self.timeout_var.set(str(plan.get('timeout', 120))); self.waves_var.set(plan.get('waves', True))
         mode = plan.get('check_mode', 'strict')
         self.check_mode_var.set(next(title for title,value in self.check_modes.items() if value==mode))
@@ -559,7 +559,7 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
         row = self.bar(page); self.artifact_var = tk.StringVar(value='sim.log')
         ttk.Label(row, text='运行记录').pack(side='left', padx=(0, 10))
         combo = ttk.Combobox(row, textvariable=self.artifact_var, state='readonly', width=26,
-                             values=['sim.log', 'sim.process.json', 'environment_errors.jsonl', 'environment_runtime.json', 'cmdbuf_rd_port_sva.sv', 'check_scope.json', 'assertions.jsonl', 'check_frames.csv', 'check_runtime.json',
+                             values=['sim.log', 'sim.process.json', 'environment_errors.jsonl', 'environment_runtime.json', 'test_mode_rd_port_sva.sv', 'check_scope.json', 'assertions.jsonl', 'check_frames.csv', 'check_runtime.json',
                                      'clock_reset.csv', 'case.sv', 'case.json', 'assigned.csv', 'samples.csv', 'events.csv',
                                      'functional_coverage.sv', 'functional_hits.json', 'drive_audit.json', 'constraint_failure.json'])
         combo.pack(side='left'); combo.bind('<<ComboboxSelected>>', lambda e: self.guard(self.read_artifact))
@@ -920,7 +920,7 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
                 existing['enabled'] = enabled
             return
         pattern = max([s['pattern'] for s in self.formal_items]+[-1])+1
-        self.formal_items.append(dict(value, enabled=enabled, pattern=pattern, scope='tb_cmdbuf_rd.dut', mapping={}))
+        self.formal_items.append(dict(value, enabled=enabled, pattern=pattern, scope='tb_test_mode_rd.dut', mapping={}))
 
     def add_run_formal(self):
         if not self.current_batch or not self.run_tree.selection(): raise ValueError('请选择带波形的回归用例')
@@ -1109,7 +1109,8 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
         grid = ttk.Frame(box); grid.pack(fill='x'); grid.columnconfigure(1, weight=1)
         variables = {}; controls = []
         for i, (key, title) in enumerate([('tool_setup', '可选环境脚本'), ('vcs_home', 'VCS 安装目录'),
-                                         ('verdi_home', 'Verdi 安装目录'), ('display', '图形会话 DISPLAY'), ('xauthority', '图形授权文件')]):
+                                         ('verdi_home', 'Verdi 安装目录'), ('display', '图形会话 DISPLAY'),
+                                         ('xauthority', '图形授权文件'), ('formal_adapter', '商业 Formal 适配器')]):
             var = tk.StringVar(value=current.get(key, '')); variables[key] = var
             ttk.Label(grid, text=title).grid(row=i, column=0, sticky='w', padx=(0, 16), pady=10)
             entry = ttk.Entry(grid, textvariable=var); entry.grid(row=i, column=1, sticky='ew', pady=10); controls.append(entry)
@@ -1127,7 +1128,9 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
             self.idle()
             value = {k:v.get() for k,v in variables.items()} if enabled.get() else {}
             value['profile'] = 'manual' if enabled.get() else 'auto'
-            eda.platform_config.save(value); self.settings = model.state_read(); dialog.destroy(); self.launch('detect')
+            eda.platform_config.save(value)
+            self.functional_page.commercial.adapter.set(eda.platform_config.load()['formal_adapter'])
+            self.settings = model.state_read(); dialog.destroy(); self.launch('detect')
         ttk.Button(box, text='保存并重新检测', style='Primary.TButton', command=lambda: self.guard(save)).pack(anchor='e')
         dialog.grab_set()
 
@@ -1135,12 +1138,14 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
         self.launch('doctor')
 
     def launch(self, kind, payload=None):
-        if kind in ('compile',) + backend.REGRESSION_JOBS + ('formal_cover', 'formal_bmc'):
+        dut_task = (kind in ('compile',) + backend.REGRESSION_JOBS + ('formal_cover', 'formal_bmc') or
+                    kind == 'formal_commercial' and payload['mode'] != 'prove')
+        if dut_task:
             self.require_rtl_import_idle()
-        if kind in ('compile',) + backend.REGRESSION_JOBS + ('formal_cover', 'formal_bmc') and self.sva_dirty():
+        if dut_task and self.sva_dirty():
             raise ValueError('请先保存端口 SVA 编辑器中的修改')
         if kind in ('compile',) + backend.REGRESSION_JOBS and self.functional_page.dirty():
-            raise ValueError('请先保存「开源 Formal」中的属性')
+            raise ValueError('请先保存「Formal 验证」中的属性')
         job = self.jobs.start(kind, payload); self.status.set('任务启动：'+kind); self.progress.start(12)
         return job
 
@@ -1189,7 +1194,8 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
                             'coverage_formal': '选集 Formal 验证包已生成',
                             'coverage_fsdb': '选集 FSDB 已导出',
                             'formal_doctor': '开源 Formal 工具链自检通过',
-                            'formal_prove': 'Formal 证明结果 · '+job.get('verdict', '未知')}
+                            'formal_prove': 'Formal 证明结果 · '+job.get('verdict', '未知'),
+                            'formal_commercial': '商业 Formal · '+job.get('verdict', '未知')}
                 self.status.set(job.get('error') or (job['stage'] if job['state'] == 'CANCELLED'
                                                    else finished.get(job['kind'], '已完成：'+job['kind'])))
                 self.on_finished(job)
@@ -1220,6 +1226,8 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
             self.guard(lambda: self.functional_page.package.refresh_runs(job['id']))
         if job['kind'] in ('formal_cover', 'formal_bmc') and job.get('functional_record'):
             self.guard(lambda: self.functional_page.present(job['functional_record']))
+        if job.get('commercial_id'):
+            self.guard(lambda: self.functional_page.commercial.refresh(job['commercial_id']))
         if job['state'] == 'CANCELLED':
             return
         if job['state'] != 'DONE':

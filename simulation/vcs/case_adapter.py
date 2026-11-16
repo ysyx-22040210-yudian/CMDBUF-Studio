@@ -1,4 +1,4 @@
-"""CMDBUF RD JSON sequences -> checked, deterministic stimulus instructions."""
+"""test_mode RD JSON sequences -> checked, deterministic stimulus instructions."""
 import json
 from pathlib import Path
 

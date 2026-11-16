@@ -1,7 +1,7 @@
 // 用户修改示例：用普通 if 和 =，在 cycle 3/4/8 给三个 XAU 发送请求。
 // 用户只需修改 main_phase 的赋值和 if 条件；没有 constraint/randomize。
 // 每次 @(posedge clk) 后执行一组带条件赋值，供下一上升沿采样。
-class tc_user_example extends cmdbuf_main_tc;
+class tc_user_example extends test_mode_main_tc;
     function new(); num_cycles=64; endfunction
 
     virtual task main_phase;

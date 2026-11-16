@@ -1,10 +1,10 @@
 {
   "version": 1,
-  "protocol": "CMDBUF 20261113",
+  "protocol": "test_mode 20261113",
   "new_run_default": "transaction",
   "legacy_plan_default": "strict",
-  "native_properties": "formal/protocol_20261021/cmdbuf_rd_port_sva.sv",
-  "simulation_monitor": "simulation/vcs/tb/cmdbuf_check_monitor.sv",
+  "native_properties": "formal/protocol_20261021/test_mode_rd_port_sva.sv",
+  "simulation_monitor": "simulation/vcs/tb/test_mode_check_monitor.sv",
   "validation": "make check-test",
   "common_native": ["E03_SRC", "E04_ARRESP", "E05_ZERO_READY", "E06_SUCCESS_BUSY", "E07_SRC_READY", "E08_AR_GRANT_REQ", "A_REQ_ONEHOT", "A_R_ONEHOT", "A_R_READY", "A_PENDING_RANGE", "A_PENDING_RECURRENCE"],
   "strict_native": [

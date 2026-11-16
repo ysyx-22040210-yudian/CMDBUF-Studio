@@ -1,7 +1,7 @@
 // 过程式 Bank/half 覆盖：每隔 12 次赋值发送一次，覆盖 16 个组合。
 // 用户只需修改 main_phase 的赋值和 if 条件；没有 constraint/randomize。
 // 每次 @(posedge clk) 后执行一组带条件赋值，供下一上升沿采样。
-class tc_banks extends cmdbuf_main_tc;
+class tc_banks extends test_mode_main_tc;
     function new(); num_cycles=210; endfunction
 
     virtual task main_phase;

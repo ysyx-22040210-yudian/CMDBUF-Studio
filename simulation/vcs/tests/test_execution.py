@@ -19,17 +19,17 @@ import backend
 class ExecutionTests(unittest.TestCase):
     def child(self,folder,source,timeout=.2,wait=True,name='sim'):
         root=Path(folder);log=root/(name+'.log')
-        env=os.environ.copy();env['CMDBUF_STUDIO_START_FILE']='must_not_be_inherited'
+        env=os.environ.copy();env['test_mode_STUDIO_START_FILE']='must_not_be_inherited'
         result=execution.run([sys.executable,'-c',source],root,log,env,timeout,
                              wait_for_start=wait,phase='simulation')
-        self.assertEqual(env['CMDBUF_STUDIO_START_FILE'],'must_not_be_inherited')
+        self.assertEqual(env['test_mode_STUDIO_START_FILE'],'must_not_be_inherited')
         return result,json.loads(log.with_suffix('.process.json').read_text())
 
     def test_wait_longer_than_execution_limit_then_pass(self):
         with tempfile.TemporaryDirectory() as folder:
             (Path(folder)/'sim.started').write_text('stale')
             (rc,elapsed),state=self.child(folder,
-                "import os,time;time.sleep(.6);open(os.environ['CMDBUF_STUDIO_START_FILE'],'w').write('started');time.sleep(.05)")
+                "import os,time;time.sleep(.6);open(os.environ['test_mode_STUDIO_START_FILE'],'w').write('started');time.sleep(.05)")
             self.assertEqual(rc,0);self.assertGreater(elapsed,.6)
             self.assertGreater(state['startup_wait_seconds'],.5)
             self.assertEqual(state['timeout_scope'],'execution_only')
@@ -38,15 +38,15 @@ class ExecutionTests(unittest.TestCase):
     def test_execution_hang_times_out_after_start(self):
         with tempfile.TemporaryDirectory() as folder:
             (rc,elapsed),state=self.child(folder,
-                "import os,time;time.sleep(.5);open(os.environ['CMDBUF_STUDIO_START_FILE'],'w').write('started');time.sleep(20)")
+                "import os,time;time.sleep(.5);open(os.environ['test_mode_STUDIO_START_FILE'],'w').write('started');time.sleep(20)")
             self.assertEqual(rc,124);self.assertGreater(elapsed,.7)
             self.assertEqual(state['state'],'TIMEOUT')
             self.assertGreaterEqual(state['execution_seconds'],.2)
 
     def test_zero_execution_timeout_and_legacy_unlimited(self):
         with tempfile.TemporaryDirectory() as folder:
-            for timeout,wait,source in [(0,True,"import os,time;open(os.environ['CMDBUF_STUDIO_START_FILE'],'w').write('started');time.sleep(.3)"),
-                                       (None,False,"import os,time;assert 'CMDBUF_STUDIO_START_FILE' not in os.environ;time.sleep(.3)")]:
+            for timeout,wait,source in [(0,True,"import os,time;open(os.environ['test_mode_STUDIO_START_FILE'],'w').write('started');time.sleep(.3)"),
+                                       (None,False,"import os,time;assert 'test_mode_STUDIO_START_FILE' not in os.environ;time.sleep(.3)")]:
                 (rc,_),state=self.child(folder,source,timeout,wait)
                 self.assertEqual(rc,0);self.assertIsNone(state['execution_timeout_seconds'])
 
@@ -80,7 +80,7 @@ raise SystemExit(rc)
     def test_parallel_waiters_have_independent_markers(self):
         with tempfile.TemporaryDirectory() as folder:
             def run(index):
-                return self.child(folder,"import os,time;time.sleep(.4);open(os.environ['CMDBUF_STUDIO_START_FILE'],'w').write('started')",name='sim'+str(index))
+                return self.child(folder,"import os,time;time.sleep(.4);open(os.environ['test_mode_STUDIO_START_FILE'],'w').write('started')",name='sim'+str(index))
             with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
                 rows=list(pool.map(run,range(2)))
             self.assertTrue(all(row[0][0]==0 and row[1]['startup_wait_seconds']>=.4 for row in rows))

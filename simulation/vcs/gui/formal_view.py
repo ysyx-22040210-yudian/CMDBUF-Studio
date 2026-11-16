@@ -69,7 +69,8 @@ def wave(studio, path, name, step=None):
 
 def job_title(job):
     return {'formal_cover': 'Cover 搜索', 'formal_bmc': 'Assert 有界检查', 'formal_prove': '验证包证明',
-            'formal_doctor': '工具链自检', 'formal_replay': 'VCS 回放'}.get(job['kind'], job['kind'])
+            'formal_doctor': '工具链自检', 'formal_replay': 'VCS 回放',
+            'formal_commercial': '商业 Formal'}.get(job['kind'], job['kind'])
 
 
 class Activity:

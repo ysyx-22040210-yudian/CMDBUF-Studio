@@ -55,7 +55,8 @@ def stop(process):
         process.wait()
 
 
-def run(cmd,cwd,log,env,timeout,wait_for_start=False,phase='tool',stop_file=None,on_output=None):
+def run(cmd,cwd,log,env,timeout,wait_for_start=False,phase='tool',stop_file=None,on_output=None,
+        start_file_env='test_mode_STUDIO_START_FILE'):
     if _cancelled:raise InterruptedError('EDA job cancelled')
     check_stop(stop_file)
     log=Path(log);log.parent.mkdir(parents=True,exist_ok=True)
@@ -65,8 +66,8 @@ def run(cmd,cwd,log,env,timeout,wait_for_start=False,phase='tool',stop_file=None
     if wait_for_start and marker.exists():marker.unlink()
     child_env=dict(env)
     # Never inherit another concurrently running job's marker path.
-    child_env.pop('CMDBUF_STUDIO_START_FILE',None)
-    if wait_for_start:child_env['CMDBUF_STUDIO_START_FILE']=str(marker.resolve())
+    child_env.pop('test_mode_STUDIO_START_FILE',None)
+    if wait_for_start:child_env[start_file_env]=str(marker.resolve())
     scope='execution_only' if wait_for_start else 'unlimited' if limit is None else 'process'
     save(log.with_suffix('.command.json'),dict(argv=cmd,cwd=str(cwd),timeout_seconds=limit,
          timeout_scope=scope,stdin='closed',license_wait_limit_seconds=None if scope!='process' else 'not_a_license_wait_command'))

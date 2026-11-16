@@ -1,7 +1,7 @@
 // Shared variables and non-optional project contracts. Included inside the TB.
 // All pin fields remain four-state logic. VCS randomize produces known values;
 // the independent pin sampler and native assertions detect X/Z or modification.
-class cmdbuf_sv_tc;
+class test_mode_sv_tc;
     rand logic rst_n, clk_enable;
     rand int unsigned clk_low_ns, clk_high_ns, num_cycles;
     rand logic [2:0] rready;

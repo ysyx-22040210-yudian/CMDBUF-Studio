@@ -1,4 +1,4 @@
-"""CMDBUF FSDB samples -> readable, pattern-selected native SVA.
+"""test_mode FSDB samples -> readable, pattern-selected native SVA.
 
 Value extraction is entirely NPI-based. DUT configuration is only used to emit
 the optional integration wrapper; it never supplies expected waveform values.
@@ -59,7 +59,7 @@ def mapping(scope, overrides=None):
     result = []
     overrides = overrides or {}
     if set(overrides) - {s['name'] for s in SIGNALS}:
-        raise ValueError('映射中出现未知的 CMDBUF 信号')
+        raise ValueError('映射中出现未知的 test_mode 信号')
     for s in SIGNALS:
         path = overrides.get(s['name'], scope + '.' + s['name'])
         if not isinstance(path, str) or not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_$.[\]:-]*', path):
@@ -358,7 +358,7 @@ def native_sva(traces, style='cycle', lowered=False):
         '// Initialize the DUT using its reset in the formal tool before checking these properties.',
         '// Verify every C_END cover for reachability.',
         '// Compare outputs according to the validity recorded in the waveform.',
-        '`default_nettype none', 'module cmdbuf_fsdb_properties (',
+        '`default_nettype none', 'module test_mode_fsdb_properties (',
         '    input wire [31:0] pattern,', '    input wire [31:0] reset_segment,',
         ',\n'.join(declarations()), ');',
         f"    reg [{cycle_width-1}:0] trace_cycle = {cycle_width}'d0;",
@@ -429,10 +429,10 @@ def native_sva(traces, style='cycle', lowered=False):
 
 
 def wrapper(instance):
-    return '\n'.join(['`default_nettype none', 'module cmdbuf_fsdb_formal_top (',
+    return '\n'.join(['`default_nettype none', 'module test_mode_fsdb_formal_top (',
         '    input wire [31:0] pattern,', '    input wire [31:0] reset_segment,',
         ',\n'.join(declarations(True)), ');', instance,
-        '    cmdbuf_fsdb_properties trace_checks (.*);', 'endmodule', '`default_nettype wire', ''])
+        '    test_mode_fsdb_properties trace_checks (.*);', 'endmodule', '`default_nettype wire', ''])
 
 
 def export_data(directory, traces, instance, style='cycle'):

@@ -1,7 +1,7 @@
 /* VCS calls this before HDL initial blocks, after simulation can start. */
 #include <stdio.h>
 #include <stdlib.h>
-#ifdef CMDBUF_RTL_COVER
+#ifdef test_mode_RTL_COVER
 #include <string.h>
 #include "sv_vpi_user.h"
 #else
@@ -10,7 +10,7 @@
 
 static PLI_INT32 studio_simulation_started(p_cb_data unused)
 {
-    const char *path = getenv("CMDBUF_STUDIO_START_FILE");
+    const char *path = getenv("test_mode_STUDIO_START_FILE");
     FILE *file;
     (void)unused;
     if (!path || !*path) return 0; /* Also safe when simv is run manually. */
@@ -30,11 +30,11 @@ static PLI_INT32 studio_simulation_started(p_cb_data unused)
     return 0;
 }
 
-#ifdef CMDBUF_RTL_COVER
+#ifdef test_mode_RTL_COVER
 static PLI_INT32 studio_collect_cover(p_cb_data unused)
 {
-    const char *enabled = getenv("CMDBUF_STUDIO_RTL_COVER");
-    const char *scope = "tb_cmdbuf_rd.dut.";
+    const char *enabled = getenv("test_mode_STUDIO_RTL_COVER");
+    const char *scope = "tb_test_mode_rd.dut.";
     (void)unused;
     if (!enabled || strcmp(enabled, "1")) return 0;
     vpiHandle list = vpi_iterate(vpiAssertion, NULL);
@@ -66,13 +66,13 @@ static PLI_INT32 studio_collect_cover(p_cb_data unused)
 #ifdef __cplusplus
 extern "C"
 #endif
-void cmdbuf_studio_register(void)
+void test_mode_studio_register(void)
 {
     s_cb_data callback = {0};
     callback.reason = cbStartOfSimulation;
     callback.cb_rtn = studio_simulation_started;
     vpi_register_cb(&callback);
-#ifdef CMDBUF_RTL_COVER
+#ifdef test_mode_RTL_COVER
     callback.reason = cbEndOfSimulation;
     callback.cb_rtn = studio_collect_cover;
     vpi_register_cb(&callback);

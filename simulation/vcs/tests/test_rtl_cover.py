@@ -113,7 +113,7 @@ class RtlCoverTests(unittest.TestCase):
         sources = {'from_dut.sv': SOURCE.encode()}
         formal = rtl_cover.formal_rewrites(sources)['from_dut.sv'].decode()
         self.assertIn('$past((req), 2)', formal)
-        self.assertRegex(formal, r'always @\(posedge clk or posedge cmdbuf_cover_history_\w+_cancel\)')
+        self.assertRegex(formal, r'always @\(posedge clk or posedge test_mode_cover_history_\w+_cancel\)')
         self.assertEqual(len(formal.splitlines()), len(SOURCE.splitlines()))
         self.assertIn('req ##2 done', sources['from_dut.sv'].decode())
 
@@ -139,7 +139,7 @@ class RtlCoverTests(unittest.TestCase):
         sources = {'d.sv': raw}
         result = rtl_cover.vcs_cover_sequences(sources)['d.sv']
         self.assertEqual(result.count(b'\n'), raw.count(b'\n'))
-        self.assertRegex(result, rb'sequence (cmdbuf_vcs_sequence_\w+); req ##\[1:3\] ack; endsequence '
+        self.assertRegex(result, rb'sequence (test_mode_vcs_sequence_\w+); req ##\[1:3\] ack; endsequence '
                                  rb'C_MULTIPLE: cover property \(@\(negedge clk\) disable iff \(!rst_n\) \1')
         self.assertIn(b'begin $display("match"); end', result)
         self.assertEqual(sources['d.sv'], raw)
@@ -320,7 +320,7 @@ endmodule
         leaf = [dict(kind='Instance', name=label, members=[occurrence('ConcurrentAssertion', 'C_REQ')])
                 for label in ('left', 'right')]
         rows = rtl_cover.collect(dut_ast(*leaf), Path('.'), {'from_dut.sv': SOURCE.encode()})
-        line = 'FUNCTIONAL_RTL_COVER\ttb_cmdbuf_rd.dut.{}.C_REQ\tfrom_dut.sv\t2\t{}\n'
+        line = 'FUNCTIONAL_RTL_COVER\ttb_test_mode_rd.dut.{}.C_REQ\tfrom_dut.sv\t2\t{}\n'
         log = line.format('left', 2) + line.format('right', 0)
         manifest = properties.manifest(b'', rows)
         with self.assertRaisesRegex(ValueError, 'VCS'):
@@ -351,13 +351,13 @@ endmodule
                 target = root/relative
                 target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_bytes((contracts.ROOT/relative).read_bytes())
-            path = root/'rtl/cmdbuf_rd.sv'
+            path = root/'rtl/test_mode_rd.sv'
             original = path.read_bytes()
             eol = b'\r\n' if b'\r\n' in original else b'\n'
             cover = (b'`ifndef SYNTHESIS'+eol+b'  C_NEW: cover property (@(posedge clk) arvalid);'+eol+b'`endif'+eol)
             path.write_bytes(original.replace(b'endmodule', cover+b'endmodule'))
             result = contracts.audit(root, copy.deepcopy(catalog), allow_rtl_covers=True)
-            self.assertNotEqual(result['sources']['rtl/cmdbuf_rd.sv'], catalog['sources']['rtl/cmdbuf_rd.sv'])
+            self.assertNotEqual(result['sources']['rtl/test_mode_rd.sv'], catalog['sources']['rtl/test_mode_rd.sv'])
             path.write_bytes(path.read_bytes().replace(b'assign rdata = (|rvalid)', b'assign rdata = (!rvalid)'))
             with self.assertRaisesRegex(ValueError, 'CONTRACT_UNSUPPORTED'):
                 contracts.audit(root, catalog, allow_rtl_covers=True)

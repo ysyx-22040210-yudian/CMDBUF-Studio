@@ -26,7 +26,7 @@ class StudioTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);tc=root/'simulation/vcs/tc';tc.mkdir(parents=True)
             path=tc/'test_read.sv'
-            before='class test_read extends cmdbuf_main_tc;\nfunction new(); num_cycles=91; endfunction\nvirtual task main_phase;\n @(posedge clk);\nendtask\nendclass\n'
+            before='class test_read extends test_mode_main_tc;\nfunction new(); num_cycles=91; endfunction\nvirtual task main_phase;\n @(posedge clk);\nendtask\nendclass\n'
             path.write_text(before)
             with patch.object(model,'ROOT',root),patch.object(model,'STATE',root/'state'),patch.object(model.eda,'HERE',root/'simulation/vcs'):
                 case=model.case('test_read')
@@ -42,7 +42,7 @@ class StudioTests(unittest.TestCase):
             root = Path(tmp)
             path = root/model.eda.PROJECT['checker']
             path.parent.mkdir(parents=True)
-            original = b'module cmdbuf_rd_port_sva;\r\nendmodule\r\n'
+            original = b'module test_mode_rd_port_sva;\r\nendmodule\r\n'
             path.write_bytes(original)
             with patch.object(model,'ROOT',root), patch.object(model,'STATE',root/'state'):
                 saved = model.load_sva()

@@ -18,8 +18,8 @@ ROOT=eda.ROOT
 
 def selected_files():
     paths=set(eda.sources())
-    paths.update(ROOT/p for p in ('CMDBUF Studio.cmd','CMDBUF Studio.sh','eda.example.json','AGENTS.md'))
-    for number in range(32, 50):
+    paths.update(ROOT/p for p in ('test_mode Studio.cmd','test_mode Studio.sh','eda.example.json','AGENTS.md'))
+    for number in range(32, 52):
         for extension in ('pdf', 'docx'):
             paths.update((ROOT/'documents').glob(str(number)+'_*.'+extension))
     for p in list(paths):
@@ -29,14 +29,14 @@ def selected_files():
     return sorted(paths)
 
 
-QUICKSTART='''# CMDBUF Studio — native Tk / local Linux
+QUICKSTART='''# test_mode Studio — native Tk / local Linux
 
 Linux downloads: {downloads}
-The GitHub Release includes `cmdbuf-studio-linux-x64.tar.gz` for `x86_64`.
+The GitHub Release includes a Linux bundle for `x86_64`.
 It ships Python/Tk and the open-source Formal runtime. Extract with
-`tar -xzf`, enter `cmdbuf-studio`, and run `make formal-doctor` and `make gui`.
+`tar -xzf`, enter the directory with `Makefile`, and run `make formal-doctor` and `make gui`.
 
-Archives named `cmdbuf-studio-source` use the workstation's Python >= 3.6
+Archives named `test_mode-studio-source` use the workstation's Python >= 3.6
 and Tk >= 8.5. The GitHub Download ZIP for the `formal-portable` branch
 ships the x64 runtime in volumes and prepares it on the first Make run.
 For VCS and Verdi operations, load your site's tool/license environment, then:
@@ -78,7 +78,7 @@ Compile / simulate / open waves and coverage all use Make:
 
 Verdi wave commands automatically add every dumped signal directly under the DUT
 instance (ports, internal signals and arrays), then fit the full time range.
-Imported FSDB can select DUT_SCOPE=top.u_cmdbuf; the GUI uses its instance field.
+Imported FSDB can select DUT_SCOPE=top.u_test_mode; the GUI uses its instance field.
 The signal list is checked before reporting success. See documents/40_*.
 
 In Results, select a historical regression and open Coverage details. Verdi NPI
@@ -101,6 +101,11 @@ or all Covers, inspect witnesses and replay selected traces in VCS. The package
 proof tab shows BMC and endpoint Cover history for FSDB exports. Joint minimum
 set analysis retains each hit code bin and user cover from passing runs.
 See documents/49_*.
+
+For a commercial Formal tool already installed at the site, open the
+Commercial Formal tab or run make formal-commercial. Configure a site adapter
+and use its native RTL/SVA handoff. See documents/51_* and
+simulation/vcs/formal_adapters/README.md for the v1 request and result contract.
 
 VCS compilation includes -lca -licqueue +vcs+lic+wait. Simulation uses
 +vcs+lic+wait; coverage merging uses +urg+lic+wait. License waiting has no
@@ -143,7 +148,7 @@ must keep rvalid low on each lane where rready is low. See documents/42_*.
 Use make constraints for the active inventory. Replay uses the saved contract.
 pending_cnt is updated by a register on each rising edge. At the next sampled
 edge the SVA compares against the previous sample plus AR accept minus issue.
-In DUT integration choose Edit Port SVA, or edit cmdbuf_rd_port_sva.sv in
+In DUT integration choose Edit Port SVA, or edit test_mode_rd_port_sva.sv in
 formal/protocol_20261021/. Compile and regression use the saved file. Results
 archive its source and hash, and replay uses the original simulator. See documents/43_*.
 Startup timing: documents/38_*. SV clock starts high at t=0; rst_n is low until
@@ -200,7 +205,7 @@ def json_bytes(data):
 
 
 def add_bytes(archive, rel, data):
-    item = tarfile.TarInfo('cmdbuf-studio/'+rel)
+    item = tarfile.TarInfo('test_mode-studio/'+rel)
     item.size = len(data)
     item.mtime = 1700000000
     item.mode = 0o755 if rel.endswith('.sh') else 0o644
@@ -208,12 +213,12 @@ def add_bytes(archive, rel, data):
 
 
 def source_archives(out, payload, manifest):
-    zip_path = out/'cmdbuf-studio-source.zip'
-    tar_path = out/'cmdbuf-studio-source.tar.gz'
+    zip_path = out/'test_mode-studio-source.zip'
+    tar_path = out/'test_mode-studio-source.tar.gz'
     payload = dict(payload, **{'PORTABLE_MANIFEST.json': json_bytes(manifest)})
     with zipfile.ZipFile(str(zip_path),'w',zipfile.ZIP_DEFLATED) as archive:
         for rel,data in sorted(payload.items()):
-            item=zipfile.ZipInfo('cmdbuf-studio/'+rel);item.create_system=3
+            item=zipfile.ZipInfo('test_mode-studio/'+rel);item.create_system=3
             item.external_attr=((0o100755 if rel.endswith('.sh') else 0o100644)<<16)
             archive.writestr(item,data,compress_type=zipfile.ZIP_DEFLATED)
     with tarfile.open(str(tar_path),'w:gz') as archive:
@@ -237,7 +242,7 @@ def linux_archive(out, payload, manifest, arch, suite):
     suffix, expected = ASSETS[arch]
     if checksum(suite) != expected:
         raise ValueError('OSS CAD Suite SHA256 mismatch for linux-'+suffix)
-    path = out/('cmdbuf-studio-linux-'+suffix+'.tar.gz')
+    path = out/('test_mode-studio-linux-'+suffix+'.tar.gz')
     temp = path.with_suffix('.gz.partial')
     manifest = dict(manifest, files=dict(manifest['files']), links={},
                     formal_runtime=dict(platform='linux-'+suffix, release=RELEASE, upstream_sha256=expected))
@@ -256,19 +261,19 @@ def linux_archive(out, payload, manifest, arch, suite):
                 rel = runtime+name.as_posix()
                 if item.isfile():
                     with source.extractfile(item) as stream:
-                        item.name = 'cmdbuf-studio/'+rel
+                        item.name = 'test_mode-studio/'+rel
                         reader = HashingReader(stream)
                         archive.addfile(item, reader)
                         manifest['files'][rel] = reader.checksum.hexdigest()
                     continue
-                item.name = 'cmdbuf-studio/'+rel
+                item.name = 'test_mode-studio/'+rel
                 if item.issym():
                     archive.addfile(item)
                     manifest['links'][rel] = item.linkname
                 elif item.islnk():
-                    item.linkname = 'cmdbuf-studio/'+runtime+item.linkname
+                    item.linkname = 'test_mode-studio/'+runtime+item.linkname
                     archive.addfile(item)
-                    manifest['files'][rel] = manifest['files'][item.linkname[len('cmdbuf-studio/'):]]
+                    manifest['files'][rel] = manifest['files'][item.linkname[len('test_mode-studio/'):]]
                 elif item.isdir():
                     archive.addfile(item)
                 else:
@@ -294,7 +299,7 @@ def main(args=None):
         if name.endswith('.sh'):
             payload[name] = data.replace(b'\r\n', b'\n')
     payload['README.md'] = QUICKSTART.encode('utf-8')
-    manifest = dict(format=1, product='CMDBUF Studio', built_at=datetime.datetime.utcnow().isoformat()+'Z',
+    manifest = dict(format=1, product='test_mode Studio', built_at=datetime.datetime.utcnow().isoformat()+'Z',
                     files={k: hashlib.sha256(v).hexdigest() for k, v in sorted(payload.items())})
     out = ROOT/'dist'
     out.mkdir(exist_ok=True)

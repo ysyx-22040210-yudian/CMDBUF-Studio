@@ -1,4 +1,4 @@
-"""Executable WaveJSON for CMDBUF RD. Exact port levels, no implicit cycles.
+"""Executable WaveJSON for test_mode RD. Exact port levels, no implicit cycles.
 
 WaveDrom is a drawing format; this adapter defines a checked executable subset.
 Every input lane is mandatory. Unsupported timing syntax fails rather than

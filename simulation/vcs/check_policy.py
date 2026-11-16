@@ -182,7 +182,7 @@ def report(directory, options, required=True, environment_required=False, contra
                 environment=environment, effective_assert_fatal=bool(options.get('env_fatal', True) and options['assert_fatal']),
                 groups=groups, sampling='pre-edge #1step; complete four-state frame; final frame explicitly flushed',
                 contract_revision=contract_revision, checker=checker,
-                contract='CMDBUF {}: MEM capture at issue N+4, parity error RRESP={}'.format(
+                contract='test_mode {}: MEM capture at issue N+4, parity error RRESP={}'.format(
                     contract_revision, expected_rresp(0, 1, contract_revision)),
                 transaction_policy='All observable issue identities retained (bounded); same-source AR order; '
                                    'capture-edge R forwarding permitted in transaction mode; no fixed response deadline.',

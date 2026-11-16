@@ -14,7 +14,7 @@ integer main_low_ns=5, main_high_ns=5, main_pause_ns=0, main_current_high_ns=5;
 longint main_edge_ps=-1, main_ready_ps=-1;
 bit main_settle_marker=0;
 string main_name;
-cmdbuf_main_tc main_tc;
+test_mode_main_tc main_tc;
 
 // Input #0 is sampled in Observed, after DUT NBA and combinational evaluation.
 clocking main_edge_cb @(posedge clk);
@@ -58,7 +58,7 @@ task automatic main_fail(input string reason, input bit unrecoverable=0);
     end
 endtask
 
-task automatic main_begin(input cmdbuf_main_tc t);
+task automatic main_begin(input test_mode_main_tc t);
     longint now_ps;
     begin
         now_ps=$realtime/1ps;
@@ -71,7 +71,7 @@ task automatic main_begin(input cmdbuf_main_tc t);
     end
 endtask
 
-task automatic main_control(input cmdbuf_main_tc t);
+task automatic main_control(input test_mode_main_tc t);
     begin
         if (main_stage!=1) main_fail("MAIN_CONTROL_ORDER");
         if ($isunknown({t.rst_n,t.rready})) main_fail("MAIN_CONTROL_INVALID");
@@ -86,7 +86,7 @@ task automatic main_control(input cmdbuf_main_tc t);
     end
 endtask
 
-task automatic main_context(input cmdbuf_main_tc t);
+task automatic main_context(input test_mode_main_tc t);
     begin
         if (main_stage!=2 || $realtime/1ps != main_edge_ps) main_fail("MAIN_CONTEXT_TIMING");
         main_wait_for_feedback();
@@ -99,7 +99,7 @@ task automatic main_context(input cmdbuf_main_tc t);
     end
 endtask
 
-task automatic main_record_assignment(input cmdbuf_main_tc t);
+task automatic main_record_assignment(input test_mode_main_tc t);
     $fdisplay(main_assignments,"%0d,%0d,%0d,%0.0f,%0d,%0d,%b,%0d,%0d,%0d,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%h,%h,%h,%032h,%0d",
         t.cycle,cycle,t.phase,$realtime*1000.0,main_edge_ps,main_edge_ps+1000*(main_current_high_ns+t.clk_low_ns+t.clk_pause_ns),1'b1,
         t.clk_low_ns,t.clk_high_ns,t.clk_pause_ns,t.rst_n,t.arvalid,t.src,t.araddr,
@@ -117,7 +117,7 @@ task automatic main_record_sample;
         pending_cnt,rvalid,rdata,rid,r_port_id,raddr,rresp);
 endtask
 
-task automatic main_drive(input cmdbuf_main_tc t);
+task automatic main_drive(input test_mode_main_tc t);
     begin
         if (main_stage!=3 || $realtime/1ps != main_edge_ps) main_fail("MAIN_DRIVE_ORDER");
         // Validate, never repair. Legal values are assigned by the TC's if blocks.
@@ -214,7 +214,7 @@ endtask
 task automatic run_sv_tc;
     string magic;
     integer override_cycles, header_seed, config_fd;
-    cmdbuf_formal_cover_tc formal_tc;
+    test_mode_formal_cover_tc formal_tc;
     process rng;
     begin
         if ($fscanf(fd,"%s %s %d %d\n",magic,main_name,header_seed,override_cycles)!=4 ||

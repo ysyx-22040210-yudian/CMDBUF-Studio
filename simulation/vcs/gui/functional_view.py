@@ -11,6 +11,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 
 import backend
+from commercial_view import CommercialPage
 import dut_config
 from formal_view import (Activity, PackagePage, TASKS, active, archived_file, preview_text,
                          save_file, source_lines, summary_status, wave)
@@ -37,6 +38,7 @@ class FunctionalPage:
         edit = self.tab('属性与任务')
         history = self.tab('搜索与回放结果')
         package = self.tab('验证包证明')
+        commercial = self.tab('商业 Formal')
         self.result_tab = history
         self.source_properties = []
         self.scan_issues = {}
@@ -50,6 +52,7 @@ class FunctionalPage:
         self.build_history(history)
         self.package = PackagePage(studio, package)
         self.package_tab = package
+        self.commercial = CommercialPage(self, commercial)
         self.tabs.bind('<<NotebookTabChanged>>', lambda event: self.fit_editor_tab(edit))
         edit.bind('<Configure>', lambda event: self.fit_editor_tab(edit))
         self.refresh()
@@ -80,7 +83,7 @@ class FunctionalPage:
     def read_source_inventory():
         if sys.platform != 'linux':
             return property_inventory.inventory(eda.ROOT, eda.PROJECT, expand=False)
-        with tempfile.TemporaryDirectory(prefix='cmdbuf-property-list-') as temporary:
+        with tempfile.TemporaryDirectory(prefix='test_mode-property-list-') as temporary:
             receipt = Path(temporary) / 'targets.json'
             command = backend.make_command(['formal-property-list', 'OUTPUT=' + str(receipt)], project_python=True)
             run = subprocess.run(command, cwd=str(eda.ROOT), stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
@@ -315,12 +318,13 @@ class FunctionalPage:
             '{}  {}\n{}'.format(p['kind'].upper(), p['name'], p['predicate']) for p in builtin)
         self.studio.preview('当前 DUT 的 Formal 端口约束', text)
 
-    def save(self):
+    def save(self, native=False):
         if not self.dirty():
             return
         self.studio.jobs.require_editable_sources()
         raw = self.contents().encode('utf-8')
-        props.user_properties(raw.decode('utf-8'))
+        if not native:
+            props.user_properties(raw.decode('utf-8'))
         if props.USER_FILE.read_bytes() != self.saved:
             raise ValueError('属性文件已在外部修改，请重载后再保存。')
         temporary = props.USER_FILE.with_name(props.USER_FILE.name+'.'+eda.uuid.uuid4().hex+'.tmp')
@@ -761,6 +765,7 @@ class FunctionalPage:
     def poll(self, job):
         self.activity.show(job)
         self.set_buttons(bool(job and job['state'] == 'RUNNING'))
+        self.commercial.poll()
 
     def show_package(self, identifier=None, run=None):
         self.package.refresh_exports(identifier)

@@ -1,23 +1,21 @@
-# CMDBUF Studio
+# test_mode Studio
 
 原生 **Python Tk / ttk** EDA 验证工作台。包含 DUT 集成、仅编辑 `main_phase` 的 SV 用例窗口、约束随机回归、波形、覆盖率和 FSDB 转 Formal。Linux 便携版内置开源 Formal 运行时，VCS 和 Verdi 用于仿真、调试与提取 FSDB。
 
 GUI 不依赖浏览器、HTTP 服务、Node.js 或 SSH。所有 EDA 操作经本机 Make 执行。VM 只用于开发调试，分发包不含 VM 地址或连接流程。本仓库具有独立 Git 历史，与之前的验证仓库分开维护。
 
-![Linux 上实际运行的原生 Tk 工作台](documents/CMDBUF_Studio_Tk预览.png)
+![Linux 上实际运行的原生 Tk 工作台](documents/test_mode_Studio_Tk预览.png)
 
 ## 通过 GitHub Download ZIP 获取 Linux x64 完整版
 
 在 `formal-portable` 分支点击 **Code → Download ZIP**，解压后进入包含 `Makefile` 的目录。ZIP 内包含 Python、Tk、Yosys、SymbiYosys、ABC 和 Yices。第一次运行 Make 命令时会校验并解包内置运行时，之后可以离线使用。[下载完整 ZIP](https://github.com/ysyx-22040210-yudian/CMDBUF-Studio/archive/refs/heads/formal-portable.zip)
 
 ```bash
-unzip CMDBUF-Studio-formal-portable.zip
-cd CMDBUF-Studio-formal-portable
 make formal-doctor
 make gui
 ```
 
-首次解包需要在可写的项目目录中额外预留约 4 GB，并使用 Linux 的 `tar`、`sha256sum` 和 `flock`。也可下载 Release 的 Linux x64 `.tar.gz`，解压后进入 `cmdbuf-studio`，运行相同的 Make 命令。[Release 完整包](https://github.com/ysyx-22040210-yudian/CMDBUF-Studio/releases/latest/download/cmdbuf-studio-linux-x64.tar.gz) · [Release SHA-256 校验清单](https://github.com/ysyx-22040210-yudian/CMDBUF-Studio/releases/latest/download/LINUX-SHA256SUMS.json)
+首次解包需要在可写的项目目录中额外预留约 4 GB，并使用 Linux 的 `tar`、`sha256sum` 和 `flock`。也可下载 Release 的 Linux x64 `.tar.gz`，解压后进入包含 `Makefile` 的目录，运行相同的 Make 命令。[Release 完整包](https://github.com/ysyx-22040210-yudian/CMDBUF-Studio/releases/latest/download/cmdbuf-studio-linux-x64.tar.gz) · [Release SHA-256 校验清单](https://github.com/ysyx-22040210-yudian/CMDBUF-Studio/releases/latest/download/LINUX-SHA256SUMS.json)
 
 使用仿真和 FSDB 提取时，加载本站点 EDA 工具和许可证环境后执行以下命令。
 
@@ -39,7 +37,7 @@ make gui
 
 通常无需填写任何路径：“本机工具”页面自动显示工程位置、启动目录、命令路径与 PLI/NPI；当前 PATH 缺少工具时再尝试当前用户的登录环境。只有特殊站点才使用“高级选项”显式启用手动覆盖。覆盖写入已忽略的 `eda.local.json` 并绑定当前设备；旧 VM 配置、其他设备的覆盖和 `EDA_MODE=ssh` 不会自动套用。
 
-Windows 的 `CMDBUF Studio.cmd` 或 `.\make.cmd gui` 可打开同一原生窗口，编辑工程和查看已有 VCD；EDA 任务请在 Linux 设备运行。
+Windows 的 `test_mode Studio.cmd` 或 `.\make.cmd gui` 可打开同一原生窗口，编辑工程和查看已有 VCD；EDA 任务请在 Linux 设备运行。
 
 ## GUI 功能
 
@@ -70,7 +68,7 @@ Windows 的 `CMDBUF Studio.cmd` 或 `.\make.cmd gui` 可打开同一原生窗口
 
 `pending_cnt` 是待发命令数的 4 位寄存输出。复位清零，接收 AR 的上升沿加一，成功发射的上升沿减一，同拍接收和发射相抵。`A_PENDING_RECURRENCE` 在两种模式都用前一采样沿的事件校验寄存递推。`A_COMPARE_PENDING_CNT` 在完整模式比较寄存值与参考模型的拍初待发数。详见 [寄存计数契约](docs/timing/pending_register_20261112.json)。
 
-在 Tk 的“DUT 集成”打开“编辑端口 SVA”并保存，也可以直接编辑 `formal/protocol_20261021/cmdbuf_rd_port_sva.sv`。下一次 `make compile` 或回归使用已保存版本。工具会归档源文件和哈希，结果页可查看该次运行的 SVA 源码。新标签的普通 `assert property` / `assume property` 在两种模式执行。默认失败动作使用工具的 fatal 设置，用户明确写出的动作按其代码执行。`make replay` 使用原仿真二进制和对应的 SVA 归档。
+在 Tk 的“DUT 集成”打开“编辑端口 SVA”并保存，也可以直接编辑 `formal/protocol_20261021/test_mode_rd_port_sva.sv`。下一次 `make compile` 或回归使用已保存版本。工具会归档源文件和哈希，结果页可查看该次运行的 SVA 源码。新标签的普通 `assert property` / `assume property` 在两种模式执行。默认失败动作使用工具的 fatal 设置，用户明确写出的动作按其代码执行。`make replay` 使用原仿真二进制和对应的 SVA 归档。
 
 内置查看器是 Tk Canvas，保留四态数值，提供信号筛选、时间缩放、平移、A/B 游标和进制切换。FSDB 显示通过本机 `fsdb2vcd` 转换；**Formal 提取直接使用 NPI 读取 FSDB**。
 
@@ -86,13 +84,13 @@ make formal-prove FORMAL_ID=导出编号
 make formal-prove FORMAL_PACKAGE="/path/to/extracted export"
 ```
 
-证明使用导出包中的 DUT 快照。旧导出包也可使用 `FORMAL_PACKAGE` 指向其解压目录。新导出的验证包解压在便携版目录树下时，可在包内运行 `make prove`。操作与结果判读见[开源 Formal 说明](documents/48_cmdbuf_open_formal_20261114.pdf)。
+证明使用导出包中的 DUT 快照。旧导出包也可使用 `FORMAL_PACKAGE` 指向其解压目录。新导出的验证包解压在便携版目录树下时，可在包内运行 `make prove`。操作与结果判读见[开源 Formal 说明](documents/48_test_mode_open_formal_20261114.pdf)。
 
 独立 Release 完整包由 `make dist SUITE_X64=/path/to/official-x64.tgz` 生成，压缩包和 SHA-256 清单输出到 `dist/`。分支 ZIP 使用 `runtime_packages/linux-x64/` 中的运行时分卷。固定的版本和上游摘要见 `simulation/vcs/fsdb_formal/toolchain.py`。
 
 ### 功能覆盖率与 Formal 找用例
 
-在 Tk 的「开源 Formal → 属性与任务」编写带标签的 SV `assert property`、`assume property`、`cover property`，也可编辑 `simulation/vcs/functional_coverage.sv`。可以搜索全部或选中的 Cover，并在任务栏查看求解进度。在「搜索与回放结果」查看逐属性结论、波形和逐拍输入，按需选择轨迹进行 VCS 回放。常规回归也采集同一组功能覆盖点。选择两类已完成的批次运行「联合最小集」，保留每个已命中项。「验证包证明」可运行 FSDB 导出的包，查看历次有界检查及各 pattern 的终点。
+在 Tk 的「Formal 验证 → 属性与任务」编写带标签的 SV `assert property`、`assume property`、`cover property`，也可编辑 `simulation/vcs/functional_coverage.sv`。可以搜索全部或选中的 Cover，并在任务栏查看求解进度。在「搜索与回放结果」查看逐属性结论、波形和逐拍输入，按需选择轨迹进行 VCS 回放。常规回归也采集同一组功能覆盖点。选择两类已完成的批次运行「联合最小集」，保留每个已命中项。「验证包证明」可运行 FSDB 导出的包，查看历次有界检查及各 pattern 的终点。
 
 「属性导航」显示属性编辑器中的定义、当前 DUT 展开后的 Assert / Assume / Cover，以及环境端口检查器中的 Assert / Assume。用类型菜单筛选，选择目标即可打开 **属性源码** 并高亮原始 SystemVerilog。环境属性会标注是否纳入现有 Formal 流程。保存 DUT 或端口 SVA 后自动刷新，外部修改可点击「刷新属性」。命令行也可执行 `make formal-property-list` 查看 DUT 和环境属性。
 
@@ -100,7 +98,7 @@ make formal-prove FORMAL_PACKAGE="/path/to/extracted export"
 
 同一主时钟下，DUT 和属性编辑器中的 Cover 还可以使用连续、非连续和跳转重复、`first_match`、`throughout`、`within`、`intersect`、序列 `and/or`、参数延时及 `##[*]` / `##[+]`。两处均可使用无参数命名序列和属性、`cover sequence`、仿真动作块及同一采样事件的带门控 `$past`。DUT 还支持空的默认时钟块。编辑器接受 `always @(posedge clk) if (rst_n)` 内带标签的单条即时断言或 Cover。
 
-复测可用 [DUT Cover 压测 RTL](verification/dut_cover_stress_20261115/sva_cover_stress_dut.sv)。在「DUT 集成」把编译文件首行换成 `verification/dut_cover_stress_20261115/sva_cover_stress_dut.sv`，保留另外两行基准 RTL 和原例化。保存 DUT 后，在「开源 Formal」刷新属性。压测 DUT 有 54 条 Cover，深度 48 下预期 44 条命中、10 条负例在深度内未命中。两层嵌套宏从标签 `C_DUT_NESTED_MACRO_READ` 开始。
+复测可用 [DUT Cover 压测 RTL](verification/dut_cover_stress_20261115/sva_cover_stress_dut.sv)。复制到 `simulation/vcs/dut_sources/`，将副本里的三处旧模块名前缀换成 `test_mode`。在「DUT 集成」把编译文件首行换成该副本，保留另外两行基准 RTL 和原例化。保存后，在「Formal 验证」刷新属性。压测 DUT 有 54 条 Cover，深度 48 下预期 44 条命中、10 条负例在深度内未命中。两层嵌套宏从标签 `C_DUT_NESTED_MACRO_READ` 开始。
 
 Open Formal 按任务深度搜索和检查。跨时钟、下降沿及需要无界活性证明的属性仍需独立建模。旧版 VCS 拒绝 `cover sequence` 时，工具在编译副本中使用命名序列保留同一次起点的多次匹配。原始 SVA 随任务归档。VCS 返回不可读的 Cover 计数时，`functional_hits.json` 会记录相应目标；回放目标仍须取得正命中才通过。
 
@@ -111,11 +109,17 @@ make formal-bmc FORMAL_DEPTH=16 COVER_TIMEOUT=600
 make coverage-minimize-joint REGRESSIONS=normal_batch,formal_replay_batch
 ```
 
-打开「轨迹与回放」，勾选「生成波形」并回放有命中轨迹的用例。回放通过后可查看 VCS 波形，并将回放批次与同一属性版本的普通回归加入「联合最小集」。操作见[Cover 回放与联合最小用例集](documents/50_cmdbuf_cover_replay_joint_minimum.pdf)。
+打开「轨迹与回放」，勾选「生成波形」并回放有命中轨迹的用例。回放通过后可查看 VCS 波形，并将回放批次与同一属性版本的普通回归加入「联合最小集」。操作见[Cover 回放与联合最小用例集](documents/50_test_mode_cover_replay_joint_minimum.pdf)。
 
 命令行可用 `TARGETS=C_XAU0_AR,C_PARITY_R` 搜索指定 Cover，用 `TRACES=trace0` 回放指定轨迹。
 
-求解使用随 Linux 完整包提供的 SBY、Yosys-Slang 和 Yices。搜索深度含八拍无未完成事务的收尾。VCS 实际回放通过才计入功能覆盖和代码覆盖。跨批次需使用相同的 DUT、覆盖率配置及属性版本。属性示例、支持语法和状态判读见[功能覆盖率与联合选集 PDF](documents/49_cmdbuf_functional_coverage.pdf) / [Word](documents/49_cmdbuf_functional_coverage.docx)。
+求解使用随 Linux 完整包提供的 SBY、Yosys-Slang 和 Yices。搜索深度含八拍无未完成事务的收尾。VCS 实际回放通过才计入功能覆盖和代码覆盖。跨批次需使用相同的 DUT、覆盖率配置及属性版本。属性示例、支持语法和状态判读见[功能覆盖率与联合选集 PDF](documents/49_test_mode_functional_coverage.pdf) / [Word](documents/49_test_mode_functional_coverage.docx)。
+
+### 接入商业 Formal
+
+在安装了商业 Formal 的 Linux 设备上，打开「Formal 验证 → 商业 Formal」，选择站点适配器并运行 DUT Cover、Assert / BMC 或已解压的 FSDB 验证包。命令行可用 `make formal-commercial COMMERCIAL_ADAPTER=/site/bin/adapter COMMERCIAL_MODE=cover COMMERCIAL_TARGETS=C_PARITY_R`。设置 `COMMERCIAL_PREPARE=1` 可先生成原生 RTL/SVA 和接口请求。逐属性状态、日志及 VCD 可在工作台查看。
+
+适配协议、站点驱动模板和厂商验收步骤见 [agent 对接指南](simulation/vcs/formal_adapters/README.md)、[Word](documents/51_test_mode_commercial_formal.docx) 和 [PDF](documents/51_test_mode_commercial_formal.pdf)。
 
 ## Make 命令
 
@@ -151,11 +155,11 @@ make dist
 
 在选集结果页点「生成选集 Formal」。表中的 `pattern` 从 0 开始，逐个对应原批次、用例与 seed。已有 FSDB 直接使用，缺少 FSDB 的选中用例用原仿真器和归档输入重放，核对原轨迹后读取补出的波形。生成包使用历史构建中可校验的 DUT 源码和接线，包含逐拍输入 `assume`、输出 `assert` 和 pattern 对照。终端可用 `make coverage-formal COVERAGE_SET=编号`。操作见说明 45。
 
-`make wave`、`make wave-file` 及对应 GUI 按钮会自动加入 DUT 顶层全部已记录的信号，包括端口、内部信号和数组，并缩放到完整时间范围。信号列表直接来自 FSDB，更换 RTL 后无需维护固定信号名。外部 FSDB 可指定 `DUT_SCOPE=top.u_cmdbuf`；GUI 使用当前“实例”栏。加载后会核对完整清单，错误实例路径明确报错。操作补充见说明 40。
+`make wave`、`make wave-file` 及对应 GUI 按钮会自动加入 DUT 顶层全部已记录的信号，包括端口、内部信号和数组，并缩放到完整时间范围。信号列表直接来自 FSDB，更换 RTL 后无需维护固定信号名。外部 FSDB 可指定 `DUT_SCOPE=top.u_test_mode`；GUI 使用当前“实例”栏。加载后会核对完整清单，错误实例路径明确报错。操作补充见说明 40。
 
 所有 VCS 编译自动加入 `-lca -licqueue +vcs+lic+wait`；仿真自动加入 `+vcs+lic+wait`，URG 合并自动加入 `+urg+lic+wait`。等待 License 不设超时上限，编译和合并进程也不再使用外层固定超时。`TIMEOUT=120` 只从 VCS 的仿真启动回调之后计算执行时间；`TIMEOUT=0` 表示执行也不限时。GUI 显示等待/启动及执行状态，结果中的 `sim.process.json` 分别记录启动等待和执行耗时。旧归档二进制没有启动回调时，重放保留原二进制并关闭整个进程的超时，以免中断许可证等待。
 
-当前 SV 用例从 t=0 启动时钟，`clk` 初始为 1。`rst_n` 在 t=0 为 0，在 `#1`（1 ns）释放后一直为 1。默认 5 ns 下降、10 ns 上升。`main_phase` 的 `cycle=0` 在 10 ns 的上升沿时间点驱动，供 20 ns 采样。SVA 及事务观察器继续读取沿前值。`clock_reset.csv` 记录实际时钟和复位跳变，`assigned.csv` 的 `time_ps` 与 `launch_ps` 相等。旧模板的两个固定 `#1` 等待在编译副本中迁移。`make replay` 使用归档时序。说明 47 更新了说明 38 中的驱动时间。[上升沿对齐说明](documents/47_cmdbuf_posedge_drive_20261113.pdf)
+当前 SV 用例从 t=0 启动时钟，`clk` 初始为 1。`rst_n` 在 t=0 为 0，在 `#1`（1 ns）释放后一直为 1。默认 5 ns 下降、10 ns 上升。`main_phase` 的 `cycle=0` 在 10 ns 的上升沿时间点驱动，供 20 ns 采样。SVA 及事务观察器继续读取沿前值。`clock_reset.csv` 记录实际时钟和复位跳变，`assigned.csv` 的 `time_ps` 与 `launch_ps` 相等。旧模板的两个固定 `#1` 等待在编译副本中迁移。`make replay` 使用归档时序。说明 47 更新了说明 38 中的驱动时间。[上升沿对齐说明](documents/47_test_mode_posedge_drive_20261113.pdf)
 
 新计划和无计划的命令行运行默认采用通用事务模式。它保存完整沿前四态快照，按实际握手检查事务、数据和单源顺序；同地址发射保留所有相容的事务对应关系。MEM 输入仍遵守 N+4 契约。参考模型待发数、精确 ready/req/R 调度和最早 N+5 返回显示 `NOT_CHECKED`，不把通用模式通过当作完整时序通过。事务未结束或对应关系候选超过上限时，结果为 `INCOMPLETE`。
 
@@ -167,21 +171,21 @@ make dist
 
 ## 下载与说明
 
-- [上升沿对齐与 `main_phase` 用例 PDF](documents/47_cmdbuf_posedge_drive_20261113.pdf)
-- [R 通道响应码与失败诊断 PDF](documents/46_cmdbuf_response_diagnostics_20261113.pdf)
-- [源码覆盖浏览与选集 Formal PDF](documents/45_cmdbuf_coverage_source_formal_20261113.pdf)
-- [代码覆盖率与最小用例集 PDF](documents/44_cmdbuf_coverage_minimum_20261113.pdf)
-- [寄存待发计数与 SVA 编辑 PDF](documents/43_cmdbuf_pending_sva_20261112.pdf)
-- [接口约束与用例赋值 PDF](documents/42_cmdbuf_interface_constraints_20261112.pdf)
-- [环境 fatal 总开关与继续运行 PDF](documents/41_cmdbuf_environment_fatal_20261112.pdf)
-- [Verdi 自动加载 DUT 顶层信号 PDF](documents/40_cmdbuf_verdi_dut_signals_20261111.pdf)
-- [License 等待与执行超时 PDF](documents/39_cmdbuf_license_wait_20261111.pdf) / [Word](documents/39_cmdbuf_license_wait_20261111.docx)
-- [时钟与复位启动时序 PDF](documents/38_cmdbuf_startup_20261111.pdf) / [Word](documents/38_cmdbuf_startup_20261111.docx)
-- [检查模式与 fatal 操作说明 PDF](documents/37_cmdbuf_check_modes_20261111.pdf) / [Word](documents/37_cmdbuf_check_modes_20261111.docx)
-- **开发用源码包（不含 Formal 运行时）** · [ZIP](packages/cmdbuf-studio-source.zip) / [tar.gz](packages/cmdbuf-studio-source.tar.gz) / [SHA256](packages/SHA256SUMS.json)
-- **当前 Tk 本机版操作手册**：[PDF](documents/36_cmdbuf_native_tk_20261111.pdf) / [Word](documents/36_cmdbuf_native_tk_20261111.docx)
-- main_phase 详细写法：[PDF](documents/32_cmdbuf_rd_main_phase_tc_20261111.pdf) / [Word](documents/32_cmdbuf_rd_main_phase_tc_20261111.docx)
-- NPI 与 Formal 语义：[PDF](documents/34_cmdbuf_fsdb_formal_20261111.pdf) / [Word](documents/34_cmdbuf_fsdb_formal_20261111.docx)
+- [上升沿对齐与 `main_phase` 用例 PDF](documents/47_test_mode_posedge_drive_20261113.pdf)
+- [R 通道响应码与失败诊断 PDF](documents/46_test_mode_response_diagnostics_20261113.pdf)
+- [源码覆盖浏览与选集 Formal PDF](documents/45_test_mode_coverage_source_formal_20261113.pdf)
+- [代码覆盖率与最小用例集 PDF](documents/44_test_mode_coverage_minimum_20261113.pdf)
+- [寄存待发计数与 SVA 编辑 PDF](documents/43_test_mode_pending_sva_20261112.pdf)
+- [接口约束与用例赋值 PDF](documents/42_test_mode_interface_constraints_20261112.pdf)
+- [环境 fatal 总开关与继续运行 PDF](documents/41_test_mode_environment_fatal_20261112.pdf)
+- [Verdi 自动加载 DUT 顶层信号 PDF](documents/40_test_mode_verdi_dut_signals_20261111.pdf)
+- [License 等待与执行超时 PDF](documents/39_test_mode_license_wait_20261111.pdf) / [Word](documents/39_test_mode_license_wait_20261111.docx)
+- [时钟与复位启动时序 PDF](documents/38_test_mode_startup_20261111.pdf) / [Word](documents/38_test_mode_startup_20261111.docx)
+- [检查模式与 fatal 操作说明 PDF](documents/37_test_mode_check_modes_20261111.pdf) / [Word](documents/37_test_mode_check_modes_20261111.docx)
+- **开发用源码包（不含 Formal 运行时）** · [ZIP](packages/test_mode-studio-source.zip) / [tar.gz](packages/test_mode-studio-source.tar.gz) / [SHA256](packages/SHA256SUMS.json)
+- **当前 Tk 本机版操作手册**：[PDF](documents/36_test_mode_native_tk_20261111.pdf) / [Word](documents/36_test_mode_native_tk_20261111.docx)
+- main_phase 详细写法：[PDF](documents/32_test_mode_rd_main_phase_tc_20261111.pdf) / [Word](documents/32_test_mode_rd_main_phase_tc_20261111.docx)
+- NPI 与 Formal 语义：[PDF](documents/34_test_mode_fsdb_formal_20261111.pdf) / [Word](documents/34_test_mode_fsdb_formal_20261111.docx)
 
 说明 33 和 35 保留为历史版本，其浏览器界面、SSH 操作流程已由 36 替代。完整包可运行 `/bin/sh simulation/vcs/fsdb_formal/run_python.sh simulation/vcs/portable.py --verify` 核对文件。`make dist` 默认生成源码包，带 `SUITE_X64` 或 `SUITE_ARM64` 参数时生成相应的 Linux 完整包。机器配置、许可证、商业 EDA 二进制、编译缓存和既有结果均不分发。
 

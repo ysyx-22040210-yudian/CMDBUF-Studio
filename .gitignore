@@ -10,8 +10,8 @@ desktop_preferences.json
 .ucagent/
 state/
 local-config/
-formal/cmdbuf_rd_dual_backend/results/
-verification/closure/cmdbuf_rd_evidence.tar.gz
+formal/test_mode_rd_dual_backend/results/
+verification/closure/test_mode_rd_evidence.tar.gz
 verification/closure/evidence/
 *.partial
 /build/

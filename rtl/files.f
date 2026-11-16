@@ -1,3 +1,3 @@
-rtl/cmdbuf_rd.sv
-rtl/cmdbuf_rd_cmd.sv
-rtl/cmdbuf_rd_otb.sv
+rtl/test_mode_rd.sv
+rtl/test_mode_rd_cmd.sv
+rtl/test_mode_rd_otb.sv

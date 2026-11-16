@@ -1,4 +1,4 @@
-// Included inside tb_cmdbuf_rd. WaveJSON drives every DUT input literally.
+// Included inside tb_test_mode_rd. WaveJSON drives every DUT input literally.
 // No free-running clock, implicit reset, automatic busy/AR fixup or tail drain.
 integer wave_clock_edges = 0, wave_active_edges = 0, wave_resets = 0;
 integer wave_aborted = 0, wave_aborted_unissued = 0, wave_aborted_mem = 0;

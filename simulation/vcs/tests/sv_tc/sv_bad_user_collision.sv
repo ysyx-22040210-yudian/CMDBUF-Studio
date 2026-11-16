@@ -4,7 +4,7 @@
 // 已包含：变量声明、E03/E04/E05/E06、MEM N+4、收尾；见 sv_tc_base.svh。
 // cycle 从 0 起算且包含复位/停钟槽；edge_count 只数真实上升沿。
 // arready / req / arb_addr / mem_due / due_data / due_error 是只读上下文。
-class sv_bad_user_collision extends cmdbuf_sv_tc;
+class sv_bad_user_collision extends test_mode_sv_tc;
     // 运行长度：soft 允许 Make CYCLES=N 覆盖。用户激励结束后自动排空。
     constraint c_run { if (stage == 2) soft num_cycles == 64; }
 

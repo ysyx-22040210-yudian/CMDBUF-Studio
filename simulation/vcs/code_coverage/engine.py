@@ -62,7 +62,7 @@ def archived_sources(database_items, summary):
                 pass
         if relative not in hashes:
             # VCS paths in a space-containing checkout can use its ASCII alias.
-            match = re.match(r'^/tmp/cmdbuf-studio-\d+/source-[0-9a-f]+/(.+)$', name)
+            match = re.match(r'^/tmp/test_mode-studio-\d+/source-[0-9a-f]+/(.+)$', name)
             relative = match[1] if match else relative
         if relative not in hashes:
             relative = max((p for p in hashes if name.endswith('/'+p)), key=len, default=None)
@@ -119,7 +119,9 @@ def functional_coverage(batches, summaries, cases):
 
     def contract(summary):
         sources = summary.get('execution_sources', {})
-        return [summary.get('contract_revision')] + [sources.get(name) for name in contract_paths]
+        project = summary.get('project', eda.PROJECT['name'])
+        paths = [name.replace(eda.PROJECT['name'], project, 1) for name in contract_paths]
+        return [summary.get('contract_revision')] + [sources.get(name) for name in paths]
 
     contracts = [contract(summary) for summary in summaries]
     if not all(contracts[0]) or any(value != contracts[0] for value in contracts[1:]):
@@ -196,7 +198,7 @@ def extract(directory, executable, env, requests, details=True):
     # Older Verdi NPI can crash when opening multiple long VDB paths in one
     # process. Use private short aliases without copying or modifying the VDBs.
     # Bound each NPI process and verify every chunk against the same reference.
-    with tempfile.TemporaryDirectory(prefix='cmdbuf-cov-', dir='/tmp') as folder, \
+    with tempfile.TemporaryDirectory(prefix='test_mode-cov-', dir='/tmp') as folder, \
             tests.open('w', encoding='utf-8') as output:
         aliases = Path(folder)
         for offset in range(0, max(1, len(candidates)), VDBS_PER_READER):

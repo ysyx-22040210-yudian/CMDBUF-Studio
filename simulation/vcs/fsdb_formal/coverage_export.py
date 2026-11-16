@@ -96,7 +96,7 @@ def export(analysis, identifier, max_edges, timeout, style='cycle'):
     style = core.formal_format(style)
     cases = selected_cases(eda.read_json(result_file(analysis)))
     rtl = archived_dut(cases)
-    scope = eda.PROJECT['top']
+    scope = eda.regression_top(cases[0][3])
     request = dict(id=identifier, coverage_set=analysis, max_edges=max_edges, format=style, sources=[])
     wave_root = eda.OUT / 'coverage_formal_waves' / identifier
     # A regression dumps the canonical interface at the testbench boundary,

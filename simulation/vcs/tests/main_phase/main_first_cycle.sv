@@ -1,7 +1,7 @@
 // 启动时序正例：cycle=0 准备请求，默认 10 ns 驱动并在 20 ns 接受。
 // 用户只需修改 main_phase 的赋值和 if 条件；没有 constraint/randomize。
 // 每次 @(posedge clk) 后执行一组带条件赋值，供下一上升沿采样。
-class main_first_cycle extends cmdbuf_main_tc;
+class main_first_cycle extends test_mode_main_tc;
     function new(); num_cycles=4; endfunction
 
     virtual task main_phase;

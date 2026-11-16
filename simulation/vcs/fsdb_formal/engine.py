@@ -143,8 +143,8 @@ def sby_configs(directory, traces, names, includes, cfg, style='cycle'):
     # read_slang receives Yosys command tokens literally; use its documented
     # command-file parser for quotes/paths instead of quoting command tokens.
     (directory/'slang.f').write_text('\n'.join(json.dumps(a,ensure_ascii=False) for a in args)+'\n',encoding='utf-8')
-    script = ('read_slang --top cmdbuf_fsdb_formal_top --no-implicit-memories -f slang.f'+
-              '\nprep -top cmdbuf_fsdb_formal_top\nasync2sync\ndffunmap\nchformal -lower\n'
+    script = ('read_slang --top test_mode_fsdb_formal_top --no-implicit-memories -f slang.f'+
+              '\nprep -top test_mode_fsdb_formal_top\nasync2sync\ndffunmap\nchformal -lower\n'
               'sim -clock clk -resetn rst_n -rstlen 1 -n 1 -w -vcd reset_initialization.vcd\n')
     for mode,engine in [('bmc','abc bmc3'),('cover','smtbmc yices')]:
         text = '[options]\nmode %s\ndepth %d\ntimeout 600\n\n[engines]\n%s\n\n[script]\n%s\n[files]\nrtl_snapshot\nsby_properties.sv\nformal_top.sv\nslang.f\n' % (mode,depth,engine,script)
@@ -195,14 +195,14 @@ def run(request, action, archived_dut=None):
         counts=core.export_data(directory,traces,cfg['instance'],style)
         names,includes=package_rtl(directory,cfg,archived_sources)
         depth=sby_configs(directory,traces,names,includes,cfg,style)
-        integration=dict(top='cmdbuf_fsdb_formal_top',native_checker='trace_properties.sv',filelist='files.f',
+        integration=dict(top='test_mode_fsdb_formal_top',native_checker='trace_properties.sv',filelist='files.f',
             format=style,
             selectors=['pattern','reset_segment'],sampling='posedge preponed; FSDB time T-1 tick',
             clock='clk',active_low_reset='rst_n',reset_initialization='Initialize DUT with its real reset in the formal tool. disable iff alone does not initialize the DUT.',
             reset_segments='Every complete reset-to-reset interval is independent; all intervals retained. Keep pattern and reset_segment stable within the interval.',
             output_validity='Control outputs compared every cycle. arb_addr compared when recorded req!=0; R payloads compared when recorded rvalid!=0. All raw values retained.',
             unknowns='Reject X/Z inputs or compared outputs; do not silently coerce or wildcard them.',
-            native_usage='Load files.f; select cmdbuf_fsdb_formal_top; configure clock/reset initialization; verify assertions and all terminal covers.',
+            native_usage='Load files.f; select test_mode_fsdb_formal_top; configure clock/reset initialization; verify assertions and all terminal covers.',
             sby_usage=['In the Studio Linux portable directory: make formal-prove FORMAL_ID=<export-id>',
                        'With the export extracted under the portable directory: make prove'],
             sby_requirements='Yosys with read_slang, SBY, ABC and Yices. SBY performs an explicit real-reset initialization; no reset-sequence assume or zinit.',

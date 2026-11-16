@@ -1,7 +1,7 @@
 // Procedural TC API. No rand fields, constraint blocks or randomize calls.
 // Pin variables keep their four-state types. main_phase is an ordinary virtual
 // SV task in this lightweight environment, not an implicit UVM phase.
-class cmdbuf_main_tc;
+class test_mode_main_tc;
     int unsigned num_cycles=64, cycle=0, edge_count=0, phase=0;
     int unsigned clk_low_ns=5, clk_high_ns=5, clk_pause_ns=0;
     // Environment releases reset at 1 ns; procedural cycles must keep it high.
@@ -36,6 +36,6 @@ class cmdbuf_main_tc;
         main_drive(this);
     endtask
     virtual task main_phase;
-        tb_cmdbuf_rd.env_fail("MAIN_PHASE_NOT_IMPLEMENTED","TC must implement main_phase",1);
+        tb_test_mode_rd.env_fail("MAIN_PHASE_NOT_IMPLEMENTED","TC must implement main_phase",1);
     endtask
 endclass

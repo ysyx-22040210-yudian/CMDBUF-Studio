@@ -1,5 +1,5 @@
 // Fill all nine entries under R backpressure, then release selected lanes.
-class main_interface_rules extends cmdbuf_main_tc;
+class main_interface_rules extends test_mode_main_tc;
     function new(); num_cycles=48; endfunction
 
     virtual task main_phase;
