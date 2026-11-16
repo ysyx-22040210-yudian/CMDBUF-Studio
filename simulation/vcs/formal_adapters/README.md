@@ -94,7 +94,7 @@ DUT 快照会保留 RTL 中的宏、命名序列和原生 SVA。`port_checks` �
 | Cover 命中、只完成有界搜索或具有不可达证明 | `REACHED`、`UNREACHED_IN_BOUND` 或 `UNREACHABLE` |
 | 求解停在未知、超时或明确错误 | `UNKNOWN`、`TIMEOUT` 或 `ERROR` |
 
-Studio 将真实断言反例标为 `FAIL`。通过要求完整结果、必需标签齐全、目标 Cover 命中，以及断言已证明或达到请求深度。空触发、浅于请求的有界结论、缺失终点和未完成求解会显示为 `INCOMPLETE`。以任务里的 `result.json` 为最终判断依据。商业轨迹可在 GUI 查看，走原有 VCS 回放时使用该流程生成的回放轨迹。
+Studio 将真实断言反例标为 `FAIL`。通过要求完整结果、必需标签齐全、目标 Cover 命中，以及断言已证明或达到请求深度。空触发、浅于请求的有界结论、缺失终点和未完成求解会显示为 `INCOMPLETE`。以任务里的 `result.json` 为最终判断依据。商业结果页可查看 `trace` 指向的 VCD。将命中轨迹转换为 VCS 激励的方法见下文。
 
 <!-- pagebreak -->
 
@@ -147,3 +147,62 @@ make formal-commercial COMMERCIAL_MODE=cover COMMERCIAL_TARGETS=C_PARITY_R \
 | 状态未完成或空触发 | 查看属性被求解到的实际深度、约束可满足性和原始工具报告 |
 
 任务默认归档在结果目录下的 `commercial_formal/<run_id>/`。排查时一起保留 `request.json`、`result.json`、原始 `adapter-result.json`、`adapter.log` 和本地工具报告。适配器协议回归可以用仓库的 `test_commercial_formal.py`，厂商求解验收使用本节的站点用例。
+
+<!-- pagebreak -->
+
+## 商业 Cover 的 VCS 回放
+
+站点适配器应先确认已命中的 Cover 是否有对应的原始轨迹（witness）。记录完整实例名、命中深度、工具版本和原始产物。VCS 回放需要可驱动的逐拍 DUT 输入，以及与 Formal 一致的时钟、复位或初态。VCD 是可选的交换格式。
+
+| 站点工具的产物 | 移植方式 |
+|---|---|
+| VCD | 核对文件对应的 Cover 实例。解压后用 `trace` 回传任务内的 VCD 相对路径。按采样边沿提取 DUT 输入，生成 VCS 激励。 |
+| CSV、TXT、JSON 或逐拍查询 | 用站点支持的导出命令或接口取得输入值，按端口名、位宽和数组下标映射为逐拍激励。原始文件可填入 `reports`。已有可读激励时无需 USDB 提取许可。 |
+| 可运行的 SV testbench | 在 VCS 编译 testbench 和同一版 RTL、SVA，核对时钟、复位与实际 Cover 命中。纳入 Studio 回归时，按 SV 用例模板把激励接入 `main_phase`。 |
+| USDB 或其他私有波形库 | 若站点有可用的厂商导出或读取接口，将时钟、复位和逐拍 DUT 输入导出成可读格式。结果接口可在 `reports` 归档任务目录内的原始文件。 |
+| 仅有命中结论、深度或不可读取的波形库 | 保留 Formal 结论并记录原始轨迹无法回放。若目标是取得同一个 Cover 的 VCS 波形，可重新搜索或编写定向用例，并记录新激励的来源。 |
+
+### 将轨迹接入现有驱动
+
+商业 Formal v1 支持查看 VCD、归档报表和显示逐属性结果。自动回放需要站点将原始轨迹转成仿真激励。现有 `functional_cover.py` 的轨迹读取使用 SBY 专用的 `smt_step` 与 `fc_stimulus`，`make formal-replay` 接收已生成激励的 Open Formal 活动编号。厂商通用 VCD 和文本输入应按其端口和周期定义解码，再接入 VCS 驱动。
+
+先核对 RTL、SVA、宏、参数和约束版本，再对齐复位、启动拍与 SVA 边沿前采样。逐拍保留端口值、空拍和背压。现有 `stimulus.txt` 的 `FORMAL_COVER_V1` 模式按 DUT 端口位序接收用十六进制编码的二态输入帧。遇到缺失值、X/Z、多时钟或中途复位时，核对现有驱动能否保留原语义，必要时改用能忠实驱动该轨迹的 SV testbench。DUT 输出和内部状态由 VCS 计算。
+
+符合 Studio `main_phase` 模板的移植用例可以从项目根目录执行以下命令。开启波形时使用站点已有的 VCS 和 FSDB 生成配置。
+
+```bash
+make run CASE=/path/to/replay_tc.sv WAVES=1
+```
+
+<!-- pagebreak -->
+
+## 在站点核验轨迹导出和回放
+
+### 阿卡思 FormalMC
+
+厂商产品页说明 FormalMC 能为被证伪的属性生成可用于仿真的激励。Cover 命中导出需按实际安装版本和授权单独验证。UCAgent 的公开脚本会处理求解目录下已有的 VCD。`fanin -cover -list -dump` 在该脚本中用于 COI 覆盖分析。FormalMC 2024 等版本以本版命令帮助和实际产物为准。[产品页](https://www.arcas-da.com/html/products/AveMC.html) · [UCAgent 脚本](https://raw.githubusercontent.com/XS-MLVP/UCAgent/ac007684b2c6b1b4b7a1ca6e3090fef174d459fa/ucagent/lang/zh/skills/formal/lib/templates/tests/formal.tcl.j2#L38)
+
+选一个已知可达的 Cover 单独试跑，检查结果菜单或命令帮助中的 witness、trace、export 和 testbench 入口。用现有 License 试导出并记录结果和许可诊断。把实际的 `-work_dir` 路径代入下方命令，列出该次运行的产物。核对文件与目标 Cover 的关联。
+
+```bash
+find /path/to/formalmc-work-dir -type f \
+  \( -iname '*.vcd' -o -iname '*.vcd.gz' -o -iname '*.usdb' \
+     -o -iname '*.fsdb' -o -iname '*.csv' -o -iname '*.txt' -o -iname '*.sv' \) -print
+```
+
+### 只有命中结论时重新生成激励
+
+若需要的是同一目标的仿真命中，而现场无法取出原始逐拍输入，可用 Studio 的 Open Formal 对支持的同一 Cover 重新搜索。以下以基准 DUT 的 `C_PARITY_R` 为例。将生成的用例标为重新搜索得到的轨迹，并继续保留原始商业 Formal 结论。
+
+```bash
+make formal-cover CAMPAIGN=cover_repro TARGETS=C_PARITY_R FORMAL_DEPTH=48
+make formal-replay CAMPAIGN=cover_repro WAVES=1
+```
+
+### 核对 VCS 运行证据
+
+将原始 witness 或新用例、端口与采样映射、运行日志共同归档。用 VCS 实际记录的 `functional_hits.json` 验证同一 Cover 实例命中，核对 `waves.fsdb` 和 `simv.vdb`。Studio 回归批次通过且 DUT、属性版本与覆盖定义相符时，可参与联合最小集。
+
+### 用厂商波形生成验证包
+
+已生成的 FSDB 验证包交给商业 Formal 时，站点求解器读取包内 RTL、SVA 和文件清单。商业工具的私有数据库由站点驱动按厂商入口加载。若起点是 USDB 波形，Studio 导入需新增厂商读取适配，将时钟、复位段和沿前采样整理为 `fsdb_formal/core.py` 消费的 `meta`、`reset` 和 `edge` 记录，再复用验证包生成逻辑。合见工软的 USDB 是波形格式，FormalMC 的可导出格式以站点版本为准。[合见工软 UVD 波形说明](https://www.univista-isg.com/site/news_detail/32)
