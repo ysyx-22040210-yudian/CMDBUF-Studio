@@ -679,12 +679,14 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
         functional = summary.get('functional')
         if functional is not None:
             detail += '  ·  功能 {}/{}'.format(functional['covered'], functional['total'])
+        commercial = summary.get('commercial_formal')
+        origin = '商业 Formal 回放 · {}  ·  '.format(commercial['run_id']) if commercial else ''
         if status == 'NO_PASSING_CASES':
-            self.coverage_note.set('暂无通过用例可统计覆盖率')
+            self.coverage_note.set(origin+'暂无通过用例可统计覆盖率')
         elif summary['status'] == 'CANCELLED' and status == 'PASS':
-            self.coverage_note.set('已合并 %d 条 PASS 用例   ·   %s' % (len(coverage['included']), detail))
+            self.coverage_note.set(origin+'已合并 %d 条 PASS 用例   ·   %s' % (len(coverage['included']), detail))
         else:
-            self.coverage_note.set('覆盖率 '+status+'   '+detail)
+            self.coverage_note.set(origin+'覆盖率 '+status+'   '+detail)
         if not self.final_results:
             self.scope_note.set('暂无已完成用例')
 
@@ -785,17 +787,19 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
         ttk.Label(box, text='选择历史回归', style='Heading.TLabel').pack(anchor='w')
         ttk.Label(box, text='勾选同一 DUT 和属性版本的普通回归与 Formal 回放，保留全部已命中项。' if joint
                   else '勾选使用同一覆盖率配置的批次。', style='Muted.TLabel').pack(anchor='w', pady=(5, 9))
-        frame, batches = tree(box, [('checked', '勾选', 60), ('batch', '回归批次', 300), ('dut', 'DUT', 160),
-                                     ('count', '通过 / 完成 / 总数', 138), ('origin', '来源', 103)], height=7,
+        frame, batches = tree(box, [('checked', '勾选', 60), ('batch', '回归批次', 285), ('dut', 'DUT', 145),
+                                     ('count', '通过 / 完成 / 总数', 138), ('origin', '来源', 133)], height=7,
                               selectmode='none')
         batches.column('checked', anchor='center', stretch=False)
         frame.pack(fill='both', expand=True)
         checked = {row['id'] for row in history if row['id'] in selected}
         for row in history:
+            origin = ('商业 Formal 回放' if row.get('commercial_run') else
+                      'Formal 回放' if row.get('formal_campaign') else '用例回归')
             batches.insert('', 'end', iid=row['id'],
                            values=('☑' if row['id'] in checked else '☐', row['id'], row['dut'],
                                    '{}/{}/{}'.format(row['passed'], row['completed'], row['total']),
-                                   'Formal 回放' if row['formal_campaign'] else '用例回归'))
+                                   origin))
         seconds = tk.StringVar(value='0')
         controls = ttk.Frame(box)
         controls.pack(fill='x', pady=(10, 0))
@@ -1219,7 +1223,11 @@ make replay 使用原用例保存的检查模式、环境 fatal 和断言 fatal 
         if job.get('batch'):
             self.guard(lambda: self.finish_regression_view(job['batch']))
         if job['kind'] == 'formal_replay':
-            self.guard(self.functional_page.refresh)
+            commercial = job.get('formal_request', {}).get('commercial_run')
+            if commercial:
+                self.guard(lambda: self.functional_page.commercial.refresh(commercial))
+            else:
+                self.guard(self.functional_page.refresh)
         if job['kind'] == 'formal_prove' and self.formal_export:
             self.guard(self.refresh_formal_proof)
         if job['kind'] == 'formal_prove' and job.get('proof_export') == self.functional_page.package.key.get():

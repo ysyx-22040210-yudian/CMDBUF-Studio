@@ -412,7 +412,8 @@ def program(case, seed):
     if not 1 <= len(frames) <= 1000000 or any(
             not re.fullmatch(r'[0-9a-f]+', value) or int(value, 16).bit_length() > props.WIDTH for value in frames):
         raise ValueError('非法 Formal 回放输入')
-    return 'FORMAL_COVER_V1 {} {} {}\n{}\n'.format(case['name'], seed, len(frames), '\n'.join(frames))
+    mode = 'COMMERCIAL_COVER_V1' if case.get('commercial') else 'FORMAL_COVER_V1'
+    return '{} {} {} {}\n{}\n'.format(mode, case['name'], seed, len(frames), '\n'.join(frames))
 
 
 def check_replay_build(campaign, build):

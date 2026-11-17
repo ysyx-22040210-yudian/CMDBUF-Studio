@@ -5,6 +5,7 @@ import tkinter as tk
 from tkinter import filedialog, ttk
 
 import backend
+from commercial_replay import witness_field
 import formal_model
 from formal_view import active, archived_file, preview_text, summary_status, wave
 from widgets import tree
@@ -32,7 +33,9 @@ class CommercialPage:
         self.timeout = tk.StringVar(value='600')
         self.history = tk.StringVar()
         self.info = tk.StringVar()
+        self.replay_waves = tk.BooleanVar(value=True)
         self.record, self.folder = {}, None
+        self.replay_targets, self.replay_batches = set(), []
 
         form = ttk.Frame(parent); form.pack(fill='x', pady=(0, 8))
         form.columnconfigure(1, weight=1)
@@ -70,10 +73,16 @@ class CommercialPage:
         self.request_button = studio.button(bar, '查看请求', lambda: self.preview('request'))
         self.log_button = studio.button(bar, '查看适配器日志', lambda: self.preview('log'))
         self.wave_button = studio.button(bar, '查看选中 VCD', self.open_wave)
+        replay_bar = studio.bar(parent)
+        self.replay_button = studio.button(replay_bar, 'VCS 回放选中', self.replay, True)
+        self.replay_all_button = studio.button(replay_bar, 'VCS 回放全部', lambda: self.replay(all_targets=True))
+        self.results_button = studio.button(replay_bar, '结果与波形', self.open_results)
+        self.minimum_button = studio.button(replay_bar, '联合最小集', self.joint)
+        ttk.Checkbutton(replay_bar, text='生成波形', variable=self.replay_waves).pack(side='left', padx=8)
         ttk.Label(parent, textvariable=self.info, style='Muted.TLabel', wraplength=920).pack(fill='x', pady=(0, 8))
         frame, self.rows = tree(parent, [('name', '属性 / 实例', 345), ('kind', '类型', 65),
                                          ('status', '结论', 160), ('depth', '深度', 70),
-                                         ('trace', '波形', 70)], height=8)
+                                         ('trace', '轨迹', 97)], height=8, selectmode='extended')
         frame.pack(fill='both', expand=True)
         self.rows.bind('<<TreeviewSelect>>', lambda event: self.poll())
         self.rows.bind('<Double-1>', lambda event: studio.guard(self.open_wave))
@@ -135,10 +144,17 @@ class CommercialPage:
         self.folder = eda.OUT / 'commercial_formal' / backend.identifier(key) if key else None
         self.record = eda.read_json(self.folder / 'result.json') if self.folder else {}
         self.rows.delete(*self.rows.get_children())
+        self.replay_targets = set()
         for i, row in enumerate(self.record.get('properties', [])):
-            self.rows.insert('', 'end', iid=str(i), values=(
+            target = 'p{}'.format(i)
+            self.rows.insert('', 'end', iid=target, values=(
                 row['name'], row['kind'], VERDICTS.get(row['status'], summary_status(row['status'])),
-                row['depth'] if row['depth'] is not None else '—', '有' if row['trace'] else '—'))
+                row['depth'] if row['depth'] is not None else '—',
+                '逐拍 JSON' if row.get('stimulus') else 'VCD' if row.get('trace') else '—'))
+            field = witness_field(row) if self.record['mode'] == 'cover' else None
+            if field and archived_file(self.folder, row[field]):
+                self.replay_targets.add(target)
+        self.replay_batches = [row for row in backend.history() if row.get('commercial_run') == key] if key else []
         if self.record:
             state = self.record['status']
             engine = self.record.get('engine', {})
@@ -146,8 +162,13 @@ class CommercialPage:
                                             engine.get('name'), engine.get('version')]))
             detail = self.record.get('error') or self.record.get('message')
             missing = self.record.get('missing', [])
+            replay_info = ''
+            if self.record['mode'] == 'cover' and self.record.get('properties'):
+                replay_info = ('{} 个命中 Cover 有回放轨迹'.format(len(self.replay_targets)) if self.replay_targets
+                               else 'VCS 回放需要命中 Cover 的 VCD 或逐拍 JSON。')
             self.info.set('\n'.join(filter(None, [title, str(self.folder), detail,
-                                                 '缺少结果：' + '、'.join(missing[:10]) if missing else ''])))
+                                                 '缺少结果：' + '、'.join(missing[:10]) if missing else '',
+                                                 replay_info])))
         else:
             self.info.set('选择本机适配器运行，或先准备原生 RTL / SVA 与请求文件。')
         self.poll()
@@ -161,18 +182,52 @@ class CommercialPage:
         selected = self.rows.selection()
         if not selected:
             return None, ''
-        row = self.record['properties'][int(selected[0])]
-        return archived_file(self.folder, row['trace']), row['name']
+        row = self.record['properties'][int(selected[0][1:])]
+        return archived_file(self.folder, row.get('trace')), row['name']
 
     def open_wave(self):
         path, name = self.selected_trace()
         if not self.studio.jobs.busy():
             wave(self.studio, path, name)
 
+    def replay(self, all_targets=False):
+        self.studio.idle()
+        targets = (list(self.rows.selection()) if not all_targets else
+                   [key for key in self.rows.get_children() if key in self.replay_targets])
+        if not targets or not set(targets).issubset(self.replay_targets):
+            raise ValueError('请选择有 VCD 或逐拍 JSON 的已命中 Cover')
+        self.functional.save(native=True)
+        plan = self.studio.plan_value()
+        policy = {key: plan[key] for key in ('jobs', 'timeout', 'check_mode', 'assert_fatal', 'env_fatal')}
+        policy['waves'] = self.replay_waves.get()
+        if policy['jobs'] < 1 or policy['timeout'] < 0:
+            raise ValueError('并行数至少为 1，仿真超时须为非负整数。')
+        self.studio.launch('formal_replay', dict(commercial_run=self.record['id'], traces=targets, policy=policy))
+
+    def open_results(self):
+        self.studio.idle()
+        if self.replay_batches:
+            self.studio.refresh_results(self.replay_batches[0]['id'])
+            self.studio.show('results')
+
+    def joint_batches(self):
+        return [row['id'] for row in self.replay_batches if row['coverage'] and row['functional_version']]
+
+    def joint(self):
+        batches = self.joint_batches()
+        if batches:
+            self.studio.choose_coverage_batches(batches[:1], joint=True)
+
     def poll(self):
-        available = sys.platform == 'linux' and not self.studio.jobs.busy()
+        idle = not self.studio.jobs.busy()
+        available = sys.platform == 'linux' and idle
         active(self.run_button, available)
         active(self.prepare_button, available)
         active(self.request_button, bool(archived_file(self.folder, self.record.get('request'))))
         active(self.log_button, bool(archived_file(self.folder, self.record.get('log'))))
-        active(self.wave_button, not self.studio.jobs.busy() and bool(self.selected_trace()[0]))
+        active(self.wave_button, idle and bool(self.selected_trace()[0]))
+        selected = self.rows.selection()
+        active(self.replay_button, available and bool(selected) and set(selected).issubset(self.replay_targets))
+        active(self.replay_all_button, available and bool(self.replay_targets))
+        active(self.results_button, idle and bool(self.replay_batches))
+        active(self.minimum_button, available and bool(self.joint_batches()))

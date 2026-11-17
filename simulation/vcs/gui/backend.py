@@ -83,7 +83,8 @@ def summary_row(summary):
                 created=summary.get('created_at', ''), seconds=sum(r.get('seconds', 0) for r in results),
                 functional_version=(functional['sha256'], functional.get('version'), functional.get('adapter_sha256'),
                                     functional.get('rtl_cover_adapter_sha256')) if functional.get('sha256') else None,
-                formal_campaign=summary.get('formal_campaign'))
+                formal_campaign=summary.get('formal_campaign'),
+                commercial_run=summary.get('commercial_formal', {}).get('run_id'))
 
 
 def history(include_interrupted=False):
@@ -433,7 +434,11 @@ class Jobs:
                     arguments = ['regress', 'PLAN='+str(path)]
                 else:
                     plan = payload['policy']
-                    arguments = ['formal-replay', 'CAMPAIGN='+identifier(payload['campaign'])]
+                    if payload.get('commercial_run'):
+                        arguments = ['formal-commercial-replay',
+                                     'COMMERCIAL_RUN_ID='+identifier(payload['commercial_run'])]
+                    else:
+                        arguments = ['formal-replay', 'CAMPAIGN='+identifier(payload['campaign'])]
                     if payload.get('traces'):
                         arguments.append('TRACES='+','.join(identifier(trace) for trace in payload['traces']))
                 if not job.get('stop_requested'):

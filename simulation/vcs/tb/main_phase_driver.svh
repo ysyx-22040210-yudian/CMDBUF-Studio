@@ -29,6 +29,14 @@ task automatic main_wait_for_feedback;
     @(main_feedback_cb);
 endtask
 
+// Commercial witnesses start at the first post-reset edge. Drive frame zero
+// after reset release so the existing startup clock samples it at 10 ns.
+task automatic main_start_replay;
+    wait (rst_n === 1'b1);
+    main_edge_ps=$realtime/1ps;
+    main_ready_ps=main_edge_ps;
+endtask
+
 initial begin : main_clock
     integer lo,hi,pause_ns;
     wait(main_clock_start);
@@ -101,7 +109,8 @@ endtask
 
 task automatic main_record_assignment(input test_mode_main_tc t);
     $fdisplay(main_assignments,"%0d,%0d,%0d,%0.0f,%0d,%0d,%b,%0d,%0d,%0d,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%b,%h,%h,%h,%032h,%0d",
-        t.cycle,cycle,t.phase,$realtime*1000.0,main_edge_ps,main_edge_ps+1000*(main_current_high_ns+t.clk_low_ns+t.clk_pause_ns),1'b1,
+        t.cycle,cycle,t.phase,$realtime*1000.0,main_edge_ps,
+        cycle==0 ? 10000 : main_edge_ps+1000*(main_current_high_ns+t.clk_low_ns+t.clk_pause_ns),1'b1,
         t.clk_low_ns,t.clk_high_ns,t.clk_pause_ns,t.rst_n,t.arvalid,t.src,t.araddr,
         t.arid,t.ar_port_id,t.arresp,t.rready,t.ar_rd_gnt,t.rw_rd_gnt,t.rd_mem_status[0],
         t.rd_mem_status[1],t.rd_mem_status[2],t.rd_mem_status[3],t.rd_mem_status[4],t.rd_mem_status[5],t.rd_mem_status[6],t.rd_mem_status[7],
@@ -216,14 +225,16 @@ task automatic run_sv_tc;
     integer override_cycles, header_seed, config_fd;
     test_mode_formal_cover_tc formal_tc;
     process rng;
+    bit commercial, run_tail;
     begin
         if ($fscanf(fd,"%s %s %d %d\n",magic,main_name,header_seed,override_cycles)!=4 ||
-            !(magic inside {"MAIN_PHASE_V1","FORMAL_COVER_V1"}) || header_seed!=seed)
+            !(magic inside {"MAIN_PHASE_V1","FORMAL_COVER_V1","COMMERCIAL_COVER_V1"}) || header_seed!=seed)
             env_fail("MAIN_BAD_PROGRAM","invalid TC header or seed",1);
-        if (magic=="FORMAL_COVER_V1") begin
+        commercial=magic=="COMMERCIAL_COVER_V1";
+        if (magic=="FORMAL_COVER_V1" || commercial) begin
             if (override_cycles<1 || override_cycles>1000000)
                 env_fail("FORMAL_BAD_FRAME_COUNT","invalid number of samples",1);
-            formal_tc=new(override_cycles);
+            formal_tc=new(override_cycles,commercial);
             formal_tc.load_frames(fd);
             main_tc=formal_tc;
         end else begin
@@ -231,12 +242,13 @@ task automatic run_sv_tc;
             if (main_tc==null) env_fail("MAIN_UNKNOWN_NAME",main_name,1);
             if (override_cycles!=0) main_tc.num_cycles=override_cycles;
         end
+        run_tail=formal_tc==null || commercial;
         $fclose(fd);
         if (main_tc.num_cycles<1 || main_tc.num_cycles>1000000) main_fail("MAIN_CYCLES_INVALID",1);
         rng=process::self(); rng.srandom(seed);
         config_fd=$fopen("tc_config.json","w");
         if (!config_fd) env_fail("MAIN_ARCHIVE_OPEN","tc_config.json",1);
-        $fdisplay(config_fd,"{\"name\":\"%s\",\"seed\":%0d,\"num_cycles\":%0d,\"bootstrap_edges\":1,\"drive_offset_ps\":0,\"startup\":{\"clock_initial\":1,\"reset_release_ps\":1000,\"first_posedge_ps\":10000}}",main_name,seed,main_tc.num_cycles);
+        $fdisplay(config_fd,"{\"name\":\"%s\",\"seed\":%0d,\"num_cycles\":%0d,\"bootstrap_edges\":%0d,\"drive_offset_ps\":0,\"startup\":{\"clock_initial\":1,\"reset_release_ps\":1000,\"first_posedge_ps\":10000}}",main_name,seed,main_tc.num_cycles,commercial ? 0 : 1);
         $fclose(config_fd);
         main_samples=$fopen("samples.csv","w"); main_assignments=$fopen("assigned.csv","w");
         if (!main_samples || !main_assignments) env_fail("MAIN_ARCHIVE_OPEN","samples.csv or assigned.csv",1);
@@ -256,7 +268,7 @@ task automatic run_sv_tc;
         if (sv_body_slots!=main_tc.num_cycles) main_fail("MAIN_BODY_COUNT");
         // Consume the final body assignment before examining the drain condition.
         @(main_edge_cb);
-        for (integer k=0;formal_tc==null && k<drain_limit &&
+        for (integer k=0;run_tail && k<drain_limit &&
              (accepted!=retired+wave_aborted || due_data.num()!=0 || req!=0 || (monitor.strict_mode && pending_cnt!=0));k++) begin
             main_tail(1);
             @(main_edge_cb);
@@ -264,7 +276,7 @@ task automatic run_sv_tc;
         if (accepted!=retired+wave_aborted || accepted!=issued+wave_aborted_unissued ||
             issued!=captured+wave_aborted_mem || captured!=retired+wave_aborted_response ||
             due_data.num()!=0 || req!=0 || (monitor.strict_mode && pending_cnt!=0)) drain_failure("MAIN_DRAIN_FAILED");
-        if (formal_tc==null) repeat (8) begin
+        if (run_tail) repeat (8) begin
             main_tail(2);
             @(main_edge_cb);
         end

@@ -121,7 +121,7 @@ make coverage-minimize-joint REGRESSIONS=normal_batch,formal_replay_batch
 
 在安装了商业 Formal 的 Linux 设备上，打开「Formal 验证 → 商业 Formal」，选择站点适配器并运行 DUT Cover、Assert / BMC 或已解压的 FSDB 验证包。命令行可用 `make formal-commercial COMMERCIAL_ADAPTER=/site/bin/adapter COMMERCIAL_MODE=cover COMMERCIAL_TARGETS=C_PARITY_R`。设置 `COMMERCIAL_PREPARE=1` 可先生成原生 RTL/SVA 和接口请求。逐属性状态、日志及 VCD 可在工作台查看。
 
-适配协议、站点驱动模板、Cover 轨迹的 VCS 回放和厂商验收步骤见 [agent 对接指南](simulation/vcs/formal_adapters/README.md)、[Word](documents/51_test_mode_commercial_formal.docx) 和 [PDF](documents/51_test_mode_commercial_formal.pdf)。
+商业 DUT Cover 命中后，可在同一页用 VCD 或逐拍 JSON 启动 VCS 回放。回放批次进入「结果与波形」，有通过用例和完整覆盖率记录时可参与「联合最小集」。适配协议、站点驱动和轨迹格式见 [agent 对接指南](simulation/vcs/formal_adapters/README.md)、[Word](documents/51_test_mode_commercial_formal.docx) 和 [PDF](documents/51_test_mode_commercial_formal.pdf)。
 
 ## Make 命令
 

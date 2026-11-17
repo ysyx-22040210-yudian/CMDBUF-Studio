@@ -1,10 +1,12 @@
 // The solver supplies pin values sampled on subsequent rising edges.
 class test_mode_formal_cover_tc extends test_mode_main_tc;
     logic [FORMAL_PIN_BITS-1:0] frames[];
+    bit first_after_reset;
 
-    function new(input int count);
+    function new(input int count, input bit commercial);
         num_cycles=count;
         frames=new[count];
+        first_after_reset=commercial;
     endfunction
 
     task load_frames(input int stream);
@@ -17,7 +19,8 @@ class test_mode_formal_cover_tc extends test_mode_main_tc;
     virtual task main_phase;
         logic [128:0] memory;
         for (int index=0; index<num_cycles; index++) begin
-            @(posedge clk);
+            if (first_after_reset && index==0) main_start_replay();
+            else @(posedge clk);
             begin_cycle(index);
             `include "functional_stimulus.svh"
             drive_control();

@@ -609,11 +609,12 @@ class CoverageWindow(tk.Toplevel):
                 points.insert('', 'end', values=(prop.get('hierarchy', point['name']),
                                                  point['baseline_hits'], point['selected_hits']))
         frame, selected = tree(tab, [('pattern','pattern',80), ('batch','回归批次',270),
-                                     ('id','选中用例',245), ('seed','种子',65), ('origin','来源',100)], height=6)
+                                     ('id','选中用例',245), ('seed','种子',65), ('origin','来源',133)], height=6)
         frame.pack(fill='both', expand=True, pady=8)
         for pattern, row in enumerate(self.record['selected']):
-            selected.insert('', 'end', values=(pattern, row['batch'], row['id'], row['seed'],
-                                                'Formal 回放' if row.get('formal_origin') else '用例回归'))
+            origin = row.get('formal_origin')
+            source = '商业 Formal 回放' if origin and origin.get('commercial') else 'Formal 回放' if origin else '用例回归'
+            selected.insert('', 'end', values=(pattern, row['batch'], row['id'], row['seed'], source))
         bar = ttk.Frame(tab)
         bar.pack(fill='x')
         ttk.Button(bar, text='另存用例清单 CSV', command=lambda: self.guard(self.save_csv)).pack(side='left', padx=(0, 16))

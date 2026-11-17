@@ -448,6 +448,8 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
         missing = sorted(set(cfg['goals']) - set(functional['hits']))
         if missing:
             failures.append('Formal targets did not hit in VCS: ' + ', '.join(missing))
+    elif formal_case and cfg.get('commercial') and check_report['environment']['completed']:
+        failures.append('商业 Cover 回放缺少完整的 VCS 命中记录')
     if check_report['environment']['failures']:
         failures.append('{} environment errors; see environment_errors.jsonl'.format(len(check_report['environment']['failures'])))
     if check_report['failures']:
@@ -520,6 +522,8 @@ def run_case(build_dir, regression, name, seed, cycles, env, timeout, injection=
         result['functional_receipt_sha256'] = digest(run / 'functional_hits.json')
     if formal_case:
         result['formal_origin'] = {key: cfg[key] for key in ('campaign', 'trace', 'goals')}
+        if cfg.get('commercial'):
+            result['formal_origin']['commercial'] = cfg['commercial']
     write_json(run / 'result.json', result)
     print('{} {} ({:.2f}s)'.format(status, identifier, elapsed), flush=True)
     return result
@@ -631,11 +635,19 @@ def regress(args, env):
     if getattr(args, 'env_fatal', None) is not None:
         policy['env_fatal'] = args.env_fatal == 1
     campaign = getattr(args, 'campaign', None)
+    commercial_run = getattr(args, 'commercial_run', None)
+    commercial = None
     cases = {}
     if args.command == 'formal-replay':
-        from functional_cover import load_campaign, cases_for
-        campaign_record = load_campaign(campaign)
-        cases = cases_for(campaign_record, args.traces.split(',') if args.traces else ())
+        selected = args.traces.split(',') if args.traces else ()
+        if commercial_run:
+            import commercial_replay
+            commercial = commercial_replay.prepare(commercial_run, selected, stop_file)
+            cases = commercial['cases']
+        else:
+            from functional_cover import load_campaign, cases_for
+            campaign_record = load_campaign(campaign)
+            cases = cases_for(campaign_record, selected)
         jobs = [(name, 1, None, '') for name in cases]
     elif args.command == 'run':
         jobs = [(args.case, args.seed, args.cycles, '')]
@@ -668,6 +680,8 @@ def regress(args, env):
     if campaign:
         from functional_cover import check_replay_build
         check_replay_build(campaign_record, build_receipt)
+    if commercial:
+        commercial_replay.check_build(commercial, build_receipt)
     for case_name, cfg in cases.values():
         if cfg.get('format') == 'sv_main_phase':
             compiled = build_dir / 'checker' / 'tc_sources' / (case_name + '.sv')
@@ -754,6 +768,8 @@ def regress(args, env):
             summary['functional'] = functional_properties.summary(build_receipt['functional'], results)
         if campaign:
             summary['formal_campaign'] = campaign
+        if commercial:
+            summary['commercial_formal'] = commercial['origin']
         write_report(regression, summary)
     except (Exception, KeyboardInterrupt):
         try:
@@ -947,7 +963,9 @@ def parser():
         s.add_argument('--assert-fatal', type=int, choices=[0, 1])
         s.add_argument('--env-fatal', type=int, choices=[0, 1], help='0: collect recoverable environment/assertion errors and finish the testcase')
         if name == 'formal-replay':
-            s.add_argument('--campaign', required=True)
+            origin = s.add_mutually_exclusive_group(required=True)
+            origin.add_argument('--campaign')
+            origin.add_argument('--commercial-run')
             s.add_argument('--traces', default='')
         elif name == 'run':
             s.add_argument('--case', default='tc_directed'); s.add_argument('--seed', type=int, default=1)

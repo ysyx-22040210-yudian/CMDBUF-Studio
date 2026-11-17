@@ -83,6 +83,7 @@ help:
 	@echo '       COVER_TIMEOUT=600 limits the solver in seconds; 0 means unlimited.'
 	@echo '  make formal-replay CAMPAIGN=id        Replay generated cases in VCS and collect coverage'
 	@echo '       TARGETS=C_label1,C_label2 (formal-cover) and TRACES=trace0,trace1 (formal-replay) are optional.'
+	@echo '  make formal-commercial-replay COMMERCIAL_RUN_ID=id  Replay commercial Cover witnesses in VCS'
 	@echo '       FORMAL_PACKAGE=/path/to/extracted/export is an alternative to FORMAL_ID.'
 	@echo '       FORMAL_TIMEOUT=seconds per check (default from export); 0 means unlimited.'
 	@echo '  make doctor                          Check VCS / Verdi / URG'
@@ -168,7 +169,7 @@ formal-commercial:
 formal-prove:
 	$(PYTHON) "$(EDA_HERE)fsdb_formal/proof.py" --project $(if $(strip $(FORMAL_ID)),--export-id "$(FORMAL_ID)") $(if $(strip $(FORMAL_PACKAGE)),--package "$(FORMAL_PACKAGE)") $(if $(strip $(FORMAL_RUN_ID)),--run-id "$(FORMAL_RUN_ID)") $(if $(strip $(FORMAL_TIMEOUT)),--timeout "$(FORMAL_TIMEOUT)")
 
-.PHONY: formal-cover formal-bmc formal-replay formal-cover-list formal-property-list
+.PHONY: formal-cover formal-bmc formal-replay formal-commercial-replay formal-cover-list formal-property-list
 formal-cover-list:
 	$(PYTHON) "$(EDA_HERE)functional_cover.py" --action list $(if $(strip $(OUTPUT)),--output "$(OUTPUT)")
 
@@ -181,6 +182,10 @@ formal-cover formal-bmc:
 formal-replay:
 	@test -n "$(CAMPAIGN)" || { echo 'Specify CAMPAIGN=cover_task_id'; exit 2; }
 	$(EDA) formal-replay --campaign "$(CAMPAIGN)" --jobs "$(JOBS)" --timeout "$(TIMEOUT)" --waves "$(WAVES)" $(if $(strip $(TRACES)),--traces "$(TRACES)") $(EDA_CHECKS)
+
+formal-commercial-replay:
+	@test -n "$(COMMERCIAL_RUN_ID)" || { echo 'Specify COMMERCIAL_RUN_ID=commercial_cover_task_id'; exit 2; }
+	$(EDA) formal-replay --commercial-run "$(COMMERCIAL_RUN_ID)" --jobs "$(JOBS)" --timeout "$(TIMEOUT)" --waves "$(WAVES)" $(if $(strip $(TRACES)),--traces "$(TRACES)") $(EDA_CHECKS)
 
 doctor selftest list:
 	$(EDA) $@ $(if $(filter selftest,$@),--jobs "$(JOBS)" --timeout "$(TIMEOUT)" $(EDA_CHECKS))

@@ -14,19 +14,23 @@ def verify_execution(directory, program, current_contract=True, contract_revisio
          'T_MEM4':0,'T_ASSOCIATION':0,'P_KNOWN':0,'assignment_equal_pins':0,
          'paused_intervals':0,'reset_assertions':1,'cancelled':0}
     phases={'body':0,'drain':0,'quiet':0}; hist={}
-    formal_replay = program.startswith('FORMAL_COVER_V1 ')
+    commercial = program.startswith('COMMERCIAL_COVER_V1 ')
+    formal_replay = commercial or program.startswith('FORMAL_COVER_V1 ')
     try:
         with (root/'samples.csv').open() as f: samples=list(csv.DictReader(f))
         with (root/'assigned.csv').open() as f: solutions=list(csv.DictReader(f))
         config=json.loads((root/'tc_config.json').read_text())
         if not samples or len(samples)!=len(solutions): raise ValueError('MAIN_ARCHIVE_COUNT')
         tokens=program.split()
-        if not tokens or tokens[0] not in ('MAIN_PHASE_V1','FORMAL_COVER_V1') or config['name']!=tokens[1] or config['seed']!=int(tokens[2]):
+        if (not tokens or tokens[0] not in ('MAIN_PHASE_V1','FORMAL_COVER_V1','COMMERCIAL_COVER_V1') or
+                config['name']!=tokens[1] or config['seed']!=int(tokens[2])):
             raise ValueError('MAIN_CONFIG_ARCHIVE')
         if int(tokens[3]) and config['num_cycles']!=int(tokens[3]): raise ValueError('MAIN_CYCLES_OVERRIDE')
         fixed_startup='startup' in config
         drive_offset_ps=config.get('drive_offset_ps', 2000)
         if drive_offset_ps not in (0, 2000): raise ValueError('MAIN_DRIVE_OFFSET')
+        if commercial and (not fixed_startup or config.get('bootstrap_edges')!=0 or drive_offset_ps!=0):
+            raise ValueError('COMMERCIAL_REPLAY_STARTUP')
         if fixed_startup:
             with (root/'clock_reset.csv').open() as f: clock_reset=list(csv.DictReader(f))
             transitions=[(int(row['time_ps']),row['clk'],row['rst_n']) for row in clock_reset]
@@ -37,16 +41,19 @@ def verify_execution(directory, program, current_contract=True, contract_revisio
             if any(a[0]>=b[0] for a,b in zip(transitions,transitions[1:])): raise ValueError('MAIN_CLOCK_TRANSITION_TIME')
             rises=[b[0] for a,b in zip(transitions,transitions[1:]) if a[1]=='0' and b[1]=='1']
             falls=[b[0] for a,b in zip(transitions,transitions[1:]) if a[1]=='1' and b[1]=='0']
-            if rises!=[10000]+[int(s['time_ps']) for s in samples]: raise ValueError('MAIN_CLOCK_RISING_TRACE')
+            bootstrap = [] if commercial else [10000]
+            if rises!=bootstrap+[int(s['time_ps']) for s in samples]: raise ValueError('MAIN_CLOCK_RISING_TRACE')
             expected_falls=[5000]; previous_high=5
-            for q in solutions:
+            for q in solutions[1:] if commercial else solutions:
                 expected_falls.append(int(q['launch_ps'])+previous_high*1000)
                 previous_high=int(q['clk_high_ns'])
             if falls!=expected_falls: raise ValueError('MAIN_CLOCK_FALLING_TRACE')
             if config['startup']!=dict(clock_initial=1,reset_release_ps=1000,first_posedge_ps=10000):
                 raise ValueError('MAIN_STARTUP_CONFIG')
         # Archived simulators retain their original startup and exact replay.
-        live=[];heads=[[],[],[]];due={};edge=1;previous_sample=10000 if fixed_startup else 5000;previous_high=5;old_reset=1 if fixed_startup else 0;last_phase=0
+        live=[];heads=[[],[],[]];due={};edge=0 if commercial else 1
+        previous_sample=1000 if commercial else (10000 if fixed_startup else 5000)
+        previous_high=5;old_reset=1 if fixed_startup else 0;last_phase=0
         quiet=0
         for slot,(s,q) in enumerate(zip(samples,solutions)):
             if None in s or None in q: raise ValueError('MAIN_ARCHIVE_COLUMNS')
@@ -60,7 +67,8 @@ def verify_execution(directory, program, current_contract=True, contract_revisio
             launch=int(q['launch_ps']);sample_time=int(s['time_ps'])
             if launch!=previous_sample or int(q['time_ps'])!=launch+drive_offset_ps:
                 raise ValueError('MAIN_AFTER_POSEDGE')
-            expected=launch+1000*(previous_high+lo+pause)
+            expected=10000 if commercial and slot==0 else launch+1000*(previous_high+lo+pause)
+            if commercial and slot==0 and (lo,hi,pause)!=(5,5,0): raise ValueError('COMMERCIAL_REPLAY_STARTUP')
             if sample_time!=expected or int(q['expected_sample_ps'])!=expected: raise ValueError('MAIN_CLOCK_TIME')
             previous_sample=sample_time;previous_high=hi
             if pause: cov['paused_intervals']+=1
@@ -144,8 +152,8 @@ def verify_execution(directory, program, current_contract=True, contract_revisio
                         for row in samples if row['phase']=='0']
             if recorded != [int(value, 16) for value in tokens[4:]]:
                 raise ValueError('FORMAL_WITNESS_PIN_MISMATCH')
-            if quiet < 8: raise ValueError('FORMAL_WITNESS_QUIET_COUNT')
-        elif phases['quiet']!=8:raise ValueError('MAIN_QUIET_COUNT')
+            if not commercial and quiet < 8: raise ValueError('FORMAL_WITNESS_QUIET_COUNT')
+        if (commercial or not formal_replay) and phases['quiet']!=8:raise ValueError('MAIN_QUIET_COUNT')
         if not incomplete and (live or due or any(heads) or o['req'] or (not generic and o['pending_cnt'])):raise ValueError('MAIN_PENDING')
     except (OSError,ValueError,KeyError,IndexError,TypeError) as exc:
         failures.append('main_phase audit cycle {} edge {}: {}'.format(locals().get('slot','?'),locals().get('edge','?'),exc))

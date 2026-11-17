@@ -21,10 +21,13 @@ def convert(report):
                 result['engine'] = dict(zip(('name', 'version'), values))
             elif record == 'complete' and values in (['1'], ['0']) and 'complete' not in result:
                 result['complete'] = values[0] == '1'
-            elif record == 'property' and len(values) == 6:
-                kind, label, name, status, depth, trace = values
-                result['properties'].append(dict(kind=kind, label=label, name=name, status=status,
-                                                  depth=int(depth) if depth else None, trace=trace or None))
+            elif record == 'property' and len(values) in (6, 7):
+                kind, label, name, status, depth, trace = values[:6]
+                prop = dict(kind=kind, label=label, name=name, status=status,
+                            depth=int(depth) if depth else None, trace=trace or None)
+                if len(values) == 7 and values[6]:
+                    prop['stimulus'] = values[6]
+                result['properties'].append(prop)
             elif record == 'report' and len(values) == 1:
                 result['reports'].append(values[0])
             elif record == 'message' and len(values) == 1 and 'message' not in result:

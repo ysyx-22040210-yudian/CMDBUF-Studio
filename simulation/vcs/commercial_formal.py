@@ -13,7 +13,7 @@ import eda
 import execution
 import functional_properties as props
 from fsdb_formal import core, proof
-from fsdb_formal.engine import package_rtl
+from fsdb_formal.engine import file_hash, package_rtl
 from sva_source import mask_sv
 
 
@@ -83,6 +83,16 @@ def compile_inputs(source, extra_defines):
                         for path in sorted(source.rglob('*')) if path.is_file()})
 
 
+def dut_wrapper(instance, checker_source):
+    module = re.search(r'\bmodule\s+([A-Za-z_][\w$]*)', mask_sv(checker_source))
+    if not module:
+        raise ValueError('未找到环境检查器 module')
+    top = ['`default_nettype none', 'module {} ('.format(TOP),
+           ',\n'.join(core.declarations(True)), ');', instance, '{} port_checks (.*);'.format(module[1])]
+    top += props.helpers(1) + ['`include "user_properties.sv"', 'endmodule', '`default_nettype wire', '']
+    return '\n'.join(top)
+
+
 def dut_snapshot(source):
     inventory = eda.contracts.audit(allow_rtl_covers=True)
     config = eda.HERE / 'dut.json'
@@ -107,16 +117,9 @@ def dut_snapshot(source):
     if eda.digest(config) != config_hash:
         raise ValueError('取快照时 DUT 配置发生改变')
     checker_name = Path(checker).name
-    module = re.search(r'\bmodule\s+([A-Za-z_][\w$]*)',
-                       mask_sv((source / checker_name).read_text(encoding='utf-8-sig')))
-    if not module:
-        raise ValueError('未找到环境检查器 module')
     (source / 'user_properties.sv').write_bytes(props.USER_FILE.read_bytes())
-    top = ['`default_nettype none', 'module {} ('.format(TOP),
-           ',\n'.join(core.declarations(True)), ');', dut['instance'],
-           '{} port_checks (.*);'.format(module[1])]
-    top += props.helpers(1) + ['`include "user_properties.sv"', 'endmodule', '`default_nettype wire', '']
-    (source / 'formal_top.sv').write_text('\n'.join(top), encoding='utf-8')
+    top = dut_wrapper(dut['instance'], (source / checker_name).read_text(encoding='utf-8-sig'))
+    (source / 'formal_top.sv').write_text(top, encoding='utf-8')
     args = ['+incdir+.'] + ['+incdir+' + path for path in includes] + [
         '+define+' + define for define in dut['defines']] + files + [checker_name, 'formal_top.sv']
     args = [json.dumps(arg, ensure_ascii=False) if re.search(r'\s', arg) else arg for arg in args]
@@ -182,7 +185,7 @@ def normalize(directory, request, request_sha256, answer):
     if not isinstance(reports, list):
         raise ValueError('reports 必须是任务目录内的文件列表')
     reports = [contained(directory, name).relative_to(directory).as_posix() for name in reports]
-    properties, names = [], set()
+    properties, names, artifact_hashes = [], set(), {}
     labels = {kind: set() for kind in request['kinds']}
     targets = set(request['targets'])
     for row in rows:
@@ -209,7 +212,20 @@ def normalize(directory, request, request_sha256, answer):
             if path.suffix.lower() != '.vcd':
                 raise ValueError('供 Studio 查看时请将逐属性轨迹导出为 VCD: ' + name)
             trace = path.relative_to(directory).as_posix()
-        properties.append(dict(name=name, label=label, kind=kind, status=status, depth=depth, trace=trace))
+        result = dict(name=name, label=label, kind=kind, status=status, depth=depth, trace=trace)
+        stimulus = row.get('stimulus')
+        if stimulus is not None:
+            path = contained(directory, stimulus)
+            if kind != 'cover' or status != 'REACHED' or path.suffix.lower() != '.json':
+                raise ValueError('stimulus 须指向已命中 Cover 的逐拍 JSON: ' + name)
+            result['stimulus'] = path.relative_to(directory).as_posix()
+        for field in ('trace', 'stimulus'):
+            relative = result.get(field)
+            if relative:
+                if relative not in artifact_hashes:
+                    artifact_hashes[relative] = file_hash(contained(directory, relative))
+                result[field + '_sha256'] = artifact_hashes[relative]
+        properties.append(result)
     missing = sorted(targets - {item for row in properties for item in (row['name'], row['label'])})
     for kind in request['kinds']:
         missing.extend(sorted(set(request['required_labels'][kind]) - labels[kind]))
