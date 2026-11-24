@@ -1,0 +1,98 @@
+{
+  "duration_seconds": 19.5,
+  "resolution": [
+    1600,
+    1000
+  ],
+  "fps": 10,
+  "mode": "Annotated montage of preserved real Tk screenshots; not a fresh end-to-end screen recording",
+  "stages": [
+    {
+      "start": 0.0,
+      "end": 3.5,
+      "title": "多种子回归"
+    },
+    {
+      "start": 3.5,
+      "end": 7.0,
+      "title": "用 Cover 找输入"
+    },
+    {
+      "start": 7.0,
+      "end": 10.5,
+      "title": "回放求解轨迹"
+    },
+    {
+      "start": 10.5,
+      "end": 14.8,
+      "title": "联合选择与核验"
+    },
+    {
+      "start": 14.8,
+      "end": 19.5,
+      "title": "FSDB → SVA"
+    }
+  ],
+  "sources": [
+    {
+      "path": "verification/tk_studio_20261111/04_regression.png",
+      "sha256": "528b99896c4b2ce336a620afab90867860ba05df103154b6d14f81e1f1928c23",
+      "tracked_source": true
+    },
+    {
+      "path": "verification/tk_studio_20261111/05_results.png",
+      "sha256": "7e82c0823b3c2a32797045f24c146807594da8dae4b627be59322efa54e4f5d2",
+      "tracked_source": true
+    },
+    {
+      "path": "build/formal_ui/01_editor.png",
+      "sha256": "0b99f0f950256b93d10992a526f787c516d4f83baf0f6066575886a36a4c2f36",
+      "tracked_source": false
+    },
+    {
+      "path": "build/formal_ui/02_goals.png",
+      "sha256": "07926ce887aa49ced1a8eb2fe1460adbbf4a03114cd2c7efe66908d8220610d4",
+      "tracked_source": false
+    },
+    {
+      "path": "build/formal_ui/04_replay.png",
+      "sha256": "370cf6362268b1557eaab339ae74941dff568f319f5dafd60a0c849a4ed21699",
+      "tracked_source": false
+    },
+    {
+      "path": "build/formal_ui/03_waves.png",
+      "sha256": "8bc5fa8b5de95feee80eab692188d0d7a739924627cedbbe9695e1e17d1a577d",
+      "tracked_source": false
+    },
+    {
+      "path": "build/gui_joint.png",
+      "sha256": "16709ba10d79653733d123201b736dc48a6a5d0b7bdf130e6f8c9e0b16ebfa45",
+      "tracked_source": false
+    },
+    {
+      "path": "build/formal_ten_20261114/formal-formats.png",
+      "sha256": "5678b6bf40f5d4275733d780f28f8ab876c57b21e3b1caf8c5a794cd6875fdea",
+      "tracked_source": false
+    }
+  ],
+  "code_excerpt_source": {
+    "recorded_trace": "verification/coverage_source_formal_20261113/replay_export/trace.json",
+    "generator": "simulation/vcs/fsdb_formal/core.py",
+    "function": "native_sva",
+    "format": "signal",
+    "generated_sva_sha256": "d43cb927347db9faa70cfecffc4c41749ca512b1762d371f990e52e0ed7f34d0",
+    "note": "The GIF displays reflowed excerpts of the generated arvalid assume and arready assert. The source examples are historical records from different runs."
+  },
+  "outputs": [
+    {
+      "path": "documents/demos/workflow_20261125/test_mode_workflow_19_5s.gif",
+      "bytes": 6492347,
+      "sha256": "861e5f5bc7d76059fea60b3af2d304e14eaa427fbaac994863f66f0da1fcf641"
+    }
+  ],
+  "schema_version": 1,
+  "archive_date": "2026-11-25",
+  "repository_commit_before_archive": "d4c98e30af387866a436ce7b2ef23b72711ce37b",
+  "path_base": "repository root",
+  "source_availability_note": "Sources marked tracked_source=false are retained in the local development archive and are not included in this Git commit."
+}

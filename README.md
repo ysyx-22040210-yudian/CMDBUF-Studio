@@ -6,6 +6,14 @@ GUI 不依赖浏览器、HTTP 服务、Node.js 或 SSH。所有 EDA 操作经本
 
 ![Linux 上实际运行的原生 Tk 工作台](documents/test_mode_Studio_Tk预览.png)
 
+## 19.5 秒全流程演示
+
+演示包含 EDA 回归、Cover 反推、VCS 回放、代码与功能覆盖的联合最小用例集，以及按 `pattern` 区分用例的 SVA 导出。动图使用项目留存的真实 Tk 界面与历史实测记录剪辑，各环节来自不同示例，未在制作时重新执行完整回归。
+
+![EDA 回归至 SVA 导出的全流程演示（19.5 秒）](documents/demos/workflow_20261125/test_mode_workflow_19_5s.gif)
+
+[GIF 原文件](documents/demos/workflow_20261125/test_mode_workflow_19_5s.gif) · [素材来源、分镜与 SHA-256 存档](documents/demos/workflow_20261125/provenance.json) · [时长与解码校验记录](documents/demos/workflow_20261125/verification.json)
+
 ## 通过 GitHub Download ZIP 获取 Linux x64 完整版
 
 在 `formal-portable` 分支点击 **Code → Download ZIP**，解压后进入包含 `Makefile` 的目录。ZIP 内包含 Python、Tk、Yosys、SymbiYosys、ABC 和 Yices。第一次运行 Make 命令时会校验并解包内置运行时，之后可以离线使用。[下载完整 ZIP](https://github.com/ysyx-22040210-yudian/CMDBUF-Studio/archive/refs/heads/formal-portable.zip)

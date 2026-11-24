@@ -1,0 +1,16 @@
+{
+  "gif_duration_seconds": 19.5,
+  "frames": 195,
+  "resolution": [
+    1600,
+    1000
+  ],
+  "loop": "infinite",
+  "gif_full_decode": "PASS",
+  "sva_excerpt_matches_generated_code": true,
+  "source_mode": "preserved real Tk screens from separate historical examples; no new EDA run",
+  "artifact": "documents/demos/workflow_20261125/test_mode_workflow_19_5s.gif",
+  "sha256": "861e5f5bc7d76059fea60b3af2d304e14eaa427fbaac994863f66f0da1fcf641",
+  "file_bytes": 6492347,
+  "archive_date": "2026-11-25"
+}
